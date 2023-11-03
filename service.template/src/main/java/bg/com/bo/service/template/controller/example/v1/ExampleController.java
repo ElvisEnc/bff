@@ -4,6 +4,7 @@ import bg.com.bo.service.template.model.ErrorResponse;
 import bg.com.bo.service.template.model.Example;
 import bg.com.bo.service.template.model.ExceptionNotFound;
 import bg.com.bo.service.template.model.Response;
+import bg.com.bo.service.template.service.ExampleService;
 import io.swagger.v3.oas.annotations.Operation;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,20 +28,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1")
 @Tag(name = "Example-Controller", description = "Controlador de Ejemplo")
 public class ExampleController {
+    @Autowired
+    private ExampleService exampleService;
     private static final Logger logger = LogManager.getLogger(ExampleController.class.getName());
 
     @Operation(summary = "Endpoint Obtener.", description = "Este es un ejemplo para una petición Get.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resultado exitoso."), @ApiResponse(responseCode = "404", description = "Resultado 404. Recurso no encontrado."), @ApiResponse(responseCode = "500", description = "Error interno del servidor")})
-    @GetMapping("/obtener")
-    public ResponseEntity<String> getExample(@RequestParam String id) {
+    @GetMapping("/obtener/{id}")
+    public ResponseEntity<?> getExample(@PathVariable int id) {
         try {
-            Example example = null;
-            example.setId(1);
-            if (Objects.equals(id, "1")) {
-                throw new ExceptionNotFound("No se encontró el objeto con el id otorgado");
-            }
-            if (Objects.equals(id, "2")) throw new RuntimeException("Error Generado");
-            return ResponseEntity.ok(id);
+//            Example example = null;
+//            example.setId(1);
+            if (Objects.equals(id, 1)) throw new ExceptionNotFound("No se encontró el objeto con el id otorgado");
+            if (Objects.equals(id, 2)) throw new RuntimeException("Error Generado");
+            Example example = exampleService.getExample(id);
+            return ResponseEntity.ok(example);
         } catch (ExceptionNotFound ex) {
             logger.error(ex);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
@@ -55,9 +58,7 @@ public class ExampleController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resultado exitoso.")})
     @PostMapping("/crear")
     public ResponseEntity<Response> postExample(@RequestBody Example example) {
-        Response response = new Response();
-        response.setStatus_code("200");
-        response.setMessage("Created");
+        Response response = exampleService.createExample(example);
         return ResponseEntity.ok(response);
     }
 
@@ -66,9 +67,7 @@ public class ExampleController {
     @DeleteMapping("/eliminar")
     public ResponseEntity<?> deletExample(@RequestParam String id) {
         try {
-            Response response = new Response();
-            response.setStatus_code("200");
-            response.setMessage("Deleted");
+            Response response = exampleService.deleteExample(id);
             return ResponseEntity.ok(response);
         } catch (ExceptionNotFound ex) {
             logger.error(ex);
@@ -86,12 +85,9 @@ public class ExampleController {
     @PutMapping("/actualizar")
     public ResponseEntity<?> putExample(@RequestBody Example example) {
         try {
-            Response response = new Response();
-            response.setStatus_code("200");
-            response.setMessage("Updated");
-
             if (example.getId() == 0) throw new ExceptionNotFound("No se encontró el objeto con el id otorgado");
             if (example.getId() == -1) throw new RuntimeException();
+            Response response = exampleService.updateExample(example);
             return ResponseEntity.ok(response);
         } catch (ExceptionNotFound ex) {
             logger.error(ex);
