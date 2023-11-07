@@ -4,7 +4,7 @@ import bg.com.bo.service.template.model.ErrorResponse;
 import bg.com.bo.service.template.model.Example;
 import bg.com.bo.service.template.model.ExceptionNotFound;
 import bg.com.bo.service.template.model.Response;
-import bg.com.bo.service.template.service.ExampleService;
+import bg.com.bo.service.template.service.Interfaces.IExampleService;
 import io.swagger.v3.oas.annotations.Operation;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Example-Controller", description = "Controlador de Ejemplo")
 public class ExampleController {
     @Autowired
-    private ExampleService exampleService;
+    private IExampleService exampleService;
     private static final Logger logger = LogManager.getLogger(ExampleController.class.getName());
 
     @Operation(summary = "Endpoint Obtener.", description = "Este es un ejemplo para una petición Get.")
@@ -37,8 +37,6 @@ public class ExampleController {
     @GetMapping("/obtener/{id}")
     public ResponseEntity<?> getExample(@PathVariable int id) {
         try {
-//            Example example = null;
-//            example.setId(1);
             if (Objects.equals(id, 1)) throw new ExceptionNotFound("No se encontró el objeto con el id otorgado");
             if (Objects.equals(id, 2)) throw new RuntimeException("Error Generado");
             Example example = exampleService.getExample(id);
