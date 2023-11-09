@@ -1,17 +1,16 @@
 package bg.com.bo.service.template.model;
 
 public class Response {
-    private String status_code;
+    private String statusCode;
     private String message;
 
 
-
-    public String getStatus_code() {
-        return status_code;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public void setStatus_code(String status_code) {
-        this.status_code = status_code;
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     public String getMessage() {
