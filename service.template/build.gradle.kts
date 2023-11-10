@@ -40,9 +40,9 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.6.0")
 }
 
-configurations.implementation{
+configurations.implementation {
     exclude("org.springframework.boot", "spring-boot-starter-logging")
-    exclude(group="commons-logging",module="commons-logging")
+    exclude(group = "commons-logging", module = "commons-logging")
 }
 
 tasks.withType<Test> {

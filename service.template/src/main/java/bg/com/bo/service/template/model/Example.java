@@ -9,6 +9,13 @@ public class Example {
     @NotBlank
     private String description;
 
+    @Override
+    public String toString() {
+        return "Example{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                '}';
+    }
 
     public Integer getId() {
         return id;

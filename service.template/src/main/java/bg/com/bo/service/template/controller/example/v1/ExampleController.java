@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Example-Controller", description = "Controlador de Ejemplo")
 public class ExampleController {
     @Autowired
-    private IExampleService exampleService;
+    private IExampleService iExampleService;
     private static final Logger logger = LogManager.getLogger(ExampleController.class.getName());
 
     @Operation(summary = "Endpoint Obtener.", description = "Este es un ejemplo para una petición Get.")
@@ -37,9 +37,7 @@ public class ExampleController {
     @GetMapping("/obtener/{id}")
     public ResponseEntity<?> getExample(@PathVariable int id) {
         try {
-            if (Objects.equals(id, 1)) throw new ExceptionNotFound("No se encontró el objeto con el id otorgado");
-            if (Objects.equals(id, 2)) throw new RuntimeException("Error Generado");
-            Example example = exampleService.getExample(id);
+            Example example = iExampleService.getExample(id);
             return ResponseEntity.ok(example);
         } catch (ExceptionNotFound ex) {
             logger.error(ex);
@@ -48,7 +46,7 @@ public class ExampleController {
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.setMessage("Internal Server Error");
             logger.error(ex.getMessage(), ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
@@ -56,26 +54,8 @@ public class ExampleController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resultado exitoso.")})
     @PostMapping("/crear")
     public ResponseEntity<Response> postExample(@RequestBody Example example) {
-        Response response = exampleService.createExample(example);
+        Response response = iExampleService.createExample(example);
         return ResponseEntity.ok(response);
-    }
-
-    @Operation(summary = "Endpoint Eliminar.", description = "Este es un ejemplo para una petición Delete.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resultado exitoso."), @ApiResponse(responseCode = "404", description = "Resultado 404. Recurso no encontrado."), @ApiResponse(responseCode = "500", description = "Error interno del servidor")})
-    @DeleteMapping("/eliminar")
-    public ResponseEntity<?> deletExample(@RequestParam String id) {
-        try {
-            Response response = exampleService.deleteExample(id);
-            return ResponseEntity.ok(response);
-        } catch (ExceptionNotFound ex) {
-            logger.error(ex);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-        } catch (Exception ex) {
-            ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setMessage("Internal Server Error");
-            logger.error(ex.getMessage(), ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse.getMessage());
-        }
     }
 
     @Operation(summary = "Endpoint Actualizar.", description = "Este es un ejemplo para una petición Put.")
@@ -83,9 +63,7 @@ public class ExampleController {
     @PutMapping("/actualizar")
     public ResponseEntity<?> putExample(@RequestBody Example example) {
         try {
-            if (example.getId() == 0) throw new ExceptionNotFound("No se encontró el objeto con el id otorgado");
-            if (example.getId() == -1) throw new RuntimeException();
-            Response response = exampleService.updateExample(example);
+            Response response = iExampleService.updateExample(example);
             return ResponseEntity.ok(response);
         } catch (ExceptionNotFound ex) {
             logger.error(ex);
@@ -94,7 +72,25 @@ public class ExampleController {
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.setMessage("Internal Server Error");
             logger.error(ex.getMessage(), ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @Operation(summary = "Endpoint Eliminar.", description = "Este es un ejemplo para una petición Delete.")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resultado exitoso."), @ApiResponse(responseCode = "404", description = "Resultado 404. Recurso no encontrado."), @ApiResponse(responseCode = "500", description = "Error interno del servidor")})
+    @DeleteMapping("/eliminar")
+    public ResponseEntity<?> deletExample(@RequestParam String id) {
+        try {
+            Response response = iExampleService.deleteExample(id);
+            return ResponseEntity.ok(response);
+        } catch (ExceptionNotFound ex) {
+            logger.error(ex);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (Exception ex) {
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setMessage("Internal Server Error");
+            logger.error(ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 }
