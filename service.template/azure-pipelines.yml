@@ -98,6 +98,10 @@ stages:
               path: $(GRADLE_USER_HOME)
             displayName: Configure gradle caching
           
+          - script: |
+              ls -la    
+            displayName: pwd
+          
           - task: Gradle@3
             inputs:
               gradleWrapperFile: 'gradlew' # string. Alias: wrapperScript. Required. Gradle wrapper. Default: gradlew.
@@ -114,7 +118,7 @@ stages:
               jdkVersionOption: '1.17'
               sonarQubeRunAnalysis: false
           
-          - script: |   
+          - script: |
               # stop the Gradle daemon to ensure no files are left open (impacting the save cache operation later)
               ./gradlew --stop    
             displayName: Gradlew stop
