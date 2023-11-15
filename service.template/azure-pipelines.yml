@@ -117,7 +117,7 @@ stages:
           
           - script: |
               # stop the Gradle daemon to ensure no files are left open (impacting the save cache operation later)
-              ./gradlew --stop    
+              $(PROJECT_PATH)/gradlew --stop    
             displayName: Gradlew stop
           
           # - task: ShellScript@2
