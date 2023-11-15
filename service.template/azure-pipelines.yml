@@ -100,13 +100,15 @@ stages:
           
           - script: |
               ls -la
-              $(System.DefaultWorkingDirectory)
+              pwd
+              echo $(System.DefaultWorkingDirectory)
+              echo $(Build.SourcesDirectory)
             displayName: pwd
           
           - task: Gradle@3
             inputs:
               gradleWrapperFile: 'gradlew' # string. Alias: wrapperScript. Required. Gradle wrapper. Default: gradlew.
-              workingDirectory: '$(System.DefaultWorkingDirectory)/service.template/'
+              workingDirectory: '$(Build.SourcesDirectory)/service.template'
               options: '--build-cache'
               tasks: 'build' # string. Required. Tasks. Default: build.
             # JUnit Test Results
