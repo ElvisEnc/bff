@@ -109,8 +109,8 @@ stages:
               publishJUnitResults: true
               testResultsFiles: '**/TEST-*.xml' # string. Required when publishJUnitResults = true. Test results files. Default: **/TEST-*.xml.
             # Code Coverage
-              codeCoverageToolOption: 'JaCoCo'
-              codeCoverageClassFilesDirectories: '$(PROJECT_PATH)/build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
+              # codeCoverageToolOption: 'JaCoCo'
+              # codeCoverageClassFilesDirectories: '$(PROJECT_PATH)/build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
               javaHomeOption: 'JDKVersion'
               jdkVersionOption: '1.17'
               sonarQubeRunAnalysis: false
