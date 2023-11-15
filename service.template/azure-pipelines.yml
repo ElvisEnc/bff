@@ -99,13 +99,14 @@ stages:
             displayName: Configure gradle caching
           
           - script: |
-              ls -la    
+              ls -la
+              $(System.DefaultWorkingDirectory)
             displayName: pwd
           
           - task: Gradle@3
             inputs:
               gradleWrapperFile: 'gradlew' # string. Alias: wrapperScript. Required. Gradle wrapper. Default: gradlew.
-              workingDirectory: '$(System.DefaultWorkingDirectory)/service.template'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/service.template/'
               options: '--build-cache'
               tasks: 'build' # string. Required. Tasks. Default: build.
             # JUnit Test Results
