@@ -71,6 +71,7 @@ stages:
     # condition: eq(variables['Build.Reason'], 'PullRequest')
     variables:
       GRADLE_USER_HOME: $(Pipeline.Workspace)/.gradle
+      PROJECT_PATH: $(Build.SourcesDirectory)/service.template
     jobs:
       - job: Scanner
         displayName: "Sonar and Trivy scan"
@@ -98,17 +99,9 @@ stages:
               path: $(GRADLE_USER_HOME)
             displayName: Configure gradle caching
           
-          - script: |
-              ls -la
-              pwd
-              echo $(System.DefaultWorkingDirectory)
-              echo $(Build.SourcesDirectory)
-            displayName: pwd
-          
           - task: Gradle@3
             inputs:
-              gradleWrapperFile: 'gradlew' # string. Alias: wrapperScript. Required. Gradle wrapper. Default: gradlew.
-              workingDirectory: '$(Build.SourcesDirectory)/service.template/'
+              gradleWrapperFile: '$(PROJECT_PATH)/gradlew' # string. Alias: wrapperScript. Required. Gradle wrapper. Default: gradlew.
               options: '--build-cache'
               tasks: 'build' # string. Required. Tasks. Default: build.
             # JUnit Test Results
@@ -116,7 +109,7 @@ stages:
               testResultsFiles: '**/TEST-*.xml' # string. Required when publishJUnitResults = true. Test results files. Default: **/TEST-*.xml.
             # Code Coverage
               codeCoverageToolOption: 'JaCoCo'
-              codeCoverageClassFilesDirectories: 'build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
+              codeCoverageClassFilesDirectories: '$(PROJECT_PATH)/build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
               javaHomeOption: 'JDKVersion'
               jdkVersionOption: '1.17'
               sonarQubeRunAnalysis: false
