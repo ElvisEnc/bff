@@ -108,7 +108,7 @@ stages:
           - task: Gradle@3
             inputs:
               gradleWrapperFile: 'gradlew' # string. Alias: wrapperScript. Required. Gradle wrapper. Default: gradlew.
-              workingDirectory: '$(Build.SourcesDirectory)/service.template'
+              workingDirectory: '$(Build.SourcesDirectory)/service.template/'
               options: '--build-cache'
               tasks: 'build' # string. Required. Tasks. Default: build.
             # JUnit Test Results
