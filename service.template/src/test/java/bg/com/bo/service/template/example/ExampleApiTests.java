@@ -5,6 +5,7 @@ import bg.com.bo.service.template.model.ErrorResponse;
 import bg.com.bo.service.template.model.Example;
 import bg.com.bo.service.template.model.ExceptionNotFound;
 import bg.com.bo.service.template.model.Response;
+import bg.com.bo.service.template.repository.ExampleRepository;
 import bg.com.bo.service.template.service.Interfaces.IExampleService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,16 +28,14 @@ public class ExampleApiTests {
 
     @BeforeAll
     public static void setup() {
-        example = new Example();
-        example.setId(3);
-        example.setDescription("Run Test");
+        example = new Example(5,"Run Test");
     }
 
     // GET
     @Test
     void givenExistingObjectWhenGetExampleThenReturnOKResponse() {
         // Arrange
-        int id = 3;
+        int id = 5;
         Mockito.when(exampleService.getExample(id)).thenReturn(example);
 
         // Act
