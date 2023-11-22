@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
+import java.io.IOException;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,7 +53,7 @@ public class ExampleController {
     @Operation(summary = "Endpoint Crear.", description = "Este es un ejemplo para una petición Post.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Resultado exitoso.")})
     @PostMapping("/crear")
-    public ResponseEntity<Response> postExample(@RequestBody Example example) {
+    public ResponseEntity<Response> postExample(@RequestBody Example example) throws IOException {
         Response response = iExampleService.createExample(example);
         return ResponseEntity.ok(response);
     }

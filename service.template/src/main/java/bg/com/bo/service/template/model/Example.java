@@ -9,6 +9,9 @@ public class Example {
     @NotBlank
     private String description;
 
+    public Example() {
+    }
+
     public Example(Integer id, String description) {
         this.id = id;
         this.description = description;

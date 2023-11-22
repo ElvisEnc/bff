@@ -27,7 +27,8 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
     implementation("org.springframework.boot:spring-boot-starter-log4j2:3.1.5")
     implementation("org.apache.logging.log4j:log4j-spring-boot:2.20.0")
-    implementation("org.apache.cxf:cxf:3.4.0")
+    implementation("org.json:json:20231013")
+    implementation("org.apache.httpcomponents:httpclient:4.5.13")
 
     compileOnly("org.projectlombok:lombok")
 
