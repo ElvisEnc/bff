@@ -1,10 +1,10 @@
 package bg.com.bo.service.template.example;
 
 import bg.com.bo.service.template.controller.example.v1.ExampleController;
-import bg.com.bo.service.template.model.ErrorResponse;
 import bg.com.bo.service.template.model.Example;
 import bg.com.bo.service.template.model.ExceptionNotFound;
 import bg.com.bo.service.template.model.Response;
+import bg.com.bo.service.template.repository.ExampleRepository;
 import bg.com.bo.service.template.service.Interfaces.IExampleService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.io.IOException;
 
 @ExtendWith(MockitoExtension.class)
 public class ExampleApiTests {
@@ -27,16 +29,14 @@ public class ExampleApiTests {
 
     @BeforeAll
     public static void setup() {
-        example = new Example();
-        example.setId(3);
-        example.setDescription("Run Test");
+        example = new Example(5,"Run Test");
     }
 
     // GET
     @Test
-    void givenExistingObjectWhenGetExampleThenReturnOKResponse() {
+    void givenExistingObjectWhenGetExampleThenReturnOKResponse() throws IOException {
         // Arrange
-        int id = 3;
+        int id = 5;
         Mockito.when(exampleService.getExample(id)).thenReturn(example);
 
         // Act
@@ -50,7 +50,7 @@ public class ExampleApiTests {
     }
 
     @Test
-    void givenNotExistingObjectWhenGetExampleThenReturnNotFoundResponse() {
+    void givenNotExistingObjectWhenGetExampleThenReturnNotFoundResponse() throws IOException {
         // Arrange
         int id = 1;
         Mockito.when(exampleService.getExample(id)).thenThrow(new ExceptionNotFound("No se encontró el objeto con el id otorgado"));
@@ -66,7 +66,7 @@ public class ExampleApiTests {
     }
 
     @Test
-    void givenInternalErrorWhenGetExampleThenReturnInternalServerError() {
+    void givenInternalErrorWhenGetExampleThenReturnInternalServerError() throws IOException {
         // Arrange
         int id = 2;
         Mockito.when(exampleService.getExample(id)).thenThrow(new RuntimeException());
@@ -83,7 +83,7 @@ public class ExampleApiTests {
 
     // POST
     @Test
-    void givenNewExampleWhenPostExampleThenReturnOKResponse() {
+    void givenNewExampleWhenPostExampleThenReturnOKResponse() throws IOException {
         // Arrange
         Response response = new Response();
         Mockito.when(exampleService.createExample(example)).thenReturn(response);
@@ -100,7 +100,7 @@ public class ExampleApiTests {
 
     // PUT
     @Test
-    void givenExistingExampleWhenPutExampleThenReturnOKResponse() {
+    void givenExistingExampleWhenPutExampleThenReturnOKResponse() throws IOException {
         // Arrange
         Response response = new Response();
         Mockito.when(exampleService.updateExample(example)).thenReturn(response);
@@ -117,7 +117,7 @@ public class ExampleApiTests {
 
 
     @Test
-    void givenInternalErrorWhenPutExampleThenReturnInternalServerError() {
+    void givenInternalErrorWhenPutExampleThenReturnInternalServerError() throws IOException {
         // Arrange
         Mockito.when(exampleService.updateExample(example)).thenThrow(new ExceptionNotFound("No se encontró el objeto con el id otorgado"));
 
@@ -132,7 +132,7 @@ public class ExampleApiTests {
     }
 
     @Test
-    void givenNotExistingObjectExampleWhenPutExampleThenReturnNotFoundResponse() {
+    void givenNotExistingObjectExampleWhenPutExampleThenReturnNotFoundResponse() throws IOException {
         // Arrange
         Mockito.when(exampleService.updateExample(example)).thenThrow(new RuntimeException());
 
@@ -148,7 +148,7 @@ public class ExampleApiTests {
 
     // DELETE
     @Test
-    void givenExistingExampleWhenDeleteExampleThenReturnOKResponse() {
+    void givenExistingExampleWhenDeleteExampleThenReturnOKResponse() throws IOException {
         // Arrange
         String id = "1";
         Response response = new Response();

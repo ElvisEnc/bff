@@ -1,0 +1,15 @@
+version: '3'
+services:
+
+  backend:
+    # Comando para buildear la imagen. Utiliza el Dockerfile indicado.
+    build: .
+    # Nombre de la imagen a utilizar. Si esta presente el comando build, construye una nueva imagen y le asigna este nombre.
+    image: bg.bo.com/bff:latest
+    environment:
+      # Permite el debug remoto de la aplicacion.
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    profiles: [ "debug", "dev" ]

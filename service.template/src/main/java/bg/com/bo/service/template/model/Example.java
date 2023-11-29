@@ -9,11 +9,19 @@ public class Example {
     @NotBlank
     private String description;
 
+    public Example() {
+    }
+
+    public Example(Integer id, String description) {
+        this.id = id;
+        this.description = description;
+    }
+
     @Override
     public String toString() {
-        return "Example{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
+        return "{" +
+                "id:" + id +
+                ", description:'" + description + '\'' +
                 '}';
     }
 
