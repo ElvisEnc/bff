@@ -1,0 +1,529 @@
+# trigger:
+#   - develop
+#   - staging
+#   - release*
+#   - main
+
+parameters:
+  - name: branchOptions
+    displayName: 'Source branch options'
+    type: object
+    default:
+      - refs/heads/develop
+      - refs/heads/staging
+      - refs/heads/release*
+      - refs/heads/main
+
+variables:
+  # Alamacena el token PAT necesario para clonar el helm repos
+  - group: Repository-Token
+  # URL para clonar el repositorio gitops con un token PAT
+  - name: gitopsRepository
+    value: 'https://$(PAT)@dev.azure.com/BancoGanadero/BGA-Internal/_git/gitops'
+  # Nombre necesario para crear infra en ./infra/team/productName
+  - name: team
+    value: 'ganamovil'
+  # [Opcional] Nombre del namespace donde está desplegado 
+  - name: namespace
+    value: 'ganamovil'
+  # [Opcional] Alias con el que se desplegara
+  - name: appalias
+    value: 'ganamovil-bff'
+  # Nombre que aloja el codigo fuente
+  - name: productName
+    value: 'ganamovil-bff'
+  # credencial para acceso a hub (Service Connection Name)
+  - name: registryCredential
+    value: 'DockerHubBG'
+  # usuario con acceso
+  - name: dockerUser
+    value: 'bancoganadero'
+  # Nombre del repositorio en el registro de contenedores
+  - name: dockerRepo
+    value: '$(productName)'
+  # Valor del TAG para la imagen
+  - name: dockerImageTAG
+    value: '$(Build.BuildId).$(Build.SourceBranchName)'
+  # Git Helm Charts donde encontrar $chart y almacenar la infra
+  - name: helmChartsURL
+    value: 'https://BancoGanadero@dev.azure.com/BancoGanadero/BGA-Internal/_git/gitops'
+  # Nombre del puerto que expone el contenedor
+  - name: portName
+    value: 'http'
+  # Numero del puerto a escuchar en el contenedor
+  - name: portNumber
+    value: '8080'
+  # Nombre del chart a utilizar para este proyecto
+  - name: chart
+    value: 'simple-chart'
+  # Condicion para detener (1) o continuar (0) la pipeline si existe vulnerabilidades
+  - name: stopCondition
+    value: '--exit-code 0 --severity HIGH,CRITICAL'
+  # Para el caso de proyectos con multi stage build que dan errores
+  - name: excludeIMG
+    value: 'base|build'
+  - name: liquibaseVer
+    value: '4.16.1'
+
+stages:
+  - stage: Validate_PR
+    displayName: "Checking QA and Vuln"
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    variables:
+      GRADLE_USER_HOME: $(Pipeline.Workspace)/.gradle
+      PROJECT_PATH: $(Build.SourcesDirectory)/bff
+    jobs:
+      - job: Scanner
+        displayName: "Sonar and Trivy scan"
+        steps:
+          # - task: MavenAuthenticate@0
+          #   inputs:
+          #     artifactsFeeds: 'midd_library'
+
+          - task: SonarQubePrepare@5
+            inputs:
+              SonarQube: 'SQ_AWS'
+              scannerMode: 'Other'
+              extraProperties: |
+                # Additional properties that will be passed to the scanner,
+                # Put one key=value per line, example:
+                # sonar.exclusions=**/*.bin
+                sonar.projectKey=$(team)-$(productName)
+
+          - task: Cache@2
+            inputs:
+              key: 'gradle | "$(Agent.OS)" | **/build.gradle.kts'
+              restoreKeys: |
+                gradle | "$(Agent.OS)"
+                gradle
+              path: $(GRADLE_USER_HOME)
+            displayName: Configure gradle caching
+          
+          - task: Gradle@3
+            inputs:
+              gradleWrapperFile: '$(PROJECT_PATH)/gradlew' # string. Alias: wrapperScript. Required. Gradle wrapper. Default: gradlew.
+              workingDirectory: '$(PROJECT_PATH)/'
+              options: '--build-cache'
+              tasks: 'build' # string. Required. Tasks. Default: build.
+            # JUnit Test Results
+              publishJUnitResults: true
+              testResultsFiles: '**/TEST-*.xml' # string. Required when publishJUnitResults = true. Test results files. Default: **/TEST-*.xml.
+            # Code Coverage
+              # codeCoverageToolOption: 'JaCoCo'
+              # codeCoverageClassFilesDirectories: '$(PROJECT_PATH)/build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
+              javaHomeOption: 'JDKVersion'
+              jdkVersionOption: '1.17'
+              sonarQubeRunAnalysis: false
+          
+          - script: |
+              # stop the Gradle daemon to ensure no files are left open (impacting the save cache operation later)
+              $(PROJECT_PATH)/gradlew --stop    
+            displayName: Gradlew stop
+          
+          - task: ShellScript@2
+            displayName: 'Scan dockerfile'
+            inputs:
+              scriptPath: $(PROJECT_PATH)/scan.sh
+          
+          - task : PublishTestResults@2
+            displayName: 'Publish Report Trivy Scan - Vulnerabilities'
+            inputs: 
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/*.xml'
+              mergeTestResults: true
+              failTaskOnFailedTests: false
+              testRunTitle: 'Trivy Vulnerabilities'
+            condition: 'always()'
+
+          - task: SonarQubePublish@5
+            inputs:
+              pollingTimeoutSec: '300'
+
+  # - stage: Validate_Changes
+  #   displayName: "Validate Integration"
+  #   condition: or(${{ containsValue(parameters.branchOptions, variables['Build.SourceBranch']) }}, startsWith(variables['build.sourceBranch'], 'refs/heads/release'))
+  #   variables:
+  #     MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
+  #     MAVEN_OPTS: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+  #   jobs:
+  #     - job: Scan_Build
+  #       displayName: "Scan and Build artifact"
+  #       steps:
+  #         - task: MavenAuthenticate@0
+  #           inputs:
+  #             artifactsFeeds: 'midd_library'
+
+  #         - task: SonarQubePrepare@5
+  #           inputs:
+  #             SonarQube: 'SQ_AWS'
+  #             scannerMode: 'Other'
+  #             extraProperties: |
+  #               # Additional properties that will be passed to the scanner,
+  #               # Put one key=value per line, example:
+  #               # sonar.exclusions=**/*.bin
+  #               sonar.projectKey=$(team)-$(productName)
+
+  #         - task: Cache@2
+  #           inputs:
+  #             key: 'maven | "$(Agent.OS)" | **/pom.xml'
+  #             restoreKeys: |
+  #               maven | "$(Agent.OS)"
+  #               maven
+  #             path: $(MAVEN_CACHE_FOLDER)
+  #           displayName: Cache Maven local repo
+
+  #         - task: Maven@3
+  #           inputs:
+  #             mavenPomFile: 'pom.xml'
+  #             options: '-Dsonar.coverage.jacoco.xmlReportPaths=$(Build.SourcesDirectory)/CCReport43F6D5EF/jacoco.xml'
+  #             mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
+  #             javaHomeOption: 'JDKVersion'
+  #             jdkVersionOption: '1.17'
+  #             jdkArchitectureOption: 'x64'
+  #             publishJUnitResults: true
+  #             testResultsFiles: '**/surefire-reports/TEST-*.xml'
+  #             codeCoverageToolOption: jaCoCo
+  #             codeCoverageClassFilesDirectories: '$(System.DefaultWorkingDirectory)/target/classes/com/dentsply/indirect/auth'
+  #             codeCoverageSourceDirectories: '$(System.DefaultWorkingDirectory)/src/main/java/com/dentsply/indirect/auth'
+  #             goals: 'package'
+  #             sonarQubeRunAnalysis: true
+          
+  #         - task: ShellScript@2
+  #           displayName: 'Vuln Scan'
+  #           inputs:
+  #             scriptPath: scan.sh
+
+  #         - task: SonarQubePublish@5
+  #           inputs:
+  #             pollingTimeoutSec: '300'
+
+  #         - task: CopyFiles@2
+  #           inputs:
+  #             sourceFolder: '$(Build.SourcesDirectory)'
+  #             contents: '**/target/*.jar'
+  #             targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+  #         - publish: '$(Build.ArtifactStagingDirectory)'
+  #           artifact: artifact
+
+  - stage: Build_Push_Container_Image
+    displayName: "Build and Push Container Image"
+    dependsOn: 'Validate_PR'
+    condition: and(succeeded('Validate_Changes'), or(${{ containsValue(parameters.branchOptions, variables['Build.SourceBranch']) }}, startsWith(variables['build.sourceBranch'], 'refs/heads/release')))
+    variables:
+      PROJECT_PATH: $(Build.SourcesDirectory)/bff
+    jobs:
+      - job: Build_Push_Container_Image
+        displayName: "Build and Push Container Image"
+        steps:
+          # - task: DownloadPipelineArtifact@2
+          #   displayName: "Download Artifact"
+          #   inputs:
+          #     artifact: 'artifact'
+          #     path: $(Build.SourcesDirectory)
+
+          - task: Docker@2
+            displayName: "Build and Push Image to registry"
+            inputs:
+              containerRegistry: '$(registryCredential)'
+              repository: '$(dockerUser)/$(dockerRepo)'
+              command: 'buildAndPush'
+              Dockerfile: '$(PROJECT_PATH)/Dockerfile'
+              tags: '$(dockerImageTAG)'
+
+  - stage: Deploy_Develop
+    displayName: "Continuous Deployment DEV"
+    dependsOn: 'Build_Push_Container_Image'
+    condition: and(succeeded('Build_Push_Container_Image'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    jobs:
+      - job: Deploy
+        displayName: "CD - Prepare"
+        variables:
+          tmpPath: 'tmp/env-data-$(productName).yaml'
+          scriptPath: './devsecops-bga-tpls/bash-scripts/new-project.sh'
+          PROJECT_PATH: $(Build.SourcesDirectory)/bff
+        steps:
+          - task: Bash@3
+            displayName: "Setting environment variables"
+            inputs:
+              targetType: 'inline'
+              script: |
+                [ -f $(PROJECT_PATH)/cicd/env-data.yaml ] && cp $(PROJECT_PATH)/cicd/env-data.yaml /$(tmpPath) || echo 'No existe $(PROJECT_PATH)/cicd/env-data.yaml'
+          
+          - script: |
+              git clone --branch main $(gitopsRepository)
+            displayName: "Get GitOps Infrastructure Repo"
+            workingDirectory: '$(Agent.TempDirectory)'
+            
+          - task: Bash@3
+            displayName: "ArgoCD Deployment"
+            inputs:
+              targetType: 'inline'
+              script: |
+                export team="$(team)"
+                export namespace="$(namespace)"
+                export appalias="$(appalias)"
+                export productName="$(productName)"
+                export registryCredential="$(registryCredential)"
+                export dockerUser="$(dockerUser)"
+                export dockerRepo="$(dockerRepo)"
+                export dockerImageTAG="$(dockerImageTAG)"
+                export helmChartsURL="$(helmChartsURL)"
+                export portName="$(portName)"
+                export portNumber="$(portNumber)"
+                export chart="$(chart)"
+                export cluster="aks"
+                BRANCH_NAME="$(Build.SourceBranchName)"
+                projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
+              workingDirectory: '$(Agent.TempDirectory)/gitops'
+
+          - task: Bash@3
+            displayName: "Delete tmp files"
+            inputs:
+              targetType: 'inline'
+              script: |
+                [ -f /$(tmpPath) ] && rm -fv /$(tmpPath) || echo 'No existe /$(tmpPath)'
+  
+  # - stage: Deploy_Staging
+  #   displayName: "Continuous Deployment STG"
+  #   dependsOn: 'Build_Push_Container_Image'
+  #   condition: and(succeeded('Build_Push_Container_Image'), eq(variables['Build.SourceBranch'], 'refs/heads/staging'))
+  #   pool:
+  #     name: Dev_AWS_Builder
+  #   jobs:
+  #     - job: Liquibase
+  #       displayName: "CD - Liquibase DB"
+  #       variables:
+  #         - group: Liquibase
+  #       steps:
+  #         - checkout: git://BGA-Flexibility/deployment-db-scripts
+  #           persistCredentials: true
+
+  #         - bash: |
+  #             export liquibaseVer=$(liquibaseVer)
+  #             [ -d /tmp/${liquibaseVer} ] && rm -Rf /tmp/${liquibaseVer}
+  #             mkdir -p /tmp/${liquibaseVer}
+  #             wget https://github.com/liquibase/liquibase/releases/download/v${liquibaseVer}/liquibase-${liquibaseVer}.tar.gz
+  #             tar  -xvf liquibase-${liquibaseVer}.tar.gz --directory=/tmp/${liquibaseVer}
+
+  #             echo "Run liquibase for Oracle"
+  #             bash /tmp/${liquibaseVer}/liquibase \
+  #               --driver=oracle.jdbc.OracleDriver \
+  #               --referenceDriver=oracle.jdbc.OracleDriver \
+  #               --classpath=/tmp/${liquibaseVer}/internal/lib/ojdbc8.jar \
+  #               --changeLogFile=master.xml \
+  #               --url=jdbc:oracle:thin:@$(ORA_HOST_STG):$(ORA_PORT_STG)/$(ORA_DB_STG) \
+  #               --username=$(ORA_USER_STG) \
+  #               --password=$(ORA_PASS_STG) \
+  #               --contexts=qa \
+  #               update
+
+  #     - job: Deploy
+  #       displayName: "CD - Prepare"
+  #       dependsOn: Liquibase
+  #       variables:
+  #         tmpPath: 'tmp/env-data-$(productName).yaml'
+  #         scriptPath: './devsecops-bga-tpls/bash-scripts/new-project.sh'
+  #       steps:
+  #         - task: Bash@3
+  #           displayName: "Setting environment variables"
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #               [ -f ./cicd/env-data.yaml ] && cp ./cicd/env-data.yaml /$(tmpPath) || echo 'No existe ./cicd/env-data.yaml'
+          
+  #         - script: |
+  #             git clone --branch main $(gitopsRepository)
+  #           displayName: "Get GitOps Infrastructure Repo"
+  #           workingDirectory: '$(Agent.TempDirectory)'
+            
+  #         - task: Bash@3
+  #           displayName: "ArgoCD Deployment"
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #               export team="$(team)"
+  #               export namespace="$(namespace)"
+  #               export appalias="$(appalias)"
+  #               export productName="$(productName)"
+  #               export registryCredential="$(registryCredential)"
+  #               export dockerUser="$(dockerUser)"
+  #               export dockerRepo="$(dockerRepo)"
+  #               export dockerImageTAG="$(dockerImageTAG)"
+  #               export helmChartsURL="$(helmChartsURL)"
+  #               export portName="$(portName)"
+  #               export portNumber="$(portNumber)"
+  #               export chart="$(chart)"
+  #               export cluster="eks"
+  #               BRANCH_NAME="$(Build.SourceBranchName)"
+  #               projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
+  #             workingDirectory: '$(Agent.TempDirectory)/gitops'
+
+  #         - task: Bash@3
+  #           displayName: "Delete tmp files"
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #               [ -f /$(tmpPath) ] && rm -fv /$(tmpPath) || echo 'No existe /$(tmpPath)'
+                
+  # - stage: Deploy_Preprod
+  #   displayName: "Continuous Deployment PREP"
+  #   dependsOn: 'Build_Push_Container_Image'
+  #   condition: and(succeeded('Build_Push_Container_Image'), startsWith(variables['build.sourceBranch'], 'refs/heads/release'))
+  #   pool:
+  #     name: Prod_Linux_Builder
+  #   jobs:
+  #     - job: Liquibase
+  #       displayName: "CD - Liquibase DB"
+  #       variables:
+  #         - group: Liquibase
+  #       steps:
+  #         - checkout: git://BGA-Flexibility/deployment-db-scripts
+  #           persistCredentials: true
+
+  #         - bash: |
+  #             export liquibaseVer=$(liquibaseVer)
+  #             [ -d /tmp/${liquibaseVer} ] && rm -Rf /tmp/${liquibaseVer}
+  #             mkdir -p /tmp/${liquibaseVer}
+  #             wget https://github.com/liquibase/liquibase/releases/download/v${liquibaseVer}/liquibase-${liquibaseVer}.tar.gz
+  #             tar  -xvf liquibase-${liquibaseVer}.tar.gz --directory=/tmp/${liquibaseVer}
+
+  #             echo "Run liquibase for Oracle"
+  #             bash /tmp/${liquibaseVer}/liquibase \
+  #               --driver=oracle.jdbc.OracleDriver \
+  #               --referenceDriver=oracle.jdbc.OracleDriver \
+  #               --classpath=/tmp/${liquibaseVer}/internal/lib/ojdbc8.jar \
+  #               --changeLogFile=master.xml \
+  #               --url=jdbc:oracle:thin:@$(ORA_HOST_PREP):$(ORA_PORT_PREP)/$(ORA_DB_PREP) \
+  #               --username=$(ORA_USER_PREP) \
+  #               --password=$(ORA_PASS_PREP) \
+  #               --contexts=preprod \
+  #               update
+
+  #     - job: Deploy
+  #       displayName: "CD - Prepare"
+  #       dependsOn: Liquibase
+  #       variables:
+  #         tmpPath: 'tmp/env-data-$(productName).yaml'
+  #         scriptPath: './devsecops-bga-tpls/bash-scripts/new-project.sh'
+  #       steps:
+  #         - task: Bash@3
+  #           displayName: "Setting environment variables"
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #               [ -f ./cicd/env-data.yaml ] && cp ./cicd/env-data.yaml /$(tmpPath) || echo 'No existe ./cicd/env-data.yaml'
+          
+  #         - script: |
+  #             git clone --branch main $(gitopsRepository)
+  #           displayName: "Get GitOps Infrastructure Repo"
+  #           workingDirectory: '$(Agent.TempDirectory)'
+            
+  #         - task: Bash@3
+  #           displayName: "ArgoCD Deployment"
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #               export team="$(team)"
+  #               export namespace="$(namespace)"
+  #               export appalias="$(appalias)"
+  #               export productName="$(productName)"
+  #               export registryCredential="$(registryCredential)"
+  #               export dockerUser="$(dockerUser)"
+  #               export dockerRepo="$(dockerRepo)"
+  #               export dockerImageTAG="$(dockerImageTAG)"
+  #               export helmChartsURL="$(helmChartsURL)"
+  #               export portName="$(portName)"
+  #               export portNumber="$(portNumber)"
+  #               export chart="$(chart)"
+  #               BRANCH_NAME="$(Build.SourceBranchName)"
+  #               projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
+  #             workingDirectory: '$(Agent.TempDirectory)/gitops'
+
+  #         - task: Bash@3
+  #           displayName: "Delete tmp files"
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #               [ -f /$(tmpPath) ] && rm -fv /$(tmpPath) || echo 'No existe /$(tmpPath)'
+
+  # - stage: Deploy_Prod
+  #   displayName: "Continuous Deployment PROD"
+  #   dependsOn: 'Build_Push_Container_Image'
+  #   condition: and(succeeded('Build_Push_Container_Image'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  #   pool:
+  #     name: Prod_Linux_Builder
+  #   jobs:
+  #     - job: Liquibase
+  #       displayName: "CD - Liquibase DB"
+  #       variables:
+  #         - group: Liquibase
+  #       steps:
+  #         - checkout: git://BGA-Flexibility/deployment-db-scripts
+  #           persistCredentials: true
+
+  #         - bash: |
+  #             export liquibaseVer=$(liquibaseVer)
+  #             [ -d /tmp/${liquibaseVer} ] && rm -Rf /tmp/${liquibaseVer}
+  #             mkdir -p /tmp/${liquibaseVer}
+  #             wget https://github.com/liquibase/liquibase/releases/download/v${liquibaseVer}/liquibase-${liquibaseVer}.tar.gz
+  #             tar  -xvf liquibase-${liquibaseVer}.tar.gz --directory=/tmp/${liquibaseVer}
+
+  #             echo "Run liquibase for Oracle"
+  #             bash /tmp/${liquibaseVer}/liquibase \
+  #               --driver=oracle.jdbc.OracleDriver \
+  #               --referenceDriver=oracle.jdbc.OracleDriver \
+  #               --classpath=/tmp/${liquibaseVer}/internal/lib/ojdbc8.jar \
+  #               --changeLogFile=master.xml \
+  #               --url=jdbc:oracle:thin:@$(ORA_HOST_PROD):$(ORA_PORT_PROD)/$(ORA_DB_PROD) \
+  #               --username=$(ORA_USER_PROD) \
+  #               --password=$(ORA_PASS_PROD) \
+  #               --contexts=prod \
+  #               update
+
+  #     - job: Deploy
+  #       displayName: "CD - Prepare"
+  #       dependsOn: Liquibase
+  #       variables:
+  #         tmpPath: 'tmp/env-data-$(productName).yaml'
+  #         scriptPath: './devsecops-bga-tpls/bash-scripts/new-project.sh'
+  #       steps:
+  #         - task: Bash@3
+  #           displayName: "Setting environment variables"
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #               [ -f ./cicd/env-data.yaml ] && cp ./cicd/env-data.yaml /$(tmpPath) || echo 'No existe ./cicd/env-data.yaml'
+          
+  #         - script: |
+  #             git clone --branch main $(gitopsRepository)
+  #           displayName: "Get GitOps Infrastructure Repo"
+  #           workingDirectory: '$(Agent.TempDirectory)'
+            
+  #         - task: Bash@3
+  #           displayName: "ArgoCD Deployment"
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #               export team="$(team)"
+  #               export namespace="$(namespace)"
+  #               export appalias="$(appalias)"
+  #               export productName="$(productName)"
+  #               export registryCredential="$(registryCredential)"
+  #               export dockerUser="$(dockerUser)"
+  #               export dockerRepo="$(dockerRepo)"
+  #               export dockerImageTAG="$(dockerImageTAG)"
+  #               export helmChartsURL="$(helmChartsURL)"
+  #               export portName="$(portName)"
+  #               export portNumber="$(portNumber)"
+  #               export chart="$(chart)"
+  #               BRANCH_NAME="$(Build.SourceBranchName)"
+  #               projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
+  #             workingDirectory: '$(Agent.TempDirectory)/gitops'
+
+  #         - task: Bash@3
+  #           displayName: "Delete tmp files"
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #               [ -f /$(tmpPath) ] && rm -fv /$(tmpPath) || echo 'No existe /$(tmpPath)'
