@@ -25,6 +25,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+	implementation("org.apache.logging.log4j:log4j-spring-boot:2.20.0")
+	implementation("org.apache.httpcomponents:httpclient:4.5.13")
 
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.h2database:h2")
@@ -33,6 +35,11 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
 	testImplementation("org.mockito:mockito-core:5.6.0")
+}
+
+configurations.implementation {
+	exclude("org.springframework.boot", "spring-boot-starter-logging")
+	exclude(group = "commons-logging", module = "commons-logging")
 }
 
 tasks.withType<Test> {

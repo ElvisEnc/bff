@@ -13,4 +13,7 @@ public class LoginRequest {
 
     @Schema(example = "abc123", description = "Este es la contraseña")
     private String password;
+
+    @Schema(example = "GANAMOVIL", description = "Este es el canal")
+    private String canal;
 }

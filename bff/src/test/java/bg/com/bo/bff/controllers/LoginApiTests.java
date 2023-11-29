@@ -1,28 +1,48 @@
 package bg.com.bo.bff.controllers;
 
-import bg.com.bo.bff.model.ErrorResponse;
-import bg.com.bo.bff.model.LoginRequest;
-import bg.com.bo.bff.model.LoginResponse;
+import bg.com.bo.bff.model.*;
+import bg.com.bo.bff.services.interfaces.ILoginServices;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
+
 @ExtendWith(MockitoExtension.class)
 public class LoginApiTests {
 
-    @Test
-    void givenUserLoginWhenCredentialValueThenItReturnSuccessfuly() {
-        // Arrange
-        int codigoPersona = 10;
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setCedula("123456");
+    @InjectMocks
+    private LoginController loginController;
+
+    @Mock
+    private ILoginServices iLoginServices;
+
+    static LoginRequest loginRequest;
+
+    @BeforeAll
+    public static void setup() {
+        loginRequest = new LoginRequest();
         loginRequest.setComplemento("a");
         loginRequest.setPassword("abc123");
+        loginRequest.setCanal("GANAMOVIL");
+    }
+
+    @Test
+    void givenUserLoginWhenCredentialValueThenItReturnSuccessfuly() throws IOException {
+        // Arrange
+        int codigoPersona = 10;
+        loginRequest.setCedula("123456");
+        User user = new User(10);
+        LoginResponse loginResponse = new LoginResponse("SUCCESS", user);
+        Mockito.when(iLoginServices.loginRequest(loginRequest)).thenReturn(loginResponse);
 
         // Act
-        LoginController loginController = new LoginController();
         ResponseEntity<LoginResponse> response = (ResponseEntity<LoginResponse>) loginController.login(loginRequest);
 
         // Assert
@@ -31,15 +51,12 @@ public class LoginApiTests {
     }
 
     @Test
-    void givenUserLoginWhenCredentialsAreInvalidThenReturnUserUnauthorized() {
+    void givenUserLoginWhenCredentialsAreInvalidThenReturnUserUnauthorized() throws IOException {
         // Arrange
-        LoginRequest loginRequest = new LoginRequest();
         loginRequest.setCedula("0000");
-        loginRequest.setComplemento("a1");
-        loginRequest.setPassword("123asd");
+        Mockito.when(iLoginServices.loginRequest(loginRequest)).thenThrow(new UnauthorizedException(HttpStatus.UNAUTHORIZED.name()));
 
         // Act
-        LoginController loginController = new LoginController();
         ResponseEntity<ErrorResponse> response = (ResponseEntity<ErrorResponse>) loginController.login(loginRequest);
 
         // Assert
