@@ -113,7 +113,7 @@ stages:
               # codeCoverageClassFilesDirectories: '$(PROJECT_PATH)/build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
               javaHomeOption: 'JDKVersion'
               jdkVersionOption: '1.17'
-              sonarQubeRunAnalysis: false
+              sonarQubeRunAnalysis: true
           
           - script: |
               # stop the Gradle daemon to ensure no files are left open (impacting the save cache operation later)
@@ -216,11 +216,11 @@ stages:
       - job: Build_Push_Container_Image
         displayName: "Build and Push Container Image"
         steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: "Download Artifact"
-            inputs:
-              artifact: 'artifact'
-              path: $(Build.SourcesDirectory)
+          # - task: DownloadPipelineArtifact@2
+          #   displayName: "Download Artifact"
+          #   inputs:
+          #     artifact: 'artifact'
+          #     path: $(Build.SourcesDirectory)
 
           - task: Docker@2
             displayName: "Build and Push Image to registry"

@@ -13,5 +13,6 @@ done
 
 echo " + Scanning for config"
 docker run --name ${APPALIAS} -v $PWD:/to-scan aquasec/trivy:latest fs ${STOPCONDITION} ${ignore} --scanners vuln,secret,config /to-scan --no-progress --format template --template @contrib/junit.tpl -o trivy_report.xml --debug
-docker cp ${APPALIAS}:trivy_report.xml trivy_report_code.xml
+docker cp ${APPALIAS}:trivy_report.xml 
+pwd && ls
 [ "$(docker ps -a | grep -E ${APPALIAS})" ] && { echo "eliminando imagen anterior..."; docker rm -f ${APPALIAS}; }
