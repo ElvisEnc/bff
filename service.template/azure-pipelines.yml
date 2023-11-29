@@ -80,15 +80,15 @@ stages:
           #   inputs:
           #     artifactsFeeds: 'midd_library'
 
-          # - task: SonarQubePrepare@5
-          #   inputs:
-          #     SonarQube: 'SQ_AWS'
-          #     scannerMode: 'Other'
-          #     extraProperties: |
-          #       # Additional properties that will be passed to the scanner,
-          #       # Put one key=value per line, example:
-          #       # sonar.exclusions=**/*.bin
-          #       sonar.projectKey=$(team)-$(productName)
+          - task: SonarQubePrepare@5
+            inputs:
+              SonarQube: 'SQ_AWS'
+              scannerMode: 'Other'
+              extraProperties: |
+                # Additional properties that will be passed to the scanner,
+                # Put one key=value per line, example:
+                # sonar.exclusions=**/*.bin
+                sonar.projectKey=$(team)-$(productName)
 
           - task: Cache@2
             inputs:
@@ -120,14 +120,24 @@ stages:
               $(PROJECT_PATH)/gradlew --stop    
             displayName: Gradlew stop
           
-          # - task: ShellScript@2
-          #   displayName: 'Scan dockerfile'
-          #   inputs:
-          #     scriptPath: scan.sh
+          - task: ShellScript@2
+            displayName: 'Scan dockerfile'
+            inputs:
+              scriptPath: $(PROJECT_PATH)/scan.sh
+          
+          - task : PublishTestResults@2
+            displayName: 'Publish Report Trivy Scan - Vulnerabilities'
+            inputs: 
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/*.xml'
+              mergeTestResults: true
+              failTaskOnFailedTests: false
+              testRunTitle: 'Trivy Vulnerabilities'
+            condition: 'always()'
 
-          # - task: SonarQubePublish@5
-          #   inputs:
-          #     pollingTimeoutSec: '300'
+          - task: SonarQubePublish@5
+            inputs:
+              pollingTimeoutSec: '300'
 
   # - stage: Validate_Changes
   #   displayName: "Validate Integration"
