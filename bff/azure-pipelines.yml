@@ -76,10 +76,6 @@ stages:
       - job: Scanner
         displayName: "Sonar and Trivy scan"
         steps:
-          # - task: MavenAuthenticate@0
-          #   inputs:
-          #     artifactsFeeds: 'midd_library'
-
           - task: SonarQubePrepare@5
             inputs:
               SonarQube: 'SQ_AWS'
@@ -113,7 +109,9 @@ stages:
               # codeCoverageClassFilesDirectories: '$(PROJECT_PATH)/build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
               javaHomeOption: 'JDKVersion'
               jdkVersionOption: '1.17'
-              sonarQubeRunAnalysis: true
+              sonarQubeRunAnalysis: false
+              # sqGradlePluginVersionChoice: 'specify' # 'specify' | 'build'. Required when sqAnalysisEnabled = true. SonarQube scanner for Gradle version. Default: specify.
+              # sonarQubeGradlePluginVersion: '4.0.0' # string. Alias: sqGradlePluginVersion. Required when sqAnalysisEnabled = true && sqGradlePluginVersionChoice = specify. SonarQube scanner for Gradle plugin version. Default: 2.6.1.
           
           - script: |
               # stop the Gradle daemon to ensure no files are left open (impacting the save cache operation later)
