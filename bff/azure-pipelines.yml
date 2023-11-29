@@ -1,8 +1,8 @@
-# trigger:
-#   - develop
-#   - staging
-#   - release*
-#   - main
+trigger:
+  - develop
+  - staging
+  - release*
+  - main
 
 parameters:
   - name: branchOptions
@@ -208,7 +208,7 @@ stages:
 
   - stage: Build_Push_Container_Image
     displayName: "Build and Push Container Image"
-    condition: and(succeeded('Validate_Changes'), or(${{ containsValue(parameters.branchOptions, variables['Build.SourceBranch']) }}, startsWith(variables['build.sourceBranch'], 'refs/heads/release')))
+    condition: or(${{ containsValue(parameters.branchOptions, variables['Build.SourceBranch']) }}, startsWith(variables['build.sourceBranch'], 'refs/heads/release'))
     variables:
       PROJECT_PATH: $(Build.SourcesDirectory)/bff
     jobs:
