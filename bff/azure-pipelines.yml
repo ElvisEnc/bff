@@ -113,7 +113,7 @@ stages:
               # codeCoverageClassFilesDirectories: '$(PROJECT_PATH)/build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
               javaHomeOption: 'JDKVersion'
               jdkVersionOption: '1.17'
-              sonarQubeRunAnalysis: false
+              sonarQubeRunAnalysis: true
           
           - script: |
               # stop the Gradle daemon to ensure no files are left open (impacting the save cache operation later)
