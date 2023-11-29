@@ -76,10 +76,6 @@ stages:
       - job: Scanner
         displayName: "Sonar and Trivy scan"
         steps:
-          # - task: MavenAuthenticate@0
-          #   inputs:
-          #     artifactsFeeds: 'midd_library'
-
           - task: SonarQubePrepare@5
             inputs:
               SonarQube: 'SQ_AWS'
