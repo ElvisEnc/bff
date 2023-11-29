@@ -68,7 +68,7 @@ variables:
 stages:
   - stage: Validate_PR
     displayName: "Checking QA and Vuln"
-    # condition: eq(variables['Build.Reason'], 'PullRequest')
+    condition: eq(variables['Build.Reason'], 'PullRequest')
     variables:
       GRADLE_USER_HOME: $(Pipeline.Workspace)/.gradle
       PROJECT_PATH: $(Build.SourcesDirectory)/bff
@@ -209,7 +209,7 @@ stages:
   - stage: Build_Push_Container_Image
     displayName: "Build and Push Container Image"
     dependsOn: 'Validate_PR'
-    # condition: and(succeeded('Validate_Changes'), or(${{ containsValue(parameters.branchOptions, variables['Build.SourceBranch']) }}, startsWith(variables['build.sourceBranch'], 'refs/heads/release')))
+    condition: and(succeeded('Validate_Changes'), or(${{ containsValue(parameters.branchOptions, variables['Build.SourceBranch']) }}, startsWith(variables['build.sourceBranch'], 'refs/heads/release')))
     variables:
       PROJECT_PATH: $(Build.SourcesDirectory)/bff
     jobs:
@@ -231,88 +231,58 @@ stages:
               Dockerfile: '$(PROJECT_PATH)/Dockerfile'
               tags: '$(dockerImageTAG)'
 
-  # - stage: Deploy_Develop
-  #   displayName: "Continuous Deployment DEV"
-  #   dependsOn: 'Build_Push_Container_Image'
-  #   condition: and(succeeded('Build_Push_Container_Image'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
-  #   pool:
-  #     name: Dev_AWS_Builder
-  #   jobs:
-  #     - job: Liquibase
-  #       displayName: "CD - Liquibase DB"
-  #       variables:
-  #         - group: Liquibase
-  #       steps:
-  #         - checkout: git://BGA-Flexibility/deployment-db-scripts
-  #           persistCredentials: true
-
-  #         - bash: |
-  #             export liquibaseVer=$(liquibaseVer)
-  #             [ -d /tmp/${liquibaseVer} ] && rm -Rf /tmp/${liquibaseVer}
-  #             mkdir -p /tmp/${liquibaseVer}
-  #             wget https://github.com/liquibase/liquibase/releases/download/v${liquibaseVer}/liquibase-${liquibaseVer}.tar.gz
-  #             tar  -xvf liquibase-${liquibaseVer}.tar.gz --directory=/tmp/${liquibaseVer}
-
-  #             echo "Run liquibase for Oracle"
-  #             bash /tmp/${liquibaseVer}/liquibase \
-  #               --driver=oracle.jdbc.OracleDriver \
-  #               --referenceDriver=oracle.jdbc.OracleDriver \
-  #               --classpath=/tmp/${liquibaseVer}/internal/lib/ojdbc8.jar \
-  #               --changeLogFile=master.xml \
-  #               --url=jdbc:oracle:thin:@$(ORA_HOST_DEV):$(ORA_PORT_DEV)/$(ORA_DB_DEV) \
-  #               --username=$(ORA_USER_DEV) \
-  #               --password=$(ORA_PASS_DEV) \
-  #               --contexts=dev \
-  #               update
-              
-
-  #     - job: Deploy
-  #       displayName: "CD - Prepare"
-  #       dependsOn: Liquibase
-  #       variables:
-  #         tmpPath: 'tmp/env-data-$(productName).yaml'
-  #         scriptPath: './devsecops-bga-tpls/bash-scripts/new-project.sh'
-  #       steps:
-  #         - task: Bash@3
-  #           displayName: "Setting environment variables"
-  #           inputs:
-  #             targetType: 'inline'
-  #             script: |
-  #               [ -f ./cicd/env-data.yaml ] && cp ./cicd/env-data.yaml /$(tmpPath) || echo 'No existe ./cicd/env-data.yaml'
+  - stage: Deploy_Develop
+    displayName: "Continuous Deployment DEV"
+    dependsOn: 'Build_Push_Container_Image'
+    condition: and(succeeded('Build_Push_Container_Image'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    jobs:
+      - job: Deploy
+        displayName: "CD - Prepare"
+        variables:
+          tmpPath: 'tmp/env-data-$(productName).yaml'
+          scriptPath: './devsecops-bga-tpls/bash-scripts/new-project.sh'
+          PROJECT_PATH: $(Build.SourcesDirectory)/bff
+        steps:
+          - task: Bash@3
+            displayName: "Setting environment variables"
+            inputs:
+              targetType: 'inline'
+              script: |
+                [ -f $(PROJECT_PATH)/cicd/env-data.yaml ] && cp $(PROJECT_PATH)/cicd/env-data.yaml /$(tmpPath) || echo 'No existe $(PROJECT_PATH)/cicd/env-data.yaml'
           
-  #         - script: |
-  #             git clone --branch main $(gitopsRepository)
-  #           displayName: "Get GitOps Infrastructure Repo"
-  #           workingDirectory: '$(Agent.TempDirectory)'
+          - script: |
+              git clone --branch main $(gitopsRepository)
+            displayName: "Get GitOps Infrastructure Repo"
+            workingDirectory: '$(Agent.TempDirectory)'
             
-  #         - task: Bash@3
-  #           displayName: "ArgoCD Deployment"
-  #           inputs:
-  #             targetType: 'inline'
-  #             script: |
-  #               export team="$(team)"
-  #               export namespace="$(namespace)"
-  #               export appalias="$(appalias)"
-  #               export productName="$(productName)"
-  #               export registryCredential="$(registryCredential)"
-  #               export dockerUser="$(dockerUser)"
-  #               export dockerRepo="$(dockerRepo)"
-  #               export dockerImageTAG="$(dockerImageTAG)"
-  #               export helmChartsURL="$(helmChartsURL)"
-  #               export portName="$(portName)"
-  #               export portNumber="$(portNumber)"
-  #               export chart="$(chart)"
-  #               export cluster="eks"
-  #               BRANCH_NAME="$(Build.SourceBranchName)"
-  #               projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
-  #             workingDirectory: '$(Agent.TempDirectory)/gitops'
+          - task: Bash@3
+            displayName: "ArgoCD Deployment"
+            inputs:
+              targetType: 'inline'
+              script: |
+                export team="$(team)"
+                export namespace="$(namespace)"
+                export appalias="$(appalias)"
+                export productName="$(productName)"
+                export registryCredential="$(registryCredential)"
+                export dockerUser="$(dockerUser)"
+                export dockerRepo="$(dockerRepo)"
+                export dockerImageTAG="$(dockerImageTAG)"
+                export helmChartsURL="$(helmChartsURL)"
+                export portName="$(portName)"
+                export portNumber="$(portNumber)"
+                export chart="$(chart)"
+                export cluster="aks"
+                BRANCH_NAME="$(Build.SourceBranchName)"
+                projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
+              workingDirectory: '$(Agent.TempDirectory)/gitops'
 
-  #         - task: Bash@3
-  #           displayName: "Delete tmp files"
-  #           inputs:
-  #             targetType: 'inline'
-  #             script: |
-  #               [ -f /$(tmpPath) ] && rm -fv /$(tmpPath) || echo 'No existe /$(tmpPath)'
+          - task: Bash@3
+            displayName: "Delete tmp files"
+            inputs:
+              targetType: 'inline'
+              script: |
+                [ -f /$(tmpPath) ] && rm -fv /$(tmpPath) || echo 'No existe /$(tmpPath)'
   
   # - stage: Deploy_Staging
   #   displayName: "Continuous Deployment STG"
