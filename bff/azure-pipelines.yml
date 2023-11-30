@@ -99,7 +99,7 @@ stages:
             inputs:
               gradleWrapperFile: '$(PROJECT_PATH)/gradlew' # string. Alias: wrapperScript. Required. Gradle wrapper. Default: gradlew.
               workingDirectory: '$(PROJECT_PATH)/'
-              options: '--build-cache'
+              options: '--build-cache --stacktrace'
               tasks: 'build' # string. Required. Tasks. Default: build.
             # JUnit Test Results
               publishJUnitResults: true
