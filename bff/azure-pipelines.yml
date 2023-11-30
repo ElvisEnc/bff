@@ -137,88 +137,86 @@ stages:
             inputs:
               pollingTimeoutSec: '300'
 
-  # - stage: Validate_Changes
-  #   displayName: "Validate Integration"
-  #   condition: or(${{ containsValue(parameters.branchOptions, variables['Build.SourceBranch']) }}, startsWith(variables['build.sourceBranch'], 'refs/heads/release'))
-  #   variables:
-  #     MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
-  #     MAVEN_OPTS: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
-  #   jobs:
-  #     - job: Scan_Build
-  #       displayName: "Scan and Build artifact"
-  #       steps:
-  #         - task: MavenAuthenticate@0
-  #           inputs:
-  #             artifactsFeeds: 'midd_library'
+  - stage: Validate_Changes
+    displayName: "Validate Integration"
+    condition: or(${{ containsValue(parameters.branchOptions, variables['Build.SourceBranch']) }}, startsWith(variables['build.sourceBranch'], 'refs/heads/release'))
+    variables:
+      GRADLE_USER_HOME: $(Pipeline.Workspace)/.gradle
+      PROJECT_PATH: $(Build.SourcesDirectory)/bff
+    jobs:
+      - job: Scanner
+        displayName: "Sonar and Trivy scan"
+        steps:
+          - task: SonarQubePrepare@5
+            inputs:
+              SonarQube: 'SQ_AWS'
+              scannerMode: 'Other'
+              extraProperties: |
+                # Additional properties that will be passed to the scanner,
+                # Put one key=value per line, example:
+                # sonar.exclusions=**/*.bin
+                sonar.projectKey=$(team)-$(productName)
 
-  #         - task: SonarQubePrepare@5
-  #           inputs:
-  #             SonarQube: 'SQ_AWS'
-  #             scannerMode: 'Other'
-  #             extraProperties: |
-  #               # Additional properties that will be passed to the scanner,
-  #               # Put one key=value per line, example:
-  #               # sonar.exclusions=**/*.bin
-  #               sonar.projectKey=$(team)-$(productName)
-
-  #         - task: Cache@2
-  #           inputs:
-  #             key: 'maven | "$(Agent.OS)" | **/pom.xml'
-  #             restoreKeys: |
-  #               maven | "$(Agent.OS)"
-  #               maven
-  #             path: $(MAVEN_CACHE_FOLDER)
-  #           displayName: Cache Maven local repo
-
-  #         - task: Maven@3
-  #           inputs:
-  #             mavenPomFile: 'pom.xml'
-  #             options: '-Dsonar.coverage.jacoco.xmlReportPaths=$(Build.SourcesDirectory)/CCReport43F6D5EF/jacoco.xml'
-  #             mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
-  #             javaHomeOption: 'JDKVersion'
-  #             jdkVersionOption: '1.17'
-  #             jdkArchitectureOption: 'x64'
-  #             publishJUnitResults: true
-  #             testResultsFiles: '**/surefire-reports/TEST-*.xml'
-  #             codeCoverageToolOption: jaCoCo
-  #             codeCoverageClassFilesDirectories: '$(System.DefaultWorkingDirectory)/target/classes/com/dentsply/indirect/auth'
-  #             codeCoverageSourceDirectories: '$(System.DefaultWorkingDirectory)/src/main/java/com/dentsply/indirect/auth'
-  #             goals: 'package'
-  #             sonarQubeRunAnalysis: true
+          - task: Cache@2
+            inputs:
+              key: 'gradle | "$(Agent.OS)" | **/build.gradle.kts'
+              restoreKeys: |
+                gradle | "$(Agent.OS)"
+                gradle
+              path: $(GRADLE_USER_HOME)
+            displayName: Configure gradle caching
           
-  #         - task: ShellScript@2
-  #           displayName: 'Vuln Scan'
-  #           inputs:
-  #             scriptPath: scan.sh
+          - task: Gradle@2
+            inputs:
+              gradleWrapperFile: '$(PROJECT_PATH)/gradlew' # string. Alias: wrapperScript. Required. Gradle wrapper. Default: gradlew.
+              workingDirectory: '$(PROJECT_PATH)/'
+              options: '--build-cache'
+              tasks: 'build' # string. Required. Tasks. Default: build.
+            # JUnit Test Results
+              publishJUnitResults: true
+              testResultsFiles: '**/TEST-*.xml' # string. Required when publishJUnitResults = true. Test results files. Default: **/TEST-*.xml.
+            # Code Coverage
+              # codeCoverageToolOption: 'JaCoCo'
+              # codeCoverageClassFilesDirectories: '$(PROJECT_PATH)/build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
+              javaHomeOption: 'JDKVersion'
+              jdkVersionOption: '1.17'
+              sonarQubeRunAnalysis: true
+              sqGradlePluginVersionChoice: 'specify' # 'specify' | 'build'. Required when sqAnalysisEnabled = true. SonarQube scanner for Gradle version. Default: specify.
+              sonarQubeGradlePluginVersion: '4.3.1.3277' # string. Alias: sqGradlePluginVersion. Required when sqAnalysisEnabled = true && sqGradlePluginVersionChoice = specify. SonarQube scanner for Gradle plugin version. Default: 2.6.1.
+          
+          - script: |
+              # stop the Gradle daemon to ensure no files are left open (impacting the save cache operation later)
+              $(PROJECT_PATH)/gradlew --stop    
+            displayName: Gradlew stop
+          
+          - task: ShellScript@2
+            displayName: 'Scan dockerfile'
+            inputs:
+              scriptPath: $(PROJECT_PATH)/scan.sh
+          
+          - task : PublishTestResults@2
+            displayName: 'Publish Report Trivy Scan - Vulnerabilities'
+            inputs: 
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/*.xml'
+              mergeTestResults: true
+              failTaskOnFailedTests: false
+              testRunTitle: 'Trivy Vulnerabilities'
+            condition: 'always()'
 
-  #         - task: SonarQubePublish@5
-  #           inputs:
-  #             pollingTimeoutSec: '300'
-
-  #         - task: CopyFiles@2
-  #           inputs:
-  #             sourceFolder: '$(Build.SourcesDirectory)'
-  #             contents: '**/target/*.jar'
-  #             targetFolder: '$(Build.ArtifactStagingDirectory)'
-
-  #         - publish: '$(Build.ArtifactStagingDirectory)'
-  #           artifact: artifact
+          - task: SonarQubePublish@5
+            inputs:
+              pollingTimeoutSec: '300'
 
   - stage: Build_Push_Container_Image
     displayName: "Build and Push Container Image"
-    condition: or(${{ containsValue(parameters.branchOptions, variables['Build.SourceBranch']) }}, startsWith(variables['build.sourceBranch'], 'refs/heads/release'))
+    condition: and(succeeded('Validate_Changes'), or(${{ containsValue(parameters.branchOptions, variables['Build.SourceBranch']) }}, startsWith(variables['build.sourceBranch'], 'refs/heads/release')))
     variables:
       PROJECT_PATH: $(Build.SourcesDirectory)/bff
     jobs:
       - job: Build_Push_Container_Image
         displayName: "Build and Push Container Image"
         steps:
-          # - task: DownloadPipelineArtifact@2
-          #   displayName: "Download Artifact"
-          #   inputs:
-          #     artifact: 'artifact'
-          #     path: $(Build.SourcesDirectory)
-
           - task: Docker@2
             displayName: "Build and Push Image to registry"
             inputs:
