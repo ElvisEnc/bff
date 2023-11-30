@@ -107,6 +107,7 @@ stages:
             # Code Coverage
               # codeCoverageToolOption: 'JaCoCo'
               # codeCoverageClassFilesDirectories: '$(PROJECT_PATH)/build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
+              gradleOptions: '-Xmx1024m --warning-mode=all' # string. Alias: gradleOpts. Set GRADLE_OPTS. Default: -Xmx1024m.
               javaHomeOption: 'JDKVersion'
               jdkVersionOption: '1.17'
               sonarQubeRunAnalysis: true
