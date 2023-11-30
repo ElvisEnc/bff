@@ -107,12 +107,11 @@ stages:
             # Code Coverage
               # codeCoverageToolOption: 'JaCoCo'
               # codeCoverageClassFilesDirectories: '$(PROJECT_PATH)/build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
-              gradleOptions: '-Xmx1024m --warning-mode=all' # string. Alias: gradleOpts. Set GRADLE_OPTS. Default: -Xmx1024m.
               javaHomeOption: 'JDKVersion'
               jdkVersionOption: '1.17'
               sonarQubeRunAnalysis: true
-              sqGradlePluginVersionChoice: 'specify' # 'specify' | 'build'. Required when sqAnalysisEnabled = true. SonarQube scanner for Gradle version. Default: specify.
-              sonarQubeGradlePluginVersion: '4.2.0.3129' # string. Alias: sqGradlePluginVersion. Required when sqAnalysisEnabled = true && sqGradlePluginVersionChoice = specify. SonarQube scanner for Gradle plugin version. Default: 2.6.1.
+              # sqGradlePluginVersionChoice: 'specify' # 'specify' | 'build'. Required when sqAnalysisEnabled = true. SonarQube scanner for Gradle version. Default: specify.
+              # sonarQubeGradlePluginVersion: '4.2.0.3129' # string. Alias: sqGradlePluginVersion. Required when sqAnalysisEnabled = true && sqGradlePluginVersionChoice = specify. SonarQube scanner for Gradle plugin version. Default: 2.6.1.
           
           - script: |
               # stop the Gradle daemon to ensure no files are left open (impacting the save cache operation later)
