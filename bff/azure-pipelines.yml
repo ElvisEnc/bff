@@ -95,7 +95,7 @@ stages:
               path: $(GRADLE_USER_HOME)
             displayName: Configure gradle caching
           
-          - task: Gradle@3
+          - task: Gradle@2
             inputs:
               gradleWrapperFile: '$(PROJECT_PATH)/gradlew' # string. Alias: wrapperScript. Required. Gradle wrapper. Default: gradlew.
               workingDirectory: '$(PROJECT_PATH)/'
