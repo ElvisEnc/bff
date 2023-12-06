@@ -1,6 +1,7 @@
 package bg.com.bo.bff.controllers;
 
 import bg.com.bo.bff.model.*;
+import bg.com.bo.bff.model.exceptions.UnauthorizedException;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,7 +28,7 @@ public class LoginController {
     @Autowired
     private ILoginServices iLoginServices;
 
-    private static final Logger logger= LogManager.getLogger(LoginController.class.getName());
+    private static final Logger logger = LogManager.getLogger(LoginController.class.getName());
 
     @Operation(summary = "Login Request", description = "Este es el Endpoint donde el usuario ganamovil hará su petición login y se le devolverá si fue exitoso o fallido")
     @ApiResponses(value = {
@@ -35,18 +36,8 @@ public class LoginController {
             @ApiResponse(responseCode = "401", description = "Login Failed, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws IOException {
-        try{
-            LoginResponse loginR = iLoginServices.loginRequest(loginRequest);
-            return ResponseEntity.ok(loginR);
-        } catch (UnauthorizedException e) {
-            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED.name(), e.getMessage());
-            logger.error(e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-        } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.name(), HttpStatus.INTERNAL_SERVER_ERROR.name());
-            logger.error(e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) throws IOException {
+        LoginResponse loginR = iLoginServices.loginRequest(loginRequest);
+        return ResponseEntity.ok(loginR);
     }
 }

@@ -2,7 +2,7 @@ package bg.com.bo.bff.services;
 
 import bg.com.bo.bff.model.LoginRequest;
 import bg.com.bo.bff.model.LoginResponse;
-import bg.com.bo.bff.model.UnauthorizedException;
+import bg.com.bo.bff.model.exceptions.UnauthorizedException;
 import bg.com.bo.bff.model.User;
 import bg.com.bo.bff.model.interfaces.IHttpClientFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,7 +79,7 @@ public class LoginServicesTests {
         loginService = new LoginService(httpClientFactoryMock);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
         CloseableHttpResponse closeableHttpResponseMock = Mockito.mock(CloseableHttpResponse.class);
-        StatusLine statusLineMock=Mockito.mock(StatusLine.class);
+        StatusLine statusLineMock = Mockito.mock(StatusLine.class);
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
@@ -91,5 +91,27 @@ public class LoginServicesTests {
 
         // Assert
         assert unauthorizedException.getMessage().equals(HttpStatus.UNAUTHORIZED.name());
+    }
+
+    @Test
+    void givenExceptionWhenRequestLoginServiceThenReturnsExceptionInternalServerError() throws IOException {
+        // Arrange
+        loginRequest.setCedula("0000");
+        IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
+        loginService = new LoginService(httpClientFactoryMock);
+        CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
+        CloseableHttpResponse closeableHttpResponseMock = Mockito.mock(CloseableHttpResponse.class);
+        StatusLine statusLineMock = Mockito.mock(StatusLine.class);
+
+        Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
+        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
+        Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
+        Mockito.when(statusLineMock.getStatusCode()).thenReturn(500);
+
+        // Act
+        UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> loginService.loginRequest(loginRequest));
+
+        // Assert
+        assert exception.getMessage().equals(HttpStatus.INTERNAL_SERVER_ERROR.name());
     }
 }

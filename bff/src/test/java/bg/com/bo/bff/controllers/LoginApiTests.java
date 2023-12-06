@@ -1,6 +1,7 @@
 package bg.com.bo.bff.controllers;
 
 import bg.com.bo.bff.model.*;
+import bg.com.bo.bff.model.exceptions.UnauthorizedException;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class LoginApiTests {
@@ -57,10 +60,22 @@ public class LoginApiTests {
         Mockito.when(iLoginServices.loginRequest(loginRequest)).thenThrow(new UnauthorizedException(HttpStatus.UNAUTHORIZED.name()));
 
         // Act
-        ResponseEntity<ErrorResponse> response = (ResponseEntity<ErrorResponse>) loginController.login(loginRequest);
+        UnauthorizedException exception = assertThrows(UnauthorizedException.class, () -> loginController.login(loginRequest));
 
         // Assert
-        assert response.getStatusCode().value() == HttpStatus.UNAUTHORIZED.value();
-        assert response.getBody().getMessage().equals(HttpStatus.UNAUTHORIZED.name());
+        assert exception.getMessage().equals(HttpStatus.UNAUTHORIZED.name());
+    }
+
+    @Test
+    void givenExceptionWhenRequestLoginThenReturnsExceptionInternalServerError() throws IOException {
+        // Arrange
+        loginRequest.setCedula("0000");
+        Mockito.when(iLoginServices.loginRequest(loginRequest)).thenThrow(new RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR.name()));
+
+        // Act
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> loginController.login(loginRequest));
+
+        // Assert
+        assert exception.getMessage().equals(HttpStatus.INTERNAL_SERVER_ERROR.name());
     }
 }

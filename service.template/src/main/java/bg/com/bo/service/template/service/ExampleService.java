@@ -2,6 +2,7 @@ package bg.com.bo.service.template.service;
 
 import bg.com.bo.service.template.model.Example;
 import bg.com.bo.service.template.model.Response;
+import bg.com.bo.service.template.model.exceptions.ExceptionNotFound;
 import bg.com.bo.service.template.model.interfaces.IHttpClientFactory;
 import bg.com.bo.service.template.repository.Interfaces.IExampleRepository;
 import bg.com.bo.service.template.service.Interfaces.IExampleService;
@@ -12,6 +13,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,19 +21,16 @@ import java.io.IOException;
 
 @Service
 public class ExampleService implements IExampleService {
-    @Value("${external.api.baseUrl}")
+    @Value("${external.api.url}")
     private String externalApiBaseUrl;
 
-    @Value("${external.api.complementUrl}")
+    @Value("${external.api.complement}")
     private String externalApiComplementUrl;
-
 
     @Autowired
     private IExampleRepository iExampleRepository;
 
-
     private IHttpClientFactory httpClientFactory;
-
 
     public ExampleService(IHttpClientFactory httpClientFactory) {
         this.httpClientFactory = httpClientFactory;
@@ -41,11 +40,18 @@ public class ExampleService implements IExampleService {
         String path = externalApiBaseUrl + externalApiComplementUrl;
         HttpGet request = new HttpGet(path);
         CloseableHttpClient client = httpClientFactory.create();
-
         try (CloseableHttpResponse response = client.execute(request)) {
-            String json = EntityUtils.toString(response.getEntity());
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(json, Example.class);
+            switch (response.getStatusLine().getStatusCode()) {
+                case 200: {
+                    String json = EntityUtils.toString(response.getEntity());
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    return objectMapper.readValue(json, Example.class);
+                }
+                case 404:
+                    throw new ExceptionNotFound(HttpStatus.NOT_FOUND.name());
+                default:
+                    throw new UnsupportedOperationException(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            }
         }
     }
 
@@ -62,8 +68,16 @@ public class ExampleService implements IExampleService {
         request.setHeader("Content-Type", "application/json");
 
         try (CloseableHttpResponse response = client.execute(request)) {
-            String jsonResponse = EntityUtils.toString(response.getEntity());
-            return objectMapper.readValue(jsonResponse, Response.class);
+            switch (response.getStatusLine().getStatusCode()) {
+                case 200: {
+                    String jsonResponse = EntityUtils.toString(response.getEntity());
+                    return objectMapper.readValue(jsonResponse, Response.class);
+                }
+                case 404:
+                    throw new ExceptionNotFound(HttpStatus.NOT_FOUND.name());
+                default:
+                    throw new UnsupportedOperationException(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            }
         }
     }
 
@@ -80,8 +94,16 @@ public class ExampleService implements IExampleService {
             request.setEntity(entity);
             request.setHeader("Content-Type", "application/json");
             try (CloseableHttpResponse response = client.execute(request)) {
-                String jsonResponse = EntityUtils.toString(response.getEntity());
-                return objectMapper.readValue(jsonResponse, Response.class);
+                switch (response.getStatusLine().getStatusCode()) {
+                    case 200: {
+                        String jsonResponse = EntityUtils.toString(response.getEntity());
+                        return objectMapper.readValue(jsonResponse, Response.class);
+                    }
+                    case 404:
+                        throw new ExceptionNotFound(HttpStatus.NOT_FOUND.name());
+                    default:
+                        throw new UnsupportedOperationException(HttpStatus.INTERNAL_SERVER_ERROR.name());
+                }
             }
         } finally {
             client.close();
@@ -94,9 +116,17 @@ public class ExampleService implements IExampleService {
         CloseableHttpClient client = httpClientFactory.create();
 
         try (CloseableHttpResponse response = client.execute(request)) {
-            String jsonResponse = EntityUtils.toString(response.getEntity());
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(jsonResponse, Response.class);
+            switch (response.getStatusLine().getStatusCode()) {
+                case 200: {
+                    String jsonResponse = EntityUtils.toString(response.getEntity());
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    return objectMapper.readValue(jsonResponse, Response.class);
+                }
+                case 404:
+                    throw new ExceptionNotFound(HttpStatus.NOT_FOUND.name());
+                default:
+                    throw new UnsupportedOperationException(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            }
         }
     }
 }

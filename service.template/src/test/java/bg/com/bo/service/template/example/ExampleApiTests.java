@@ -2,9 +2,7 @@ package bg.com.bo.service.template.example;
 
 import bg.com.bo.service.template.controller.example.v1.ExampleController;
 import bg.com.bo.service.template.model.Example;
-import bg.com.bo.service.template.model.ExceptionNotFound;
 import bg.com.bo.service.template.model.Response;
-import bg.com.bo.service.template.repository.ExampleRepository;
 import bg.com.bo.service.template.service.Interfaces.IExampleService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,7 +30,6 @@ public class ExampleApiTests {
         example = new Example(5,"Run Test");
     }
 
-    // GET
     @Test
     void givenExistingObjectWhenGetExampleThenReturnOKResponse() throws IOException {
         // Arrange
@@ -50,39 +47,6 @@ public class ExampleApiTests {
     }
 
     @Test
-    void givenNotExistingObjectWhenGetExampleThenReturnNotFoundResponse() throws IOException {
-        // Arrange
-        int id = 1;
-        Mockito.when(exampleService.getExample(id)).thenThrow(new ExceptionNotFound("No se encontró el objeto con el id otorgado"));
-
-        // Act
-        ResponseEntity<?> response = exampleController.getExample(id);
-
-        // Assert
-        assert response.getStatusCode() == HttpStatus.NOT_FOUND;
-        assert response.getBody() != null;
-        Mockito.verify(exampleService).getExample(id);
-        Mockito.verifyNoMoreInteractions(exampleService);
-    }
-
-    @Test
-    void givenInternalErrorWhenGetExampleThenReturnInternalServerError() throws IOException {
-        // Arrange
-        int id = 2;
-        Mockito.when(exampleService.getExample(id)).thenThrow(new RuntimeException());
-
-        // Act
-        ResponseEntity<?> response = exampleController.getExample(id);
-
-        // Assert
-        assert response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR;
-        assert response.getBody() != null;
-        Mockito.verify(exampleService).getExample(id);
-        Mockito.verifyNoMoreInteractions(exampleService);
-    }
-
-    // POST
-    @Test
     void givenNewExampleWhenPostExampleThenReturnOKResponse() throws IOException {
         // Arrange
         Response response = new Response();
@@ -98,7 +62,6 @@ public class ExampleApiTests {
         Mockito.verifyNoMoreInteractions(exampleService);
     }
 
-    // PUT
     @Test
     void givenExistingExampleWhenPutExampleThenReturnOKResponse() throws IOException {
         // Arrange
@@ -115,38 +78,6 @@ public class ExampleApiTests {
         Mockito.verifyNoMoreInteractions(exampleService);
     }
 
-
-    @Test
-    void givenInternalErrorWhenPutExampleThenReturnInternalServerError() throws IOException {
-        // Arrange
-        Mockito.when(exampleService.updateExample(example)).thenThrow(new ExceptionNotFound("No se encontró el objeto con el id otorgado"));
-
-        // Act
-        ResponseEntity<?> result = exampleController.putExample(example);
-
-        // Assert
-        assert result.getStatusCode() == HttpStatus.NOT_FOUND;
-        assert result.getBody() != null;
-        Mockito.verify(exampleService).updateExample(example);
-        Mockito.verifyNoMoreInteractions(exampleService);
-    }
-
-    @Test
-    void givenNotExistingObjectExampleWhenPutExampleThenReturnNotFoundResponse() throws IOException {
-        // Arrange
-        Mockito.when(exampleService.updateExample(example)).thenThrow(new RuntimeException());
-
-        // Act
-        ResponseEntity<?> result = exampleController.putExample(example);
-
-        // Assert
-        assert result.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR;
-        assert result.getBody() != null;
-        Mockito.verify(exampleService).updateExample(example);
-        Mockito.verifyNoMoreInteractions(exampleService);
-    }
-
-    // DELETE
     @Test
     void givenExistingExampleWhenDeleteExampleThenReturnOKResponse() throws IOException {
         // Arrange

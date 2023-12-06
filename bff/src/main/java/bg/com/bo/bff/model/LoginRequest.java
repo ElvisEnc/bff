@@ -1,9 +1,8 @@
 package bg.com.bo.bff.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
 
-@Data
+@lombok.Data
 public class LoginRequest {
     @Schema(example = "1234567", description = "Este es el carnet del usuario")
     private String cedula;

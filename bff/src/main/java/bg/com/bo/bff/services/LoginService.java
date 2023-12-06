@@ -1,6 +1,7 @@
 package bg.com.bo.bff.services;
 
 import bg.com.bo.bff.model.*;
+import bg.com.bo.bff.model.exceptions.UnauthorizedException;
 import bg.com.bo.bff.model.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,7 +49,7 @@ public class LoginService implements ILoginServices {
                     case 401:
                         throw new UnauthorizedException(HttpStatus.UNAUTHORIZED.name());
                     default:
-                        throw new UnsupportedOperationException();
+                        throw new UnsupportedOperationException(HttpStatus.INTERNAL_SERVER_ERROR.name());
                 }
             }
         }
