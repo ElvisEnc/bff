@@ -332,86 +332,58 @@ stages:
               script: |
                 [ -f /$(tmpPath) ] && rm -fv /$(tmpPath) || echo 'No existe /$(tmpPath)'
                 
-  # - stage: Deploy_Preprod
-  #   displayName: "Continuous Deployment PREP"
-  #   dependsOn: 'Build_Push_Container_Image'
-  #   condition: and(succeeded('Build_Push_Container_Image'), startsWith(variables['build.sourceBranch'], 'refs/heads/release'))
-  #   pool:
-  #     name: Prod_Linux_Builder
-  #   jobs:
-  #     - job: Liquibase
-  #       displayName: "CD - Liquibase DB"
-  #       variables:
-  #         - group: Liquibase
-  #       steps:
-  #         - checkout: git://BGA-Flexibility/deployment-db-scripts
-  #           persistCredentials: true
-
-  #         - bash: |
-  #             export liquibaseVer=$(liquibaseVer)
-  #             [ -d /tmp/${liquibaseVer} ] && rm -Rf /tmp/${liquibaseVer}
-  #             mkdir -p /tmp/${liquibaseVer}
-  #             wget https://github.com/liquibase/liquibase/releases/download/v${liquibaseVer}/liquibase-${liquibaseVer}.tar.gz
-  #             tar  -xvf liquibase-${liquibaseVer}.tar.gz --directory=/tmp/${liquibaseVer}
-
-  #             echo "Run liquibase for Oracle"
-  #             bash /tmp/${liquibaseVer}/liquibase \
-  #               --driver=oracle.jdbc.OracleDriver \
-  #               --referenceDriver=oracle.jdbc.OracleDriver \
-  #               --classpath=/tmp/${liquibaseVer}/internal/lib/ojdbc8.jar \
-  #               --changeLogFile=master.xml \
-  #               --url=jdbc:oracle:thin:@$(ORA_HOST_PREP):$(ORA_PORT_PREP)/$(ORA_DB_PREP) \
-  #               --username=$(ORA_USER_PREP) \
-  #               --password=$(ORA_PASS_PREP) \
-  #               --contexts=preprod \
-  #               update
-
-  #     - job: Deploy
-  #       displayName: "CD - Prepare"
-  #       dependsOn: Liquibase
-  #       variables:
-  #         tmpPath: 'tmp/env-data-$(productName).yaml'
-  #         scriptPath: './devsecops-bga-tpls/bash-scripts/new-project.sh'
-  #       steps:
-  #         - task: Bash@3
-  #           displayName: "Setting environment variables"
-  #           inputs:
-  #             targetType: 'inline'
-  #             script: |
-  #               [ -f ./cicd/env-data.yaml ] && cp ./cicd/env-data.yaml /$(tmpPath) || echo 'No existe ./cicd/env-data.yaml'
+  - stage: Deploy_Preprod
+    displayName: "Continuous Deployment PREP"
+    dependsOn: 'Build_Push_Container_Image'
+    condition: and(succeeded('Build_Push_Container_Image'), startsWith(variables['build.sourceBranch'], 'refs/heads/release'))
+    jobs:
+      - job: Deploy
+        displayName: "CD - Prepare"
+        variables:
+          tmpPath: 'tmp/env-data-$(productName).yaml'
+          scriptPath: './devsecops-bga-tpls/bash-scripts/new-project.sh'
+          PROJECT_PATH: $(Build.SourcesDirectory)/bff
+        steps:
+          - task: Bash@3
+            displayName: "Setting environment variables"
+            inputs:
+              targetType: 'inline'
+              script: |
+                [ -f $(PROJECT_PATH)/cicd/env-data.yaml ] && cp $(PROJECT_PATH)/cicd/env-data.yaml /$(tmpPath) || echo 'No existe $(PROJECT_PATH)/cicd/env-data.yaml'
           
-  #         - script: |
-  #             git clone --branch main $(gitopsRepository)
-  #           displayName: "Get GitOps Infrastructure Repo"
-  #           workingDirectory: '$(Agent.TempDirectory)'
+          - script: |
+              git clone --branch main $(gitopsRepository)
+            displayName: "Get GitOps Infrastructure Repo"
+            workingDirectory: '$(Agent.TempDirectory)'
             
-  #         - task: Bash@3
-  #           displayName: "ArgoCD Deployment"
-  #           inputs:
-  #             targetType: 'inline'
-  #             script: |
-  #               export team="$(team)"
-  #               export namespace="$(namespace)"
-  #               export appalias="$(appalias)"
-  #               export productName="$(productName)"
-  #               export registryCredential="$(registryCredential)"
-  #               export dockerUser="$(dockerUser)"
-  #               export dockerRepo="$(dockerRepo)"
-  #               export dockerImageTAG="$(dockerImageTAG)"
-  #               export helmChartsURL="$(helmChartsURL)"
-  #               export portName="$(portName)"
-  #               export portNumber="$(portNumber)"
-  #               export chart="$(chart)"
-  #               BRANCH_NAME="$(Build.SourceBranchName)"
-  #               projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
-  #             workingDirectory: '$(Agent.TempDirectory)/gitops'
+          - task: Bash@3
+            displayName: "ArgoCD Deployment"
+            inputs:
+              targetType: 'inline'
+              script: |
+                export team="$(team)"
+                export namespace="$(namespace)"
+                export appalias="$(appalias)"
+                export productName="$(productName)"
+                export registryCredential="$(registryCredential)"
+                export dockerUser="$(dockerUser)"
+                export dockerRepo="$(dockerRepo)"
+                export dockerImageTAG="$(dockerImageTAG)"
+                export helmChartsURL="$(helmChartsURL)"
+                export portName="$(portName)"
+                export portNumber="$(portNumber)"
+                export chart="$(chart)"
+                export cluster="aks"
+                BRANCH_NAME="$(Build.SourceBranchName)"
+                projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
+              workingDirectory: '$(Agent.TempDirectory)/gitops'
 
-  #         - task: Bash@3
-  #           displayName: "Delete tmp files"
-  #           inputs:
-  #             targetType: 'inline'
-  #             script: |
-  #               [ -f /$(tmpPath) ] && rm -fv /$(tmpPath) || echo 'No existe /$(tmpPath)'
+          - task: Bash@3
+            displayName: "Delete tmp files"
+            inputs:
+              targetType: 'inline'
+              script: |
+                [ -f /$(tmpPath) ] && rm -fv /$(tmpPath) || echo 'No existe /$(tmpPath)'
 
   # - stage: Deploy_Prod
   #   displayName: "Continuous Deployment PROD"
