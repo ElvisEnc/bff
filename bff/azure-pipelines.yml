@@ -336,8 +336,6 @@ stages:
     displayName: "Continuous Deployment PREP"
     dependsOn: 'Build_Push_Container_Image'
     condition: and(succeeded('Build_Push_Container_Image'), startsWith(variables['build.sourceBranch'], 'refs/heads/release'))
-    pool:
-      name: Prod_Linux_Builder
     jobs:
       - job: Deploy
         displayName: "CD - Prepare"
