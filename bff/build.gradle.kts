@@ -27,10 +27,12 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 	implementation("org.apache.logging.log4j:log4j-spring-boot:2.20.0")
 	implementation("org.apache.httpcomponents:httpclient:4.5.13")
+	implementation("org.mapstruct:mapstruct:1.5.5.Final")
 
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.h2database:h2")
 	annotationProcessor("org.projectlombok:lombok")
+	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
