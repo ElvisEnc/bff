@@ -30,43 +30,19 @@ public class AccountApiTests {
     void givenPersonIdWhenGetAccountsThenResponseEntityOkAccountListResponse() throws IOException {
         // Arrange
         String personId = "123456";
+        String documentNumber = "1234";
         AccountListResponse accountListResponse = new AccountListResponse();
         Account account = new Account();
-        account.setAccountId("4355307");
-        account.setAccountNumber("1310325715");
-        account.setClientName("CLIENTE");
-        account.setClientCode("5219027");
-        account.setAccountHolderCode(" ");
-        account.setCurrencyCode("068");
-        account.setCurrencyDescription("Bs");
-        account.setProductDescription("CAJA DE AHORRO GANADOBLE");
-        account.setAccountManagementCode("I");
-        account.setAccountType("CA");
-        account.setAvailiableBalance(0);
-        account.setAccountManagementDescription("Individual");
-        account.setOpeningDate("2019-05-25");
-        account.setDateOfLastMovement("2019-08-31");
-        account.setTotalBalance(0);
-        account.setPledgeFounds(0);
-        account.setPendingDeposits(0);
-        account.setStatusCode(" ");
-        account.setStatusDescription("SIN BLOQUEO");
-        account.setBranchCode("712");
-        account.setBranchDescription("GRIGOTA");
-        account.setDepartamentCode("7");
-        account.setDepartamentDescription("SANTA CRUZ");
-        account.setAccountUsage("T");
-        account.setAccountUsageDescription("Todo Uso");
         List<Account> list = new ArrayList<>();
         list.add(account);
         accountListResponse.setData(list);
-        Mockito.when(iAccountService.getAccounts(personId)).thenReturn(accountListResponse);
+        Mockito.when(iAccountService.getAccounts(personId, documentNumber)).thenReturn(accountListResponse);
 
         // Act
-        ResponseEntity<AccountListResponse>  response = accountController.accounts(personId);
+        ResponseEntity<AccountListResponse> response = accountController.accounts(personId, documentNumber);
 
         // Assert
-        assert response.getStatusCode().value()== HttpStatus.OK.value();
+        assert response.getStatusCode().value() == HttpStatus.OK.value();
         Assertions.assertNotNull(response.getBody());
     }
 }
