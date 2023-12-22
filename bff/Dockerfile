@@ -3,7 +3,7 @@ COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle bootJar --no-daemon 
 
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:17.0.9_9-jre-alpine
 EXPOSE 8080
 
 RUN mkdir /app

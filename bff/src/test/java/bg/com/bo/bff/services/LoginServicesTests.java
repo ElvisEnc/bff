@@ -68,6 +68,7 @@ public class LoginServicesTests {
         // Act
         LoginResponse response = (LoginResponse) loginService.loginRequest(loginRequest);
 
+        // Assert
         assert response.getStatusCode().equals("SUCCESS");
     }
 

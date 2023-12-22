@@ -18,10 +18,10 @@ import java.io.IOException;
 
 @Service
 public class LoginService implements ILoginServices {
-    @Value("${external.api.middleware}")
+    @Value("${middleware}")
     private String baseUrl;
 
-    @Value("${external.api.complement}")
+    @Value("${login}")
     private String urlComplement;
 
     private IHttpClientFactory httpClientFactory;
