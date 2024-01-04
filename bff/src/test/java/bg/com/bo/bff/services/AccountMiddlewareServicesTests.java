@@ -4,7 +4,7 @@ import bg.com.bo.bff.model.*;
 import bg.com.bo.bff.model.exceptions.RequestException;
 import bg.com.bo.bff.model.interfaces.AccountListMapper;
 import bg.com.bo.bff.model.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.services.v1.AccountService;
+import bg.com.bo.bff.services.v1.AccountMiddlewareService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -28,9 +28,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class AccountServicesTests {
+public class AccountMiddlewareServicesTests {
     @Autowired
-    private AccountService accountService;
+    private AccountMiddlewareService accountMiddlewareService;
 
     @Test
     void givenPersonIdWhenRequestGetAccountsThenListOwnAccounts() throws IOException {
@@ -38,7 +38,7 @@ public class AccountServicesTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountService = new AccountService(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareService(httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
         CloseableHttpResponse closeableHttpPostResponseMock = Mockito.mock(CloseableHttpResponse.class);
         CloseableHttpResponse closeableHttpGetResponseMock = Mockito.mock(CloseableHttpResponse.class);
@@ -63,17 +63,14 @@ public class AccountServicesTests {
         InputStream accountsResponseMock = new ByteArrayInputStream(jsonAccountsResponseMock.getBytes());
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpPostResponseMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenReturn(closeableHttpGetResponseMock);
-        Mockito.when(closeableHttpPostResponseMock.getEntity()).thenReturn(httpPostEntityMock);
         Mockito.when(closeableHttpGetResponseMock.getEntity()).thenReturn(httpGetEntityMock);
-        Mockito.when(httpPostEntityMock.getContent()).thenReturn(tokenResponseMock);
         Mockito.when(httpGetEntityMock.getContent()).thenReturn(accountsResponseMock);
         Mockito.when(closeableHttpGetResponseMock.getStatusLine()).thenReturn(statusLineMock);
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
 
         // Act
-        AccountListResponse response = accountService.getAccounts(personId, documenNumber);
+        AccountListResponse response = accountMiddlewareService.getAccounts("", personId, documenNumber);
 
         // Assert
         Assertions.assertNotNull(response.getData());
@@ -85,12 +82,12 @@ public class AccountServicesTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountService = new AccountService(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareService(httpClientFactoryMock, AccountListMapper.INSTANCE);
 
         Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Test Catch General"));
 
         // Act
-        assertThrows(RuntimeException.class, () -> accountService.getAccounts(personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
     }
 
     @Test
@@ -99,14 +96,14 @@ public class AccountServicesTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountService = new AccountService(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareService(httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenThrow(new RequestException("Test RequestException"));
 
         // Act
-        assertThrows(RequestException.class, () -> accountService.getAccounts(personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
     }
 
     @Test
@@ -115,24 +112,18 @@ public class AccountServicesTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountService = new AccountService(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareService(httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
-        CloseableHttpResponse closeableHttpPostResponseMock = Mockito.mock(CloseableHttpResponse.class);
-        HttpEntity httpPostEntityMock = Mockito.mock(HttpEntity.class);
 
         ClientToken clientTokenMock = new ClientToken();
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(clientTokenMock);
-        InputStream tokenResponseMock = new ByteArrayInputStream(json.getBytes());
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpPostResponseMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenThrow(new RequestException("Test Request"));
-        Mockito.when(closeableHttpPostResponseMock.getEntity()).thenReturn(httpPostEntityMock);
-        Mockito.when(httpPostEntityMock.getContent()).thenReturn(tokenResponseMock);
 
         // Act
-        assertThrows(RequestException.class, () -> accountService.getAccounts(personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
     }
 
     @Test
@@ -141,28 +132,22 @@ public class AccountServicesTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountService = new AccountService(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareService(httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
-        CloseableHttpResponse closeableHttpPostResponseMock = Mockito.mock(CloseableHttpResponse.class);
         CloseableHttpResponse closeableHttpGetResponseMock = Mockito.mock(CloseableHttpResponse.class);
-        HttpEntity httpPostEntityMock = Mockito.mock(HttpEntity.class);
         StatusLine statusLineMock = Mockito.mock(StatusLine.class);
 
         ClientToken clientTokenMock = new ClientToken();
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(clientTokenMock);
-        InputStream tokenResponseMock = new ByteArrayInputStream(json.getBytes());
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpPostResponseMock);
-        Mockito.when(closeableHttpPostResponseMock.getEntity()).thenReturn(httpPostEntityMock);
-        Mockito.when(httpPostEntityMock.getContent()).thenReturn(tokenResponseMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenReturn(closeableHttpGetResponseMock);
         Mockito.when(closeableHttpGetResponseMock.getStatusLine()).thenReturn(statusLineMock);
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(401);
 
         // Act
-        assertThrows(RuntimeException.class, () -> accountService.getAccounts(personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
     }
 
     @Test
@@ -171,28 +156,22 @@ public class AccountServicesTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountService = new AccountService(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareService(httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
-        CloseableHttpResponse closeableHttpPostResponseMock = Mockito.mock(CloseableHttpResponse.class);
         CloseableHttpResponse closeableHttpGetResponseMock = Mockito.mock(CloseableHttpResponse.class);
-        HttpEntity httpPostEntityMock = Mockito.mock(HttpEntity.class);
         StatusLine statusLineMock = Mockito.mock(StatusLine.class);
 
         ClientToken clientTokenMock = new ClientToken();
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(clientTokenMock);
-        InputStream tokenResponseMock = new ByteArrayInputStream(json.getBytes());
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpPostResponseMock);
-        Mockito.when(closeableHttpPostResponseMock.getEntity()).thenReturn(httpPostEntityMock);
-        Mockito.when(httpPostEntityMock.getContent()).thenReturn(tokenResponseMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenReturn(closeableHttpGetResponseMock);
         Mockito.when(closeableHttpGetResponseMock.getStatusLine()).thenReturn(statusLineMock);
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(404);
 
         // Act
-        assertThrows(RuntimeException.class, () -> accountService.getAccounts(personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
     }
 
     @Test
@@ -201,28 +180,22 @@ public class AccountServicesTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountService = new AccountService(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareService(httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
-        CloseableHttpResponse closeableHttpPostResponseMock = Mockito.mock(CloseableHttpResponse.class);
         CloseableHttpResponse closeableHttpGetResponseMock = Mockito.mock(CloseableHttpResponse.class);
-        HttpEntity httpPostEntityMock = Mockito.mock(HttpEntity.class);
         StatusLine statusLineMock = Mockito.mock(StatusLine.class);
 
         ClientToken clientTokenMock = new ClientToken();
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(clientTokenMock);
-        InputStream tokenResponseMock = new ByteArrayInputStream(json.getBytes());
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpPostResponseMock);
-        Mockito.when(closeableHttpPostResponseMock.getEntity()).thenReturn(httpPostEntityMock);
-        Mockito.when(httpPostEntityMock.getContent()).thenReturn(tokenResponseMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenReturn(closeableHttpGetResponseMock);
         Mockito.when(closeableHttpGetResponseMock.getStatusLine()).thenReturn(statusLineMock);
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(406);
 
         // Act
-        assertThrows(RequestException.class, () -> accountService.getAccounts(personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
     }
 
     @Test
@@ -231,27 +204,21 @@ public class AccountServicesTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountService = new AccountService(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareService(httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
-        CloseableHttpResponse closeableHttpPostResponseMock = Mockito.mock(CloseableHttpResponse.class);
         CloseableHttpResponse closeableHttpGetResponseMock = Mockito.mock(CloseableHttpResponse.class);
-        HttpEntity httpPostEntityMock = Mockito.mock(HttpEntity.class);
         StatusLine statusLineMock = Mockito.mock(StatusLine.class);
 
         ClientToken clientTokenMock = new ClientToken();
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(clientTokenMock);
-        InputStream tokenResponseMock = new ByteArrayInputStream(json.getBytes());
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpPostResponseMock);
-        Mockito.when(closeableHttpPostResponseMock.getEntity()).thenReturn(httpPostEntityMock);
-        Mockito.when(httpPostEntityMock.getContent()).thenReturn(tokenResponseMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenReturn(closeableHttpGetResponseMock);
         Mockito.when(closeableHttpGetResponseMock.getStatusLine()).thenReturn(statusLineMock);
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(500);
 
         // Act
-        assertThrows(RuntimeException.class, () -> accountService.getAccounts(personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
     }
 }

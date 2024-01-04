@@ -2,7 +2,7 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <JSONLayout complete="true" compact="false" eventEol="true"
+            <JSONLayout complete="true" compact="true" eventEol="true"
                         includeTimeMillis="true" objectMessageAsJsonObject="true">
                 <KeyValuePair key="fecha" value="$${date:yyyy-MM-dd'T'HH:mm:ss.SSS}"/>
             </JSONLayout>
