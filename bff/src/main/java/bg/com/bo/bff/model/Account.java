@@ -25,7 +25,7 @@ public class Account {
     @Schema(example = "CA", description = "Este es el abreviado del tipo de cuenta")
     private String accountType;
     @Schema(example = "123.50", description = "Este es el balance de la cuenta")
-    private Integer availiableBalance;
+    private Double availiableBalance;
     @Schema(example = "Individual", description = "Este es la descripción del manejo de la cuenta")
     private String accountManagementDescription;
     @Schema(example = "2019-05-25", description = "Este es la fecha de apertura de la cuenta")
@@ -33,11 +33,11 @@ public class Account {
     @Schema(example = "2019-08-31", description = "Este es la fecha del último movimiento")
     private String dateOfLastMovement;
     @Schema(example = "525.23", description = "Este es el total del balance de la cuenta")
-    private Integer totalBalance;
+    private Double totalBalance;
     @Schema(example = "456.50", description = "Este es el monto de fondos pignorados")
-    private Integer pledgeFounds;
+    private Double pledgeFounds;
     @Schema(example = "0", description = "Este es el monto de depósitos pendientes")
-    private Integer pendingDeposits;
+    private Double pendingDeposits;
     @Schema(example = " ", description = "Este es el código del estado de la cuenta")
     private String statusCode;
     @Schema(example = "SIN BLOQUEO", description = "Este es la decripción del estado de la cuenta")
