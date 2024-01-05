@@ -29,6 +29,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpError.Error400.getName(), exception.getMessage());
+        logger.error(exception);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleNotBlankParamsException(ConstraintViolationException exception) {
         ErrorResponse errorResponse = new ErrorResponse(HttpError.Error422.getName(), exception.getMessage());

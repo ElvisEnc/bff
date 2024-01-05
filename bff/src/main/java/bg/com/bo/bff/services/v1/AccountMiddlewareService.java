@@ -4,6 +4,7 @@ import bg.com.bo.bff.model.AccountListMWResponse;
 import bg.com.bo.bff.model.AccountListResponse;
 import bg.com.bo.bff.model.ClientToken;
 import bg.com.bo.bff.model.enums.HttpError;
+import bg.com.bo.bff.model.exceptions.BadRequestException;
 import bg.com.bo.bff.model.exceptions.NotAcceptableException;
 import bg.com.bo.bff.model.exceptions.RequestException;
 import bg.com.bo.bff.model.interfaces.AccountListMapper;
@@ -50,11 +51,13 @@ public class AccountMiddlewareService implements IAccountMiddlewareService {
         this.accountListMapper = accountListMapper;
     }
 
-    private CloseableHttpClient createHttpClient(){
+    private CloseableHttpClient createHttpClient() {
         return httpClientFactory.create();
     }
 
     public ClientToken generateAccountAccessToken() throws IOException {
+        boolean propagateException = false;
+
         try (CloseableHttpClient httpClient = createHttpClient()) {
             String paramsGenerarClientSecret = "?grant_type=client_credentials";
             String pathPostToken = url + complementToken + paramsGenerarClientSecret;
@@ -66,16 +69,21 @@ public class AccountMiddlewareService implements IAccountMiddlewareService {
                 String responseToken = EntityUtils.toString(httpResponse.getEntity());
                 return objectMapper.readValue(responseToken, ClientToken.class);
             } catch (Exception e) {
+                propagateException = true;
                 LOGGER.error(e);
                 throw new RequestException("Hubo un error no controlado al realizar el requestToken");
             }
         } catch (Exception e) {
+            if (propagateException)
+                throw e;
             LOGGER.error(e);
             throw new RuntimeException("Hubo un error no controlado al crear el clienteToken");
         }
     }
 
     public AccountListResponse getAccounts(String token, String personId, String documentNumber) throws IOException {
+        boolean propagateException = false;
+
         try (CloseableHttpClient httpClient = createHttpClient()) {
             String ganamovilChannel = "2";
             String pathGetAccounts = url + complementAccounts + "/persons/" + personId + "/document-number/" + documentNumber;
@@ -84,28 +92,39 @@ public class AccountMiddlewareService implements IAccountMiddlewareService {
             getAccountsMW.setHeader("topaz-channel", ganamovilChannel);
             ObjectMapper objectMapper = new ObjectMapper();
             try (CloseableHttpResponse httpResponse = httpClient.execute(getAccountsMW)) {
-                switch (httpResponse.getStatusLine().getStatusCode()) {
-                    case 200: {
-                        String responseAccounts = EntityUtils.toString(httpResponse.getEntity());
-                        AccountListMWResponse responseMW = objectMapper.readValue(responseAccounts, AccountListMWResponse.class);
-                        AccountListResponse accountListResponse = accountListMapper.convert(responseMW);
-                        return accountListResponse;
-                    }
-                    case 401:
-                        throw new RuntimeException(HttpError.Error401.getDescription());
-                    case 404:
-                        throw new UnsupportedOperationException(HttpError.Error404.getDescription());
-                    case 406:
-                        throw new NotAcceptableException(HttpError.Error406.getDescription());
-                    default: {
-                        throw new UnsupportedOperationException(HttpError.Error500.getDescription());
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+                if (statusCode == 200) {
+                    String responseAccounts = EntityUtils.toString(httpResponse.getEntity());
+                    AccountListMWResponse responseMW = objectMapper.readValue(responseAccounts, AccountListMWResponse.class);
+                    AccountListResponse accountListResponse = accountListMapper.convert(responseMW);
+                    return accountListResponse;
+                } else {
+                    propagateException = true;
+                    switch (statusCode) {
+                        case 400:
+                            throw new BadRequestException(HttpError.Error400.getDescription());
+                        case 401:
+                            throw new RuntimeException(HttpError.Error401.getDescription());
+                        case 404:
+                            throw new UnsupportedOperationException(HttpError.Error404.getDescription());
+                        case 406:
+                            throw new NotAcceptableException(HttpError.Error406.getDescription());
+                        default: {
+                            throw new UnsupportedOperationException(HttpError.Error500.getDescription());
+                        }
                     }
                 }
             } catch (Exception e) {
+                if (propagateException)
+                    throw e;
+                propagateException = true;
                 LOGGER.error(e);
                 throw new RequestException("Hubo un error no controlado al realizar el requestGetAccounts");
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
+            if (propagateException)
+                throw e;
             LOGGER.error(e);
             throw new RuntimeException("Hubo un error no controlado al crear el clienteGetAccounts");
         }

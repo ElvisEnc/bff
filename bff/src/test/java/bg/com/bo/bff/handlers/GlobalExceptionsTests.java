@@ -1,6 +1,7 @@
 package bg.com.bo.bff.handlers;
 
 import bg.com.bo.bff.model.ErrorResponse;
+import bg.com.bo.bff.model.exceptions.BadRequestException;
 import bg.com.bo.bff.model.exceptions.GlobalExceptionHandler;
 import bg.com.bo.bff.model.exceptions.NotAcceptableException;
 import bg.com.bo.bff.model.exceptions.UnauthorizedException;
@@ -55,5 +56,17 @@ public class GlobalExceptionsTests {
 
         // Assert
         assert response.getStatusCode().equals(HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @Test
+    public void givenBadRequestExceptionWhenRequestThenErrorResponseBadRequest(){
+        // Arrange
+        BadRequestException exception = new BadRequestException(HttpStatus.BAD_REQUEST.name());
+
+        // Act
+        ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleBadRequestException(exception);
+
+        // Assert
+        assert response.getStatusCode().equals(HttpStatus.BAD_REQUEST);
     }
 }

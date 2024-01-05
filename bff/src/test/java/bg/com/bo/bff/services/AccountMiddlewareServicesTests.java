@@ -77,7 +77,7 @@ public class AccountMiddlewareServicesTests {
     }
 
     @Test
-    void givenThatErrorOcurredWhenCreatedClientThenRunTimeException()throws IOException{
+    void givenThatErrorOcurredWhenCreatedClientThenRunTimeException() {
         // Arrange
         String personId = "123456789";
         String documenNumber = "1234";
