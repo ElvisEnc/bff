@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 @RestController
 @Validated
 @RequestMapping("api/v1/ingresoGM")
-@Tag(name = "Login Biometric", description = "Login Biometric GanaMoovil")
+@Tag(name = "Ingres GanaMovil", description = "Ingres GanaMoovil")
 public class IngresoController {
 
     @Autowired
@@ -35,7 +35,7 @@ public class IngresoController {
 
     @Operation(summary = "Ingreso GanaMovil Request", description = "Ingreso GanaMovil")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Devulve los datos del cliente", content = @Content(schema = @Schema(implementation = TransferResponse.class),mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Devulve los datos del cliente", content = @Content(schema = @Schema(implementation = Object.class),mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "401", description = "Token expirado, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "406", description = "Error del sistema", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),

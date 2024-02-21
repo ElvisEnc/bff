@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 import bg.com.bo.bff.config.exception.GenericException;
+import bg.com.bo.bff.model.exceptions.RequestException;
 import bg.com.bo.bff.model.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.model.util.Util;
 import bg.com.bo.bff.provider.interfaces.IIngresProvider;
@@ -34,6 +35,7 @@ public class IngresProvider implements IIngresProvider {
 
     @Override
     public Object ingres(IngresoRequestDTO requestDTO) throws IOException {
+        boolean propagateException = false;
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String pathGetAccounts = "https://devganamovil.bg.com.bo/services/GanaMovilWS/mtdValidarIngresoxHD_N";
@@ -45,20 +47,18 @@ public class IngresProvider implements IIngresProvider {
             httpPost.setEntity(entity);
             httpPost.setHeader("Content-Type", "application/json");
 
-            CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
-            int statusCode = httpResponse.getStatusLine().getStatusCode();
-
-            String responseAccounts = EntityUtils.toString(httpResponse.getEntity());
-            if (statusCode == 200) {
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
+                String responseAccounts = EntityUtils.toString(httpResponse.getEntity());
                 return Util.stringToObject(responseAccounts, Object.class);
-            } else {
-                ApiErrorResponse response = Util.stringToObject(responseAccounts, ApiErrorResponse.class);
-                throw new GenericException(response.getErrorDetail().toString(), HttpStatus.resolve(response.getCode()));
+            } catch (Exception e) {
+                propagateException = true;
+                LOGGER.error(e);
+                throw new RequestException("Hubo un error no controlado al realizar el request");
             }
-        } catch (GenericException ex) {
-            LOGGER.error(ex);
-            throw ex;
+
         } catch (Exception e) {
+            if (propagateException)
+                throw e;
             LOGGER.error(e);
             throw new RuntimeException("Hubo un error no controlado al crear el cliente");
         }
