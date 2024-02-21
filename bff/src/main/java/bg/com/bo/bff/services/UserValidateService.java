@@ -9,6 +9,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ public class UserValidateService implements IUserValidateService {
     public UserValidateService(IHttpClientFactory httpClientFactory) {
         this.httpClientFactory = httpClientFactory;
     }
+    private static final Logger LOGGER = LogManager.getLogger(UserValidateService.class.getName());
 
     private CloseableHttpClient createHttpClient() {
         return httpClientFactory.create();
@@ -42,10 +45,12 @@ public class UserValidateService implements IUserValidateService {
                 String responseData = EntityUtils.toString(httpResponse.getEntity());
                 return objectMapper.readValue(responseData, Object.class);
             } catch (Exception e) {
-                throw new RuntimeException("ERROR");
+                LOGGER.error(e);
+                throw new Exception(e);
             }
         } catch (Exception e) {
-            throw new RuntimeException("FULL ERROR");
+            LOGGER.error(e);
+            throw new RuntimeException(e);
         }
     }
 }
