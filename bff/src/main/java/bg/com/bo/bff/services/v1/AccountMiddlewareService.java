@@ -1,8 +1,8 @@
 package bg.com.bo.bff.services.v1;
 
-import bg.com.bo.bff.model.AccountListMWResponse;
-import bg.com.bo.bff.model.AccountListResponse;
-import bg.com.bo.bff.model.ClientToken;
+import bg.com.bo.bff.model.dtos.middleware.accounts.AccountListMWResponse;
+import bg.com.bo.bff.model.dtos.accounts.AccountListResponse;
+import bg.com.bo.bff.model.dtos.middleware.ClientMWToken;
 import bg.com.bo.bff.model.enums.HttpError;
 import bg.com.bo.bff.model.exceptions.BadRequestException;
 import bg.com.bo.bff.model.exceptions.NotAcceptableException;
@@ -43,7 +43,7 @@ public class AccountMiddlewareService implements IAccountMiddlewareService {
 
     private AccountListMapper accountListMapper;
 
-    private static final Logger LOGGER = LogManager.getLogger(AccountMiddlewareService.class.getName());
+    private static final Logger logger = LogManager.getLogger(AccountMiddlewareService.class.getName());
 
     @Autowired
     public AccountMiddlewareService(IHttpClientFactory httpClientFactory, AccountListMapper accountListMapper) {
@@ -55,7 +55,7 @@ public class AccountMiddlewareService implements IAccountMiddlewareService {
         return httpClientFactory.create();
     }
 
-    public ClientToken generateAccountAccessToken() throws IOException {
+    public ClientMWToken generateAccountAccessToken() throws IOException {
         boolean propagateException = false;
 
         try (CloseableHttpClient httpClient = createHttpClient()) {
@@ -67,16 +67,16 @@ public class AccountMiddlewareService implements IAccountMiddlewareService {
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(postGenerateAccessToken)) {
                 String responseToken = EntityUtils.toString(httpResponse.getEntity());
-                return objectMapper.readValue(responseToken, ClientToken.class);
+                return objectMapper.readValue(responseToken, ClientMWToken.class);
             } catch (Exception e) {
                 propagateException = true;
-                LOGGER.error(e);
+                logger.error(e);
                 throw new RequestException("Hubo un error no controlado al realizar el requestToken");
             }
         } catch (Exception e) {
             if (propagateException)
                 throw e;
-            LOGGER.error(e);
+            logger.error(e);
             throw new RuntimeException("Hubo un error no controlado al crear el clienteToken");
         }
     }
@@ -93,25 +93,25 @@ public class AccountMiddlewareService implements IAccountMiddlewareService {
             ObjectMapper objectMapper = new ObjectMapper();
             try (CloseableHttpResponse httpResponse = httpClient.execute(getAccountsMW)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String response = EntityUtils.toString(httpResponse.getEntity());
 
                 if (statusCode == 200) {
-                    String responseAccounts = EntityUtils.toString(httpResponse.getEntity());
-                    AccountListMWResponse responseMW = objectMapper.readValue(responseAccounts, AccountListMWResponse.class);
-                    AccountListResponse accountListResponse = accountListMapper.convert(responseMW);
-                    return accountListResponse;
+                    AccountListMWResponse responseMW = objectMapper.readValue(response, AccountListMWResponse.class);
+                    return accountListMapper.convert(responseMW);
                 } else {
                     propagateException = true;
+                    logger.error(response);
                     switch (statusCode) {
                         case 400:
-                            throw new BadRequestException(HttpError.Error400.getDescription());
+                            throw new BadRequestException(HttpError.ERROR_400.getDescription());
                         case 401:
-                            throw new RuntimeException(HttpError.Error401.getDescription());
+                            throw new RuntimeException(HttpError.ERROR_401.getDescription());
                         case 404:
-                            throw new UnsupportedOperationException(HttpError.Error404.getDescription());
+                            throw new UnsupportedOperationException(HttpError.ERROR_404.getDescription());
                         case 406:
-                            throw new NotAcceptableException(HttpError.Error406.getDescription());
+                            throw new NotAcceptableException(HttpError.ERROR_406.getDescription());
                         default: {
-                            throw new UnsupportedOperationException(HttpError.Error500.getDescription());
+                            throw new UnsupportedOperationException(HttpError.ERROR_500.getDescription());
                         }
                     }
                 }
@@ -119,13 +119,13 @@ public class AccountMiddlewareService implements IAccountMiddlewareService {
                 if (propagateException)
                     throw e;
                 propagateException = true;
-                LOGGER.error(e);
+                logger.error(e);
                 throw new RequestException("Hubo un error no controlado al realizar el requestGetAccounts");
             }
         } catch (Exception e) {
             if (propagateException)
                 throw e;
-            LOGGER.error(e);
+            logger.error(e);
             throw new RuntimeException("Hubo un error no controlado al crear el clienteGetAccounts");
         }
     }

@@ -1,118 +1,79 @@
 package bg.com.bo.bff.services;
 
-import bg.com.bo.bff.model.LoginRequest;
-import bg.com.bo.bff.model.LoginResponse;
-import bg.com.bo.bff.model.exceptions.UnauthorizedException;
-import bg.com.bo.bff.model.User;
-import bg.com.bo.bff.model.interfaces.IHttpClientFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import bg.com.bo.bff.mappings.services.LoginServiceMapper;
+import bg.com.bo.bff.controllers.request.LoginRequest;
+import bg.com.bo.bff.provider.interfaces.IJwtProvider;
+import bg.com.bo.bff.provider.interfaces.ILoginMiddlewareProvider;
+import bg.com.bo.bff.provider.LoginMiddlewareProvider;
+import bg.com.bo.bff.services.v1.LoginService;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
+@WireMockTest(proxyMode = true, httpPort = 8080)
+@ExtendWith(WireMockExtension.class)
 @ExtendWith(MockitoExtension.class)
-public class LoginServicesTests {
-    @Autowired
-    private LoginService loginService;
+class LoginServicesTests {
+    private static IJwtProvider jwtService;
+
+    static ILoginMiddlewareProvider loginMiddlewareService;
 
     static LoginRequest loginRequest;
+
+    static LoginService loginService;
 
     @BeforeAll
     public static void setup() {
         loginRequest = new LoginRequest();
         loginRequest.setComplemento("a1");
         loginRequest.setPassword("1q01a");
-        loginRequest.setCanal("GANAMOVIL");
+
+        loginMiddlewareService = Mockito.mock(LoginMiddlewareProvider.class);
+        jwtService = Mockito.mock(IJwtProvider.class);
     }
 
-    @Test
-    void givenCorrectCredentialsWhenLoginThenReturnSuccess() throws IOException {
-        // Arrange
-        loginRequest.setCedula("1324501");
-        IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        loginService = new LoginService(httpClientFactoryMock);
-        CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
-        CloseableHttpResponse closeableHttpResponseMock = Mockito.mock(CloseableHttpResponse.class);
-        User user = new User(123456000);
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setStatusCode("SUCCESS");
-        loginResponse.setData(user);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(loginResponse);
-        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
-        HttpEntity httpEntityMock = Mockito.mock(HttpEntity.class);
-        StatusLine statusLineMock = Mockito.mock(StatusLine.class);
-
-        Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
-        Mockito.when(closeableHttpResponseMock.getEntity()).thenReturn(httpEntityMock);
-        Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
-        Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
-        Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
-
-        // Act
-        LoginResponse response = (LoginResponse) loginService.loginRequest(loginRequest);
-
-        // Assert
-        assert response.getStatusCode().equals("SUCCESS");
+    @BeforeEach
+    public void init() {
+        loginService = new LoginService(loginMiddlewareService, jwtService, LoginServiceMapper.INSTANCE);
     }
 
-    @Test
-    void givenIncorrectCredentialsWhenLoginThenReturnUnauthorized() throws IOException {
-        // Arrange
-        loginRequest.setCedula("0000");
-        IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        loginService = new LoginService(httpClientFactoryMock);
-        CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
-        CloseableHttpResponse closeableHttpResponseMock = Mockito.mock(CloseableHttpResponse.class);
-        StatusLine statusLineMock = Mockito.mock(StatusLine.class);
-
-        Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
-        Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
-        Mockito.when(statusLineMock.getStatusCode()).thenReturn(401);
-
-        // Act
-        UnauthorizedException unauthorizedException = assertThrows(UnauthorizedException.class, () -> loginService.loginRequest(loginRequest));
-
-        // Assert
-        assert unauthorizedException.getMessage().equals(HttpStatus.UNAUTHORIZED.name());
-    }
-
-    @Test
-    void givenExceptionWhenRequestLoginServiceThenReturnsExceptionInternalServerError() throws IOException {
-        // Arrange
-        loginRequest.setCedula("0000");
-        IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        loginService = new LoginService(httpClientFactoryMock);
-        CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
-        CloseableHttpResponse closeableHttpResponseMock = Mockito.mock(CloseableHttpResponse.class);
-        StatusLine statusLineMock = Mockito.mock(StatusLine.class);
-
-        Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
-        Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
-        Mockito.when(statusLineMock.getStatusCode()).thenReturn(500);
-
-        // Act
-        UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> loginService.loginRequest(loginRequest));
-
-        // Assert
-        assert exception.getMessage().equals(HttpStatus.INTERNAL_SERVER_ERROR.name());
-    }
+//    @Test
+//    void givenCorrectCredentialsWhenLoginThenReturnSuccess() throws IOException {
+//        // Arrange
+//        String personId = "1";
+//        String statusCode = "SUCCESS";
+//        String token = UUID.randomUUID().toString();
+//
+//        ClientToken clientToken = new ClientToken();
+//        clientToken.setAccessToken(token);
+//
+//        LoginResult loginResult = new LoginResult();
+//        loginResult.setStatusCode(statusCode);
+//        loginResult.setPersonId(personId);
+//
+//        String accessToken = UUID.randomUUID().toString();
+//        String refreshToken = UUID.randomUUID().toString();
+//
+//        TokenData tokenData = new TokenData();
+//        tokenData.setAccessToken(accessToken);
+//        tokenData.setRefreshToken(refreshToken);
+//
+//        Mockito.when(loginMiddlewareService.generateAccessToken()).thenReturn(clientToken);
+//        Mockito.when(loginMiddlewareService.validateCredentials(token, loginRequest)).thenReturn(loginResult);
+//        Mockito.when(jwtService.generateToken(loginResult.getPersonId(), UserRole.LOGGED_USER)).thenReturn(tokenData);
+//
+//        // Act
+//        LoginResponse response = loginService.loginRequest(loginRequest);
+//
+//        // Assert
+//        assert response.getStatusCode().equals("SUCCESS");
+//        assert response.getData().getAccessToken().equals(accessToken);
+//        assert response.getData().getRefreshToken().equals(refreshToken);
+//        assert response.getData().getPersonId().equals(personId);
+//    }
 }

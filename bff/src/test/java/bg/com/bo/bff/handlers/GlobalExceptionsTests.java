@@ -1,6 +1,6 @@
 package bg.com.bo.bff.handlers;
 
-import bg.com.bo.bff.model.ErrorResponse;
+import bg.com.bo.bff.model.dtos.ErrorResponse;
 import bg.com.bo.bff.model.exceptions.BadRequestException;
 import bg.com.bo.bff.model.exceptions.GlobalExceptionHandler;
 import bg.com.bo.bff.model.exceptions.NotAcceptableException;
@@ -12,7 +12,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class GlobalExceptionsTests {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class GlobalExceptionsTests {
     @InjectMocks
     private GlobalExceptionHandler globalExceptionHandler;
 
@@ -30,8 +32,8 @@ public class GlobalExceptionsTests {
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleUnauthorizedException(unauthorizedException);
 
         // Assert
-        assert response.getStatusCode().equals(HttpStatus.UNAUTHORIZED);
-        assert response.getBody().getMessage().equals(HttpStatus.UNAUTHORIZED.name());
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals(HttpStatus.UNAUTHORIZED.name(), response.getBody().getMessage());
     }
 
     @Test
@@ -43,11 +45,11 @@ public class GlobalExceptionsTests {
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleException(exception);
 
         // Assert
-        assert response.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
-    public void givenNotAcceptableExceptionWhenRequestThenErrorResponseNotAcceptable(){
+    public void givenNotAcceptableExceptionWhenRequestThenErrorResponseNotAcceptable() {
         // Arrange
         NotAcceptableException exception = new NotAcceptableException(HttpStatus.NOT_ACCEPTABLE.name());
 
@@ -55,7 +57,7 @@ public class GlobalExceptionsTests {
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleNotAcceptableException(exception);
 
         // Assert
-        assert response.getStatusCode().equals(HttpStatus.NOT_ACCEPTABLE);
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
     }
 
     @Test

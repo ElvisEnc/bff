@@ -1,8 +1,9 @@
 package bg.com.bo.bff.controllers.v1;
 
-import bg.com.bo.bff.model.AccountListResponse;
-import bg.com.bo.bff.model.ErrorResponse;
-import bg.com.bo.bff.model.LoginResponse;
+import bg.com.bo.bff.model.dtos.accounts.AccountListResponse;
+import bg.com.bo.bff.model.dtos.ErrorResponse;
+import bg.com.bo.bff.model.UserData;
+import bg.com.bo.bff.model.exceptions.UnauthorizedException;
 import bg.com.bo.bff.services.interfaces.IAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -39,6 +40,14 @@ public class AccountController {
     public ResponseEntity<AccountListResponse> accounts(
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
             @PathVariable("document") @NotBlank @Parameter(description = "Este es el número de documento de identidad", example = "1234567") String document) throws IOException {
-        return ResponseEntity.ok(iAccountService.getAccounts(personId, document));
+
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
+//            UserData userData = (UserData) authentication.getPrincipal();
+//            if (!Objects.equals(userData.getPersonId(), personId))
+//                throw new BadCredentialsException("Las credenciales no corresponden con el persona id enviado.");
+            return ResponseEntity.ok(iAccountService.getAccounts(personId, document));
+//        }
+//        throw new UnauthorizedException("Not valid authorization data.");
     }
 }

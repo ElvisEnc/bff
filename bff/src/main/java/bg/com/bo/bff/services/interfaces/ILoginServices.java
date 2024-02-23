@@ -1,10 +1,12 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.model.LoginRequest;
-import bg.com.bo.bff.model.LoginResponse;
-
-import java.io.IOException;
+import bg.com.bo.bff.controllers.request.LoginRequest;
+import bg.com.bo.bff.model.dtos.login.LoginResult;
+import bg.com.bo.bff.controllers.request.RefreshSessionRequest;
+import bg.com.bo.bff.model.dtos.login.RefreshSessionResult;
 
 public interface ILoginServices {
-    LoginResponse loginRequest(LoginRequest loginRequest) throws IOException;
+    LoginResult login(LoginRequest loginRequest);
+
+    RefreshSessionResult refreshSession(String personId, RefreshSessionRequest refreshSessionRequest);
 }

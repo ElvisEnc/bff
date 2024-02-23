@@ -95,15 +95,15 @@ public class ThirdAccountMiddlewareService implements IThirdAccountMiddlewareSer
                     propagateException = true;
                     switch (statusCode) {
                         case 400:
-                            throw new BadRequestException(HttpError.Error400.getDescription());
+                            throw new BadRequestException(HttpError.ERROR_400.getDescription());
                         case 401:
-                            throw new RuntimeException(HttpError.Error401.getDescription());
+                            throw new RuntimeException(HttpError.ERROR_401.getDescription());
                         case 404:
-                            throw new UnsupportedOperationException(HttpError.Error404.getDescription());
+                            throw new UnsupportedOperationException(HttpError.ERROR_404.getDescription());
                         case 406:
-                            throw new NotAcceptableException(HttpError.Error406.getDescription());
+                            throw new NotAcceptableException(HttpError.ERROR_406.getDescription());
                         default: {
-                            throw new UnsupportedOperationException(HttpError.Error500.getDescription());
+                            throw new UnsupportedOperationException(HttpError.ERROR_500.getDescription());
                         }
                     }
                 }

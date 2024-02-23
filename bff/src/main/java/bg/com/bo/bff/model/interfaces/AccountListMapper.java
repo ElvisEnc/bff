@@ -1,7 +1,7 @@
 package bg.com.bo.bff.model.interfaces;
 
-import bg.com.bo.bff.model.AccountListMWResponse;
-import bg.com.bo.bff.model.AccountListResponse;
+import bg.com.bo.bff.model.dtos.middleware.accounts.AccountListMWResponse;
+import bg.com.bo.bff.model.dtos.accounts.AccountListResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

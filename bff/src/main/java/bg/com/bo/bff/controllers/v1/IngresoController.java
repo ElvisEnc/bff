@@ -1,5 +1,6 @@
 package bg.com.bo.bff.controllers.v1;
 
+import bg.com.bo.bff.model.dtos.ErrorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import bg.com.bo.bff.controllers.request.IngresoRequest;
 import bg.com.bo.bff.controllers.request.LoginBiometricRequest;
 import bg.com.bo.bff.controllers.response.TransferResponse;
-import bg.com.bo.bff.model.ErrorResponse;
 import bg.com.bo.bff.services.interfaces.IIngresService;
 import bg.com.bo.bff.services.interfaces.ILoginBiometricService;
 import io.swagger.v3.oas.annotations.Operation;
