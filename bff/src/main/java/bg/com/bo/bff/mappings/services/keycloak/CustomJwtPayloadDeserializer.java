@@ -1,6 +1,6 @@
 package bg.com.bo.bff.mappings.services.keycloak;
 
-import bg.com.bo.bff.model.jwt.JwtPayload;
+import bg.com.bo.bff.models.jwt.JwtPayload;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;

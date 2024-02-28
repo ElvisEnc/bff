@@ -1,10 +1,10 @@
 package bg.com.bo.bff.mappings.services;
 
-import bg.com.bo.bff.model.dtos.login.LoginValidationServiceResponse;
-import bg.com.bo.bff.model.dtos.TokenDataServiceResponse;
-import bg.com.bo.bff.model.dtos.login.CreateTokenServiceResponse;
-import bg.com.bo.bff.model.dtos.login.LoginResult;
-import bg.com.bo.bff.model.dtos.login.RefreshSessionResult;
+import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
+import bg.com.bo.bff.models.dtos.TokenDataServiceResponse;
+import bg.com.bo.bff.models.dtos.login.CreateTokenServiceResponse;
+import bg.com.bo.bff.models.dtos.login.LoginResult;
+import bg.com.bo.bff.models.dtos.login.RefreshSessionResult;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

@@ -1,6 +1,6 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.model.dtos.accounts.AccountListResponse;
+import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 
 import java.io.IOException;
 

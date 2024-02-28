@@ -1,0 +1,9 @@
+package bg.com.bo.bff.providers.mappings;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
+public interface IGenericsMapper {
+    <S, T> Map<String, T> convert(List<S> list, Function<T, String> func, Function<S, T> conv);
+}

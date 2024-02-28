@@ -2,8 +2,8 @@ package bg.com.bo.bff.services.interfaces;
 
 import java.io.IOException;
 
-import bg.com.bo.bff.controllers.request.TransferRequest;
-import bg.com.bo.bff.controllers.response.TransferResponse;
+import bg.com.bo.bff.application.dtos.request.TransferRequest;
+import bg.com.bo.bff.application.dtos.response.TransferResponse;
 
 public interface IOwnAccountTransferService {
 

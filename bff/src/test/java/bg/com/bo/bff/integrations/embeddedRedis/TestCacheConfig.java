@@ -1,6 +1,6 @@
 package bg.com.bo.bff.integrations.embeddedRedis;
 
-import bg.com.bo.bff.model.Constants;
+import bg.com.bo.bff.commons.constants.Constants;
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

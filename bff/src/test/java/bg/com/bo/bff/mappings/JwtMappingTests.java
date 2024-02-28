@@ -1,7 +1,7 @@
 package bg.com.bo.bff.mappings;
 
 import bg.com.bo.bff.mappings.services.keycloak.KeyCloakJsonMapper;
-import bg.com.bo.bff.model.jwt.JwtHeader;
+import bg.com.bo.bff.models.jwt.JwtHeader;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,6 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.model.ThirdAccountListResponse;
+import bg.com.bo.bff.models.ThirdAccountListResponse;
 
 import java.io.IOException;
 

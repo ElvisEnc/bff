@@ -1,7 +1,7 @@
 package bg.com.bo.bff.mappings.services.keycloak.interfaces;
 
-import bg.com.bo.bff.model.jwt.JwtHeader;
-import bg.com.bo.bff.model.jwt.JwtPayload;
+import bg.com.bo.bff.models.jwt.JwtHeader;
+import bg.com.bo.bff.models.jwt.JwtPayload;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 

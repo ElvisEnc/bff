@@ -1,13 +1,10 @@
 package bg.com.bo.bff.mappings.services.keycloak;
 
-import bg.com.bo.bff.model.jwt.*;
+import bg.com.bo.bff.models.jwt.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -17,7 +14,6 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
