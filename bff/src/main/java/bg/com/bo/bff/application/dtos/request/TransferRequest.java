@@ -28,7 +28,6 @@ import lombok.NoArgsConstructor;
 @JsonRootName(value = "OwnAccountTransferRequest")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Schema(name = "Transfer Own Account", description = "Transfer Own Account Request")
 public class TransferRequest {
     @Valid
     @NotNull(message = "Invalid source account")

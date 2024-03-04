@@ -6,9 +6,9 @@ import lombok.Getter;
 @Builder
 @Getter
 public class MiddlewareConfig {
-    private String url_base;
+    private String urlBase;
 
-    private String token_path;
+    private String tokenPath;
 
-    private String client_transfer;
+    private String clientTransfer;
 }

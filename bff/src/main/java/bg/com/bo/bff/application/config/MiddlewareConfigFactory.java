@@ -18,8 +18,8 @@ public class MiddlewareConfigFactory {
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
-                .token_path(token_path)
-                .client_transfer(client_secret_transfer)
-                .url_base(url_base).build();
+                .tokenPath(token_path)
+                .clientTransfer(client_secret_transfer)
+                .urlBase(url_base).build();
     }
 }

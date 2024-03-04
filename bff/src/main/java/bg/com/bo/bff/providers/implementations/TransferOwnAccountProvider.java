@@ -52,7 +52,7 @@ public class TransferOwnAccountProvider implements ITransferOwnAccountProvider {
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String ganamovilChannel = "2";
-            String pathGetAccounts = middlewareConfig.getUrl_base() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/transfer/same-bank/to-own-account/" + personId;
+            String pathGetAccounts = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/transfer/same-bank/to-own-account/" + personId;
             HttpPost httpPost = new HttpPost(pathGetAccounts);
             httpPost.setHeader("Authorization", "Bearer " + clientToken.getAccessToken());
             httpPost.setHeader("topaz-channel", ganamovilChannel);

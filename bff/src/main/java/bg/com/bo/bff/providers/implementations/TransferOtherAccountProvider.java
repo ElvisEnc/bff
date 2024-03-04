@@ -52,7 +52,7 @@ public class TransferOtherAccountProvider implements ITransferOtherAccountProvid
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String ganamovilChannel = "2";
-            String pathGetAccounts = middlewareConfig.getUrl_base() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/transfer/same-bank/to-other-account/" + personId;
+            String pathGetAccounts = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/transfer/same-bank/to-other-account/" + personId;
             HttpPost httpPost = new HttpPost(pathGetAccounts);
             httpPost.setHeader("Authorization", "Bearer " + clientToken.getAccessToken());
             httpPost.setHeader("topaz-channel", ganamovilChannel);

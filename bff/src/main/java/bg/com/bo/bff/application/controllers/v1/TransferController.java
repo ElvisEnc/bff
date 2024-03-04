@@ -1,9 +1,12 @@
 package bg.com.bo.bff.application.controllers.v1;
 
+import bg.com.bo.bff.application.dtos.request.Pcc01Request;
 import bg.com.bo.bff.application.dtos.request.TransferRequest;
+import bg.com.bo.bff.application.dtos.response.Pcc01Response;
 import bg.com.bo.bff.application.dtos.response.TransferResponse;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.services.interfaces.IOtherAccountTransferService;
+import bg.com.bo.bff.services.interfaces.ITransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +39,10 @@ public class TransferController {
 
     @Autowired
     private IOtherAccountTransferService thirdTransferService;
+
+    @Autowired
+    private ITransferService pcc01Service;
+
 
     @Operation(summary = "Transfer Own Accounts Request", description = "Transferencias")
     @ApiResponses(value = {
@@ -70,5 +77,16 @@ public class TransferController {
 
     ) throws IOException {
         return ResponseEntity.ok(thirdTransferService.transfer(personId, body));
+    }
+
+    @Operation(summary = "Validación del lavado de dinero", description = "Se realiza el control del lavado de dinero.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Devuelve si requiere o no el control de lavado de dinero.", content = @Content(schema = @Schema(implementation = Pcc01Response.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Existe un error en los datos otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Ocurrio un error no controlado.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PostMapping("/validate-digital")
+    public ResponseEntity<Pcc01Response> control(@Valid @RequestBody Pcc01Request request) throws IOException {
+        return ResponseEntity.ok(pcc01Service.makeControl(request));
     }
 }

@@ -35,9 +35,9 @@ public class TokenMiddlewareProvider implements ITokenMiddlewareProvider {
         boolean propagateException = false;
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
-            String pathPostToken = middlewareConfig.getUrl_base() + project + middlewareConfig.getToken_path();
+            String pathPostToken = middlewareConfig.getUrlBase() + project + middlewareConfig.getTokenPath();
             HttpPost postGenerateAccessToken = new HttpPost(pathPostToken);
-            postGenerateAccessToken.setHeader("Authorization", middlewareConfig.getClient_transfer());
+            postGenerateAccessToken.setHeader("Authorization", middlewareConfig.getClientTransfer());
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(postGenerateAccessToken)) {
                 String responseToken = EntityUtils.toString(httpResponse.getEntity());
