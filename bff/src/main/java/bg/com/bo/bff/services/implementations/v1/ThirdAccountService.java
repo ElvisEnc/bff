@@ -14,9 +14,9 @@ public class ThirdAccountService implements IThirdAccountService {
     @Autowired
     private IThirdAccountProvider iThirdAccountMiddlewareService;
 
-    public ThirdAccountListResponse getListThridAccounts(String personId, String company) throws IOException {
+    public ThirdAccountListResponse getListThirdAccounts(String personId, String company) throws IOException {
         ClientToken clientToken = iThirdAccountMiddlewareService.generateAccessToken();
         String token = clientToken.getAccessToken();
-        return iThirdAccountMiddlewareService.getListThridAccounts(token, personId, company);
+        return iThirdAccountMiddlewareService.getListThirdAccounts(token, personId, company);
     }
 }

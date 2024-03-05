@@ -30,12 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class ThirdAccountMiddlewareProviderTests {
-
     @Autowired
     private ThirdAccountMiddlewareProvider thirdAccountMiddlewareService;
 
     @Test
-    void givenPersonIdCompaniWhenRequestGetThirdAccountsThenListThirdAccounts()throws IOException{
+    void givenPersonIdCompanyWhenRequestGetThirdAccountsThenListThirdAccounts()throws IOException{
         // Arrange
         String personId="123456";
         String company="123456";
@@ -47,7 +46,7 @@ public class ThirdAccountMiddlewareProviderTests {
         StatusLine statusLineMock = Mockito.mock(StatusLine.class);
 
         ThirdAccountListMWResponse accountListMWResponseMock=new ThirdAccountListMWResponse();
-        ThirdAccount account=new ThirdAccount();
+        ThirdAccount account= new ThirdAccount();
         List<ThirdAccount> list =new ArrayList<>();
         list.add(account);
         accountListMWResponseMock.setData(list);
@@ -63,7 +62,7 @@ public class ThirdAccountMiddlewareProviderTests {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
 
         // Act
-        ThirdAccountListResponse response = thirdAccountMiddlewareService.getListThridAccounts("", personId, company);
+        ThirdAccountListResponse response = thirdAccountMiddlewareService.getListThirdAccounts("", personId, company);
 
         // Assert
         Assertions.assertNotNull(response.getData());
@@ -80,7 +79,7 @@ public class ThirdAccountMiddlewareProviderTests {
         Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Test Catch General"));
 
         // Act
-        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThridAccounts("", personId, company));
+        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThirdAccounts("", personId, company));
     }
 
     @Test
@@ -96,7 +95,7 @@ public class ThirdAccountMiddlewareProviderTests {
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenThrow(new RequestException("Test RequestException"));
 
         // Act
-        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThridAccounts("", personId, company));
+        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThirdAccounts("", personId, company));
     }
 
     @Test
@@ -116,7 +115,7 @@ public class ThirdAccountMiddlewareProviderTests {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(401);
 
         // Act
-        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThridAccounts("", personId, company));
+        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThirdAccounts("", personId, company));
     }
 
     @Test
@@ -136,7 +135,7 @@ public class ThirdAccountMiddlewareProviderTests {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(404);
 
         // Act
-        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThridAccounts("", personId, company));
+        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThirdAccounts("", personId, company));
     }
 
     @Test
@@ -156,7 +155,7 @@ public class ThirdAccountMiddlewareProviderTests {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(406);
 
         // Act
-        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThridAccounts("", personId, company));
+        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThirdAccounts("", personId, company));
     }
 
     @Test
@@ -176,6 +175,6 @@ public class ThirdAccountMiddlewareProviderTests {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(500);
 
         // Act
-        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThridAccounts("", personId, company));
+        assertThrows(RuntimeException.class, () -> thirdAccountMiddlewareService.getListThirdAccounts("", personId, company));
     }
 }

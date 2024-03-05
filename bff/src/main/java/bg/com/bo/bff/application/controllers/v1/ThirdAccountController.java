@@ -39,6 +39,6 @@ public class ThirdAccountController {
     public ResponseEntity<ThirdAccountListResponse> getThirdAccounts(
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "1234567") String personId,
             @PathVariable("company") @NotBlank @Parameter(description = "Este es el companyId, para ganamovil llega a ser el mismo personId", example = "1234567") String company) throws IOException {
-        return ResponseEntity.ok(iThirdAccountService.getListThridAccounts(personId, company));
+        return ResponseEntity.ok(iThirdAccountService.getListThirdAccounts(personId, company));
     }
 }

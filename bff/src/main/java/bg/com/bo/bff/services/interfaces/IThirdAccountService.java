@@ -5,5 +5,5 @@ import bg.com.bo.bff.models.ThirdAccountListResponse;
 import java.io.IOException;
 
 public interface IThirdAccountService {
-    ThirdAccountListResponse getListThridAccounts( String personId, String compani) throws IOException;
+    ThirdAccountListResponse getListThirdAccounts( String personId, String compani) throws IOException;
 }

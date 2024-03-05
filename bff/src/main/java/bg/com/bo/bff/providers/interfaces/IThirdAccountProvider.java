@@ -7,5 +7,5 @@ import java.io.IOException;
 
 public interface IThirdAccountProvider {
     ClientToken generateAccessToken() throws IOException;
-    ThirdAccountListResponse getListThridAccounts(String token, String personId, String compani) throws IOException;
+    ThirdAccountListResponse getListThirdAccounts(String token, String personId, String compani) throws IOException;
 }

@@ -35,7 +35,7 @@ class ThirdAccountApiTest {
         List<ThirdAccount> list =new ArrayList<>();
         list.add(account);
         accountListResponse.setData(list);
-        Mockito.when(iThirdAccountService.getListThridAccounts(companies,personId)).thenReturn(accountListResponse);
+        Mockito.when(iThirdAccountService.getListThirdAccounts(companies,personId)).thenReturn(accountListResponse);
 
         // Act
         ResponseEntity<ThirdAccountListResponse> response=accountController.getThirdAccounts(companies,personId);

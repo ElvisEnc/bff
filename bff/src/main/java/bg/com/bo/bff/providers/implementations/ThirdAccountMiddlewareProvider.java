@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.implementations;
 
+import bg.com.bo.bff.commons.enums.ErrorExceptions;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.responses.ThirdAccountListMWResponse;
 import bg.com.bo.bff.models.ThirdAccountListResponse;
@@ -11,6 +12,7 @@ import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountListMapper;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -35,9 +37,12 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     @Value("${client.secret.third-accounts}")
     private String clientSecret;
 
-    private IHttpClientFactory httpClientFactory;
-    private ThirdAccountListMapper thirdAccountListMapper;
+    private final IHttpClientFactory httpClientFactory;
+    private final ThirdAccountListMapper thirdAccountListMapper;
     private static final Logger LOGGER = LogManager.getLogger(ThirdAccountMiddlewareProvider.class.getName());
+    private static final String AUTH = "Authorization";
+    private static final String MIDDLEWARE_CHANNEL = "middleware-channel";
+    private static final String APPLICATION_ID = "application-id";
 
     @Autowired
     public ThirdAccountMiddlewareProvider(IHttpClientFactory httpClientFactory, ThirdAccountListMapper thirdAccountListMapper) {
@@ -64,29 +69,28 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
             } catch (Exception e) {
                 propagateException = true;
                 LOGGER.error(e);
-                throw new RequestException("Hubo un error no controlado al realizar el requestToken");
+                throw new RequestException(ErrorExceptions.ERROR_REQUEST_TOKEN.getMessage());
             }
         } catch (Exception e) {
             if (propagateException) throw e;
             LOGGER.error(e);
-            throw new RuntimeException("Hubo un error no controlado al crear el clienteToken");
+            throw new RuntimeException(ErrorExceptions.ERROR_CLIENT_TOKEN.getMessage());
         }
     }
 
-    public ThirdAccountListResponse getListThridAccounts(String token, String personId, String company) throws IOException {
+    public ThirdAccountListResponse getListThirdAccounts(String token, String personId, String company) throws IOException {
         boolean propagateException = false;
         try (CloseableHttpClient httpClient = createHttpClient()) {
             String channel = "2";
-            String urlGetThirdAccounts = url + complementThirdAccounts + "/companies/" + company + "/persons/" + personId;
+            String urlGetThirdAccounts = url + complementThirdAccounts + "/persons/" + company + "/companies/" + personId;
             HttpGet getThirdAccounts = new HttpGet(urlGetThirdAccounts);
-            getThirdAccounts.setHeader("Authorization", "Bearer " + token);
-            getThirdAccounts.setHeader("middleware-channel", channel);
-            getThirdAccounts.setHeader("Accept", "application/json");
+            getThirdAccounts.setHeader(AUTH, "Bearer " + token);
+            getThirdAccounts.setHeader(MIDDLEWARE_CHANNEL, channel);
+            getThirdAccounts.setHeader(APPLICATION_ID, channel);
             ObjectMapper objectMapper = new ObjectMapper();
             try (CloseableHttpResponse httpResponse = httpClient.execute(getThirdAccounts)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-
+                if (statusCode == HttpStatus.SC_OK) {
                     String responseThirdAccounts = EntityUtils.toString(httpResponse.getEntity());
                     ThirdAccountListMWResponse responseMW = objectMapper.readValue(responseThirdAccounts, ThirdAccountListMWResponse.class);
                     ThirdAccountListResponse listResponse = thirdAccountListMapper.convert(responseMW);
@@ -111,12 +115,12 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
                 if (propagateException) throw e;
                 propagateException = true;
                 LOGGER.error(e);
-                throw new RequestException("Hubo un error no controlado al realizar el getListThridAccounts");
+                throw new RequestException(ErrorExceptions.ERROR_THIRD_ACCOUNT.getMessage());
             }
         } catch (Exception e) {
             if (propagateException) throw e;
             LOGGER.error(e);
-            throw new RuntimeException("Hubo un error no controlado al crear el clienteGetAccounts");
+            throw new RuntimeException(ErrorExceptions.ERROR_CLIENT.getMessage());
         }
     }
 }
