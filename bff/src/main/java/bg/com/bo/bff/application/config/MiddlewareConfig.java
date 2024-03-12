@@ -10,5 +10,7 @@ public class MiddlewareConfig {
 
     private String tokenPath;
 
+    private String clientLogin;
+
     private String clientTransfer;
 }

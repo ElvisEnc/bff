@@ -5,6 +5,7 @@ import bg.com.bo.bff.application.dtos.request.Pcc01Request;
 import bg.com.bo.bff.application.dtos.response.Pcc01Response;
 import bg.com.bo.bff.application.exceptions.NotAcceptableException;
 import bg.com.bo.bff.application.exceptions.RequestException;
+import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.HttpError;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.models.ClientToken;
@@ -46,10 +47,9 @@ public class TransferMiddlewareProvider implements ITransferProvider {
     }
 
     public Pcc01Response validateControl(Pcc01Request request) throws IOException {
-        ClientToken token = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName());
+        ClientToken token = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
 
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            String channel = "2";
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/money-laundering/validate-digital";
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonMapper = objectMapper.writeValueAsString(request);
@@ -57,7 +57,7 @@ public class TransferMiddlewareProvider implements ITransferProvider {
             HttpPost requestPost = new HttpPost(path);
             requestPost.setHeader("Content-Type", "application/json");
             requestPost.setHeader("Authorization", "Bearer " + token.getAccessToken());
-            requestPost.setHeader("topaz-channel", channel);
+            requestPost.setHeader("topaz-channel", CanalMW.GANAMOVIL.getCanal());
             requestPost.setHeader("Accept", "application/json");
             requestPost.setEntity(entity);
             try (CloseableHttpResponse httpResponse = httpClient.execute(requestPost)) {

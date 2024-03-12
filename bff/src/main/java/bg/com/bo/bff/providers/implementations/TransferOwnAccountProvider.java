@@ -1,5 +1,8 @@
 package bg.com.bo.bff.providers.implementations;
 
+import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.CanalMW;
+import bg.com.bo.bff.providers.dtos.responses.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -7,7 +10,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,9 +24,6 @@ import bg.com.bo.bff.application.dtos.response.TransferResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferOwnAccountProvider;
-import bg.com.bo.bff.providers.dtos.responses.ApiDataResponse;
-import bg.com.bo.bff.providers.dtos.responses.ApiErrorResponse;
-import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 
 @Service
 public class TransferOwnAccountProvider implements ITransferOwnAccountProvider {
@@ -47,15 +46,14 @@ public class TransferOwnAccountProvider implements ITransferOwnAccountProvider {
     @Override
     public TransferResponse transfer(String personId, TransferRequest request) throws IOException {
 
-        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName());
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
 
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
-            String ganamovilChannel = "2";
             String pathGetAccounts = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/transfer/same-bank/to-own-account/" + personId;
             HttpPost httpPost = new HttpPost(pathGetAccounts);
             httpPost.setHeader("Authorization", "Bearer " + clientToken.getAccessToken());
-            httpPost.setHeader("topaz-channel", ganamovilChannel);
+            httpPost.setHeader("topaz-channel", CanalMW.GANAMOVIL.getCanal());
             String jsonMapper = Util.objectToString(request);
             StringEntity entity = new StringEntity(jsonMapper);
             httpPost.setEntity(entity);
@@ -71,8 +69,8 @@ public class TransferOwnAccountProvider implements ITransferOwnAccountProvider {
                 TransferResponse transferResponse = Util.stringToObject(text, TransferResponse.class);
                 return transferResponse;
             } else {
-                ApiErrorResponse response = Util.stringToObject(responseAccounts, ApiErrorResponse.class);
-                throw new GenericException(response.getErrorDetail().toString(), HttpStatus.resolve(response.getCode()));
+                AppError error = Util.mapProviderError(responseAccounts);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }
         } catch (GenericException ex) {
             LOGGER.error(ex);

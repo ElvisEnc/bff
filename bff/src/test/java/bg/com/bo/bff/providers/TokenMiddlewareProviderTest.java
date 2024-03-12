@@ -82,7 +82,7 @@ class TokenMiddlewareProviderTest {
 
         Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
 
-        ClientToken result = provider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName());
+        ClientToken result = provider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
 
         assertNotNull(result);
 
@@ -97,13 +97,10 @@ class TokenMiddlewareProviderTest {
         Mockito.when(httpClientFactory.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenThrow(new RuntimeException("Test Catch General"));
 
-
-
-        RuntimeException result = assertThrows(RuntimeException.class, () -> provider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName()));
+        RuntimeException result = assertThrows(RuntimeException.class, () -> provider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey()));
 
         assertNotNull(result);
 
         assertEquals("Hubo un error no controlado al realizar el requestToken", result.getMessage());
-
     }
 }

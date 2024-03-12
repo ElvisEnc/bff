@@ -30,7 +30,7 @@ class LoginServicesTests {
     @BeforeAll
     public static void setup() {
         loginRequest = new LoginRequest();
-        loginRequest.setComplemento("a1");
+        loginRequest.setComplement("a1");
         loginRequest.setPassword("1q01a");
 
         loginMiddlewareService = Mockito.mock(LoginMiddlewareProvider.class);

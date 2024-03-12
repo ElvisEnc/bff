@@ -5,5 +5,5 @@ import java.io.IOException;
 import bg.com.bo.bff.models.ClientToken;
 
 public interface ITokenMiddlewareProvider {
-    ClientToken generateAccountAccessToken(String project) throws IOException;
+    ClientToken generateAccountAccessToken(String project, String clientSecret, String headerKeyToken) throws IOException;
 }

@@ -6,6 +6,7 @@ import bg.com.bo.bff.application.mappings.login.LoginMapper;
 import bg.com.bo.bff.models.dtos.login.*;
 import bg.com.bo.bff.application.exceptions.UnauthorizedException;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,12 +33,16 @@ class LoginApiTests {
     private final LoginMapper loginMapper = LoginMapper.INSTANCE;
 
     static LoginRequest loginRequest;
+    static String ip;
+    @Mock
+    static HttpServletRequest servletRequest;
 
     @BeforeAll
     public static void setup() {
         loginRequest = new LoginRequest();
-        loginRequest.setComplemento("a");
+        loginRequest.setComplement("a");
         loginRequest.setPassword("abc123");
+        ip = "123.123.123.123";
     }
 
     @BeforeEach
@@ -61,10 +66,11 @@ class LoginApiTests {
         loginResponse.setTokenData(tokenData);
         loginResponse.setStatusCode(LoginResult.StatusCode.SUCCESS);
 
-        Mockito.when(iLoginServices.login(loginRequest)).thenReturn(loginResponse);
+        Mockito.when(iLoginServices.login(loginRequest, ip)).thenReturn(loginResponse);
+        Mockito.when(servletRequest.getRemoteAddr()).thenReturn(ip);
 
         // Act
-        ResponseEntity<LoginResponse> response = loginController.login(loginRequest);
+        ResponseEntity<LoginResponse> response = loginController.login(loginRequest, servletRequest);
 
         // Assert
         assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
@@ -76,10 +82,11 @@ class LoginApiTests {
     @Test
     void givenUserLoginWhenCredentialsAreInvalidThenReturnUserUnauthorized() throws Exception {
         // Arrange
-        Mockito.when(iLoginServices.login(loginRequest)).thenThrow(new UnauthorizedException(HttpStatus.UNAUTHORIZED.name()));
+        Mockito.when(iLoginServices.login(loginRequest, ip)).thenThrow(new UnauthorizedException(HttpStatus.UNAUTHORIZED.name()));
+        Mockito.when(servletRequest.getRemoteAddr()).thenReturn(ip);
 
         // Act
-        UnauthorizedException exception = assertThrows(UnauthorizedException.class, () -> loginController.login(loginRequest));
+        UnauthorizedException exception = assertThrows(UnauthorizedException.class, () -> loginController.login(loginRequest, servletRequest));
 
         // Assert
         assertEquals(HttpStatus.UNAUTHORIZED.name(), exception.getMessage());
@@ -88,10 +95,11 @@ class LoginApiTests {
     @Test
     void givenExceptionWhenRequestLoginThenReturnsExceptionInternalServerError() throws Exception {
         // Arrange
-        Mockito.when(iLoginServices.login(loginRequest)).thenThrow(new RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR.name()));
+        Mockito.when(iLoginServices.login(loginRequest, ip)).thenThrow(new RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR.name()));
+        Mockito.when(servletRequest.getRemoteAddr()).thenReturn(ip);
 
         // Act
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> loginController.login(loginRequest));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> loginController.login(loginRequest, servletRequest));
 
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.name(), exception.getMessage());

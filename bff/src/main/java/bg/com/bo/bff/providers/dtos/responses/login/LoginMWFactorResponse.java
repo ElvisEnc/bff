@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 @lombok.Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginMWResponse {
-    private String statusCode;
-    private UserMWResponse data;
+public class LoginMWFactorResponse {
+    private LoginMWFactorDataResponse data;
 }

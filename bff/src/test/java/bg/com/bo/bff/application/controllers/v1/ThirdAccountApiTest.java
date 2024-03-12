@@ -26,22 +26,22 @@ class ThirdAccountApiTest {
     private IThirdAccountService iThirdAccountService;
 
     @Test
-    void givenPersonIdAndCompaniesWhenToGetThirdAccountsThenReturnListThirdAccounts()throws IOException {
+    void givenPersonIdAndCompaniesWhenToGetThirdAccountsThenReturnListThirdAccounts() throws IOException {
         // Arrange
         String personId = "123456";
         String companies = "123456";
-        ThirdAccountListResponse accountListResponse=new ThirdAccountListResponse();
-        ThirdAccount account=new ThirdAccount();
-        List<ThirdAccount> list =new ArrayList<>();
+        ThirdAccountListResponse accountListResponse = new ThirdAccountListResponse();
+        ThirdAccount account = new ThirdAccount();
+        List<ThirdAccount> list = new ArrayList<>();
         list.add(account);
         accountListResponse.setData(list);
         Mockito.when(iThirdAccountService.getListThirdAccounts(companies,personId)).thenReturn(accountListResponse);
 
         // Act
-        ResponseEntity<ThirdAccountListResponse> response=accountController.getThirdAccounts(companies,personId);
+        ResponseEntity<ThirdAccountListResponse> response = accountController.getThirdAccounts(companies, personId);
 
         // Assert
-        assert  response.getStatusCode().value()== HttpStatus.OK.value();
+        assert response.getStatusCode().value() == HttpStatus.OK.value();
         Assertions.assertNotNull(response.getBody());
     }
 }

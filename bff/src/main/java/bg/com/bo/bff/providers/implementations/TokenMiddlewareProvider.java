@@ -7,7 +7,9 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+
 import java.io.IOException;
+
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.application.exceptions.RequestException;
@@ -31,13 +33,13 @@ public class TokenMiddlewareProvider implements ITokenMiddlewareProvider {
 
 
     @Override
-    public ClientToken generateAccountAccessToken(String project) throws IOException {
+    public ClientToken generateAccountAccessToken(String project, String clientSecret, String headerKeyToken) throws IOException {
         boolean propagateException = false;
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String pathPostToken = middlewareConfig.getUrlBase() + project + middlewareConfig.getTokenPath();
             HttpPost postGenerateAccessToken = new HttpPost(pathPostToken);
-            postGenerateAccessToken.setHeader("Authorization", middlewareConfig.getClientTransfer());
+            postGenerateAccessToken.setHeader(headerKeyToken, clientSecret);
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(postGenerateAccessToken)) {
                 String responseToken = EntityUtils.toString(httpResponse.getEntity());

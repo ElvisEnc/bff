@@ -1,17 +1,26 @@
 package bg.com.bo.bff.providers.implementations;
 
-import bg.com.bo.bff.providers.mappings.login.LoginMWMapper;
+import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.CanalMW;
+import bg.com.bo.bff.commons.enums.ProjectNameMW;
+import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.models.ClientToken;
+import bg.com.bo.bff.providers.dtos.requests.login.LoginMWCredendialDeviceRequest;
+import bg.com.bo.bff.providers.dtos.requests.login.LoginMWCredentialRequest;
+import bg.com.bo.bff.providers.dtos.requests.login.LoginMWFactorDeviceRequest;
+import bg.com.bo.bff.providers.dtos.requests.login.LoginMWFactorRequest;
+import bg.com.bo.bff.providers.dtos.responses.login.LoginMWCredentialResponse;
+import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorDataResponse;
+import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
-import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
 import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
-import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
-import bg.com.bo.bff.application.exceptions.RequestException;
-import bg.com.bo.bff.application.exceptions.UnauthorizedException;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.requests.login.LoginMWRequest;
-import bg.com.bo.bff.providers.dtos.responses.login.LoginMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorResponse;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -19,73 +28,42 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 
 @Service
 public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
-    @Value("${middleware}")
-    private String url;
+    ITokenMiddlewareProvider tokenMiddlewareProvider;
 
-    @Value("${login.oauth.middleware}")
-    private String complementToken;
-
-    @Value("${login.url.complement}")
-    private String complementLogin;
-
-    @Value("${client.secret.login.api}")
-    private String clientSecret;
+    private final MiddlewareConfig middlewareConfig;
 
     private IHttpClientFactory httpClientFactory;
 
-    private LoginMWMapper loginMWMapper;
-
-    private static final String TOPAZ_CHANNEL = "1";
-    private static final String APPLICATION_ID = "1";
 
     private static final Logger logger = LogManager.getLogger(LoginMiddlewareProvider.class.getName());
 
-    @Autowired
-    public LoginMiddlewareProvider(IHttpClientFactory httpClientFactory, LoginMWMapper loginMWMapper) {
+    public LoginMiddlewareProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
+        this.tokenMiddlewareProvider = tokenMiddlewareProvider;
+        this.middlewareConfig = middlewareConfig;
         this.httpClientFactory = httpClientFactory;
-        this.loginMWMapper = loginMWMapper;
     }
+
 
     private CloseableHttpClient createHttpClient() {
         return httpClientFactory.create();
     }
 
-    public ClientMWToken generateAccessToken() {
-        try (CloseableHttpClient httpClient = createHttpClient()) {
-            String paramsGenerateClientSecret = "?grant_type=client_credentials";
-            String pathPostToken = url + complementToken + paramsGenerateClientSecret;
-            HttpPost postGenerateAccessToken = new HttpPost(pathPostToken);
-            postGenerateAccessToken.setHeader("Secret", clientSecret);
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            try (CloseableHttpResponse httpResponse = httpClient.execute(postGenerateAccessToken)) {
-                String responseToken = EntityUtils.toString(httpResponse.getEntity());
-                return objectMapper.readValue(responseToken, ClientMWToken.class);
-            } catch (Exception e) {
-                logger.error(e);
-                throw new RequestException("Hubo un error no controlado al realizar el requestToken");
-            }
-        } catch (RequestException e) {
-            throw e;
-        } catch (Exception e) {
-            logger.error(e);
-            throw new RequestException("Hubo un error no controlado al crear el clienteToken");
-        }
+    public ClientToken tokenLogin() throws IOException {
+        return tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.LOGIN_MANAGER.getName(), middlewareConfig.getClientLogin(), ProjectNameMW.LOGIN_MANAGER.getHeaderKey());
     }
 
-    public LoginValidationServiceResponse validateCredentials(String token, LoginRequest loginRequest) {
+    public LoginMWFactorResponse validateUser(LoginRequest loginRequest, String ip, String token) throws IOException {
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            LoginMWRequest loginMWRequest = loginMWMapper.convert(loginRequest);
+            LoginMWFactorDeviceRequest loginMWDeviceFactorRequest = LoginMWFactorDeviceRequest.builder().deviceIp(ip).uniqueId(loginRequest.getDeviceIdentification().getUniqueId()).build();
+            LoginMWFactorRequest loginMWRequest = LoginMWFactorRequest.builder().codeTypeAuthentication(loginRequest.getType()).factor(loginRequest.getUser()).geoReference(loginRequest.getGeoReference()).deviceIdentification(loginMWDeviceFactorRequest).build();
 
-            String path = url + complementLogin;
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.LOGIN_MANAGER.getName() + "/bs/v1/authentication/validate";
             HttpPost request = new HttpPost(path);
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonMapper = objectMapper.writeValueAsString(loginMWRequest);
@@ -93,40 +71,76 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             request.setEntity(entity);
             request.setHeader("Content-Type", "application/json");
             request.setHeader("Authorization", "Bearer " + token);
-            request.setHeader("topaz-channel", TOPAZ_CHANNEL);
-            request.setHeader("application-id", APPLICATION_ID);
+            request.setHeader("middleware-channel", CanalMW.GANAMOVIL.getCanal());
+            request.setHeader("application-id", CanalMW.GANAMOVIL.getCanal());
 
-            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                int statusCode = httpResponse.getStatusLine().getStatusCode();
-                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
-                switch (statusCode) {
-                    case 200: {
-                        LoginMWResponse loginMWResponse = objectMapper.readValue(jsonResponse, LoginMWResponse.class);
-
-                        LoginValidationServiceResponse loginResult = new LoginValidationServiceResponse();
-                        loginResult.setPersonId(loginMWResponse.getData().getPersonId());
-                        loginResult.setStatusCode("SUCCESS");
-
-                        return loginResult;
-                    }
-                    case 401:
-                        logger.error(jsonResponse);
-                        throw new UnauthorizedException(HttpStatus.UNAUTHORIZED.name());
-                    default:
-                        logger.error(jsonResponse);
-                        throw new NotHandledResponseException();
-                }
-            } catch (UnauthorizedException | NotHandledResponseException e) {
-                throw e;
-            } catch (Exception e) {
-                logger.error(e);
-                throw new RequestException("Hubo un error al realizar el validateCredentials.");
+            CloseableHttpResponse httpResponse = httpClient.execute(request);
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+            if (statusCode == HttpStatus.SC_OK) {
+                return objectMapper.readValue(jsonResponse, LoginMWFactorResponse.class);
+            } else {
+                logger.error(jsonResponse);
+                AppError error = Util.mapProviderError(jsonResponse);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }
-        } catch (NotHandledResponseException | UnauthorizedException e) {
-            throw e;
+        } catch (GenericException ex) {
+            logger.error(ex);
+            throw ex;
         } catch (Exception e) {
             logger.error(e);
-            throw new RequestException("Hubo un error no controlado al crear el clienteValidateCredentials");
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        }
+    }
+
+    public LoginValidationServiceResponse validateCredentials(LoginRequest loginRequest, String ip, String token, LoginMWFactorDataResponse data) throws IOException {
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            LoginMWCredendialDeviceRequest loginMWCredendialDeviceRequest = LoginMWCredendialDeviceRequest.builder().deviceIp(ip).boot(loginRequest.getDeviceIdentification().getBoot()).uniqueId(loginRequest.getDeviceIdentification().getUniqueId()).soCodeName(loginRequest.getDeviceIdentification().getSoCodeName()).systemName(loginRequest.getDeviceIdentification().getSystemName()).systemVersion(loginRequest.getDeviceIdentification().getSystemVersion()).systemBuildId(loginRequest.getDeviceIdentification().getSystemBuildId()).userAgent(loginRequest.getDeviceIdentification().getUserAgent()).firstInstallTime(loginRequest.getDeviceIdentification().getFirstInstallTime()).debug(loginRequest.getDeviceIdentification().getDebug()).emulator(loginRequest.getDeviceIdentification().getEmulator()).appVersion(loginRequest.getDeviceIdentification().getAppVersion()).build();
+
+            LoginMWCredentialRequest loginMWRequest = LoginMWCredentialRequest.builder().personId(data.getPersonId())
+                    .password(loginRequest.getPassword()).geoReference(loginRequest.getGeoReference()).deviceIdentification(loginMWCredendialDeviceRequest).idGeneratorUuid(data.getIdGeneratorUuid()) // Aqui igual de la respuesta
+                    .loginType(data.getSecondFactor()).tokenFinger(data.getSecondFactor()).build();
+
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.LOGIN_MANAGER.getName() + "/bs/v1/users/validate-credentials";
+            HttpPost request = new HttpPost(path);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonMapper = objectMapper.writeValueAsString(loginMWRequest);
+            StringEntity entity = new StringEntity(jsonMapper);
+            request.setEntity(entity);
+            request.setHeader("Content-Type", "application/json");
+            request.setHeader("Authorization", "Bearer " + token);
+            request.setHeader("middleware-channel", CanalMW.GANAMOVIL.getCanal());
+            request.setHeader("application-id", CanalMW.GANAMOVIL.getCanal());
+
+            CloseableHttpResponse httpResponse = httpClient.execute(request);
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+
+            if (statusCode == HttpStatus.SC_OK) {
+                LoginMWCredentialResponse loginMWCredentialResponse = objectMapper.readValue(jsonResponse, LoginMWCredentialResponse.class);
+                String codigoError = loginMWCredentialResponse.getData().getCodError();
+                switch (codigoError) {
+                    case "0000": {
+                        LoginValidationServiceResponse loginResult = new LoginValidationServiceResponse();
+                        loginResult.setPersonId(data.getPersonId());
+                        loginResult.setStatusCode("SUCCESS");
+                        return loginResult;
+                    }
+                    default:
+                        logger.error(jsonResponse);
+                        throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+                }
+            } else {
+                logger.error(jsonResponse);
+                AppError error = Util.mapProviderError(jsonResponse);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            }
+        } catch (GenericException ex) {
+            logger.error(ex);
+            throw ex;
+        } catch (Exception e) {
+            logger.error(e);
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
         }
     }
 }

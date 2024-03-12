@@ -65,6 +65,10 @@ class Pcc01MiddlewareProviderTest {
 
     private static ClientToken clientToken;
 
+    static String project;
+    static String clientSecret;
+    static String headerKeyToke;
+
     @BeforeEach
     void setup() {
         pcc01MiddlewareProvider = new TransferMiddlewareProvider(tokenMiddlewareProviderMock, httpClientFactoryMock, Pcc01Mapper.INSTANCE, middlewareConfigMock);
@@ -74,6 +78,9 @@ class Pcc01MiddlewareProviderTest {
         clientToken = new ClientToken();
         clientToken.setAccessToken("fglkjhdfg9d87fgd98f09gd");
         clientToken.setExpiresIn(1234);
+        project = "/manager";
+        clientSecret = "2s4f2s4d3f4sd";
+        headerKeyToke = "secret";
     }
 
 
@@ -87,7 +94,7 @@ class Pcc01MiddlewareProviderTest {
         String jsonAccountsResponseMock = objectMapperMWResponse.writeValueAsString(pcc01Response);
         InputStream accountsResponseMock = new ByteArrayInputStream(jsonAccountsResponseMock.getBytes());
 
-        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any())).thenReturn(clientToken);
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(),any(),any())).thenReturn(clientToken);
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
         Mockito.when(closeableHttpResponseMock.getEntity()).thenReturn(httpEntityMock);
@@ -106,7 +113,7 @@ class Pcc01MiddlewareProviderTest {
     @Test
     void givenStatusLineIs406WhenClientRequestRespondThenRuntimeException() throws IOException {
         // Arrange
-        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any())).thenReturn(clientToken);
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(),any(),any())).thenReturn(clientToken);
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
         Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
@@ -119,7 +126,7 @@ class Pcc01MiddlewareProviderTest {
     @Test
     void givenStatusLineIs500WhenClientRequestRespondThenRuntimeException() throws IOException {
         // Arrange
-        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any())).thenReturn(clientToken);
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(),any(),any())).thenReturn(clientToken);
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
         Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);

@@ -2,33 +2,28 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
 import bg.com.bo.bff.application.dtos.request.RefreshSessionRequest;
+import bg.com.bo.bff.commons.enums.LoginSchemaName;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.services.LoginServiceMapper;
-import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
+import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
 import bg.com.bo.bff.models.dtos.login.*;
 import bg.com.bo.bff.commons.enums.UserRole;
 import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
 import bg.com.bo.bff.application.exceptions.NotValidStateException;
+import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorDataResponse;
+import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorResponse;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.Objects;
 
 @Service
 public class LoginService implements ILoginServices {
-    @Value("${middleware}")
-    private String baseUrl;
-
-    @Value("${login.oauth.middleware}")
-    private String complementToken;
-
-    @Value("${client.secret.login.api}")
-    private String clientSecret;
-
-    @Value("${login.url.complement}")
-    private String urlComplement;
 
     private ILoginMiddlewareProvider loginMiddlewareService;
     private IJwtProvider jwtService;
@@ -42,10 +37,23 @@ public class LoginService implements ILoginServices {
     }
 
     @Override
-    public LoginResult login(LoginRequest loginRequest) {
-        ClientMWToken clientToken = loginMiddlewareService.generateAccessToken();
+    public LoginResult login(LoginRequest loginRequest, String ip) throws IOException {
+        String encrypted = Util.encodeSha512(loginRequest.getPassword());
+        loginRequest.setPassword(encrypted);
+        ClientToken clientToken = loginMiddlewareService.tokenLogin();
         String token = clientToken.getAccessToken();
-        LoginValidationServiceResponse loginValidation = loginMiddlewareService.validateCredentials(token, loginRequest);
+        String factorId = loginRequest.getType();
+        LoginValidationServiceResponse loginValidation;
+        if (Objects.equals(factorId, LoginSchemaName.PERSONIDLOGIN.getCode())) {
+            LoginMWFactorDataResponse loginMWFactorDataResponse = new LoginMWFactorDataResponse();
+            loginMWFactorDataResponse.setPersonId(loginRequest.getUser());
+            loginMWFactorDataResponse.setSecondFactor("1");
+            loginValidation = loginMiddlewareService.validateCredentials(loginRequest, ip, token, loginMWFactorDataResponse);
+        }
+        else {
+            LoginMWFactorResponse loginMWFactorResponse = loginMiddlewareService.validateUser(loginRequest, ip, token);
+            loginValidation = loginMiddlewareService.validateCredentials(loginRequest, ip, token, loginMWFactorResponse.getData());
+        }
 
         CreateTokenServiceResponse createToken = jwtService.generateToken(loginValidation.getPersonId(), UserRole.LOGGED_USER);
 

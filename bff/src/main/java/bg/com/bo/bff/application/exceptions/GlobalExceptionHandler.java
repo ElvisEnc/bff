@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(GenericException.class)
     public ResponseEntity<ErrorResponse> genericException(GenericException exception) {
-        ErrorResponse errorResponse = new ErrorResponse(String.valueOf(exception.getStatus().value()), exception.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(String.valueOf(exception.getCode()), exception.getMessage());
         logger.error(exception);
         return ResponseEntity.status(exception.getStatus()).body(errorResponse);
     }

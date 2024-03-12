@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.implementations;
 
+import bg.com.bo.bff.commons.enums.CanalMW;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -47,15 +48,14 @@ public class TransferOtherAccountProvider implements ITransferOtherAccountProvid
     @Override
     public TransferResponse transfer(String personId, TransferRequest request) throws IOException {
 
-        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName());
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
 
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
-            String ganamovilChannel = "2";
             String pathGetAccounts = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/transfer/same-bank/to-other-account/" + personId;
             HttpPost httpPost = new HttpPost(pathGetAccounts);
             httpPost.setHeader("Authorization", "Bearer " + clientToken.getAccessToken());
-            httpPost.setHeader("topaz-channel", ganamovilChannel);
+            httpPost.setHeader("topaz-channel", CanalMW.GANAMOVIL.getCanal());
             String jsonMapper = Util.objectToString(request);
             StringEntity entity = new StringEntity(jsonMapper);
             httpPost.setEntity(entity);
@@ -72,7 +72,7 @@ public class TransferOtherAccountProvider implements ITransferOtherAccountProvid
                 return transferResponse;
             } else {
                 ApiErrorResponse response = Util.stringToObject(responseAccounts, ApiErrorResponse.class);
-                throw new GenericException(response.getErrorDetail().toString(), HttpStatus.resolve(response.getCode()));
+                throw new GenericException(response.getErrorDetailResponse().toString(), HttpStatus.resolve(response.getCode()));
             }
         } catch (GenericException ex) {
             LOGGER.error(ex);

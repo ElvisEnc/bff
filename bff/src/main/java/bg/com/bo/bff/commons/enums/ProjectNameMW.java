@@ -6,9 +6,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ProjectNameMW {
-
-    TRANSFER_MANAGER("/transaction-manager", "TRANSACTION MANAGER");
+    LOGIN_MANAGER("/login-manager", "LOGIN MANAGER", "secret"),
+    TRANSFER_MANAGER("/transaction-manager", "TRANSACTION MANAGER", "Authorization");
 
     private final String name;
     private final String description;
+    private final String headerKey;
 }

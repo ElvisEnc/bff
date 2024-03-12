@@ -1,5 +1,8 @@
 package bg.com.bo.bff.commons.utils;
 
+import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.providers.dtos.responses.ApiErrorResponse;
+import bg.com.bo.bff.providers.dtos.responses.ErrorDetailResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -9,6 +12,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -21,14 +26,12 @@ public class Util {
     }
 
 
-
-
     public static boolean validateUserAgents(List<String> userAgentsList, String userAgent) {
         boolean match = false;
         Iterator var3 = userAgentsList.iterator();
 
-        while(var3.hasNext()) {
-            String agent = (String)var3.next();
+        while (var3.hasNext()) {
+            String agent = (String) var3.next();
             if (agent.equals("*") || Pattern.matches(".*" + agent + ".*", userAgent)) {
                 match = true;
                 break;
@@ -53,6 +56,7 @@ public class Util {
     public static String getExceptionMsg(Exception ex) {
         return ex.getCause() == null ? ex.getMessage() : ex.getCause().getMessage();
     }
+
     public static <T> T stringToObject(String json, Class<T> clazz) throws IOException {
         try {
             return objectMapper.readValue(json, clazz);
@@ -64,6 +68,7 @@ public class Util {
     public static String objectToString(Object data) throws IOException {
         return objectToString(data, false);
     }
+
     public static String objectToString(Object data, boolean pretty) throws IOException {
         try {
             ObjectWriter ow = objectMapper.writer();
@@ -84,5 +89,48 @@ public class Util {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return mapper;
+    }
+
+    public static String encodeSha512(String text) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-512");
+            byte[] bytes = text.getBytes();
+            byte[] hashBytes = digest.digest(bytes);
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                hexString.append(hex);
+            }
+            return hexString.toString().toUpperCase();
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException("Error obtaining hash algorithm");
+        }
+    }
+
+    public static AppError mapProviderError(String jsonResponse) throws IOException {
+        ApiErrorResponse response = Util.stringToObject(jsonResponse, ApiErrorResponse.class);
+        List<ErrorDetailResponse> listError = response.getErrorDetailResponse();
+        ErrorDetailResponse errorDetail = listError.get(0);
+        String providerErrorCode = errorDetail.getCode();
+        switch (providerErrorCode) {
+            case "MDWLM-009":
+                return AppError.MDWLM_009;
+            case "MDWLM-010":
+                return AppError.MDWLM_010;
+            case "MDWLM-011":
+                return AppError.MDWLM_011;
+            case "MDWLM-012":
+                return AppError.MDWLM_012;
+            case "MDWLM-018":
+                return AppError.MDWLM_018;
+            case "MDWLM-019":
+                return AppError.MDWLM_019;
+            case "MDWLM-020":
+                return AppError.MDWLM_020;
+            case "MDWLM-22":
+                return AppError.MDWLM_22;
+            default:
+                return AppError.DEFAULT;
+        }
     }
 }

@@ -17,11 +17,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("api/v1/login")
@@ -40,11 +43,15 @@ public class LoginController {
     @Operation(summary = "Login Request", description = "Este es el Endpoint donde el usuario ganamovil hará su petición login y se le devolverá si fue exitoso o fallido")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login Success, devuelve LoginResponse", content = @Content(schema = @Schema(implementation = LoginResult.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "401", description = "Login Failed, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "401", description = "Login Failed, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "406", description = "Los parámetros proporcionados no son válidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+
     })
     @PostMapping
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-        LoginResult loginResult = iLoginServices.login(loginRequest);
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest servletRequest) throws IOException {
+        String ip = servletRequest.getRemoteAddr();
+        LoginResult loginResult = iLoginServices.login(loginRequest, ip);
 
         switch (loginResult.getStatusCode()) {
             case SUCCESS:
@@ -63,7 +70,7 @@ public class LoginController {
     @PostMapping("/{personId}/refresh")
     public ResponseEntity<TokenDataResponse> refresh(
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @Valid @RequestBody RefreshSessionRequest refreshSessionRequest) {;
+            @Valid @RequestBody RefreshSessionRequest refreshSessionRequest) {
         RefreshSessionResult refreshSessionResult = iLoginServices.refreshSession(personId, refreshSessionRequest);
         switch (refreshSessionResult.getStatusCode()) {
             case SUCCESS:
