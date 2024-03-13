@@ -18,5 +18,6 @@ public interface LoginMapper {
 
     @Mapping(source = "tokenData.refreshToken", target = "refreshToken")
     @Mapping(source = "tokenData.accessToken", target = "accessToken")
+    @Mapping(source = "personId", target = "userData.personId")
     LoginResponse convert(LoginResult loginRequest);
 }

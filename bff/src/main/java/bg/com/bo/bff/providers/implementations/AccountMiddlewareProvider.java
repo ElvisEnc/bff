@@ -42,6 +42,9 @@ public class AccountMiddlewareProvider implements IAccountProvider {
     private IHttpClientFactory httpClientFactory;
 
     private AccountListMapper accountListMapper;
+    private static final String AUTH = "Authorization";
+    private static final String MIDDLEWARE_CHANNEL = "middleware-channel";
+    private static final String APPLICATION_ID = "application-id";
 
     private static final Logger logger = LogManager.getLogger(AccountMiddlewareProvider.class.getName());
 
@@ -62,7 +65,7 @@ public class AccountMiddlewareProvider implements IAccountProvider {
             String paramsGenerarClientSecret = "?grant_type=client_credentials";
             String pathPostToken = url + complementToken + paramsGenerarClientSecret;
             HttpPost postGenerateAccessToken = new HttpPost(pathPostToken);
-            postGenerateAccessToken.setHeader("Authorization", clientSecret);
+            postGenerateAccessToken.setHeader("Secret", clientSecret);
             ObjectMapper objectMapper = new ObjectMapper();
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(postGenerateAccessToken)) {

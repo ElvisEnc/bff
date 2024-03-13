@@ -37,15 +37,8 @@ public class AccountController {
     @GetMapping("/persons/{personId}/document-number/{document}")
     public ResponseEntity<AccountListResponse> accounts(
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("document") @NotBlank @Parameter(description = "Este es el número de documento de identidad", example = "1234567") String document) throws IOException {
-
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
-//            UserData userData = (UserData) authentication.getPrincipal();
-//            if (!Objects.equals(userData.getPersonId(), personId))
-//                throw new BadCredentialsException("Las credenciales no corresponden con el persona id enviado.");
+            @PathVariable("document") @NotBlank @Parameter(description = "Este es el número de documento de identidad", example = "1234567") String document
+    ) throws IOException {
             return ResponseEntity.ok(iAccountService.getAccounts(personId, document));
-//        }
-//        throw new UnauthorizedException("Not valid authorization data.");
     }
 }

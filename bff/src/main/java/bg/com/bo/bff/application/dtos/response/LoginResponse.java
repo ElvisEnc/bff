@@ -12,8 +12,7 @@ public class LoginResponse {
     private String accessToken;
     @Schema(description = "Refresh Token generado.")
     private String refreshToken;
-    @Schema(example = "1", description = "Access Token generado.")
-    private String personId;
+    private UserDataResponse userData;
 
     public enum StatusCode {
         SUCCESS,

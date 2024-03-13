@@ -76,7 +76,7 @@ class LoginApiTests {
         assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertEquals(accessToken, response.getBody().getAccessToken());
         assertEquals(refreshToken, response.getBody().getRefreshToken());
-        assertEquals(personId, response.getBody().getPersonId());
+        assertEquals(personId, response.getBody().getUserData().getPersonId());
     }
 
     @Test
