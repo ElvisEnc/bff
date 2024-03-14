@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.dtos.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
 @lombok.Data
 public class Device {
@@ -8,6 +9,7 @@ public class Device {
     @Schema(example = "mw8998-002.0069.00", description = "Número de version del bootloader del sistema del dispotivo.")
     private String boot;
 
+    @NotBlank
     @Schema(example = "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9", description = "ID unico del dispositivo.")
     private String uniqueId;
 

@@ -16,6 +16,8 @@ public enum AppError {
     MDWLM_019(HttpStatus.UNAUTHORIZED,"EXPIRED_PASSWORD_DAYS_LM","MDWLM-019","The password will expire in X days"),
     MDWLM_020(HttpStatus.UNAUTHORIZED,"PASSWORD_CHANGE_LM","MDWLM-020","You must change the password"),
     MDWLM_22(HttpStatus.NOT_ACCEPTABLE,"ERROR_PROCEDURE","MDWLM-22","You have exceeded the maximum attempts, we need your identity validation"),
+
+    MDWRLIB_0003(HttpStatus.NOT_ACCEPTABLE,"NOT_ENROLLED","MDWRLIB-0003","Dispositivo no enrolado"),
     DEFAULT(HttpStatus.INTERNAL_SERVER_ERROR,"ERROR","DEFAULT","This is a default error in the BFF");
 
     private final HttpStatus httpCode;

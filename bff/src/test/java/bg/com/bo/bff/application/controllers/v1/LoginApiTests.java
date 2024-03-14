@@ -1,12 +1,16 @@
 package bg.com.bo.bff.application.controllers.v1;
 
+import bg.com.bo.bff.application.dtos.request.Device;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
+import bg.com.bo.bff.application.dtos.response.DeviceEnrollmentResponse;
 import bg.com.bo.bff.application.dtos.response.LoginResponse;
 import bg.com.bo.bff.application.mappings.login.LoginMapper;
 import bg.com.bo.bff.models.dtos.login.*;
 import bg.com.bo.bff.application.exceptions.UnauthorizedException;
+import bg.com.bo.bff.services.interfaces.IDeviceEnrollmentService;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,9 +35,16 @@ class LoginApiTests {
     @Mock
     private ILoginServices iLoginServices;
 
+    @Mock
+    private IDeviceEnrollmentService iDeviceEnrollmentService;
+
     private final LoginMapper loginMapper = LoginMapper.INSTANCE;
 
     static LoginRequest loginRequest;
+    static Device device;
+
+    @Mock
+    DeviceEnrollmentResponse deviceEnrollmentResponse;
     static String ip;
     @Mock
     static HttpServletRequest servletRequest;
@@ -43,11 +55,13 @@ class LoginApiTests {
         loginRequest.setComplement("a");
         loginRequest.setPassword("abc123");
         ip = "123.123.123.123";
+        device = new Device();
+
     }
 
     @BeforeEach
     public void init() {
-        loginController = new LoginController(this.iLoginServices, this.loginMapper);
+        loginController = new LoginController(this.iLoginServices, this.iDeviceEnrollmentService, this.loginMapper);
     }
 
     @Test
@@ -103,5 +117,19 @@ class LoginApiTests {
 
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.name(), exception.getMessage());
+    }
+
+    @Test
+    void fivenDeviceWhenRequestValidateEnrolledThenSuccessfully() throws IOException {
+        // Arrange
+        deviceEnrollmentResponse = new DeviceEnrollmentResponse();
+        Mockito.when(iDeviceEnrollmentService.validation(device)).thenReturn(deviceEnrollmentResponse);
+
+        // Act
+        ResponseEntity<DeviceEnrollmentResponse> response = loginController.validateEnrollment(device);
+
+        // Assert
+        assert response.getStatusCode().value() == HttpStatus.OK.value();
+        Assertions.assertNotNull(response.getBody());
     }
 }
