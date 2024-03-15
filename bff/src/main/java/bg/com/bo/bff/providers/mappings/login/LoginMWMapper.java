@@ -12,5 +12,6 @@ public interface LoginMWMapper {
 
     @Mapping(source = "type", target = "codeTypeAuthentication")
     @Mapping(source = "user", target = "factor")
+    @Mapping(target = "deviceIdentification.deviceIp", ignore = true)
     LoginMWFactorRequest convert(LoginRequest loginRequest);
 }

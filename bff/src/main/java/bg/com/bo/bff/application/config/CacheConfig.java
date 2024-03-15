@@ -26,12 +26,21 @@ public class CacheConfig {
     @Value("${cache.certs.ttl}")
     private Integer cacheCertsTtl;
 
+    @Value("${cache.encryption.keys.ttl}")
+    private Integer encryptionKeysTtl;
+
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return builder -> builder
                 .withCacheConfiguration(Constants.CERTS_CACHE_NAME,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(cacheCertsTtl))
+                                .disableCachingNullValues()
+                                .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                                .prefixCacheNameWith(cachePrefix))
+                .withCacheConfiguration(Constants.ENCRYPTION_KEYS_CACHE_NAME,
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofMinutes(encryptionKeysTtl))
                                 .disableCachingNullValues()
                                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                                 .prefixCacheNameWith(cachePrefix));
