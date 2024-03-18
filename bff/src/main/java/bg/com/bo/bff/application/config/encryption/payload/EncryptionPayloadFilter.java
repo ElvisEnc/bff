@@ -2,7 +2,6 @@ package bg.com.bo.bff.application.config.encryption.payload;
 
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
-import bg.com.bo.bff.application.exceptions.GlobalExceptionHandler;
 import bg.com.bo.bff.application.exceptions.NotEncodedInfoException;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;

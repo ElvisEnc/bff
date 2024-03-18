@@ -1,31 +1,100 @@
 package bg.com.bo.bff.providers.implementations;
 
+import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.application.exceptions.HandledException;
+import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
 import bg.com.bo.bff.commons.constants.Constants;
+import bg.com.bo.bff.commons.enums.ProjectNameMW;
+import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
+import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.EncodeInfo;
 import bg.com.bo.bff.models.UserEncryptionKeys;
+import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.requests.login.LoginMWFactorDeviceRequest;
+import bg.com.bo.bff.providers.dtos.requests.login.LoginMWFactorRequest;
+import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorResponse;
 import bg.com.bo.bff.providers.interfaces.IEncryptionProvider;
+import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URI;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 
 @Service
 public class EncryptionProvider implements IEncryptionProvider {
-    private String appPublicKey = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAmKXW8tSw8hbqyFWsPuRd6X1IXA+GRMNWCZD/23S9eiaa2wbUwCvsdaQmx6H+haaqsW1Bs90RgRE3Wg7m7TnVyL4+epC42oNWZleGlVtILeQkQU087z1/d2dusuMV8L7Rb3wSFHomto1JiVW+lBpGsGn9rqGSLPR3o+W0PY58/wlcWzGTbp3jxl6YHHJmM4cbQ87SYSd0x9tNlvWs2c5T9psS8wADz9q/daYUYi6oIvCAR8LoClRKIiPjnJFh2/WSLY/1ReAhMgoq4w7lRa93L3kxE5S+8HW2ehgI8MH+rGG9wA0aOzx/4cWtMwQfbxP/BbpyYc2y7fQ7UgzhIBcMuJi1Dbot1LTdxWY47LoufINVB/vZutEpdPLec/N4Yurk7uL6MBz5UjnzRiZZLyyQmh+Hj59ApQFplwIEc0/M07SUju6BioEcHFAeAF/Oxni2mwARlBy6v1uI5iq2SNpwAnduHdPYQBnBht6OFgRfwvK46i9R/+YJDkfSLHY9jwrpmX6jOCDo50SWVWbNZbgvUXxEBcjIVdQukcm642Cx2Kbi72YroPqWGThBvLoe6cXHEMlc7oDDAMPXMS5H2CP3eiBIJkYqDdjZ6aWZ8NiXEmVGEoRRJtW0ak06cdo7W3r6VRhd7i/tb0FhGXbjVHHCBFJgYdaNHnavoKSMesbo6wcCAwEAAQ==";
-    private String appPrivateKey = "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";
-    private String userPublicKey = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAtPSPbYxKEsVQ8vyJ+OaR3WvDtdkDQYSOgJUrR5v7O1bIRDhpOrix0ERcgKh2IA0Ue946ZQF/PnbdmQBFW9pEqzNO4mlo715DQTB7qWkzOskdgtlStw0B623mw4jDgexuHAp5Ga9iL7bjhE4RDWZDZ/lVZSaX9NzguFZEvdttNvxZqIY6ypE3KosvbviF+upA2AnThRUlaP6H+XV7OIRjATMT6H/OirpUS4uo9ioUzV5bBSaWQZpRtly//gU0Jc3yWUKYjnIGREbNypQhmiYFe7L3Xfyd85uG8d4wdoDoKMcOvGng4kUB/LSlZKYNVPMuOFSc83XIlys8rntkLXG/4MAaEXkkrsOenle0OIqhYv3o9W1nnbw/J80A3NyMBAkdXPn+DyEBMsvDTT2gDVYpq7AiEXU73P/46SmFcHAJ3aeYUcxjEH+y/FJ9CWWQjLKQhayAvWRH15i6A0gz1QK1aaUv6Qz9QE4njaSxUoq7fZyTiCEi6Spwt738wKZZsZmzNTBcGquW/fgJn6lQLd1RfyNOQfLyU3QzJkszYOQAgS3t9LUk8M58kvTh0kJkAt2AFzfGT0J6fa2n7B0Kou4Z7S2RjLc+ODyXup4kfon6VmXM66YM9BX8M3qu/CTZhTEFzt2p8UeX/TzzjqfER8n5OscB7h/z6nh0Yhp/7QY7NHUCAwEAAQ==";
-    private String userPrivateKey = "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";
+
+    ITokenMiddlewareProvider tokenMiddlewareProvider;
+    private final MiddlewareConfig middlewareConfig;
+    private IHttpClientFactory httpClientFactory;
+
+    private static final Logger logger = LogManager.getLogger(LoginMiddlewareProvider.class.getName());
+
+    public EncryptionProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
+        this.tokenMiddlewareProvider = tokenMiddlewareProvider;
+        this.middlewareConfig = middlewareConfig;
+        this.httpClientFactory = httpClientFactory;
+    }
 
     @Cacheable(value = Constants.ENCRYPTION_KEYS_CACHE_NAME)
-    public UserEncryptionKeys getEncryptionKeys(EncodeInfo encodeInfo) {
-        return UserEncryptionKeys.builder()
-                .appPublicKey(appPublicKey)
-                .appPrivateKey(appPrivateKey)
-                .userPublicKey(userPublicKey)
-                .build();
+    public UserEncryptionKeys getEncryptionKeys(EncodeInfo encodeInfo) throws IOException {
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.LOGIN_MANAGER.getName(), middlewareConfig.getClientLogin(), ProjectNameMW.LOGIN_MANAGER.getHeaderKey());
+
+        try (CloseableHttpClient httpClient = httpClientFactory.create()) {
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.LOGIN_MANAGER.getName() + "/bs/v1/device/get-keys";
+
+            HttpGet request = new HttpGet(path);
+
+            URI uri = new URIBuilder(request.getURI())
+                    .addParameter("personId", encodeInfo.getPersonId().toString())
+                    .build();
+            request.setURI(uri);
+
+            request.setHeader("Content-Type", "application/json");
+            request.setHeader("Authorization", "Bearer " + clientToken.getAccessToken());
+            request.setHeader("middleware-channel", CanalMW.GANAMOVIL.getCanal());
+            request.setHeader("application-id", CanalMW.GANAMOVIL.getCanal());
+            request.setHeader("deviceId", encodeInfo.getUniqueId());
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+
+                if (statusCode == HttpStatus.SC_OK) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    JsonNode jsonNode = objectMapper.readTree(jsonResponse);
+                    String filteredJson = jsonNode.get("data").toString();
+
+                    return Util.stringToObject(filteredJson, UserEncryptionKeys.class);
+                } else {
+                    logger.error(jsonResponse);
+                    throw new HandledException(GenericControllerErrorResponse.NOT_HANDLED_RESPONSE);
+                }
+            }
+        } catch (HandledException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new HandledException(GenericControllerErrorResponse.INTERNAL_SERVER_ERROR, e);
+        }
     }
 
     public KeyPair createKeys() throws NoSuchAlgorithmException {
