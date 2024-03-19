@@ -1,5 +1,9 @@
 package bg.com.bo.bff.providers.implementations;
 
+import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.commons.enums.CanalMW;
+import bg.com.bo.bff.commons.enums.Headers;
+import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AccountListMWResponse;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
@@ -39,6 +43,7 @@ public class AccountMiddlewareProvider implements IAccountProvider {
     @Value("${client.secret.accounts}")
     private String clientSecret;
 
+    private final MiddlewareConfig middlewareConfig;
     private IHttpClientFactory httpClientFactory;
 
     private AccountListMapper accountListMapper;
@@ -49,7 +54,8 @@ public class AccountMiddlewareProvider implements IAccountProvider {
     private static final Logger logger = LogManager.getLogger(AccountMiddlewareProvider.class.getName());
 
     @Autowired
-    public AccountMiddlewareProvider(IHttpClientFactory httpClientFactory, AccountListMapper accountListMapper) {
+    public AccountMiddlewareProvider(MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory, AccountListMapper accountListMapper) {
+        this.middlewareConfig = middlewareConfig;
         this.httpClientFactory = httpClientFactory;
         this.accountListMapper = accountListMapper;
     }
@@ -88,13 +94,13 @@ public class AccountMiddlewareProvider implements IAccountProvider {
         boolean propagateException = false;
 
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            String ganamovilChannel = "2";
-            String pathGetAccounts = url + complementAccounts + "/persons/" + personId + "/document-number/" + documentNumber;
-            HttpGet getAccountsMW = new HttpGet(pathGetAccounts);
-            getAccountsMW.setHeader("Authorization", "Bearer " + token);
-            getAccountsMW.setHeader("topaz-channel", ganamovilChannel);
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/persons/" + personId + "/companies/" + personId + "/devices/0/roles/0";
+            HttpGet get = new HttpGet(path);
+            get.setHeader(Headers.AUT.getName(), "Bearer " + token);
+            get.setHeader(Headers.CHA_MW.getName(), CanalMW.GANAMOVIL.getCanal());
+            get.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
             ObjectMapper objectMapper = new ObjectMapper();
-            try (CloseableHttpResponse httpResponse = httpClient.execute(getAccountsMW)) {
+            try (CloseableHttpResponse httpResponse = httpClient.execute(get)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String response = EntityUtils.toString(httpResponse.getEntity());
 

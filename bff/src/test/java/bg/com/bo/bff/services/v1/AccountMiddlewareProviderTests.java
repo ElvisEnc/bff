@@ -1,5 +1,6 @@
 package bg.com.bo.bff.services.v1;
 
+import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.models.*;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
@@ -17,6 +18,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class AccountMiddlewareProviderTests {
     @Autowired
     private AccountMiddlewareProvider accountMiddlewareService;
+    @Mock
+    private MiddlewareConfig middlewareConfig;
 
     @Test
     void givenPersonIdWhenRequestGetAccountsThenListOwnAccounts() throws IOException {
@@ -40,7 +44,7 @@ class AccountMiddlewareProviderTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountMiddlewareService = new AccountMiddlewareProvider(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareProvider(middlewareConfig, httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
         CloseableHttpResponse closeableHttpPostResponseMock = Mockito.mock(CloseableHttpResponse.class);
         CloseableHttpResponse closeableHttpGetResponseMock = Mockito.mock(CloseableHttpResponse.class);
@@ -84,7 +88,7 @@ class AccountMiddlewareProviderTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountMiddlewareService = new AccountMiddlewareProvider(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareProvider(middlewareConfig, httpClientFactoryMock, AccountListMapper.INSTANCE);
 
         Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Test Catch General"));
 
@@ -98,7 +102,7 @@ class AccountMiddlewareProviderTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountMiddlewareService = new AccountMiddlewareProvider(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareProvider(middlewareConfig, httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
@@ -114,7 +118,7 @@ class AccountMiddlewareProviderTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountMiddlewareService = new AccountMiddlewareProvider(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareProvider(middlewareConfig, httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
         CloseableHttpResponse closeableHttpGetResponseMock = Mockito.mock(CloseableHttpResponse.class);
         StatusLine statusLineMock = Mockito.mock(StatusLine.class);
@@ -134,7 +138,7 @@ class AccountMiddlewareProviderTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountMiddlewareService = new AccountMiddlewareProvider(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareProvider(middlewareConfig, httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
         CloseableHttpResponse closeableHttpGetResponseMock = Mockito.mock(CloseableHttpResponse.class);
         StatusLine statusLineMock = Mockito.mock(StatusLine.class);
@@ -154,7 +158,7 @@ class AccountMiddlewareProviderTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountMiddlewareService = new AccountMiddlewareProvider(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareProvider(middlewareConfig, httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
         CloseableHttpResponse closeableHttpGetResponseMock = Mockito.mock(CloseableHttpResponse.class);
         StatusLine statusLineMock = Mockito.mock(StatusLine.class);
@@ -174,7 +178,7 @@ class AccountMiddlewareProviderTests {
         String personId = "123456789";
         String documenNumber = "1234";
         IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
-        accountMiddlewareService = new AccountMiddlewareProvider(httpClientFactoryMock, AccountListMapper.INSTANCE);
+        accountMiddlewareService = new AccountMiddlewareProvider(middlewareConfig, httpClientFactoryMock, AccountListMapper.INSTANCE);
         CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
         CloseableHttpResponse closeableHttpGetResponseMock = Mockito.mock(CloseableHttpResponse.class);
         StatusLine statusLineMock = Mockito.mock(StatusLine.class);
