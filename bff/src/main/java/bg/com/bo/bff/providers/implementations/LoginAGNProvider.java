@@ -4,9 +4,11 @@ import bg.com.bo.bff.application.dtos.request.registry.RegistryCredentialsReques
 import bg.com.bo.bff.application.dtos.request.registry.RegistryDeviceIdentificatorRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryOldDeviceIdentificatorRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
+import bg.com.bo.bff.application.exceptions.GlobalExceptionHandler;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.enums.CredentialsType;
 import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.UserEncryptionKeys;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.loginagn.*;
@@ -32,7 +34,12 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Objects;
 
 @Service
@@ -46,6 +53,8 @@ public class LoginAGNProvider implements ILoginAGNProvider {
 
     @Value("${agm.login.server.url}")
     private String agnLoginUrlServer;
+
+    private static final Logger logger = LogManager.getLogger(LoginAGNProvider.class.getName());
 
     @Autowired
     public LoginAGNProvider(IHttpClientFactory httpClientFactory) {
@@ -96,8 +105,11 @@ public class LoginAGNProvider implements ILoginAGNProvider {
                     String status = result.getElementsByTagName(SERVER_STATUS_KEY).item(0).getTextContent();
 
                     return codError.equals(SERVER_COD_ERROR_SUCCESSFUL) && status.equals(SERVER_STATUS_SUCCESSFUL);
-                } else
+                } else {
+                    String response = EntityUtils.toString(httpResponse.getEntity());
+                    logger.error(response);
                     throw new HandledException(GenericControllerErrorResponse.NOT_HANDLED_RESPONSE);
+                }
             } catch (HandledException e) {
                 throw e;
             } catch (Exception e) {

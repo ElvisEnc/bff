@@ -3,6 +3,9 @@ package bg.com.bo.bff.application.dtos.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @lombok.Data
+@lombok.Builder
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
 public class RegistryResponse {
     @Schema(example = "1234", description = "Person ID del usuario.")
     private Long personId;

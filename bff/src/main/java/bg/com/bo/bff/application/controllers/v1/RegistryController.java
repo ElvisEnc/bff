@@ -3,6 +3,9 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.RegistryResponse;
+import bg.com.bo.bff.application.mappings.login.LoginMapper;
+import bg.com.bo.bff.services.interfaces.IDeviceEnrollmentService;
+import bg.com.bo.bff.services.interfaces.ILoginServices;
 import bg.com.bo.bff.services.interfaces.IRegistryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,8 +30,12 @@ import java.security.NoSuchAlgorithmException;
 @Tag(name = "Registry Controller", description = "Controlador de registro de dispositivos.")
 public class RegistryController {
 
-    @Autowired
     private IRegistryService registryService;
+
+    @Autowired
+    public RegistryController(IRegistryService registryService) {
+        this.registryService = registryService;
+    }
 
     @Operation(summary = "Registro de dispositivo para migración.", description = "Este endpoint registra los datos de un dispositivo que realizo la migración del AGN al NGM.")
     @ApiResponses(value = {

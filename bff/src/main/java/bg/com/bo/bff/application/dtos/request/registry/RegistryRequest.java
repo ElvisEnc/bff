@@ -6,18 +6,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @lombok.Data
+@lombok.Builder
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RegistryRequest {
     @Valid
+    @NotNull(message = "Invalid credentials.")
     private RegistryCredentialsRequest credentials;
 
     @Valid
+    @NotNull(message = "Invalid device identificator.")
     private RegistryDeviceIdentificatorRequest deviceIdentificator;
 
     @Valid
+    @NotNull(message = "Invalid old device identificator.")
     private RegistryOldDeviceIdentificatorRequest oldDeviceIdentificator;
 
     @Valid
