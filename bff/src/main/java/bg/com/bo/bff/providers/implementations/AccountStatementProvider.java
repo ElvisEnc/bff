@@ -1,6 +1,8 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.dtos.request.ExtractRequest;
+import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.Headers;
@@ -13,6 +15,7 @@ import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.dtos.responses.ApiErrorResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
+import bg.com.bo.bff.services.implementations.v1.AccountStatementService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -22,12 +25,18 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class AccountStatementProvider implements IAccountStatementProvider {
+    @Value("${account.statement.init}")
+    private String init;
+    @Value("${account.statement.total}")
+    private String total;
     private final MiddlewareConfig middlewareConfig;
 
     ITokenMiddlewareProvider tokenMiddlewareProvider;
@@ -47,12 +56,28 @@ public class AccountStatementProvider implements IAccountStatementProvider {
     }
 
     @Override
-    public AccountReportBasicResponse getAccountStatement(AccountReportBasicRequest request, String token) {
+    public ExtractDataResponse getAccountStatement(ExtractRequest request, String token, String accountId) {
+
+        ExtractRequest.Pagination pagination = request.getFilters().getPagination();
+        AccountReportBasicRequest reportBasicRequest = AccountReportBasicRequest.builder()
+                .accountId(accountId)
+                .startDate(pagination.getStartDate())
+                .endDate(pagination.getEndDate())
+                .initCount(init)
+                .totalCount(total)
+                .build();
+
+        Integer page = pagination.getPage();
+        Integer pageSize = pagination.getPageSize();
+        int start = (page - 1) * pageSize;
+        int end = start + pageSize - 1;
+
+
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/reports/generate-basic";
             HttpPost httpRequest = new HttpPost(path);
-            String jsonMapper = Util.objectToString(request);
+            String jsonMapper = Util.objectToString(reportBasicRequest);
 
             StringEntity entity = new StringEntity(jsonMapper);
             httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + token);
@@ -67,7 +92,16 @@ public class AccountStatementProvider implements IAccountStatementProvider {
             ObjectMapper objectMapper = new ObjectMapper();
             if (statusCode == HttpStatus.SC_OK) {
                 AccountReportBasicResponse basicResponse = objectMapper.readValue(responseMW, AccountReportBasicResponse.class);
-                return basicResponse;
+
+                List<AccountReportBasicResponse.AccountReportData> accountReportData = basicResponse.getData();
+
+                List<AccountReportBasicResponse.AccountReportData> accountReportDataPagination = accountReportData.subList(start, end + 1);
+
+                List<ExtractDataResponse.ExtractResponse> extractResponseList = accountReportDataPagination.stream().map(AccountStatementService::toProviderResponse).toList();
+
+                ExtractDataResponse extractDataResponse = new ExtractDataResponse();
+                extractDataResponse.setData(extractResponseList);
+                return extractDataResponse;
             } else {
                 ApiErrorResponse response = Util.stringToObject(responseMW, ApiErrorResponse.class);
                 throw new GenericException(response.getErrorDetailResponse().toString(), org.springframework.http.HttpStatus.resolve(response.getCode()));

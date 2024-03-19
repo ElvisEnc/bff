@@ -3,7 +3,6 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.ExtractRequest;
 import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.providers.dtos.requests.AccountReportBasicRequest;
 import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.services.interfaces.IAccountStatementService;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -24,23 +22,9 @@ public class AccountStatementService implements IAccountStatementService {
 
     @Override
     public ExtractDataResponse getAccountStatement(ExtractRequest request, String accountId) throws IOException {
-        ExtractRequest.Pagination pagination = request.getFilters().getPagination();
-        AccountReportBasicRequest reportBasicRequest = AccountReportBasicRequest.builder()
-                .accountId(accountId)
-                .startDate(pagination.getStartDate())
-                .endDate(pagination.getEndDate())
-                .initCount(String.valueOf(pagination.getPage()))
-                .totalCount(String.valueOf(pagination.getPageSize()))
-                .build();
-
         ClientToken clientToken = iAccountStatementProvider.generateToken();
-
-        ExtractDataResponse response = new ExtractDataResponse();
-        AccountReportBasicResponse basicResponse = iAccountStatementProvider.getAccountStatement(reportBasicRequest, clientToken.getAccessToken());
-        List<AccountReportBasicResponse.AccountReportData> accountReportData = basicResponse.getData();
-        List<ExtractDataResponse.ExtractResponse> extractResponseList = accountReportData.stream().map(AccountStatementService::toProviderResponse).toList();
-        response.setData(extractResponseList);
-        return response;
+        ExtractDataResponse basicResponse = iAccountStatementProvider.getAccountStatement(request, clientToken.getAccessToken(), accountId);
+        return basicResponse;
     }
 
     public static ExtractDataResponse.ExtractResponse toProviderResponse(AccountReportBasicResponse.AccountReportData accountReportData) {
