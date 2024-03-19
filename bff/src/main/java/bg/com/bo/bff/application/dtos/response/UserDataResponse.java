@@ -12,4 +12,8 @@ public class UserDataResponse {
     private String personId;
     @Schema(example = "1")
     private String documentNumber;
+    @Schema(example = "1", description = "User Device Id")
+    private String userDeviceId;
+    @Schema(example = "1", description = "Role Person Id")
+    private String rolePersonId;
 }

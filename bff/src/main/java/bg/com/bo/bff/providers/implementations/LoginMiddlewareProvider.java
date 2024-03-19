@@ -58,10 +58,18 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
         return tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.LOGIN_MANAGER.getName(), middlewareConfig.getClientLogin(), ProjectNameMW.LOGIN_MANAGER.getHeaderKey());
     }
 
-    public LoginMWFactorResponse validateUser(LoginRequest loginRequest, String ip, String token) throws IOException {
+    public LoginMWFactorResponse validateFactorUser(LoginRequest loginRequest, String ip, String token) throws IOException {
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            LoginMWFactorDeviceRequest loginMWDeviceFactorRequest = LoginMWFactorDeviceRequest.builder().deviceIp(ip).uniqueId(loginRequest.getDeviceIdentification().getUniqueId()).build();
-            LoginMWFactorRequest loginMWRequest = LoginMWFactorRequest.builder().codeTypeAuthentication(loginRequest.getType()).factor(loginRequest.getUser()).geoReference(loginRequest.getGeoReference()).deviceIdentification(loginMWDeviceFactorRequest).build();
+            LoginMWFactorDeviceRequest loginMWDeviceFactorRequest = LoginMWFactorDeviceRequest.builder()
+                    .deviceIp(ip)
+                    .uniqueId(loginRequest.getDeviceIdentification().getUniqueId())
+                    .build();
+            LoginMWFactorRequest loginMWRequest = LoginMWFactorRequest.builder()
+                    .codeTypeAuthentication(loginRequest.getType())
+                    .factor(loginRequest.getUser())
+                    .geoReference(loginRequest.getDeviceIdentification().getGeoPositionX()+","+loginRequest.getDeviceIdentification().getGeoPositionY())
+                    .deviceIdentification(loginMWDeviceFactorRequest)
+                    .build();
 
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.LOGIN_MANAGER.getName() + "/bs/v1/authentication/validate";
             HttpPost request = new HttpPost(path);
@@ -95,11 +103,22 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
 
     public LoginValidationServiceResponse validateCredentials(LoginRequest loginRequest, String ip, String token, LoginMWFactorDataResponse data) throws IOException {
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            LoginMWCredendialDeviceRequest loginMWCredendialDeviceRequest = LoginMWCredendialDeviceRequest.builder().deviceIp(ip).boot(loginRequest.getDeviceIdentification().getBoot()).uniqueId(loginRequest.getDeviceIdentification().getUniqueId()).soCodeName(loginRequest.getDeviceIdentification().getSoCodeName()).systemName(loginRequest.getDeviceIdentification().getSystemName()).systemVersion(loginRequest.getDeviceIdentification().getSystemVersion()).systemBuildId(loginRequest.getDeviceIdentification().getSystemBuildId()).userAgent(loginRequest.getDeviceIdentification().getUserAgent()).firstInstallTime(loginRequest.getDeviceIdentification().getFirstInstallTime()).debug(loginRequest.getDeviceIdentification().getDebug()).emulator(loginRequest.getDeviceIdentification().getEmulator()).appVersion(loginRequest.getDeviceIdentification().getAppVersion()).build();
+            LoginMWCredendialDeviceRequest loginMWCredendialDeviceRequest = LoginMWCredendialDeviceRequest.builder()
+                    .deviceIp(ip)
+                    .deviceId(loginRequest.getDeviceIdentification().getUniqueId())
+                    .deviceName(loginRequest.getDeviceIdentification().getSystemName())
+                    .geoPositionX(loginRequest.getDeviceIdentification().getGeoPositionX())
+                    .geoPositionY(loginRequest.getDeviceIdentification().getGeoPositionY())
+                    .build();
 
             LoginMWCredentialRequest loginMWRequest = LoginMWCredentialRequest.builder().personId(data.getPersonId())
-                    .password(loginRequest.getPassword()).geoReference(loginRequest.getGeoReference()).deviceIdentification(loginMWCredendialDeviceRequest).idGeneratorUuid(data.getIdGeneratorUuid()) // Aqui igual de la respuesta
-                    .loginType(data.getSecondFactor()).tokenFinger(data.getSecondFactor()).build();
+                    .password(loginRequest.getPassword())
+                    .deviceData(loginMWCredendialDeviceRequest)
+                    .idGeneratorUuid(data.getIdGeneratorUuid())
+                    .loginType(data.getSecondFactor())
+                    .tokenFinger(data.getSecondFactor())
+                    .appVersion(loginRequest.getAppVersion())
+                    .build();
 
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.LOGIN_MANAGER.getName() + "/bs/v1/users/validate-credentials";
             HttpPost request = new HttpPost(path);
@@ -123,6 +142,8 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
                     case "0000": {
                         LoginValidationServiceResponse loginResult = new LoginValidationServiceResponse();
                         loginResult.setPersonId(data.getPersonId());
+                        loginResult.setUserDeviceId(String.valueOf(loginMWCredentialResponse.getData().getUserDeviceId()));
+                        loginResult.setRolePersonId(String.valueOf(loginMWCredentialResponse.getData().getRoleList().get(0).getRolePersonId()));
                         loginResult.setStatusCode("SUCCESS");
                         return loginResult;
                     }

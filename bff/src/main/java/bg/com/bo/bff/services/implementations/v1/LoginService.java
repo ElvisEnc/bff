@@ -40,6 +40,7 @@ public class LoginService implements ILoginServices {
     public LoginResult login(LoginRequest loginRequest, String ip) throws IOException {
         String encrypted = Util.encodeSha512(loginRequest.getPassword());
         loginRequest.setPassword(encrypted);
+
         ClientToken clientToken = loginMiddlewareService.tokenLogin();
         String token = clientToken.getAccessToken();
         String factorId = loginRequest.getType();
@@ -51,7 +52,7 @@ public class LoginService implements ILoginServices {
             loginValidation = loginMiddlewareService.validateCredentials(loginRequest, ip, token, loginMWFactorDataResponse);
         }
         else {
-            LoginMWFactorResponse loginMWFactorResponse = loginMiddlewareService.validateUser(loginRequest, ip, token);
+            LoginMWFactorResponse loginMWFactorResponse = loginMiddlewareService.validateFactorUser(loginRequest, ip, token);
             loginValidation = loginMiddlewareService.validateCredentials(loginRequest, ip, token, loginMWFactorResponse.getData());
         }
 

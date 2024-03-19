@@ -6,4 +6,6 @@ package bg.com.bo.bff.models.dtos.login;
 public class LoginValidationServiceResponse {
     private String statusCode;
     private String personId;
+    private String userDeviceId;
+    private String rolePersonId;
 }

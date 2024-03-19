@@ -18,8 +18,8 @@ public class LoginRequest {
     @Schema(example = "1234", description = "Contraseña")
     private @NotBlank String password;
 
-    @Schema(example = "-17.7803675,-63.1733187", description = "Datos de geolocalización.")
-    private String geoReference;
+    @Schema(example = "3.2.0", description = "Especifica la versión de la app.")
+    private String appVersion;
 
     private Device deviceIdentification;
 }

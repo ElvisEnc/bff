@@ -77,7 +77,6 @@ class LoginMiddlewareProviderTests {
         loginRequest.setUser("dfsdf");
         loginRequest.setComplement("a1");
         loginRequest.setPassword("1q01a");
-        loginRequest.setGeoReference("sdfdf");
         loginRequest.setDeviceIdentification(device);
         ip = "132.435.463.54";
         accessTokenMW = UUID.randomUUID().toString();
@@ -98,7 +97,7 @@ class LoginMiddlewareProviderTests {
         Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
 
         // Act
-        LoginMWFactorResponse response = loginMiddlewareProvider.validateUser(loginRequest, ip, accessTokenMW);
+        LoginMWFactorResponse response = loginMiddlewareProvider.validateFactorUser(loginRequest, ip, accessTokenMW);
 
         // Assert
         assertNotNull(response);

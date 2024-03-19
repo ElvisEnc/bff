@@ -7,9 +7,9 @@ import lombok.Builder;
 public class LoginMWCredentialRequest {
     private String personId;
     private String password;
-    private String geoReference;
-    private LoginMWCredendialDeviceRequest deviceIdentification;
+    private LoginMWCredendialDeviceRequest deviceData;
     private String idGeneratorUuid;
     private String loginType;
     private String tokenFinger;
+    private String appVersion;
 }

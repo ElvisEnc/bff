@@ -10,6 +10,6 @@ import java.io.IOException;
 
 public interface ILoginMiddlewareProvider {
     ClientToken tokenLogin()throws IOException;
-    LoginMWFactorResponse validateUser(LoginRequest loginRequest, String ip, String token) throws IOException;
+    LoginMWFactorResponse validateFactorUser(LoginRequest loginRequest, String ip, String token) throws IOException;
     LoginValidationServiceResponse validateCredentials(LoginRequest loginRequest, String ip,String token,  LoginMWFactorDataResponse data) throws IOException;
 }

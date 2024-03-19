@@ -37,6 +37,9 @@ public class Device {
     @Schema(example = "123324566", description = "Especifica si la aplicacion se esta ejecutando en un emulador.")
     private String emulator;
 
-    @Schema(example = "3.2.0", description = "Especifica la versión de la app.")
-    private String appVersion;
+    @Schema(example = "12.324566", description = "Coordenada X")
+    private String geoPositionX;
+
+    @Schema(example = "12.24566", description = "Coordenada Y")
+    private String geoPositionY;
 }
