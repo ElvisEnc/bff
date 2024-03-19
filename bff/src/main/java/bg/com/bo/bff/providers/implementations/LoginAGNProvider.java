@@ -189,7 +189,7 @@ public class LoginAGNProvider implements ILoginAGNProvider {
                                         .biometricStatus(credentials.getType() == CredentialsType.BIOMETRIC.getValue() ? "A" : "B")
                                         .build())
                                 .userKeys(UserKeysRequest.builder()
-                                        .appPrivateKey(userEncryptionKeys.getAppPrivateKey())
+                                        .appPublicKey(userEncryptionKeys.getAppPublicKey())
                                         .appPrivateKey(userEncryptionKeys.getAppPrivateKey())
                                         .userPublicKey(userEncryptionKeys.getUserPublicKey())
                                         .build())
