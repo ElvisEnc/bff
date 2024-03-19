@@ -18,12 +18,17 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.login}")
     private String client_secret_login;
 
+    @Value("${client.secret.accounts}")
+    private String client_secret_own;
+
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
+                .urlBase(url_base)
                 .tokenPath(token_path)
-                .clientTransfer(client_secret_transfer)
                 .clientLogin(client_secret_login)
-                .urlBase(url_base).build();
+                .clientOwnManager(client_secret_own)
+                .clientTransfer(client_secret_transfer)
+                .build();
     }
 }

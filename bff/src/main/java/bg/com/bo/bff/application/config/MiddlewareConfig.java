@@ -12,5 +12,7 @@ public class MiddlewareConfig {
 
     private String clientLogin;
 
+    private String clientOwnManager;
+
     private String clientTransfer;
 }
