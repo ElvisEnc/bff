@@ -41,6 +41,7 @@ public class AccountStatementService implements IAccountStatementService {
                 .dateMov(accountReportData.getProcessDate())
                 .timeMov(accountReportData.getAccountingTime())
                 .movBalance(accountReportData.getCurrentBalance())
+                .seatNumber(String.valueOf(accountReportData.getSeatNumber()))
                 .build();
     }
 }

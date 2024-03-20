@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.ExtractRequest;
 import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.Headers;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
@@ -29,7 +30,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AccountStatementProvider implements IAccountStatementProvider {
@@ -73,7 +77,6 @@ public class AccountStatementProvider implements IAccountStatementProvider {
         int end = start + pageSize - 1;
 
 
-
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/reports/generate-basic";
             HttpPost httpRequest = new HttpPost(path);
@@ -94,6 +97,7 @@ public class AccountStatementProvider implements IAccountStatementProvider {
                 AccountReportBasicResponse basicResponse = objectMapper.readValue(responseMW, AccountReportBasicResponse.class);
 
                 List<AccountReportBasicResponse.AccountReportData> accountReportData = basicResponse.getData();
+                Collections.reverse(accountReportData);
 
                 List<AccountReportBasicResponse.AccountReportData> accountReportDataPagination = accountReportData.subList(start, end + 1);
 
@@ -103,10 +107,17 @@ public class AccountStatementProvider implements IAccountStatementProvider {
                 extractDataResponse.setData(extractResponseList);
                 return extractDataResponse;
             } else {
-                ApiErrorResponse response = Util.stringToObject(responseMW, ApiErrorResponse.class);
-                throw new GenericException(response.getErrorDetailResponse().toString(), org.springframework.http.HttpStatus.resolve(response.getCode()));
+                AppError error = Util.mapProviderError(responseMW);
+                String noRecords = error.getDescription();
+                if (Objects.equals(AppError.MDWACM_008.getDescription(), noRecords)) {
+                    ExtractDataResponse response = new ExtractDataResponse();
+                    List<ExtractDataResponse.ExtractResponse> extractResponse = new ArrayList<>();
+                    response.setData(extractResponse);
+                    return response;
+                }
+                LOGGER.error(responseMW);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }
-
         } catch (GenericException ex) {
             LOGGER.error(ex);
             throw ex;

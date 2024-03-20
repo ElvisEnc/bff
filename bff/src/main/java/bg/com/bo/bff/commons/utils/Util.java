@@ -155,6 +155,12 @@ public class Util {
                 return AppError.MDWLM_25;
             case "MDWRLIB-0003":
                 return AppError.MDWRLIB_0003;
+            case "MDWPGL-500", "MDWRLIB-0001", "MDWRLIB-0011", "MDWRLIB-0012", "MDWPGL-404", "MDWRLIB-0009", "MDWPGL-405":
+                return AppError.DEFAULT;
+            case "MDWPGL-400":
+                return AppError.MDWPGL_400;
+            case "MDWACM-008":
+                return AppError.MDWACM_008;
             default:
                 return AppError.DEFAULT;
         }
