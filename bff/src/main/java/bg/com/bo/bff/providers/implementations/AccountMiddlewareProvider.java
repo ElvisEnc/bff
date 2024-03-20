@@ -97,7 +97,7 @@ public class AccountMiddlewareProvider implements IAccountProvider {
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/persons/" + personId + "/companies/" + personId + "/devices/0/roles/0";
             HttpGet get = new HttpGet(path);
             get.setHeader(Headers.AUT.getName(), "Bearer " + token);
-            get.setHeader(Headers.CHA_MW.getName(), CanalMW.GANAMOVIL.getCanal());
+            get.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
             get.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
             ObjectMapper objectMapper = new ObjectMapper();
             try (CloseableHttpResponse httpResponse = httpClient.execute(get)) {

@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.CanalMW;
+import bg.com.bo.bff.commons.enums.Headers;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
@@ -67,7 +68,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             LoginMWFactorRequest loginMWRequest = LoginMWFactorRequest.builder()
                     .codeTypeAuthentication(loginRequest.getType())
                     .factor(loginRequest.getUser())
-                    .geoReference(loginRequest.getDeviceIdentification().getGeoPositionX()+","+loginRequest.getDeviceIdentification().getGeoPositionY())
+                    .geoReference(loginRequest.getDeviceIdentification().getGeoPositionX() + "," + loginRequest.getDeviceIdentification().getGeoPositionY())
                     .deviceIdentification(loginMWDeviceFactorRequest)
                     .build();
 
@@ -77,10 +78,10 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             String jsonMapper = objectMapper.writeValueAsString(loginMWRequest);
             StringEntity entity = new StringEntity(jsonMapper);
             request.setEntity(entity);
-            request.setHeader("Content-Type", "application/json");
-            request.setHeader("Authorization", "Bearer " + token);
-            request.setHeader("middleware-channel", CanalMW.GANAMOVIL.getCanal());
-            request.setHeader("application-id", CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            request.setHeader(Headers.AUT.getName(), "Bearer " + token);
+            request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
 
             CloseableHttpResponse httpResponse = httpClient.execute(request);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -126,10 +127,10 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             String jsonMapper = objectMapper.writeValueAsString(loginMWRequest);
             StringEntity entity = new StringEntity(jsonMapper);
             request.setEntity(entity);
-            request.setHeader("Content-Type", "application/json");
-            request.setHeader("Authorization", "Bearer " + token);
-            request.setHeader("middleware-channel", CanalMW.GANAMOVIL.getCanal());
-            request.setHeader("application-id", CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            request.setHeader(Headers.AUT.getName(), "Bearer " + token);
+            request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
 
             CloseableHttpResponse httpResponse = httpClient.execute(request);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -137,8 +138,8 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
 
             if (statusCode == HttpStatus.SC_OK) {
                 LoginMWCredentialResponse loginMWCredentialResponse = objectMapper.readValue(jsonResponse, LoginMWCredentialResponse.class);
-                String codigoError = loginMWCredentialResponse.getData().getCodError();
-                switch (codigoError) {
+                String codError = loginMWCredentialResponse.getData().getCodError();
+                switch (codError) {
                     case "0000": {
                         LoginValidationServiceResponse loginResult = new LoginValidationServiceResponse();
                         loginResult.setPersonId(data.getPersonId());

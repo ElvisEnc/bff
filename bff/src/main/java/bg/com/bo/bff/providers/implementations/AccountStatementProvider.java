@@ -81,7 +81,7 @@ public class AccountStatementProvider implements IAccountStatementProvider {
 
             StringEntity entity = new StringEntity(jsonMapper);
             httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + token);
-            httpRequest.setHeader(Headers.CHA_MW.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
             httpRequest.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
             httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
             httpRequest.setEntity(entity);

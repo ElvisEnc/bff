@@ -147,6 +147,12 @@ public class Util {
                 return AppError.MDWLM_020;
             case "MDWLM-22":
                 return AppError.MDWLM_22;
+            case "MDWLM-23":
+                return AppError.MDWLM_23;
+            case "MDWLM-24":
+                return AppError.MDWLM_24;
+            case "MDWLM-25":
+                return AppError.MDWLM_25;
             case "MDWRLIB-0003":
                 return AppError.MDWRLIB_0003;
             default:

@@ -8,8 +8,8 @@ import lombok.Getter;
 public enum Headers {
     SEC("Secret"),
     AUT("Authorization"),
-    CHA_MW("middleware-channel"),
-    CHA_TOP("topaz-channel"),
+    MW_CHA("middleware-channel"),
+    TOP_CHA("topaz-channel"),
     APP_ID("application-id"),
     CONTENT_TYPE("Content-Type"),
     APP_JSON("application/json");
