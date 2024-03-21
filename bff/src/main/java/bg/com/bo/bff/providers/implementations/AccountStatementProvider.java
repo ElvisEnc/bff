@@ -97,8 +97,19 @@ public class AccountStatementProvider implements IAccountStatementProvider {
 
                 List<AccountReportBasicResponse.AccountReportData> accountReportData = basicResponse.getData();
                 Collections.reverse(accountReportData);
-                if (end >= accountReportData.size()) {
-                    end = accountReportData.size() - 1;
+
+                int totalRecords = accountReportData.size();
+                int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+
+                if (page > totalPages) {
+                    ExtractDataResponse response = new ExtractDataResponse();
+                    List<ExtractDataResponse.ExtractResponse> extractResponse = new ArrayList<>();
+                    response.setData(extractResponse);
+                    return response;
+                }
+
+                if (end >= totalRecords) {
+                    end = totalRecords - 1;
                 }
                 List<AccountReportBasicResponse.AccountReportData> accountReportDataPagination = accountReportData.subList(start, end + 1);
 
