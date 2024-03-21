@@ -112,11 +112,12 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
                     .geoPositionY(loginRequest.getDeviceIdentification().getGeoPositionY())
                     .build();
 
-            LoginMWCredentialRequest loginMWRequest = LoginMWCredentialRequest.builder().personId(data.getPersonId())
+            LoginMWCredentialRequest loginMWRequest = LoginMWCredentialRequest.builder()
+                    .personId(data.getPersonId())
                     .password(loginRequest.getPassword())
                     .deviceData(loginMWCredendialDeviceRequest)
                     .idGeneratorUuid(data.getIdGeneratorUuid())
-                    .loginType(data.getSecondFactor())
+                    .loginType(loginRequest.getType())
                     .tokenFinger(data.getSecondFactor())
                     .appVersion(loginRequest.getAppVersion())
                     .build();
