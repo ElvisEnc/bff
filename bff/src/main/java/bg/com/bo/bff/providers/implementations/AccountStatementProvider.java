@@ -13,7 +13,6 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.AccountReportBasicRequest;
 import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
-import bg.com.bo.bff.providers.dtos.responses.ApiErrorResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.services.implementations.v1.AccountStatementService;
@@ -98,7 +97,9 @@ public class AccountStatementProvider implements IAccountStatementProvider {
 
                 List<AccountReportBasicResponse.AccountReportData> accountReportData = basicResponse.getData();
                 Collections.reverse(accountReportData);
-
+                if (end >= accountReportData.size()) {
+                    end = accountReportData.size() - 1;
+                }
                 List<AccountReportBasicResponse.AccountReportData> accountReportDataPagination = accountReportData.subList(start, end + 1);
 
                 List<ExtractDataResponse.ExtractResponse> extractResponseList = accountReportDataPagination.stream().map(AccountStatementService::toProviderResponse).toList();
