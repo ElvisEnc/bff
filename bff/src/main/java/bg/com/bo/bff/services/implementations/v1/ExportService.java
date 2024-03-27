@@ -15,19 +15,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 @Service
 public class ExportService implements IExportService {
 
     public ResponseEntity<byte[]> getPdf() {
-        try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(classLoader.getResource("template.pdf").getFile());
-            PDDocument document = Loader.loadPDF(file);
+        try (InputStream inputStream = getClass().getResourceAsStream("/template.pdf")) {
+            PDDocument document = Loader.loadPDF(inputStream.readAllBytes());
             PDPage page = document.getPage(0);
 
             PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
