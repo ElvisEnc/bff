@@ -1,28 +1,25 @@
 package bg.com.bo.bff.application.dtos.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
 @lombok.Data
-public class ExtractRequest {
+public class ExportRequest {
+    @NotBlank
+    @Schema(example = "PDF", description = "Formato de exportación. PDF/CSV")
+    private String format;
     private Filter filters;
 
     @lombok.Data
     public static class Filter {
-        private Pagination pagination;
-    }
-
-    @lombok.Data
-    public static class Pagination {
+        @NotBlank
         @Schema(example = "2023-11-22", description = "Fecha Inicio")
         private String startDate;
 
+        @NotBlank
         @Schema(example = "2023-12-31", description = "Fecha fin")
         private String endDate;
-
-        @Schema(example = "1", description = "Número de página")
-        private Integer page;
-
-        @Schema(example = "10", description = "Cantidad de registros por página")
-        private Integer pageSize;
     }
 }
+
+
