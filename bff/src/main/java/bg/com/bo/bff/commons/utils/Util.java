@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
@@ -164,5 +165,13 @@ public class Util {
             default:
                 return AppError.DEFAULT;
         }
+    }
+
+    public static byte[] getEncodedBytes(String data) {
+        return data.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static String getStringFromEncodedBytes(byte[] decryptedData) {
+        return new String(decryptedData, StandardCharsets.UTF_8);
     }
 }

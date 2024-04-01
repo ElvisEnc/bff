@@ -1,6 +1,5 @@
 package bg.com.bo.bff.application.config.encryption.payload;
 
-import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.exceptions.NotEncodedInfoException;
 import bg.com.bo.bff.commons.utils.Util;
@@ -42,12 +41,9 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
             DecryptRequestWrapper decryptRequestWrapper = new DecryptRequestWrapper(request, encryptionService);
             EncryptResponseWrapper responseWrapper = new EncryptResponseWrapper(response, encryptionService, decryptRequestWrapper.getEncodeInfo());
 
-            responseWrapper.addHeader(Constants.SESSION_ENCRYPTED_KEY_HEADER, responseWrapper.getPayloadEncrypted());
-
             filterChain.doFilter(decryptRequestWrapper, responseWrapper);
 
-            String content = responseWrapper.encrypt();
-            response.getWriter().write(content);
+            response.getWriter().write(responseWrapper.getContent());
         } catch (NotEncodedInfoException e) {
             logger.error("Encryption parameters not valid.");
 

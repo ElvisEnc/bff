@@ -1,9 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
-import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
 import bg.com.bo.bff.commons.constants.Constants;
@@ -11,12 +9,9 @@ import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.EncodeInfo;
+import bg.com.bo.bff.models.EncryptInfo;
 import bg.com.bo.bff.models.UserEncryptionKeys;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.requests.login.LoginMWFactorDeviceRequest;
-import bg.com.bo.bff.providers.dtos.requests.login.LoginMWFactorRequest;
-import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorResponse;
 import bg.com.bo.bff.providers.interfaces.IEncryptionProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,9 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
@@ -56,7 +49,7 @@ public class EncryptionProvider implements IEncryptionProvider {
     }
 
     @Cacheable(value = Constants.ENCRYPTION_KEYS_CACHE_NAME)
-    public UserEncryptionKeys getEncryptionKeys(EncodeInfo encodeInfo) throws IOException {
+    public UserEncryptionKeys getEncryptionKeys(EncryptInfo encodeInfo) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.LOGIN_MANAGER.getName(), middlewareConfig.getClientLogin(), ProjectNameMW.LOGIN_MANAGER.getHeaderKey());
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {

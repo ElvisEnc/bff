@@ -5,6 +5,7 @@ import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -17,22 +18,21 @@ public class CipherUtils {
         cipher.init(Cipher.DECRYPT_MODE, appPrivateKey);
         byte[] dataDecoded = Base64.getDecoder().decode(data);
         byte[] decryptedData = cipher.doFinal(dataDecoded);
-        return new String(decryptedData);
+        return Util.getStringFromEncodedBytes(decryptedData);
     }
 
     public static String decrypt(EncryptionAlgorithm encryptionAlgorithm, String data, SecretKey secretKey, IvParameterSpec iv) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         Cipher cipher = Cipher.getInstance(encryptionAlgorithm.getCode());
         cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
-        byte[] dataEncoded = Base64.getDecoder().decode(data);
-        byte[] dataDecrypted = cipher.doFinal(dataEncoded);
-        return new String(dataDecrypted);
+        byte[] dataDecoded = Base64.getDecoder().decode(data);
+        byte[] dataDecrypted = cipher.doFinal(dataDecoded);
+        return Util.getStringFromEncodedBytes(dataDecrypted);
     }
 
     public static String encrypt(EncryptionAlgorithm encryptionAlgorithm, String data, SecretKey secretKey, IvParameterSpec iv) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance(encryptionAlgorithm.getCode());
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-
-        byte[] dataEncrypted = cipher.doFinal(data.getBytes());
+        byte[] dataEncrypted = cipher.doFinal(Util.getEncodedBytes(data));
         return Base64.getEncoder().encodeToString(dataEncrypted);
     }
 
@@ -50,7 +50,7 @@ public class CipherUtils {
         Cipher cipher = Cipher.getInstance(encryptionAlgorithm.getCode());
         cipher.init(Cipher.ENCRYPT_MODE, key);
 
-        byte[] dataEncrypted = cipher.doFinal(data.getBytes());
+        byte[] dataEncrypted = cipher.doFinal(Util.getEncodedBytes(data));
         return Base64.getEncoder().encodeToString(dataEncrypted);
     }
 
@@ -65,7 +65,7 @@ public class CipherUtils {
     }
 
     public static SecretKey getSecretKey(EncryptionAlgorithm alg, String secretKey) {
-        byte[] keyBytes = Base64.getDecoder().decode(secretKey.getBytes());
+        byte[] keyBytes = Base64.getDecoder().decode(Util.getEncodedBytes(secretKey));
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, alg.getFamily());
     }
 

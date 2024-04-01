@@ -4,7 +4,7 @@ import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.CipherUtils;
-import bg.com.bo.bff.models.EncodeInfo;
+import bg.com.bo.bff.models.EncryptInfo;
 import bg.com.bo.bff.models.UserEncryptionKeys;
 import bg.com.bo.bff.providers.interfaces.IEncryptionProvider;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;
@@ -23,7 +23,7 @@ public class EncryptionService implements IEncryptionService {
         this.encryptionProvider = encryptionProvider;
     }
 
-    public PublicKey getAppPublicKey(EncodeInfo encodeInfo) {
+    public PublicKey getAppPublicKey(EncryptInfo encodeInfo) {
         try {
             UserEncryptionKeys userEncryptionKeys = encryptionProvider.getEncryptionKeys(encodeInfo);
             return CipherUtils.createPublicKey(EncryptionAlgorithm.RSA, userEncryptionKeys.getAppPublicKey());
@@ -32,7 +32,7 @@ public class EncryptionService implements IEncryptionService {
         }
     }
 
-    public PrivateKey getAppPrivateKey(EncodeInfo encodeInfo) {
+    public PrivateKey getAppPrivateKey(EncryptInfo encodeInfo) {
         try {
             UserEncryptionKeys userEncryptionKeys = encryptionProvider.getEncryptionKeys(encodeInfo);
             return CipherUtils.createPrivateKey(EncryptionAlgorithm.RSA, userEncryptionKeys.getAppPrivateKey());
@@ -41,7 +41,7 @@ public class EncryptionService implements IEncryptionService {
         }
     }
 
-    public PublicKey getUserPublicKey(EncodeInfo encodeInfo) {
+    public PublicKey getUserPublicKey(EncryptInfo encodeInfo) {
         try {
             UserEncryptionKeys userEncryptionKeys = encryptionProvider.getEncryptionKeys(encodeInfo);
             return CipherUtils.createPublicKey(EncryptionAlgorithm.RSA, userEncryptionKeys.getUserPublicKey());
