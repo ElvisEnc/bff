@@ -68,6 +68,33 @@ public class KeyCloakJsonMapper {
         return jwtAccess;
     }
 
+    /**
+     * Convierte un JWT encodeado en un objeto JwtRefresh.
+     *
+     * @param token   el JWT en base64.
+     * @return JwtAccess con los datos del token provisto.
+     * @throws JsonProcessingException  si hubo un error al convertir del json desencodeado a las partes del Refresh JWT.
+     */
+    public JwtRefresh convertToJwtRefresh(String token) throws JsonProcessingException {
+        String[] chunks = token.split("\\.");
+
+        String headerEncoded = chunks[0];
+        String payloadEncoded = chunks[1];
+
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+
+        String header = new String(decoder.decode(headerEncoded));
+        String payload = new String(decoder.decode(payloadEncoded));
+
+        JwtHeader jwtHeader = this.convertToJwtHeader(header);
+
+        JwtRefresh jwtRefresh = new JwtRefresh();
+        jwtRefresh.setHeader(jwtHeader);
+        jwtRefresh.setPayload(this.convertToJwtPayload(payload));
+
+        return jwtRefresh;
+    }
+
     private JwtPayload convertToJwtPayload(String json) throws JsonProcessingException {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(JwtPayload.class, new CustomJwtPayloadDeserializer());

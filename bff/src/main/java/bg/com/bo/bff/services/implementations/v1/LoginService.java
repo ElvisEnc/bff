@@ -2,7 +2,11 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
 import bg.com.bo.bff.application.dtos.request.RefreshSessionRequest;
+import bg.com.bo.bff.application.dtos.response.TokenDataResponse;
+import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.enums.LoginSchemaName;
+import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
+import bg.com.bo.bff.commons.enums.response.RefreshControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.services.LoginServiceMapper;
 import bg.com.bo.bff.models.ClientToken;
@@ -11,6 +15,7 @@ import bg.com.bo.bff.models.dtos.login.*;
 import bg.com.bo.bff.commons.enums.UserRole;
 import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
 import bg.com.bo.bff.application.exceptions.NotValidStateException;
+import bg.com.bo.bff.models.jwt.JwtRefresh;
 import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorDataResponse;
 import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorResponse;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
@@ -50,8 +55,7 @@ public class LoginService implements ILoginServices {
             loginMWFactorDataResponse.setPersonId(loginRequest.getUser());
             loginMWFactorDataResponse.setSecondFactor("1");
             loginValidation = loginMiddlewareService.validateCredentials(loginRequest, ip, token, loginMWFactorDataResponse);
-        }
-        else {
+        } else {
             LoginMWFactorResponse loginMWFactorResponse = loginMiddlewareService.validateFactorUser(loginRequest, ip, token);
             loginValidation = loginMiddlewareService.validateCredentials(loginRequest, ip, token, loginMWFactorResponse.getData());
         }
@@ -69,17 +73,28 @@ public class LoginService implements ILoginServices {
     }
 
     @Override
-    public RefreshSessionResult refreshSession(String personId, RefreshSessionRequest refreshSessionRequest) {
-        //TODO: validacion de estado de usuario.
-        CreateTokenServiceResponse createTokenResponse = jwtService.refreshToken(refreshSessionRequest.getRefreshToken());
+    public TokenDataResponse refreshSession(String personId, RefreshSessionRequest refreshSessionRequest) {
+        JwtRefresh jwtRefresh = jwtService.parseJwtRefresh(refreshSessionRequest.getRefreshToken());
 
-        switch (createTokenResponse.getStatusCode()) {
-            case SUCCESS:
-                return loginServiceMapper.convert(createTokenResponse.getTokenData(), RefreshSessionResult.StatusCode.SUCCESS);
-            case INVALID_DATA:
-                return RefreshSessionResult.create(RefreshSessionResult.StatusCode.INVALID_DATA);
-            default:
-                throw new NotHandledResponseException();
+        if (!jwtRefresh.getPayload().getPersonId().trim().equals(personId.trim()))
+            throw new HandledException(RefreshControllerErrorResponse.INVALID_DATA);
+
+        try {
+            CreateTokenServiceResponse createTokenResponse = jwtService.refreshToken(refreshSessionRequest.getRefreshToken());
+
+            switch (createTokenResponse.getStatusCode()) {
+                case SUCCESS:
+                    RefreshSessionResult refreshSessionResult = loginServiceMapper.convert(createTokenResponse.getTokenData(), RefreshSessionResult.StatusCode.SUCCESS);
+                    return loginServiceMapper.convert(refreshSessionResult);
+                case INVALID_DATA:
+                    throw new HandledException(RefreshControllerErrorResponse.INVALID_DATA);
+                default:
+                    throw new NotHandledResponseException();
+            }
+        } catch (HandledException | NotHandledResponseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new HandledException(GenericControllerErrorResponse.INTERNAL_SERVER_ERROR, e);
         }
     }
 }

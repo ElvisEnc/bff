@@ -77,16 +77,8 @@ public class LoginController {
     public ResponseEntity<TokenDataResponse> refresh(
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
             @Valid @RequestBody RefreshSessionRequest refreshSessionRequest) {
-        RefreshSessionResult refreshSessionResult = iLoginServices.refreshSession(personId, refreshSessionRequest);
-        switch (refreshSessionResult.getStatusCode()) {
-            case SUCCESS:
-                TokenDataResponse tokenDataResponse = loginMapper.convert(refreshSessionResult);
-                return ResponseEntity.ok(tokenDataResponse);
-            case INVALID_DATA:
-                throw new NotAcceptableException("Los campos brindados son invalidos.");
-        }
-
-        throw new NotHandledResponseException("Se recibio una respuesta no controlada.");
+        TokenDataResponse tokenDataResponse = iLoginServices.refreshSession(personId, refreshSessionRequest);
+        return ResponseEntity.ok(tokenDataResponse);
     }
 
     @Operation(summary = "Device Enrollment", description = "Se realiza la validación si un dispositivo está enrrolado")

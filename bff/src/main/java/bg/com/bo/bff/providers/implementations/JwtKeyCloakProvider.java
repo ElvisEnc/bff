@@ -268,6 +268,21 @@ public class JwtKeyCloakProvider implements IJwtProvider {
     }
 
     /**
+     * Convierte un JWT encodeado en un objeto JwtRefresh. Internamente valida los valores de los claims esperados y si esta correctamente firmado.
+     *
+     * @param token el JWT en base64.
+     * @return JwtAccess con los datos del token provisto.
+     */
+    @Override
+    public JwtRefresh parseJwtRefresh(String token) throws JwtException, JwtValidationException {
+        JwtRefresh jwtRefresh = getRefreshSignedToken(token);
+
+        if (!validateToken(jwtRefresh)) throw new JwtValidationException();
+
+        return jwtRefresh;
+    }
+
+    /**
      * Valida los claims esperados.
      *
      * @param jwtAccess el token a validar.
@@ -288,6 +303,25 @@ public class JwtKeyCloakProvider implements IJwtProvider {
     }
 
     /**
+     * Valida los claims esperados.
+     *
+     * @param jwtRefresh el token a validar.
+     * @return el resultado de la validación.
+     */
+    private boolean validateToken(JwtRefresh jwtRefresh) {
+        try {
+            boolean issuerValidation = issuer.equals(jwtRefresh.getPayload().getIssuer());
+            boolean authorizedPartyValidation = authorizedParty.equals(jwtRefresh.getPayload().getAuthorizedParty());
+            boolean subjectValidation = subject.equals(jwtRefresh.getPayload().getSubject());
+
+            return authorizedPartyValidation && subjectValidation && issuerValidation;
+        } catch (Exception e) {
+            logger.error("Hubo un error inesperado al validar el token.");
+            return false;
+        }
+    }
+
+    /**
      * Devuelve el objeto JwtAccess verificando la firma del mismo pero sin validación de los claims.
      *
      * @param token el JWT en base64.
@@ -300,7 +334,25 @@ public class JwtKeyCloakProvider implements IJwtProvider {
         } catch (Exception e) {
             logger.error("Hubo un error al obtener el Access JWT.");
             logger.error(e);
+            logger.error(token);
             throw new JwtException("Hubo un error al obtener el Access JWT.");
+        }
+    }
+
+    /**
+     * Devuelve el objeto JwtRefresh verificando la firma del mismo pero sin validación de los claims.
+     *
+     * @param token el JWT en base64.
+     * @return JwtRefresh con los datos del token provisto.
+     */
+    private JwtRefresh getRefreshSignedToken(String token) {
+        try {
+            return keyCloakMapper.getJsonMapper().convertToJwtRefresh(token);
+        } catch (Exception e) {
+            logger.error("Hubo un error al obtener el Refresh JWT.");
+            logger.error(e);
+            logger.error(token);
+            throw new JwtException("Hubo un error al obtener el Refresh JWT.");
         }
     }
 }

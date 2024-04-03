@@ -1,5 +1,6 @@
 package bg.com.bo.bff.mappings.services;
 
+import bg.com.bo.bff.application.dtos.response.TokenDataResponse;
 import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
 import bg.com.bo.bff.models.dtos.TokenDataServiceResponse;
 import bg.com.bo.bff.models.dtos.login.CreateTokenServiceResponse;
@@ -22,4 +23,8 @@ public interface LoginServiceMapper {
     @Mapping(source = "createTokenResponse.tokenData.refreshToken", target = "tokenData.refreshToken")
     @Mapping(source = "statusCode", target = "statusCode")
     LoginResult convert(CreateTokenServiceResponse createTokenResponse, LoginValidationServiceResponse loginResult, LoginResult.StatusCode statusCode);
+
+    @Mapping(source = "refreshToken", target = "refreshToken")
+    @Mapping(source = "accessToken", target = "accessToken")
+    TokenDataResponse convert(RefreshSessionResult refreshSessionResult);
 }
