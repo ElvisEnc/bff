@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -173,5 +174,8 @@ public class Util {
 
     public static String getStringFromEncodedBytes(byte[] decryptedData) {
         return new String(decryptedData, StandardCharsets.UTF_8);
+    }
+    public static String encodeByteArrayToBase64(byte[] data) {
+        return Base64.getEncoder().encodeToString(data);
     }
 }

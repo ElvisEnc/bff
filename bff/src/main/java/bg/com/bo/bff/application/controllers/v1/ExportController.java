@@ -2,6 +2,8 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.ExportRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.ExportResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.services.interfaces.IExportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,7 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +39,7 @@ public class ExportController {
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping(value = "/accounts/{accountId}", produces = {"application/pdf", "text/csv"})
-    public ResponseEntity<byte[]> extract(
+    public ResponseEntity<ExportResponse> extract(
             @PathVariable("accountId") @NotBlank @Parameter(description = "id de la cuenta", example = "654654678") String accountId,
             @Valid @RequestBody ExportRequest body
     ) throws IOException {
@@ -45,9 +47,9 @@ public class ExportController {
         String format = body.getFormat();
 
         if (Objects.equals(format, "PDF"))
-            return exportService.getPdf();
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(exportService.getPdf());
         else if (Objects.equals(format, "CSV"))
-            return exportService.getCsv();
-        else return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(exportService.getCsv());
+        else throw new GenericException();
     }
 }

@@ -1,8 +1,9 @@
 package bg.com.bo.bff.services.interfaces;
 
+import bg.com.bo.bff.application.dtos.response.ExportResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface IExportService {
-    ResponseEntity<byte[]> getPdf();
-    ResponseEntity<byte[]> getCsv();
+    ExportResponse getPdf();
+    ExportResponse getCsv();
 }

@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.Headers;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AccountListMWResponse;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
@@ -99,13 +100,12 @@ public class AccountMiddlewareProvider implements IAccountProvider {
             get.setHeader(Headers.AUT.getName(), "Bearer " + token);
             get.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
             get.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
-            ObjectMapper objectMapper = new ObjectMapper();
             try (CloseableHttpResponse httpResponse = httpClient.execute(get)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String response = EntityUtils.toString(httpResponse.getEntity());
 
                 if (statusCode == 200) {
-                    AccountListMWResponse responseMW = objectMapper.readValue(response, AccountListMWResponse.class);
+                    AccountListMWResponse responseMW = Util.stringToObject(response, AccountListMWResponse.class);
                     return accountListMapper.convert(responseMW);
                 } else {
                     propagateException = true;
