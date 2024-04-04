@@ -68,7 +68,7 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
+        String path = request.getServletPath();
 
         String[] urlPatterns = urlExcludePatterns.split(",");
 
