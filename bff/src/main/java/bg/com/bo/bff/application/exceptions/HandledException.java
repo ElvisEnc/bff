@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.exceptions;
 
-import bg.com.bo.bff.services.implementations.v1.ErrorControllerResponse;
+import bg.com.bo.bff.commons.enums.response.IErrorControllerResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,14 +16,14 @@ public class HandledException extends RuntimeException {
     private String method;
     private String source;
 
-    public HandledException(ErrorControllerResponse controllerResponse) {
+    public HandledException(IErrorControllerResponse controllerResponse) {
         super(controllerResponse.getDescription());
         this.description = controllerResponse.getDescription();
         this.status = controllerResponse.getHttpCode();
         this.code = controllerResponse.getCode();
         fillTrace();
     }
-    public HandledException(ErrorControllerResponse controllerResponse, Exception e) {
+    public HandledException(IErrorControllerResponse controllerResponse, Exception e) {
         super(e);
         this.description = controllerResponse.getDescription();
         this.status = controllerResponse.getHttpCode();

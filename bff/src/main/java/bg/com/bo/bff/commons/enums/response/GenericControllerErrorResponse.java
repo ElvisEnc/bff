@@ -1,13 +1,12 @@
 package bg.com.bo.bff.commons.enums.response;
 
-import bg.com.bo.bff.services.implementations.v1.ErrorControllerResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum GenericControllerErrorResponse implements ErrorControllerResponse {
+public enum GenericControllerErrorResponse implements IErrorControllerResponse {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED.name(), "Not valid credentials."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.name(), "Internal server error."),
     HTTP_CLIENT_CREATION_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.name(), "Internal server error."),

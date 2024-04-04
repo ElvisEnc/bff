@@ -1,4 +1,4 @@
-package bg.com.bo.bff.services.implementations;
+package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
 import bg.com.bo.bff.application.exceptions.HandledException;
