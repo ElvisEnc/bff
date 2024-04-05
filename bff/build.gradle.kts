@@ -48,8 +48,8 @@ dependencies {
 	implementation("org.apache.httpcomponents:httpclient:4.5.13")
 	implementation("org.mapstruct:mapstruct:1.5.5.Final")
 	implementation("io.jsonwebtoken:jjwt-api:0.12.3")
-	implementation("org.apache.pdfbox:pdfbox:3.0.2")
 	implementation("org.apache.commons:commons-csv:1.10.0")
+	implementation("com.github.librepdf:openpdf:2.0.1")
 
 	implementation("org.springframework.cloud:spring-cloud-context:3.1.6")
 

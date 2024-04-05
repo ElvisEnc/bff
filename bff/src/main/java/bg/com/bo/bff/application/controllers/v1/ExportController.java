@@ -3,7 +3,6 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.ExportRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.ExportResponse;
-import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.services.interfaces.IExportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,7 +20,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
-import java.util.Objects;
 
 @RestController
 @Validated
@@ -39,17 +37,12 @@ public class ExportController {
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping(value = "/accounts/{accountId}", produces = {"application/pdf", "text/csv"})
-    public ResponseEntity<ExportResponse> extract(
+    public ResponseEntity<ExportResponse> generateExtractReport(
             @PathVariable("accountId") @NotBlank @Parameter(description = "id de la cuenta", example = "654654678") String accountId,
             @Valid @RequestBody ExportRequest body
     ) throws IOException {
 
-        String format = body.getFormat();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(exportService.generateReport(body, accountId));
 
-        if (Objects.equals(format, "PDF"))
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(exportService.getPdf());
-        else if (Objects.equals(format, "CSV"))
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(exportService.getCsv());
-        else throw new GenericException();
     }
 }

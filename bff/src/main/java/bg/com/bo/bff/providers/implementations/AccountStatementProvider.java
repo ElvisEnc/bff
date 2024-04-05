@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.dtos.request.ExportRequest;
 import bg.com.bo.bff.application.dtos.request.ExtractRequest;
 import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
@@ -127,6 +128,49 @@ public class AccountStatementProvider implements IAccountStatementProvider {
                     response.setData(extractResponse);
                     return response;
                 }
+                LOGGER.error(responseMW);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            }
+        } catch (GenericException ex) {
+            LOGGER.error(ex);
+            throw ex;
+        } catch (Exception e) {
+            LOGGER.error(e);
+            throw new RuntimeException("Hubo un error no controlado al crear el cliente");
+        }
+    }
+
+    @Override
+    public AccountReportBasicResponse getAccountStatementForExport(ExportRequest request, String accountId, String token) {
+        AccountReportBasicRequest reportBasicRequest = AccountReportBasicRequest.builder()
+                .accountId(accountId)
+                .startDate(request.getFilters().getStartDate())
+                .endDate(request.getFilters().getEndDate())
+                .initCount(init)
+                .totalCount(total)
+                .build();
+
+        try (CloseableHttpClient httpClient = httpClientFactory.create()) {
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/reports/generate-basic";
+            HttpPost httpRequest = new HttpPost(path);
+            String jsonMapper = Util.objectToString(reportBasicRequest);
+
+            StringEntity entity = new StringEntity(jsonMapper);
+            httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + token);
+            httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            httpRequest.setEntity(entity);
+
+            CloseableHttpResponse httpResponse = httpClient.execute(httpRequest);
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            String responseMW = EntityUtils.toString(httpResponse.getEntity());
+            ObjectMapper objectMapper = new ObjectMapper();
+            if (statusCode == HttpStatus.SC_OK) {
+                AccountReportBasicResponse basicResponse = objectMapper.readValue(responseMW, AccountReportBasicResponse.class);
+                return basicResponse;
+            } else {
+                AppError error = Util.mapProviderError(responseMW);
                 LOGGER.error(responseMW);
                 throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }

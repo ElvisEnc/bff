@@ -1,75 +1,57 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.ExportRequest;
 import bg.com.bo.bff.application.dtos.response.ExportResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.models.ClientToken;
+import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.interfaces.IAccountStatementCsvProvider;
+import bg.com.bo.bff.providers.interfaces.IAccountStatementPdfProvider;
+import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
+import bg.com.bo.bff.services.adapters.AccountStatementAdapter;
 import bg.com.bo.bff.services.interfaces.IExportService;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ExportService implements IExportService {
+    private final IAccountStatementProvider iAccountStatementProvider;
 
-    public ExportResponse getPdf() {
-        try (InputStream inputStream = getClass().getResourceAsStream("/template.pdf")) {
-            PDDocument document = Loader.loadPDF(inputStream.readAllBytes());
-            PDPage page = document.getPage(0);
+    private final IAccountStatementPdfProvider pdfProvider;
 
-            PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
-            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.TIMES_ROMAN), 12);
-            contentStream.beginText();
-            contentStream.newLineAtOffset(100, 700);
-            contentStream.showText("Hello, World!");
-            contentStream.endText();
-            contentStream.close();
+    private final IAccountStatementCsvProvider csvProvider;
 
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            document.save(byteArrayOutputStream);
+    private final AccountStatementAdapter accountStatementAdapter;
 
-            String base64 = Util.encodeByteArrayToBase64(byteArrayOutputStream.toByteArray());
-
-            ExportResponse response = new ExportResponse();
-            response.setData(base64);
-            return response;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new GenericException();
-        }
+    public ExportService(IAccountStatementProvider iAccountStatementProvider, IAccountStatementPdfProvider pdfProvider, IAccountStatementCsvProvider csvProvider, AccountStatementAdapter accountStatementAdapter) {
+        this.iAccountStatementProvider = iAccountStatementProvider;
+        this.pdfProvider = pdfProvider;
+        this.csvProvider = csvProvider;
+        this.accountStatementAdapter = accountStatementAdapter;
     }
 
-    public ExportResponse getCsv() {
-        String[] header = {"ID", "Nombre", "Edad"};
-        String[][] data = {
-                {"1", "Juan", "30"},
-                {"2", "Maria", "25"},
-                {"3", "Carlos", "35"}
-        };
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try (CSVPrinter csvPrinter = new CSVPrinter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), CSVFormat.DEFAULT.withHeader(header).withDelimiter(';'))) {
-            for (String[] row : data) {
-                csvPrinter.printRecord((Object[]) row);
-            }
-            csvPrinter.close();
-            byte[] csvBytes = outputStream.toByteArray();
+    @Override
+    public ExportResponse generateReport(ExportRequest request, String accountId) throws IOException {
+        ClientToken clientToken = iAccountStatementProvider.generateToken();
 
-            String base64 = Util.encodeByteArrayToBase64(csvBytes);
+        AccountReportBasicResponse basicResponse = iAccountStatementProvider.getAccountStatementForExport(request, accountId, clientToken.getAccessToken());
+        List<AccountReportBasicResponse.AccountReportData> basicResponseData = accountStatementAdapter.mapping(basicResponse);
 
-            ExportResponse response = new ExportResponse();
-            response.setData(base64);
-            return response;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new GenericException();
-        }
+        String format = request.getFormat();
+
+        String base64;
+        if (Objects.equals(format, "PDF")) {
+            base64 = Util.encodeByteArrayToBase64(pdfProvider.generatePdf(basicResponseData, request, accountId));
+        } else if (Objects.equals(format, "CSV")) {
+            base64 = Util.encodeByteArrayToBase64(csvProvider.generateCsv(basicResponseData));
+        } else throw new GenericException();
+
+        ExportResponse response = new ExportResponse();
+        response.setData(base64);
+        return response;
     }
 }
