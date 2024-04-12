@@ -2,7 +2,8 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.ExportRequest;
-import bg.com.bo.bff.application.dtos.request.ExtractRequest;
+import bg.com.bo.bff.application.dtos.request.accountStatement.ExtractPagination;
+import bg.com.bo.bff.application.dtos.request.accountStatement.ExtractRequest;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.enums.AppError;
@@ -33,7 +34,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -65,7 +65,7 @@ public class AccountStatementProvider implements IAccountStatementProvider {
             put = {@CachePut(value = Constants.ACCOUNTS_STATEMENTS, key = "#extractId", condition = "#clearCache == true")})
     @Override
     public AccountReportBasicResponse getAccountStatement(ExtractRequest request, String token, String accountId, String extractId, Boolean clearCache) {
-        ExtractRequest.Pagination pagination = request.getFilters().getPagination();
+        ExtractPagination pagination = request.getFilters().getPagination();
         AccountReportBasicRequest reportBasicRequest = AccountReportBasicRequest.builder()
                 .accountId(accountId)
                 .startDate(pagination.getStartDate())
@@ -91,10 +91,7 @@ public class AccountStatementProvider implements IAccountStatementProvider {
             String responseMW = EntityUtils.toString(httpResponse.getEntity());
             ObjectMapper objectMapper = new ObjectMapper();
             if (statusCode == HttpStatus.SC_OK) {
-                AccountReportBasicResponse basicResponse = objectMapper.readValue(responseMW, AccountReportBasicResponse.class);
-                List<AccountReportBasicResponse.AccountReportData> accountReportData = basicResponse.getData();
-                Collections.reverse(accountReportData);
-                return basicResponse;
+                return objectMapper.readValue(responseMW, AccountReportBasicResponse.class);
             } else {
                 AppError error = Util.mapProviderError(responseMW);
                 String noRecords = error.getDescription();

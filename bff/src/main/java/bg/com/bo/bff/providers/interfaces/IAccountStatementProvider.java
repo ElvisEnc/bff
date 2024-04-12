@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.interfaces;
 
 import bg.com.bo.bff.application.dtos.request.ExportRequest;
-import bg.com.bo.bff.application.dtos.request.ExtractRequest;
+import bg.com.bo.bff.application.dtos.request.accountStatement.ExtractRequest;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
 

@@ -1,6 +1,6 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.ExtractRequest;
+import bg.com.bo.bff.application.dtos.request.accountStatement.ExtractRequest;
 import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
 import bg.com.bo.bff.commons.enums.AccountStatementType;
 import bg.com.bo.bff.commons.filters.AmountRangeFilter;
@@ -13,6 +13,7 @@ import bg.com.bo.bff.services.interfaces.IAccountStatementService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -40,6 +41,10 @@ public class AccountStatementService implements IAccountStatementService {
         AccountReportBasicResponse basicResponse = iAccountStatementProvider.getAccountStatement(request, clientToken.getAccessToken(), accountId, key, isPageOne);
 
         List<AccountReportBasicResponse.AccountReportData> data = basicResponse.getData();
+
+        if (!request.getFilters().getIsAsc()) {
+            Collections.reverse(data);
+        }
 
         data = new TypeFilter(AccountStatementType.getValueByCode(extractType)).apply(data);
 
