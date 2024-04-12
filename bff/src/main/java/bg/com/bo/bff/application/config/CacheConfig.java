@@ -29,6 +29,9 @@ public class CacheConfig {
     @Value("${cache.encryption.keys.ttl}")
     private Integer encryptionKeysTtl;
 
+    @Value("${cache.account.statement.ttl}")
+    private Integer accountStatementTtl;
+
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return builder -> builder
@@ -41,6 +44,12 @@ public class CacheConfig {
                 .withCacheConfiguration(Constants.ENCRYPTION_KEYS_CACHE_NAME,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(encryptionKeysTtl))
+                                .disableCachingNullValues()
+                                .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                                .prefixCacheNameWith(cachePrefix))
+                .withCacheConfiguration(Constants.ACCOUNTS_STATEMENTS,
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofMinutes(accountStatementTtl))
                                 .disableCachingNullValues()
                                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                                 .prefixCacheNameWith(cachePrefix));

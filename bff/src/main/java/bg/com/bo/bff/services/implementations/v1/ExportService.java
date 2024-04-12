@@ -9,7 +9,7 @@ import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementCsvProvider;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementPdfProvider;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
-import bg.com.bo.bff.services.adapters.AccountStatementAdapter;
+import bg.com.bo.bff.commons.adapters.AccountStatementAdapter;
 import bg.com.bo.bff.services.interfaces.IExportService;
 import org.springframework.stereotype.Service;
 

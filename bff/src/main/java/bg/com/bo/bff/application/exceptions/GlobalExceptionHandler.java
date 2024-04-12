@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
     private static final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class.getName());
 
-    @ExceptionHandler({HttpMessageNotReadableException.class, UnexpectedTypeException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, UnexpectedTypeException.class, MethodArgumentNotValidException.class, NullPointerException.class})
     public ResponseEntity<ErrorResponse> handleValidateException(Exception exception) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), HttpStatus.BAD_REQUEST.getReasonPhrase());
         logger.error(exception);

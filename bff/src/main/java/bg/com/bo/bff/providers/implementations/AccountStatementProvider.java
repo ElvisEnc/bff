@@ -3,8 +3,8 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.ExportRequest;
 import bg.com.bo.bff.application.dtos.request.ExtractRequest;
-import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.Headers;
@@ -16,7 +16,6 @@ import bg.com.bo.bff.providers.dtos.requests.AccountReportBasicRequest;
 import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
-import bg.com.bo.bff.services.implementations.v1.AccountStatementService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -27,6 +26,9 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -59,9 +61,10 @@ public class AccountStatementProvider implements IAccountStatementProvider {
         return tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.OWN_ACCOUNT_MANAGER.getName(), middlewareConfig.getClientOwnManager(), ProjectNameMW.OWN_ACCOUNT_MANAGER.getHeaderKey());
     }
 
+    @Caching(cacheable = {@Cacheable(value = Constants.ACCOUNTS_STATEMENTS, key = "#extractId", condition = "#clearCache == false")},
+            put = {@CachePut(value = Constants.ACCOUNTS_STATEMENTS, key = "#extractId", condition = "#clearCache == true")})
     @Override
-    public ExtractDataResponse getAccountStatement(ExtractRequest request, String token, String accountId) {
-
+    public AccountReportBasicResponse getAccountStatement(ExtractRequest request, String token, String accountId, String extractId, Boolean clearCache) {
         ExtractRequest.Pagination pagination = request.getFilters().getPagination();
         AccountReportBasicRequest reportBasicRequest = AccountReportBasicRequest.builder()
                 .accountId(accountId)
@@ -70,12 +73,6 @@ public class AccountStatementProvider implements IAccountStatementProvider {
                 .initCount(init)
                 .totalCount(total)
                 .build();
-
-        Integer page = pagination.getPage();
-        Integer pageSize = pagination.getPageSize();
-        int start = (page - 1) * pageSize;
-        int end = start + pageSize - 1;
-
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/reports/generate-basic";
@@ -95,38 +92,17 @@ public class AccountStatementProvider implements IAccountStatementProvider {
             ObjectMapper objectMapper = new ObjectMapper();
             if (statusCode == HttpStatus.SC_OK) {
                 AccountReportBasicResponse basicResponse = objectMapper.readValue(responseMW, AccountReportBasicResponse.class);
-
                 List<AccountReportBasicResponse.AccountReportData> accountReportData = basicResponse.getData();
                 Collections.reverse(accountReportData);
-
-                int totalRecords = accountReportData.size();
-                int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
-
-                if (page > totalPages) {
-                    ExtractDataResponse response = new ExtractDataResponse();
-                    List<ExtractDataResponse.ExtractResponse> extractResponse = new ArrayList<>();
-                    response.setData(extractResponse);
-                    return response;
-                }
-
-                if (end >= totalRecords) {
-                    end = totalRecords - 1;
-                }
-                List<AccountReportBasicResponse.AccountReportData> accountReportDataPagination = accountReportData.subList(start, end + 1);
-
-                List<ExtractDataResponse.ExtractResponse> extractResponseList = accountReportDataPagination.stream().map(AccountStatementService::toProviderResponse).toList();
-
-                ExtractDataResponse extractDataResponse = new ExtractDataResponse();
-                extractDataResponse.setData(extractResponseList);
-                return extractDataResponse;
+                return basicResponse;
             } else {
                 AppError error = Util.mapProviderError(responseMW);
                 String noRecords = error.getDescription();
                 if (Objects.equals(AppError.MDWACM_008.getDescription(), noRecords)) {
-                    ExtractDataResponse response = new ExtractDataResponse();
-                    List<ExtractDataResponse.ExtractResponse> extractResponse = new ArrayList<>();
-                    response.setData(extractResponse);
-                    return response;
+                    AccountReportBasicResponse basicResponse = new AccountReportBasicResponse();
+                    List<AccountReportBasicResponse.AccountReportData> dataEmpty = new ArrayList<>();
+                    basicResponse.setData(dataEmpty);
+                    return basicResponse;
                 }
                 LOGGER.error(responseMW);
                 throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
@@ -139,6 +115,7 @@ public class AccountStatementProvider implements IAccountStatementProvider {
             throw new RuntimeException("Hubo un error no controlado al crear el cliente");
         }
     }
+
 
     @Override
     public AccountReportBasicResponse getAccountStatementForExport(ExportRequest request, String accountId, String token) {

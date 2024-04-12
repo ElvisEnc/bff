@@ -1,4 +1,4 @@
-package bg.com.bo.bff.services.adapters;
+package bg.com.bo.bff.commons.adapters;
 
 import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
 import org.springframework.stereotype.Component;
