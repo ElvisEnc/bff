@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HandledException.class)
     public ResponseEntity<ErrorResponse> handledException(HandledException exception) {
-        ErrorResponse errorResponse = new ErrorResponse(String.valueOf(exception.getCode()), exception.getDescription());
+        ErrorResponse errorResponse = new ErrorResponse(String.valueOf(exception.getCode()), exception.getMessage());
         logger.error(exception);
         return ResponseEntity.status(exception.getStatus()).body(errorResponse);
     }

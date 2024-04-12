@@ -1,5 +1,7 @@
 package bg.com.bo.bff.providers.mappings.login;
 
+import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
+import bg.com.bo.bff.providers.dtos.requests.login.ChangePasswordMWRequest;
 import bg.com.bo.bff.providers.dtos.requests.login.LoginMWFactorRequest;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
 import org.mapstruct.Mapper;
@@ -14,4 +16,9 @@ public interface LoginMWMapper {
     @Mapping(source = "user", target = "factor")
     @Mapping(target = "deviceIdentification.deviceIp", ignore = true)
     LoginMWFactorRequest convert(LoginRequest loginRequest);
+
+    @Mapping(target = "newPassword", expression = "java(bg.com.bo.bff.commons.utils.Util.encodeSha512(input.getNewPassword()))")
+    @Mapping(target = "previousPassword", expression = "java(bg.com.bo.bff.commons.utils.Util.encodeSha512(input.getOldPassword()))")
+    @Mapping(target = "ownerAccount", ignore = true)
+    ChangePasswordMWRequest convert(ChangePasswordRequest input);
 }

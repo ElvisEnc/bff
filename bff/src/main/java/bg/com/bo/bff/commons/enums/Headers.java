@@ -12,7 +12,9 @@ public enum Headers {
     TOP_CHA("topaz-channel"),
     APP_ID("application-id"),
     CONTENT_TYPE("Content-Type"),
-    APP_JSON("application/json");
+    APP_JSON("application/json"),
+    DEVICE_ID("device-id"),
+    DEVICE_IP("device-ip");
 
     private final String name;
 }

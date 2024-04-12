@@ -80,7 +80,7 @@ public class RegistryServicesTests {
         assertEquals(HandledException.class, exception.getClass());
         assertEquals(HttpStatus.UNAUTHORIZED, ((HandledException) exception).getStatus());
         assertEquals(GenericControllerErrorResponse.UNAUTHORIZED.getCode(), ((HandledException) exception).getCode());
-        assertEquals(GenericControllerErrorResponse.UNAUTHORIZED.getDescription(), ((HandledException) exception).getDescription());
+        assertEquals(GenericControllerErrorResponse.UNAUTHORIZED.getDescription(), ((HandledException) exception).getMessage());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class RegistryServicesTests {
         assertEquals(HandledException.class, exception.getClass());
         assertEquals(HttpStatus.BAD_REQUEST, ((HandledException) exception).getStatus());
         assertEquals(RegistryControllerErrorResponse.INVALID_REGISTER.getCode(), ((HandledException) exception).getCode());
-        assertEquals(RegistryControllerErrorResponse.INVALID_REGISTER.getDescription(), ((HandledException) exception).getDescription());
+        assertEquals(RegistryControllerErrorResponse.INVALID_REGISTER.getDescription(), ((HandledException) exception).getMessage());
 
         verify(loginAGNProvider).login(request);
         verify(encryptionProvider).createKeys();

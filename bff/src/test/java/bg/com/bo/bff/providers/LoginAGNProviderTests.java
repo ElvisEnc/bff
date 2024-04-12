@@ -94,7 +94,7 @@ class LoginAGNProviderTests {
         assertEquals(HandledException.class, exception.getClass());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ((HandledException) exception).getStatus());
         assertEquals(GenericControllerErrorResponse.INTERNAL_SERVER_ERROR.getCode(), ((HandledException) exception).getCode());
-        assertEquals(GenericControllerErrorResponse.INTERNAL_SERVER_ERROR.getDescription(), ((HandledException) exception).getDescription());
+        assertEquals(GenericControllerErrorResponse.INTERNAL_SERVER_ERROR.getDescription(), ((HandledException) exception).getMessage());
     }
 
     @Test
@@ -128,7 +128,7 @@ class LoginAGNProviderTests {
         assertEquals(HandledException.class, exception.getClass());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ((HandledException) exception).getStatus());
         assertEquals(GenericControllerErrorResponse.REQUEST_EXCEPTION.getCode(), ((HandledException) exception).getCode());
-        assertEquals(GenericControllerErrorResponse.REQUEST_EXCEPTION.getDescription(), ((HandledException) exception).getDescription());
+        assertEquals(GenericControllerErrorResponse.REQUEST_EXCEPTION.getDescription(), ((HandledException) exception).getMessage());
     }
 
     @Test
@@ -144,7 +144,7 @@ class LoginAGNProviderTests {
         assertEquals(HandledException.class, exception.getClass());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ((HandledException) exception).getStatus());
         assertEquals(GenericControllerErrorResponse.HTTP_CLIENT_CREATION_EXCEPTION.getCode(), ((HandledException) exception).getCode());
-        assertEquals(GenericControllerErrorResponse.HTTP_CLIENT_CREATION_EXCEPTION.getDescription(), ((HandledException) exception).getDescription());
+        assertEquals(GenericControllerErrorResponse.HTTP_CLIENT_CREATION_EXCEPTION.getDescription(), ((HandledException) exception).getMessage());
     }
 
 
