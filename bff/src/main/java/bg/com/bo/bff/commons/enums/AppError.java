@@ -22,6 +22,7 @@ public enum AppError {
 
     MDWRLIB_0003(HttpStatus.NOT_ACCEPTABLE, "NOT_ENROLLED", "MDWRLIB-0003", "Dispositivo no enrolado"),
 
+    // Extractos
     MDWPGL_400(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWPGL-400", "Error en los parametros"),
     MDWACM_008(HttpStatus.NOT_FOUND, "BAD_REQUEST", "MDWACM-008", "Sin registros"),
     MDWACM_013(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWACM-013", "La cuenta no existe"),
