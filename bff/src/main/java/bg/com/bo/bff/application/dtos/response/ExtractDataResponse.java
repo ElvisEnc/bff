@@ -27,5 +27,6 @@ public class ExtractDataResponse {
         private String timeMov;
         private Double movBalance;
         private String seatNumber;
+        private String description;
     }
 }

@@ -11,4 +11,7 @@ public final class Constants {
     public static final String BFF_ENCODE_INFO_HEADER = "Bff-EI";
     public static final String SESSION_ENCRYPTED_KEY_HEADER = "Bff-SEK";
     public static final String ACCOUNTS_STATEMENTS = "accountstatements";
+
+    public static final int PASSWORD_MIN_LENGTH = 6;
+    public static final int PASSWORD_MAX_LENGTH = 15;
 }

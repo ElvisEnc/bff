@@ -79,6 +79,29 @@ public class UserServicesTests {
     }
 
     @Test
+    void givenLongPasswordWhenChangePasswordThenReturnBadRequestException() {
+        // Arrange
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+        changePasswordRequest.setOldPassword("123456");
+        changePasswordRequest.setNewPassword("123456789012345a");
+
+        String ip = "127.0.0.1";
+        String deviceId = "123";
+        String deviceUniqueId = "3cae84faa9b64750";
+        String rolePersonId = "1";
+        String personId = "999";
+
+        HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD);
+
+        // Act
+        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, changePasswordRequest));
+
+        // Assert
+        assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
+        assertEquals(expectedResponse.getMessage(), exception.getMessage());
+    }
+
+    @Test
     void givenSamePasswordWhenChangePasswordThenReturnBadRequestException() {
         // Arrange
         ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
