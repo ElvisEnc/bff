@@ -21,6 +21,9 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.accounts}")
     private String client_secret_own;
 
+    @Value("${client.secret.third-accounts}")
+    private String clientSecretThirdAccounts;
+
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
@@ -29,6 +32,7 @@ public class MiddlewareConfigFactory {
                 .clientLogin(client_secret_login)
                 .clientOwnManager(client_secret_own)
                 .clientTransfer(client_secret_transfer)
+                .clientThirdAccount(clientSecretThirdAccounts)
                 .build();
     }
 }

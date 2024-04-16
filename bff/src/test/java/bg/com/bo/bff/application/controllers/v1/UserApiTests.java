@@ -1,12 +1,9 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
-import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
-import bg.com.bo.bff.application.dtos.requests.RegistryRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.RegistryResponse;
-import bg.com.bo.bff.application.dtos.responses.RegistryResponseFixture;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.services.interfaces.IThirdAccountService;
 import bg.com.bo.bff.services.interfaces.IUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -44,6 +40,7 @@ public class UserApiTests {
 
     @Test
     void givenValidDataWhenChangePasswordThenReturnOk() throws Exception {
+        // Assert
         ChangePasswordRequest request = new ChangePasswordRequest();
         request.setNewPassword("1");
         request.setOldPassword("2");
@@ -57,6 +54,7 @@ public class UserApiTests {
 
         when(userService.changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, request)).thenReturn(expected);
 
+        // Act
         mockMvc.perform(put(URL_CHANGE_PASSWORD)
                         .header("device-id", deviceId)
                         .header("role-person-id", rolePersonId)
@@ -67,13 +65,16 @@ public class UserApiTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
+        // Arrange
         verify(userService).changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, request);
     }
 
     @Test
     void givenInvalidDataWhenChangePasswordThenReturnBadRequest() throws Exception {
+        // Arrange
         ChangePasswordRequest request = new ChangePasswordRequest();
 
+        // Act and Assert
         mockMvc.perform(put(URL_CHANGE_PASSWORD)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)

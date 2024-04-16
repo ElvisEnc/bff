@@ -15,4 +15,6 @@ public class MiddlewareConfig {
     private String clientOwnManager;
 
     private String clientTransfer;
+
+    private String clientThirdAccount;
 }

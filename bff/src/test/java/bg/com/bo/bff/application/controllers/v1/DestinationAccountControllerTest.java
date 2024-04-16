@@ -1,9 +1,11 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.requests.AddThirdAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddThirdAccountResponse;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -29,7 +31,9 @@ import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DestinationAccountControllerTest {
 
     private static final String URL = "/api/v1/destination-accounts/1234567/third-accounts";
+    private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/delete";
     private MockMvc mockMvc;
 
     @Spy
@@ -48,12 +53,12 @@ class DestinationAccountControllerTest {
     private IDestinationAccountService service;
 
     @Mock
-    private  HttpServletRequest httpServletRequest;
+    private HttpServletRequest httpServletRequest;
 
     private ObjectMapper objectMapper;
     private HttpHeaders headers = new HttpHeaders();
 
-    private Enumeration <String> enumerations;
+    private Enumeration<String> enumerations;
 
     @BeforeEach
     void setUp() {
@@ -68,18 +73,16 @@ class DestinationAccountControllerTest {
         headers.add("topaz-channel", "2");
 
         Map<String, String> map = Map.of(
-                DeviceMW.DEVICE_ID.getCode(),"1234",
-                DeviceMW.DEVICE_IP.getCode(),"12344",
-                DeviceMW.DEVICE_NAME.getCode(),"OS",
-                DeviceMW.GEO_POSITION_X.getCode(),"121.11",
-                DeviceMW.GEO_POSITION_Y.getCode(),"121.11",
-                DeviceMW.APP_VERSION.getCode(),"1.0.0"
+                DeviceMW.DEVICE_ID.getCode(), "1234",
+                DeviceMW.DEVICE_IP.getCode(), "12344",
+                DeviceMW.DEVICE_NAME.getCode(), "OS",
+                DeviceMW.GEO_POSITION_X.getCode(), "121.11",
+                DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
+                DeviceMW.APP_VERSION.getCode(), "1.0.0"
         );
 
         Vector<String> lists = new Vector<>(map.keySet().stream().toList());
         this.enumerations = lists.elements();
-
-
     }
 
     @Test
@@ -87,7 +90,7 @@ class DestinationAccountControllerTest {
         GenericResponse expected = GenericResponse.instance(AddThirdAccountResponse.SUCCESS);
         AddThirdAccountRequest request = AddThirdAccountRequestFixture.withDefault();
         when(httpServletRequest.getHeaderNames()).thenReturn(this.enumerations);
-        when(service.addThirdAccount(any(),any(),any())).thenReturn(expected);
+        when(service.addThirdAccount(any(), any(), any())).thenReturn(expected);
         MvcResult result = mockMvc
                 .perform(put(URL)
                         .content(objectMapper.writeValueAsString(request))
@@ -99,6 +102,51 @@ class DestinationAccountControllerTest {
                 .andReturn();
         String response = objectMapper.writeValueAsString(expected);
         String actual = result.getResponse().getContentAsString();
-        assertEquals(response,actual);
+        assertEquals(response, actual);
+    }
+
+    @Test
+    void givenValidDataWhenDeleteThirdAccountThenReturnOk() throws Exception {
+        // Arrange
+        String personId = "23";
+        int identifier = 46;
+        String ip = "127.0.0.1";
+        String deviceId = "123";
+
+        DeleteThirdAccountRequest request = new DeleteThirdAccountRequest();
+        request.setAccountId(1);
+
+        GenericResponse expected = new GenericResponse();
+
+        when(service.delete(personId, identifier, deviceId, ip, request)).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc.perform(delete(DELETE_THIRD_ACCOUNT)
+                        .header("device-id", deviceId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request, false)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Assert
+        verify(service).delete(personId, identifier, deviceId, ip, request);
+    }
+
+    @Test
+    void givenInvalidDataWhenDeleteThirdAccountThenReturnOk() throws Exception {
+        // Arrange
+        String deviceId = "123";
+        DeleteThirdAccountRequest request = new DeleteThirdAccountRequest();
+        request.setAccountId(0);
+
+        // Act and Assert
+        MvcResult result = mockMvc.perform(delete(DELETE_THIRD_ACCOUNT)
+                        .header("device-id", deviceId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request, false)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
     }
 }

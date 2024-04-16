@@ -1,6 +1,7 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
 import bg.com.bo.bff.providers.interfaces.IDestinationAccountProvider;
@@ -36,9 +37,13 @@ public class DestinationAccountService implements IDestinationAccountService {
                 .addThirdAccount(
                         thirdAccountProvider.generateAccessToken().getAccessToken(),
                         addThirdAccountBasicRequest,
-                         parameters
+                        parameters
                 );
     }
 
+    @Override
+    public GenericResponse delete(String personId, int identifier, String deviceId, String deviceIp, DeleteThirdAccountRequest request) throws IOException {
+        return thirdAccountProvider.delete(personId, identifier, request.getAccountId(), deviceId, deviceIp);
+    }
 
 }

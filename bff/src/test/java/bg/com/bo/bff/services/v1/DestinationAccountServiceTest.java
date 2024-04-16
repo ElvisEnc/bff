@@ -1,11 +1,14 @@
 package bg.com.bo.bff.services.v1;
 
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.requests.AddThirdAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddThirdAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IDestinationAccountProvider;
+import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
 import bg.com.bo.bff.services.implementations.v1.DestinationAccountService;
 import org.junit.jupiter.api.Test;
@@ -19,7 +22,9 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,5 +53,28 @@ class DestinationAccountServiceTest {
         when(thirdAccountProvider.generateAccessToken()).thenReturn(clientToken);
         GenericResponse response = service.addThirdAccount("1212", request, new HashMap<>());
         assertNotNull(response);
+    }
+
+    @Test
+    void givenValidDataWhenDeleteAccountThenReturnOk() throws IOException {
+        // Arrange
+        DeleteThirdAccountRequest request = new DeleteThirdAccountRequest();
+        request.setAccountId(1);
+        String personId = "1";
+        int identifier = 1;
+        String deviceId = "1";
+        String ip = "127.0.0.1";
+
+        GenericResponse expectedResponse = new GenericResponse();
+        expectedResponse.setCode("SUCCESS");
+        expectedResponse.setMessage("Satisfactorio");
+        when(thirdAccountProvider.delete(personId, identifier, request.getAccountId(), deviceId, ip)).thenReturn(expectedResponse);
+
+        // Act
+        GenericResponse response = service.delete(personId, identifier, deviceId, ip, request);
+
+        // Assert
+        verify(thirdAccountProvider).delete(personId, identifier, request.getAccountId(), deviceId, ip);
+        assertEquals(expectedResponse, response);
     }
 }
