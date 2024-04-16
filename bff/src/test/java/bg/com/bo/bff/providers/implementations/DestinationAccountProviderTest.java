@@ -1,4 +1,4 @@
-package bg.com.bo.bff.providers;
+package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.dtos.requests.AddThirdAccountBasicRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;

@@ -1,4 +1,4 @@
-package bg.com.bo.bff.services.v1;
+package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;

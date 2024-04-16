@@ -1,4 +1,4 @@
-package bg.com.bo.bff.providers;
+package bg.com.bo.bff.providers.implementations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

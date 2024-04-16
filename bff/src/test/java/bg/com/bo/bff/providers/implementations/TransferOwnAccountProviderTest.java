@@ -1,10 +1,12 @@
-package bg.com.bo.bff.providers;
+package bg.com.bo.bff.providers.implementations;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-import bg.com.bo.bff.providers.implementations.TokenMiddlewareProvider;
+import bg.com.bo.bff.providers.implementations.TransferOwnAccountProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpEntity;
@@ -24,21 +26,32 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.application.dtos.requests.TransferRequestFixture;
+import bg.com.bo.bff.application.dtos.responses.TransferResponseFixture;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.application.dtos.response.TransferResponse;
+import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
+import bg.com.bo.bff.providers.dtos.responses.ApiDataResponse;
+import bg.com.bo.bff.providers.dtos.responses.ApiErrorResponse;
+import bg.com.bo.bff.providers.dtos.responses.ErrorDetailResponse;
 
 @ExtendWith(MockitoExtension.class)
-class TokenMiddlewareProviderTest {
+class TransferOwnAccountProviderTest {
 
 
     @Spy
     @InjectMocks
-    TokenMiddlewareProvider provider;
+    TransferOwnAccountProvider provider;
 
+    @Mock
+    ITokenMiddlewareProvider tokenMiddlewareProvider;
 
     @Mock
     MiddlewareConfig middlewareConfig;
@@ -61,46 +74,63 @@ class TokenMiddlewareProviderTest {
 
     @BeforeEach
     void setUp() {
-        provider = new TokenMiddlewareProvider(httpClientFactory, middlewareConfig);
+        provider = new TransferOwnAccountProvider(httpClientFactory, middlewareConfig, tokenMiddlewareProvider);
         setField(provider, "middlewareConfig", MiddlewareConfigFixture.withDefault(), MiddlewareConfig.class);
     }
 
     @Test
-    void generateAccountAccessToken() throws IOException {
-
+    void transfer() throws IOException {
         ClientToken clientToken = new ClientToken();
         clientToken.setAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjdjNjlmZjNjZjdlNjE5MWU2NGUxMmZhMGVlNmM2ZWNiNTBiODkyY2E5NzIyMmJmZmMxMTc0Yzg5ZTcwNGM5NDQiLCJyb2xlIjoiMTY5YjRlM2IyNzhiYzAzYzZjNWUzNTQ4MDk5ZDUyZTk1MzRmZDRkNjhmMTM0MmEzNzM0OWFjYjQ1NWQ2ZWRjOCIsImdyb3Vwc2lkIjoiMmZhN2MxYjljNjE1ZmU5NThjYmFkODAyNDQzMGNjYjM3ZGE5YTEyMGExMjJiYWI0ZDEyMTFjMGQ3MDMyMTEwYiIsInByaW1hcnlzaWQiOiIyNGI4YjIxNTE1ZTU4ZDdkYTJiZTE1ZWFkZjBhODUyODg5NjEyNTMzODI4ZjkxNDA2YWJmNjRmYjgyYTViNjE2IiwibmJmIjoxNjk5OTIyMzg5LCJleHAiOjE2OTk5MjQxODksImlhdCI6MTY5OTkyMjM4OSwiaXNzIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIiwiYXVkIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIn0.J-Is_mRLEwwn8Z-RyAe40t0TpkLoppTE7roWe0zXFoc");
         clientToken.setExpiresIn(1699924189);
+        when(tokenMiddlewareProvider.generateAccountAccessToken(any(), any(), any())).thenReturn(clientToken);
         Mockito.when(httpClientFactory.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpGetResponseMock);
         Mockito.when(closeableHttpGetResponseMock.getEntity()).thenReturn(httpEntityMock);
+        Mockito.when(closeableHttpGetResponseMock.getStatusLine()).thenReturn(statusLineMock);
+        Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        String json = objectMapper.writeValueAsString(clientToken);
+        String json = objectMapper.writeValueAsString(ApiDataResponse.builder().data(TransferResponseFixture.withDefault()).build());
         InputStream inputStream = new ByteArrayInputStream(json.getBytes());
 
         Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
 
-        ClientToken result = provider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
+
+        TransferResponse result = provider.transfer("123455", TransferRequestFixture.withDefault());
 
         assertNotNull(result);
+        verify(tokenMiddlewareProvider).generateAccountAccessToken(any(), any(), any());
 
     }
 
     @Test
-    void generateAccountAccessTokenError() throws IOException {
-
+    void transferError() throws IOException {
         ClientToken clientToken = new ClientToken();
         clientToken.setAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjdjNjlmZjNjZjdlNjE5MWU2NGUxMmZhMGVlNmM2ZWNiNTBiODkyY2E5NzIyMmJmZmMxMTc0Yzg5ZTcwNGM5NDQiLCJyb2xlIjoiMTY5YjRlM2IyNzhiYzAzYzZjNWUzNTQ4MDk5ZDUyZTk1MzRmZDRkNjhmMTM0MmEzNzM0OWFjYjQ1NWQ2ZWRjOCIsImdyb3Vwc2lkIjoiMmZhN2MxYjljNjE1ZmU5NThjYmFkODAyNDQzMGNjYjM3ZGE5YTEyMGExMjJiYWI0ZDEyMTFjMGQ3MDMyMTEwYiIsInByaW1hcnlzaWQiOiIyNGI4YjIxNTE1ZTU4ZDdkYTJiZTE1ZWFkZjBhODUyODg5NjEyNTMzODI4ZjkxNDA2YWJmNjRmYjgyYTViNjE2IiwibmJmIjoxNjk5OTIyMzg5LCJleHAiOjE2OTk5MjQxODksImlhdCI6MTY5OTkyMjM4OSwiaXNzIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIiwiYXVkIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIn0.J-Is_mRLEwwn8Z-RyAe40t0TpkLoppTE7roWe0zXFoc");
         clientToken.setExpiresIn(1699924189);
+        when(tokenMiddlewareProvider.generateAccountAccessToken(any(), any(), any())).thenReturn(clientToken);
         Mockito.when(httpClientFactory.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenThrow(new RuntimeException("Test Catch General"));
+        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpGetResponseMock);
+        Mockito.when(closeableHttpGetResponseMock.getEntity()).thenReturn(httpEntityMock);
+        Mockito.when(closeableHttpGetResponseMock.getStatusLine()).thenReturn(statusLineMock);
+        Mockito.when(statusLineMock.getStatusCode()).thenReturn(406);
 
-        RuntimeException result = assertThrows(RuntimeException.class, () -> provider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey()));
+        List<ErrorDetailResponse> responseList = new ArrayList<>();
+        responseList.add(ErrorDetailResponse.builder().code("MDW").description("Error").build());
+        ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+                .errorType("Technical")
+                .code(406)
+                .errorDetailResponse(responseList).build();
 
-        assertNotNull(result);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(errorResponse);
+        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
+        Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
 
-        assertEquals("Hubo un error no controlado al realizar el requestToken", result.getMessage());
+        GenericException response = assertThrows(GenericException.class, () -> provider.transfer("123455", TransferRequestFixture.withDefault()));
+
+        assertNotNull(response);
     }
 }

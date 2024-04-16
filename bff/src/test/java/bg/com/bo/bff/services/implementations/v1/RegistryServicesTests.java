@@ -1,4 +1,4 @@
-package bg.com.bo.bff.services.v1;
+package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
 import bg.com.bo.bff.application.dtos.requests.RegistryRequestFixture;

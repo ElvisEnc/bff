@@ -1,4 +1,4 @@
-package bg.com.bo.bff.services.v1;
+package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.models.*;

@@ -1,4 +1,4 @@
-package bg.com.bo.bff.providers;
+package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
