@@ -46,7 +46,6 @@ public class DestinationAccountProvider implements IDestinationAccountProvider {
     private static final String APPLICATION_ID = "application-id";
 
 
-
     public DestinationAccountProvider(IHttpClientFactory httpClientFactory) {
         this.httpClientFactory = httpClientFactory;
     }
@@ -62,8 +61,7 @@ public class DestinationAccountProvider implements IDestinationAccountProvider {
         String jsonMapper = Util.objectToString(request);
 
         StringEntity entity = new StringEntity(jsonMapper);
-        try {
-            CloseableHttpClient httpClient = createHttpClient();
+        try (CloseableHttpClient httpClient = createHttpClient()) {
             String urlGetThirdAccounts = url + complementThirdAccounts + "/third-party-accounts";
             HttpPost httpRequest = new HttpPost(urlGetThirdAccounts);
             httpRequest.setHeader(AUTH, "Bearer " + token);
@@ -77,18 +75,18 @@ public class DestinationAccountProvider implements IDestinationAccountProvider {
             httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode()));
             httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
             httpRequest.setEntity(entity);
-            CloseableHttpResponse httpResponse = httpClient.execute(httpRequest);
-            int statusCode = httpResponse.getStatusLine().getStatusCode();
-            String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
 
-            if (statusCode == HttpStatus.SC_OK) {
-                return GenericResponse.instance(AddThirdAccountResponse.SUCCESS);
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+
+                if (statusCode == HttpStatus.SC_OK) {
+                    return GenericResponse.instance(AddThirdAccountResponse.SUCCESS);
+                }
+                logger.error(jsonResponse);
+                AppError error = Util.mapProviderError(jsonResponse);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }
-            logger.error(jsonResponse);
-            AppError error = Util.mapProviderError(jsonResponse);
-            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
-
-
         } catch (GenericException ex) {
             logger.error(ex);
             throw ex;
