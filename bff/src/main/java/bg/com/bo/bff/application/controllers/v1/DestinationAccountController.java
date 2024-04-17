@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 
+import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
@@ -19,7 +20,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -40,14 +47,36 @@ public class DestinationAccountController {
         this.service = service;
     }
 
+    @Operation(summary = "Agendar nueva cuenta de destino terceros.", description = "Agendar nueva cuenta de destino terceros.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
     @PutMapping("/{personId}/third-accounts")
     public ResponseEntity<GenericResponse> addThirdAccounts(
             @Parameter(description = "Este es el personId", example = "1234567")
             @PathVariable("personId")
             @NotBlank
             String personId,
-            @RequestBody AddThirdAccountRequest addThirdAccountRequest) throws IOException {
+            @Valid @RequestBody AddThirdAccountRequest addThirdAccountRequest) throws IOException {
         return ResponseEntity.ok(service.addThirdAccount(personId, addThirdAccountRequest,getParameter(httpServletRequest)));
+    }
+
+    @Operation(summary = "Agendar nueva cuenta de destino ACH.", description = "Agendar nueva cuenta de destino ACH.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PutMapping("/{personId}/ach-accounts")
+    public ResponseEntity<GenericResponse> addAchAccounts(
+            @Parameter(description = "Este es el personId", example = "1234567")
+            @PathVariable("personId")
+            @NotBlank
+            String personId,
+            @Valid @RequestBody AddAchAccountRequest addAchAccountRequest) throws IOException {
+        return ResponseEntity.ok(service.addAchAccount(personId, addAchAccountRequest, getParameter(httpServletRequest)));
     }
 
     @Operation(summary = "Eliminación de cuenta de terceros.", description = "Elimina cuenta de terceros.")
@@ -68,7 +97,7 @@ public class DestinationAccountController {
         return ResponseEntity.ok(service.delete(personId, identifier, deviceId, ip, request));
     }
 
-    public Map<String, String> getParameter(HttpServletRequest request) {
+    private Map<String, String> getParameter(HttpServletRequest request) {
         Map<String, String> parameters = new HashMap<>();
 
         Enumeration<String> headerNames = request.getHeaderNames();

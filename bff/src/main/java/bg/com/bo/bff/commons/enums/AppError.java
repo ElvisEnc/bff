@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-
 @Getter
 @AllArgsConstructor
 public enum AppError {
@@ -26,7 +25,8 @@ public enum AppError {
     MDWPGL_400(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWPGL-400", "Error en los parametros"),
     MDWACM_008(HttpStatus.NOT_FOUND, "BAD_REQUEST", "MDWACM-008", "Sin registros"),
     MDWACM_013(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWACM-013", "La cuenta no existe"),
-
+    MDWRACTM_004(HttpStatus.BAD_REQUEST, "DATA_INVALID", "MDWRACTM-004", "Datos Invalidos"),
+    MDWAAM_002(HttpStatus.BAD_REQUEST, "DATA_INVALID", "MDWAAM-002", "Datos Invalidos"),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "Error en los parametros"),
     DEFAULT(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "DEFAULT", "Error interno");
 
@@ -34,4 +34,14 @@ public enum AppError {
     private final String code;
     private final String description;
     private final String message;
+
+    public static AppError findByCode(String description) {
+
+        for (AppError constant : AppError.values()) {
+            if (constant.getDescription().equals(description)) {
+                return constant;
+            }
+        }
+        return AppError.DEFAULT;
+    }
 }

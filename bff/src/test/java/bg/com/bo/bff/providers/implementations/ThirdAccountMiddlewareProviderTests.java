@@ -2,12 +2,14 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
+import bg.com.bo.bff.application.dtos.requests.AddThirdAccountBasicRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.*;
 import bg.com.bo.bff.application.exceptions.RequestException;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.DeleteThirdAccountMWRequest;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountListMapper;
@@ -33,16 +35,19 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
@@ -69,6 +74,23 @@ public class ThirdAccountMiddlewareProviderTests {
     private ThirdAccountMWtMapper mapper;
     @InjectMocks
     private ThirdAccountMiddlewareProvider provider;
+
+    @Mock
+    CloseableHttpClient closeableHttpClientMock;
+    @Mock
+    CloseableHttpResponse closeableHttpResponseMock;
+    @Mock
+    HttpEntity httpEntityMock;
+    @Mock
+    StatusLine statusLineMock;
+
+    @BeforeEach
+    void setUp(){
+        ReflectionTestUtils.setField(provider, "url", "http://localhost");
+        ReflectionTestUtils.setField(provider, "complementToken", "/third-accounts-manager");
+        ReflectionTestUtils.setField(provider, "complementThirdAccounts", "/third-accounts-manager/bs/v1");
+        ReflectionTestUtils.setField(provider, "clientSecret", "db");
+    }
 
     @Test
     void givenPersonIdCompanyWhenRequestGetThirdAccountsThenListThirdAccounts()throws IOException{
@@ -245,5 +267,29 @@ public class ThirdAccountMiddlewareProviderTests {
         // Assert
         assertEquals(expectedResponse.getCode(), response.getCode());
         assertEquals(expectedResponse.getMessage(), response.getMessage());
+    }
+
+    @Test
+    void givenValidaDataWhenAddThirdAccountThenReturnOk() throws IOException {
+        // Arrange
+        final String token= "1212121";
+        final AddThirdAccountBasicRequest request = AddThirdAccountBasicRequestFixture.withDefaultOK();
+
+        Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
+        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
+        Mockito.when(closeableHttpResponseMock.getEntity()).thenReturn(httpEntityMock);
+        Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
+        Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
+
+        // Act
+        GenericResponse response = provider.addThirdAccount(token, request, new HashMap<>());
+
+        // Assert
+        assertNotNull(response);
+        Mockito.verify(httpClientFactoryMock).create();
+        Mockito.verify(closeableHttpClientMock).execute(Mockito.any(HttpPost.class));
+        Mockito.verify(closeableHttpResponseMock).getEntity();
+        Mockito.verify(closeableHttpResponseMock).getStatusLine();
+        Mockito.verify(statusLineMock).getStatusCode();
     }
 }

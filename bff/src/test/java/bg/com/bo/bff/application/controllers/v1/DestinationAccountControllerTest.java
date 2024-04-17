@@ -1,11 +1,14 @@
 package bg.com.bo.bff.application.controllers.v1;
 
+import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.requests.AddAchAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.requests.AddThirdAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddThirdAccountResponse;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -41,7 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class DestinationAccountControllerTest {
 
-    private static final String URL = "/api/v1/destination-accounts/1234567/third-accounts";
+    private static final String URL_THIRD = "/api/v1/destination-accounts/1234567/third-accounts";
+    private static final String URL_ACH = "/api/v1/destination-accounts/1234567/ach-accounts";
     private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/delete";
     private MockMvc mockMvc;
 
@@ -83,16 +87,21 @@ class DestinationAccountControllerTest {
 
         Vector<String> lists = new Vector<>(map.keySet().stream().toList());
         this.enumerations = lists.elements();
+
+
     }
 
     @Test
-    void addThirdAccounts() throws Exception {
+    void givenValidaDataWhenAddThirdAccountThenReturnOk() throws Exception {
+        // Arrange
         GenericResponse expected = GenericResponse.instance(AddThirdAccountResponse.SUCCESS);
         AddThirdAccountRequest request = AddThirdAccountRequestFixture.withDefault();
         when(httpServletRequest.getHeaderNames()).thenReturn(this.enumerations);
         when(service.addThirdAccount(any(), any(), any())).thenReturn(expected);
+
+        // Act
         MvcResult result = mockMvc
-                .perform(put(URL)
+                .perform(put(URL_THIRD)
                         .content(objectMapper.writeValueAsString(request))
                         .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .headers(this.headers)
@@ -102,7 +111,36 @@ class DestinationAccountControllerTest {
                 .andReturn();
         String response = objectMapper.writeValueAsString(expected);
         String actual = result.getResponse().getContentAsString();
+
+        // Assert
         assertEquals(response, actual);
+        verify(httpServletRequest).getHeaderNames();
+        verify(service).addThirdAccount(any(), any(), any());
+    }
+
+    @Test
+    void givenValidaDataWhenAddAchAccountThenReturnOk() throws Exception {
+        // Arrange
+        GenericResponse expected = GenericResponse.instance(AddAccountResponse.SUCCESS);
+        AddAchAccountRequest request = AddAchAccountRequestFixture.withDefault();
+        when(httpServletRequest.getHeaderNames()).thenReturn(this.enumerations);
+        when(service.addAchAccount(any(), any(), any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc
+                .perform(put(URL_ACH)
+                        .content(objectMapper.writeValueAsString(request))
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .headers(this.headers)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+        // Assert
+        assertEquals(response, actual);
+        verify(httpServletRequest).getHeaderNames();
+        verify(service).addAchAccount(any(), any(), any());
     }
 
     @Test

@@ -132,43 +132,7 @@ public class Util {
         List<ErrorDetailResponse> listError = response.getErrorDetailResponse();
         ErrorDetailResponse errorDetail = listError.get(0);
         String providerErrorCode = errorDetail.getCode();
-        switch (providerErrorCode) {
-            case "MDWLM-009":
-                return AppError.MDWLM_009;
-            case "MDWLM-010":
-                return AppError.MDWLM_010;
-            case "MDWLM-011":
-                return AppError.MDWLM_011;
-            case "MDWLM-012":
-                return AppError.MDWLM_012;
-            case "MDWLM-013":
-                return AppError.MDWLM_013;
-            case "MDWLM-018":
-                return AppError.MDWLM_018;
-            case "MDWLM-019":
-                return AppError.MDWLM_019;
-            case "MDWLM-020":
-                return AppError.MDWLM_020;
-            case "MDWLM-23":
-                return AppError.MDWLM_23;
-            case "MDWLM-24":
-                return AppError.MDWLM_24;
-            case "MDWLM-25":
-                return AppError.MDWLM_25;
-            case "MDWRLIB-0003":
-                return AppError.MDWRLIB_0003;
-            case "MDWPGL-500", "MDWRLIB-0001", "MDWRLIB-0011", "MDWRLIB-0012", "MDWPGL-404", "MDWRLIB-0009", "MDWPGL-405":
-                return AppError.DEFAULT;
-
-            case "MDWPGL-400":
-                return AppError.MDWPGL_400;
-            case "MDWACM-008":
-                return AppError.MDWACM_008;
-            case "MDWACM-013":
-                return AppError.MDWACM_013;
-            default:
-                return AppError.DEFAULT;
-        }
+        return AppError.findByCode(providerErrorCode);
     }
 
     public static byte[] getEncodedBytes(String data) {
