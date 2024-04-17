@@ -1,4 +1,3 @@
-
 package bg.com.bo.bff.application.dtos.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -63,14 +62,11 @@ public class AddAchAccountRequest {
     @Schema(example = "Juan Perez", description = "Nombre de cuanta destino", requiredMode = Schema.RequiredMode.REQUIRED)
     private String destinationHolderName;
 
-    @JsonProperty(required = true)
-    @NotBlank(message = "destinationIDNumber")
     @Schema(example = "123456", description = "Numero de identificacion", requiredMode = Schema.RequiredMode.REQUIRED)
     private String destinationIDNumber;
 
-    @JsonProperty(required = true)
     @Email(message = "Invalid email")
-    @Schema(example = "reynaldo@gmai.com", description = "Correo Electronico", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(example = "reynaldo@gmail.com", description = "Correo Electronico", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 }
 
