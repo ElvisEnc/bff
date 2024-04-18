@@ -2,9 +2,11 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.requests.AddAchAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.requests.AddThirdAccountRequestFixture;
+import bg.com.bo.bff.application.dtos.requests.AddWalletAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
@@ -45,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DestinationAccountControllerTest {
 
     private static final String URL_THIRD = "/api/v1/destination-accounts/1234567/third-accounts";
+    private static final String URL_WALLET = "/api/v1/destination-accounts/1234567/wallets";
     private static final String URL_ACH = "/api/v1/destination-accounts/1234567/ach-accounts";
     private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/delete";
     private MockMvc mockMvc;
@@ -187,4 +190,32 @@ class DestinationAccountControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
     }
+
+    @Test
+    void givenValidaDataWhenAddWalletdAccountThenReturnOk() throws Exception {
+        // Arrange
+        GenericResponse expected = GenericResponse.instance(AddThirdAccountResponse.SUCCESS);
+        AddWalletAccountRequest request = AddWalletAccountRequestFixture.withDefault();
+        when(httpServletRequest.getHeaderNames()).thenReturn(this.enumerations);
+        when(service.addWalletAccount(any(), any(), any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc
+                .perform(put(URL_WALLET)
+                        .content(objectMapper.writeValueAsString(request))
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .headers(this.headers)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(httpServletRequest).getHeaderNames();
+        verify(service).addWalletAccount(any(), any(), any());
+    }
+
 }

@@ -13,6 +13,7 @@ import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.DeleteThirdAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.responses.ThirdAccountListMWResponse;
 import bg.com.bo.bff.models.ThirdAccountListResponse;
@@ -38,6 +39,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @Service
@@ -59,6 +61,8 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     private static final String AUTH = "Authorization";
     private static final String MIDDLEWARE_CHANNEL = "middleware-channel";
     private static final String APPLICATION_ID = "application-id";
+    private static final String PATH_ADD_THIRD_ACCOUNT="/third-party-accounts";
+    private static final String PATH_ADD_WALLET ="/wallets";
 
     @Autowired
     public ThirdAccountMiddlewareProvider(IHttpClientFactory httpClientFactory, ThirdAccountListMapper thirdAccountListMapper, MiddlewareConfig middlewareConfig, ITokenMiddlewareProvider tokenMiddlewareProvider, ThirdAccountMWtMapper mapper) {
@@ -149,6 +153,7 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
         DeleteThirdAccountMWRequest requestData = mapper.convert(personId, identifier, accountId);
 
         try (CloseableHttpClient httpClient = createHttpClient()) {
+
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.THIRD_ACCOUNTS.getName() + "/bs/v1/third-party-accounts";
             HttpDeleteWithBody request = new HttpDeleteWithBody(path);
 
@@ -156,7 +161,6 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
             String jsonMapper = objectMapper.writeValueAsString(requestData);
             StringEntity entity = new StringEntity(jsonMapper);
             request.setEntity(entity);
-
             request.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
             request.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
             request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
@@ -186,12 +190,21 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     @Override
     public GenericResponse addThirdAccount(String token, AddThirdAccountBasicRequest request, Map<String, String> parameters) throws IOException {
 
+        String jsonMapper = Util.objectToString(request);
+        return getGenericResponse(token, parameters, jsonMapper,PATH_ADD_THIRD_ACCOUNT);
+    }
+
+    @Override
+    public GenericResponse addWalletAccount(String token, AddWalletAccountBasicRequest request, Map<String, String> parameters) throws IOException{
 
         String jsonMapper = Util.objectToString(request);
+        return getGenericResponse(token, parameters, jsonMapper, PATH_ADD_WALLET);
+    }
 
+    private GenericResponse getGenericResponse(String token, Map<String, String> parameters, String jsonMapper,String pathUrl) throws UnsupportedEncodingException {
         StringEntity entity = new StringEntity(jsonMapper);
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            String urlGetThirdAccounts = url + complementThirdAccounts + "/third-party-accounts";
+            String urlGetThirdAccounts = url + complementThirdAccounts + pathUrl;
             HttpPost httpRequest = getHttpPost(token, parameters, urlGetThirdAccounts, entity);
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
 
@@ -211,7 +224,6 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
             logger.error(e);
             throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
         }
-
     }
 
     private HttpPost getHttpPost(String token, Map<String, String> parameters, String urlGetThirdAccounts, StringEntity entity) {

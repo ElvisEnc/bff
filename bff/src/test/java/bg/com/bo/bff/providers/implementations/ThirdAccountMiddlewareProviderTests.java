@@ -3,6 +3,7 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
 import bg.com.bo.bff.application.dtos.requests.AddThirdAccountBasicRequestFixture;
+import bg.com.bo.bff.application.dtos.requests.AddWalletAccountBasicRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
@@ -10,6 +11,7 @@ import bg.com.bo.bff.models.*;
 import bg.com.bo.bff.application.exceptions.RequestException;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.DeleteThirdAccountMWRequest;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountListMapper;
@@ -85,7 +87,7 @@ public class ThirdAccountMiddlewareProviderTests {
     StatusLine statusLineMock;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         ReflectionTestUtils.setField(provider, "url", "http://localhost");
         ReflectionTestUtils.setField(provider, "complementToken", "/third-accounts-manager");
         ReflectionTestUtils.setField(provider, "complementThirdAccounts", "/third-accounts-manager/bs/v1");
@@ -93,25 +95,25 @@ public class ThirdAccountMiddlewareProviderTests {
     }
 
     @Test
-    void givenPersonIdCompanyWhenRequestGetThirdAccountsThenListThirdAccounts()throws IOException{
+    void givenPersonIdCompanyWhenRequestGetThirdAccountsThenListThirdAccounts() throws IOException {
         // Arrange
-        String personId="123456";
-        String company="123456";
-        IHttpClientFactory httpClientFactoryMock= Mockito.mock(IHttpClientFactory.class);
-        thirdAccountMiddlewareService=new ThirdAccountMiddlewareProvider(httpClientFactoryMock, ThirdAccountListMapper.INSTANCE, middlewareConfig, tokenMiddlewareProvider, thirdAccountMWtMapper);
-        CloseableHttpClient closeableHttpClientMock=Mockito.mock(CloseableHttpClient.class);
+        String personId = "123456";
+        String company = "123456";
+        IHttpClientFactory httpClientFactoryMock = Mockito.mock(IHttpClientFactory.class);
+        thirdAccountMiddlewareService = new ThirdAccountMiddlewareProvider(httpClientFactoryMock, ThirdAccountListMapper.INSTANCE, middlewareConfig, tokenMiddlewareProvider, thirdAccountMWtMapper);
+        CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
         CloseableHttpResponse closeableHttpGetResponseMock = Mockito.mock(CloseableHttpResponse.class);
         HttpEntity httpGetEntityMock = Mockito.mock(HttpEntity.class);
         StatusLine statusLineMock = Mockito.mock(StatusLine.class);
 
-        ThirdAccountListMWResponse accountListMWResponseMock=new ThirdAccountListMWResponse();
-        ThirdAccount account= new ThirdAccount();
-        List<ThirdAccount> list =new ArrayList<>();
+        ThirdAccountListMWResponse accountListMWResponseMock = new ThirdAccountListMWResponse();
+        ThirdAccount account = new ThirdAccount();
+        List<ThirdAccount> list = new ArrayList<>();
         list.add(account);
         accountListMWResponseMock.setData(list);
-        ObjectMapper objectMapperMWResponse=new ObjectMapper();
-        String jsonAccountsResponseMock=objectMapperMWResponse.writeValueAsString(accountListMWResponseMock);
-        InputStream accountsResponseMock=new ByteArrayInputStream(jsonAccountsResponseMock.getBytes());
+        ObjectMapper objectMapperMWResponse = new ObjectMapper();
+        String jsonAccountsResponseMock = objectMapperMWResponse.writeValueAsString(accountListMWResponseMock);
+        InputStream accountsResponseMock = new ByteArrayInputStream(jsonAccountsResponseMock.getBytes());
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenReturn(closeableHttpGetResponseMock);
@@ -272,7 +274,7 @@ public class ThirdAccountMiddlewareProviderTests {
     @Test
     void givenValidaDataWhenAddThirdAccountThenReturnOk() throws IOException {
         // Arrange
-        final String token= "1212121";
+        final String token = "1212121";
         final AddThirdAccountBasicRequest request = AddThirdAccountBasicRequestFixture.withDefaultOK();
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
@@ -292,4 +294,29 @@ public class ThirdAccountMiddlewareProviderTests {
         Mockito.verify(closeableHttpResponseMock).getStatusLine();
         Mockito.verify(statusLineMock).getStatusCode();
     }
+
+    @Test
+    void givenValidaDataWhenAddWalletAccountThenReturnOk() throws IOException {
+        // Arrange
+        final String token= "1212121";
+        final AddWalletAccountBasicRequest request = AddWalletAccountBasicRequestFixture.withDefaultOK();
+
+        Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
+        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
+        Mockito.when(closeableHttpResponseMock.getEntity()).thenReturn(httpEntityMock);
+        Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
+        Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
+
+        // Act
+        GenericResponse response = provider.addWalletAccount(token, request, new HashMap<>());
+
+        // Assert
+        assertNotNull(response);
+        Mockito.verify(httpClientFactoryMock).create();
+        Mockito.verify(closeableHttpClientMock).execute(Mockito.any(HttpPost.class));
+        Mockito.verify(closeableHttpResponseMock).getEntity();
+        Mockito.verify(closeableHttpResponseMock).getStatusLine();
+        Mockito.verify(statusLineMock).getStatusCode();
+    }
+
 }

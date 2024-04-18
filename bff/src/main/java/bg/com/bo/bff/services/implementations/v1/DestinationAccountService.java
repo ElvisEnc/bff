@@ -2,10 +2,12 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.providers.dtos.requests.AddAchAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
@@ -72,5 +74,22 @@ public class DestinationAccountService implements IDestinationAccountService {
     @Override
     public GenericResponse delete(String personId, int identifier, String deviceId, String deviceIp, DeleteThirdAccountRequest request) throws IOException {
         return thirdAccountProvider.delete(personId, identifier, request.getAccountId(), deviceId, deviceIp);
+    }
+
+    @Override
+    public GenericResponse addWalletAccount(String personId, AddWalletAccountRequest request, Map<String, String> parameter) throws IOException  {
+        AddWalletAccountBasicRequest addWalletAccountBasicRequest = AddWalletAccountBasicRequest.builder()
+                .personId(personId)
+                .companyPersonId(personId)
+                .toAccountNumber(request.getToAccountNumber())
+                .reference(request.getReference())
+                .isFavorite(request.getIsFavorite())
+                .build();
+        return thirdAccountProvider
+                .addWalletAccount(
+                        thirdAccountProvider.generateAccessToken().getAccessToken(),
+                        addWalletAccountBasicRequest,
+                        parameter
+                );
     }
 }

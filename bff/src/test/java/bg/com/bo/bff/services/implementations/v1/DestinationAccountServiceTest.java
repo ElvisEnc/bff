@@ -2,9 +2,11 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.requests.AddAchAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.requests.AddThirdAccountRequestFixture;
+import bg.com.bo.bff.application.dtos.requests.AddWalletAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
@@ -40,7 +42,8 @@ class DestinationAccountServiceTest {
     private  IAchAccountProvider achAccountProvider;
 
     @Test
-    void addThirdAccount() throws IOException {
+    void givenValidaDataWhenAddThirdAccountThenReturnOk() throws IOException {
+        // Arrange
         ClientToken clientToken = new ClientToken();
         clientToken.setAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjdjNjlmZjNjZjdlNjE5MWU2NGUxMmZhMGVlNmM2ZWNiNTBiODkyY2E5NzIyMmJmZmMxMTc0Yzg5ZTcwNGM5NDQiLCJyb2xlIjoiMTY5YjRlM2IyNzhiYzAzYzZjNWUzNTQ4MDk5ZDUyZTk1MzRmZDRkNjhmMTM0MmEzNzM0OWFjYjQ1NWQ2ZWRjOCIsImdyb3Vwc2lkIjoiMmZhN2MxYjljNjE1ZmU5NThjYmFkODAyNDQzMGNjYjM3ZGE5YTEyMGExMjJiYWI0ZDEyMTFjMGQ3MDMyMTEwYiIsInByaW1hcnlzaWQiOiIyNGI4YjIxNTE1ZTU4ZDdkYTJiZTE1ZWFkZjBhODUyODg5NjEyNTMzODI4ZjkxNDA2YWJmNjRmYjgyYTViNjE2IiwibmJmIjoxNjk5OTIyMzg5LCJleHAiOjE2OTk5MjQxODksImlhdCI6MTY5OTkyMjM4OSwiaXNzIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIiwiYXVkIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIn0.J-Is_mRLEwwn8Z-RyAe40t0TpkLoppTE7roWe0zXFoc");
         clientToken.setExpiresIn(1699924189);
@@ -48,12 +51,18 @@ class DestinationAccountServiceTest {
         when(thirdAccountProvider.
                 addThirdAccount(any(),any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
         when(thirdAccountProvider.generateAccessToken()).thenReturn(clientToken);
+
+        // Act
         GenericResponse response = service.addThirdAccount("1212", request, new HashMap<>());
+
         assertNotNull(response);
+        verify(thirdAccountProvider).generateAccessToken();
+        verify(thirdAccountProvider).addThirdAccount(any(),any(), any());
+
     }
 
     @Test
-    void givenValidaDataWhenAddThirdAccountThenReturnOk() throws IOException {
+    void givenValidaDataWhenAddAchAccountThenReturnOk() throws IOException {
         // Arrange
         ClientToken clientToken = new ClientToken();
         clientToken.setAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjdjNjlmZjNjZjdlNjE5MWU2NGUxMmZhMGVlNmM2ZWNiNTBiODkyY2E5NzIyMmJmZmMxMTc0Yzg5ZTcwNGM5NDQiLCJyb2xlIjoiMTY5YjRlM2IyNzhiYzAzYzZjNWUzNTQ4MDk5ZDUyZTk1MzRmZDRkNjhmMTM0MmEzNzM0OWFjYjQ1NWQ2ZWRjOCIsImdyb3Vwc2lkIjoiMmZhN2MxYjljNjE1ZmU5NThjYmFkODAyNDQzMGNjYjM3ZGE5YTEyMGExMjJiYWI0ZDEyMTFjMGQ3MDMyMTEwYiIsInByaW1hcnlzaWQiOiIyNGI4YjIxNTE1ZTU4ZDdkYTJiZTE1ZWFkZjBhODUyODg5NjEyNTMzODI4ZjkxNDA2YWJmNjRmYjgyYTViNjE2IiwibmJmIjoxNjk5OTIyMzg5LCJleHAiOjE2OTk5MjQxODksImlhdCI6MTY5OTkyMjM4OSwiaXNzIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIiwiYXVkIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIn0.J-Is_mRLEwwn8Z-RyAe40t0TpkLoppTE7roWe0zXFoc");
@@ -94,4 +103,27 @@ class DestinationAccountServiceTest {
         verify(thirdAccountProvider).delete(personId, identifier, request.getAccountId(), deviceId, ip);
         assertEquals(expectedResponse, response);
     }
+
+    @Test
+    void givenValidaDataWhenAddWalletAccountThenReturnOk() throws IOException {
+        // Arrange
+        ClientToken clientToken = new ClientToken();
+        clientToken.setAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjdjNjlmZjNjZjdlNjE5MWU2NGUxMmZhMGVlNmM2ZWNiNTBiODkyY2E5NzIyMmJmZmMxMTc0Yzg5ZTcwNGM5NDQiLCJyb2xlIjoiMTY5YjRlM2IyNzhiYzAzYzZjNWUzNTQ4MDk5ZDUyZTk1MzRmZDRkNjhmMTM0MmEzNzM0OWFjYjQ1NWQ2ZWRjOCIsImdyb3Vwc2lkIjoiMmZhN2MxYjljNjE1ZmU5NThjYmFkODAyNDQzMGNjYjM3ZGE5YTEyMGExMjJiYWI0ZDEyMTFjMGQ3MDMyMTEwYiIsInByaW1hcnlzaWQiOiIyNGI4YjIxNTE1ZTU4ZDdkYTJiZTE1ZWFkZjBhODUyODg5NjEyNTMzODI4ZjkxNDA2YWJmNjRmYjgyYTViNjE2IiwibmJmIjoxNjk5OTIyMzg5LCJleHAiOjE2OTk5MjQxODksImlhdCI6MTY5OTkyMjM4OSwiaXNzIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIiwiYXVkIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIn0.J-Is_mRLEwwn8Z-RyAe40t0TpkLoppTE7roWe0zXFoc");
+        clientToken.setExpiresIn(1699924189);
+        AddWalletAccountRequest request = AddWalletAccountRequestFixture.withDefault();
+        when(thirdAccountProvider.
+                addWalletAccount(any(),any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
+        when(thirdAccountProvider.generateAccessToken()).thenReturn(clientToken);
+
+        // Act
+        GenericResponse response = service.addWalletAccount("1212", request, new HashMap<>());
+
+        // Assert
+        assertNotNull(response);
+        verify(thirdAccountProvider).generateAccessToken();
+        verify(thirdAccountProvider).addWalletAccount(any(),any(), any());
+
+    }
+
+
 }

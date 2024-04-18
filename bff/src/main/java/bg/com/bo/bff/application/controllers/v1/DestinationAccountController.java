@@ -3,6 +3,7 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
@@ -95,6 +96,22 @@ public class DestinationAccountController {
     ) throws IOException {
         String ip = servletRequest.getRemoteAddr();
         return ResponseEntity.ok(service.delete(personId, identifier, deviceId, ip, request));
+    }
+
+    @Operation(summary = "Agendar nueva cuenta de destino ACH.", description = "Agendar nueva cuenta de destino ACH.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PutMapping("/{personId}/wallets")
+    public ResponseEntity<GenericResponse> addWalletAccounts(
+            @Parameter(description = "Este es el personId", example = "1234567")
+            @PathVariable("personId")
+            @NotBlank
+            String personId,
+            @Valid @RequestBody AddWalletAccountRequest addWalletAccountRequest) throws IOException {
+        return ResponseEntity.ok(service.addWalletAccount(personId, addWalletAccountRequest, getParameter(httpServletRequest)));
     }
 
     private Map<String, String> getParameter(HttpServletRequest request) {
