@@ -1,14 +1,11 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.commons.enums.CanalMW;
-import bg.com.bo.bff.commons.enums.Headers;
-import bg.com.bo.bff.commons.enums.ProjectNameMW;
+import bg.com.bo.bff.commons.enums.*;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AccountListMWResponse;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
-import bg.com.bo.bff.commons.enums.HttpError;
 import bg.com.bo.bff.application.exceptions.BadRequestException;
 import bg.com.bo.bff.application.exceptions.NotAcceptableException;
 import bg.com.bo.bff.application.exceptions.RequestException;
@@ -95,7 +92,7 @@ public class AccountMiddlewareProvider implements IAccountProvider {
         boolean propagateException = false;
 
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/persons/" + personId + "/companies/" + personId + "/devices/0/roles/0";
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/persons/" + personId + "/companies/" + personId + "/devices/0/roles/" + PersonRol.PERSONA.getId();
             HttpGet get = new HttpGet(path);
             get.setHeader(Headers.AUT.getName(), "Bearer " + token);
             get.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
