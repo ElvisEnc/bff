@@ -14,15 +14,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
     private static final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class.getName());
 
-    @ExceptionHandler({HttpMessageNotReadableException.class, UnexpectedTypeException.class, MethodArgumentNotValidException.class, NullPointerException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, UnexpectedTypeException.class, MethodArgumentNotValidException.class, NullPointerException.class, MissingRequestHeaderException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ErrorResponse> handleValidateException(Exception exception) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), HttpStatus.BAD_REQUEST.getReasonPhrase());
         logger.error(exception);

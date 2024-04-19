@@ -174,6 +174,51 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
         }
     }
 
+    @Override
+    public GenericResponse logout(String deviceId, String deviceIp, String deviceName, String geoPositionX, String geoPositionY, String appVersion, String personId, String userDeviceId, String personRoleId, LogoutMWRequest logoutMWRequest, String token) {
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.LOGIN_MANAGER.getName() + "/bs/v1/users/log-logout-securely";
+            HttpPost request = new HttpPost(path);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonMapper = objectMapper.writeValueAsString(logoutMWRequest);
+            StringEntity entity = new StringEntity(jsonMapper);
+            request.setEntity(entity);
+            request.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            request.setHeader(Headers.AUT.getName(), "Bearer " + token);
+            request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+
+            request.setHeader("device-id", deviceId);
+            request.setHeader("device-ip", deviceIp);
+            request.setHeader("device-name", deviceName);
+            request.setHeader("geo-position-x", geoPositionX);
+            request.setHeader("geo-position-y", geoPositionY);
+            request.setHeader("app-version", appVersion);
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK) {
+                    return GenericResponse.builder()
+                            .code("SUCCESS")
+                            .message("Se cerró sesión satisfactoriamente")
+                            .build();
+                } else {
+                    logger.error(jsonResponse);
+                    AppError error = Util.mapProviderError(jsonResponse);
+                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                }
+            }
+        } catch (GenericException ex) {
+            logger.error(ex);
+            throw ex;
+        } catch (Exception e) {
+            logger.error(e);
+            throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
+        }
+    }
+
+    @Override
     public GenericResponse changePassword(String personId, String ip, String deviceId, String deviceUniqueId, String rolePersonId, ChangePasswordRequest changePasswordRequest) throws IOException {
         ChangePasswordMWRequest changePasswordMWRequest = loginMWMapper.convert(changePasswordRequest);
         MWOwnerAccountRequest owner = new MWOwnerAccountRequest();
@@ -202,8 +247,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
-                if (statusCode == HttpStatus.SC_OK)
-                    return GenericResponse.instance(UserControllerResponse.SUCCESS);
+                if (statusCode == HttpStatus.SC_OK) return GenericResponse.instance(UserControllerResponse.SUCCESS);
                 else {
                     logger.error(jsonResponse);
                     IErrorResponse errorResponse = ChangePasswordErrorResponseConverter.INSTANCE.convert(jsonResponse);

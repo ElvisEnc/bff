@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.interfaces;
 
+import bg.com.bo.bff.application.dtos.request.LogoutRequest;
 import bg.com.bo.bff.models.dtos.login.CreateTokenServiceResponse;
 import bg.com.bo.bff.models.jwt.JwtAccess;
 import bg.com.bo.bff.models.jwt.JwtKey;
@@ -18,4 +19,9 @@ public interface IJwtProvider {
     JwtRefresh parseJwtRefresh(String token);
 
     Map<String, JwtKey> certs();
+
+
+    boolean revokeAccessToken(String authorization);
+
+    boolean revokeRefreshToken(LogoutRequest request);
 }

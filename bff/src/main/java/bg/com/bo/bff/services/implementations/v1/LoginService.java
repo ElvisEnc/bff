@@ -1,9 +1,13 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
+import bg.com.bo.bff.application.dtos.request.LogoutRequest;
 import bg.com.bo.bff.application.dtos.request.RefreshSessionRequest;
+import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.TokenDataResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
+import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.LoginSchemaName;
 import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
 import bg.com.bo.bff.commons.enums.response.RefreshControllerErrorResponse;
@@ -16,6 +20,7 @@ import bg.com.bo.bff.commons.enums.UserRole;
 import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
 import bg.com.bo.bff.application.exceptions.NotValidStateException;
 import bg.com.bo.bff.models.jwt.JwtRefresh;
+import bg.com.bo.bff.providers.dtos.requests.login.LogoutMWRequest;
 import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorDataResponse;
 import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorResponse;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
@@ -96,5 +101,36 @@ public class LoginService implements ILoginServices {
         } catch (Exception e) {
             throw new HandledException(GenericControllerErrorResponse.INTERNAL_SERVER_ERROR, e);
         }
+    }
+
+    @Override
+    public GenericResponse logout(String deviceId, String deviceIp, String deviceName, String geoPositionX, String geoPositionY, String appVersion, String personId, String userDeviceId, String personRoleId, String authorization,
+                                  LogoutRequest request) throws IOException {
+
+        String accessToken = authorization.substring(7);
+        if (!jwtService.revokeAccessToken(accessToken) || !jwtService.revokeRefreshToken(request)) {
+            AppError errorKetCloak = AppError.KEY_CLOAK_ERROR;
+            throw new GenericException(errorKetCloak.getMessage(), errorKetCloak.getHttpCode(), errorKetCloak.getCode());
+        }
+
+        LogoutMWRequest logoutMWRequest = LogoutMWRequest.builder()
+                .ownerAccount(LogoutMWRequest.OwnerAccount.builder()
+                        .personId(personId)
+                        .userDeviceId(userDeviceId)
+                        .personRoleId(personRoleId)
+                        .build())
+                .deviceData(LogoutMWRequest.LogoutDataMW.builder()
+                        .deviceId(deviceId)
+                        .deviceIp(deviceIp)
+                        .deviceName(deviceName)
+                        .geoPositionX(geoPositionX)
+                        .geoPositionY(geoPositionY)
+                        .appVersion(appVersion)
+                        .build())
+                .build();
+
+        ClientToken clientToken = loginMiddlewareService.tokenLogin();
+        return loginMiddlewareService.logout(deviceId, deviceIp, deviceName, geoPositionX, geoPositionY, appVersion, personId, userDeviceId, personRoleId, logoutMWRequest, clientToken.getAccessToken()
+        );
     }
 }

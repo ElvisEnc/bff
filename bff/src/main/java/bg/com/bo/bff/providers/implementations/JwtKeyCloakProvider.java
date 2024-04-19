@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.implementations;
 
+import bg.com.bo.bff.application.dtos.request.LogoutRequest;
 import bg.com.bo.bff.application.exceptions.*;
 import bg.com.bo.bff.providers.mappings.IGenericsMapper;
 import bg.com.bo.bff.providers.mappings.keycloak.KeyCloakMapper;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -70,6 +72,9 @@ public class JwtKeyCloakProvider implements IJwtProvider {
 
     @Value("${keycloak.certs.url}")
     private String urlCertsComplement;
+
+    @Value("${keycloak.revoke.url}")
+    private String urlRevokeComplement;
 
     @Autowired
     private JwtKeyCloakProvider self;
@@ -217,8 +222,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
 
                         if (errorKCResponse.getError().equals(ErrorKCResponse.Error.INVALID_GRANT.getCode()))
                             createTokenResponse.setStatusCode(CreateTokenServiceResponse.StatusCode.INVALID_DATA);
-                        else
-                            throw new NotHandledResponseException(errorKCResponse.getError());
+                        else throw new NotHandledResponseException(errorKCResponse.getError());
                         break;
                     case 404:
                         String response = EntityUtils.toString(httpResponse.getEntity());
@@ -353,6 +357,52 @@ public class JwtKeyCloakProvider implements IJwtProvider {
             logger.error(e);
             logger.error(token);
             throw new JwtException("Hubo un error al obtener el Refresh JWT.");
+        }
+    }
+
+    @Override
+    public boolean revokeAccessToken(String authorization) {
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("token_type_hint", "access_token"));
+        params.add(new BasicNameValuePair("token", authorization));
+        params.add(new BasicNameValuePair("client_id", clientId));
+        params.add(new BasicNameValuePair("client_secret", clientSecret));
+
+        return revokeKeyCloak(params);
+    }
+
+    @Override
+    public boolean revokeRefreshToken(LogoutRequest request) {
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("token_type_hint", "refresh_token"));
+        params.add(new BasicNameValuePair("token", request.getRefreshToken()));
+        params.add(new BasicNameValuePair("client_id", clientId));
+        params.add(new BasicNameValuePair("client_secret", clientSecret));
+
+        return revokeKeyCloak(params);
+    }
+
+
+    private boolean revokeKeyCloak(List<BasicNameValuePair> params) {
+        try (CloseableHttpClient httpClient = httpClientFactory.create()) {
+            String pathPostToken = urlBase + urlRevokeComplement;
+            HttpPost postRevoke = new HttpPost(pathPostToken);
+            postRevoke.setHeader("Content-Type", "application/x-www-form-urlencoded");
+            HttpEntity httpEntity = new UrlEncodedFormEntity(params, StandardCharsets.UTF_8);
+            postRevoke.setEntity(httpEntity);
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(postRevoke)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String response = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.OK.value()) return true;
+                else {
+                    logger.error(response);
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e);
+            return false;
         }
     }
 }

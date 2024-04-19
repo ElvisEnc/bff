@@ -1,15 +1,12 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.Device;
-import bg.com.bo.bff.application.dtos.response.DeviceEnrollmentResponse;
-import bg.com.bo.bff.application.dtos.response.LoginResponse;
-import bg.com.bo.bff.application.dtos.response.TokenDataResponse;
+import bg.com.bo.bff.application.dtos.request.LogoutRequest;
+import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
 import bg.com.bo.bff.application.dtos.request.RefreshSessionRequest;
 import bg.com.bo.bff.application.mappings.login.LoginMapper;
-import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.models.dtos.login.*;
-import bg.com.bo.bff.application.exceptions.NotAcceptableException;
 import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
 import bg.com.bo.bff.services.interfaces.IDeviceEnrollmentService;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
@@ -23,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +31,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("api/v1/login")
 @Tag(name = "Login Controller", description = "Controlador del Login")
+@Validated
 public class LoginController {
 
     private ILoginServices iLoginServices;
@@ -42,7 +41,7 @@ public class LoginController {
     @Autowired
     public LoginController(ILoginServices iLoginServices, IDeviceEnrollmentService iDeviceEnrollmentService, LoginMapper loginMapper) {
         this.iLoginServices = iLoginServices;
-        this.iDeviceEnrollmentService=iDeviceEnrollmentService;
+        this.iDeviceEnrollmentService = iDeviceEnrollmentService;
         this.loginMapper = loginMapper;
     }
 
@@ -91,4 +90,44 @@ public class LoginController {
         DeviceEnrollmentResponse response = iDeviceEnrollmentService.validation(device);
         return ResponseEntity.ok(response);
     }
+
+
+    @Operation(summary = "Logout Request", description = "Endpoint para cerrar sesión")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Logout Success", content = @Content(schema = @Schema(implementation = LoginResult.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Error en los parámetros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error Interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PostMapping("/{personId}/logout")
+    public ResponseEntity<GenericResponse> logout(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId", example = "13021") Integer personId,
+            @RequestHeader("user-device-id") @NotNull @Parameter(description = "Este es el userDeviceId", example = "70") Integer userDeviceId,
+            @RequestHeader("person-role-id") @NotNull @Parameter(description = "Este es el personRoleId", example = "50") Integer personRoleId,
+            HttpServletRequest servletRequest,
+            @RequestHeader("Authorization") String authorization,
+            @Valid @RequestBody LogoutRequest request
+    ) throws IOException {
+        String deviceIp = servletRequest.getRemoteAddr();
+
+        GenericResponse response = iLoginServices.logout(
+                deviceId,
+                deviceIp,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion,
+                String.valueOf(personId),
+                String.valueOf(userDeviceId),
+                String.valueOf(personRoleId),
+                authorization,
+                request);
+
+        return ResponseEntity.ok(response);
+    }
 }
+
