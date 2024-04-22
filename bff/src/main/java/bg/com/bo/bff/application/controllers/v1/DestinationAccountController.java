@@ -5,6 +5,7 @@ import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
@@ -21,13 +22,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -112,6 +107,16 @@ public class DestinationAccountController {
             String personId,
             @Valid @RequestBody AddWalletAccountRequest addWalletAccountRequest) throws IOException {
         return ResponseEntity.ok(service.addWalletAccount(personId, addWalletAccountRequest, getParameter(httpServletRequest)));
+    }
+
+    @Operation(summary = "Obtiener lista de tipos de cuenta.", description = "Obtiene un listado de todos los tipos de cuentas.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AccountTypeListResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("/account-types")
+    public ResponseEntity<AccountTypeListResponse> accountTypes(){
+        return ResponseEntity.ok(service.accountTypes());
     }
 
     private Map<String, String> getParameter(HttpServletRequest request) {

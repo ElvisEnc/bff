@@ -39,6 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,6 +51,7 @@ class DestinationAccountControllerTest {
     private static final String URL_WALLET = "/api/v1/destination-accounts/1234567/wallets";
     private static final String URL_ACH = "/api/v1/destination-accounts/1234567/ach-accounts";
     private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/delete";
+    private static final String GET_ACCOUNT_TYPES = "/api/v1/destination-accounts/account-types";
     private MockMvc mockMvc;
 
     @Spy
@@ -218,4 +220,16 @@ class DestinationAccountControllerTest {
         verify(service).addWalletAccount(any(), any(), any());
     }
 
+    @Test
+    void givenRequestWhenGetAccountTypesReturnOk() throws Exception {
+        //Act
+        MvcResult result = mockMvc.perform(get(GET_ACCOUNT_TYPES)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //Assert
+        verify(service).accountTypes();
+    }
 }

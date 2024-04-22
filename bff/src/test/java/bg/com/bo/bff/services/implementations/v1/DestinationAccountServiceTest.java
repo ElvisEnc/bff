@@ -7,16 +7,19 @@ import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.requests.AddAchAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.requests.AddThirdAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.requests.AddWalletAccountRequestFixture;
+import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.commons.enums.AccountType;
+import bg.com.bo.bff.mappings.services.DestinationAccountServiceMapper;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
@@ -31,15 +34,20 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class DestinationAccountServiceTest {
 
-    @Spy
-    @InjectMocks
     private DestinationAccountService service;
 
     @Mock
-    private  IThirdAccountProvider thirdAccountProvider;
+    private IThirdAccountProvider thirdAccountProvider;
 
     @Mock
-    private  IAchAccountProvider achAccountProvider;
+    private IAchAccountProvider achAccountProvider;
+
+    private final DestinationAccountServiceMapper mapper = DestinationAccountServiceMapper.INSTANCE;
+
+    @BeforeEach
+    void init(){
+        service = new DestinationAccountService(thirdAccountProvider, achAccountProvider, mapper);
+    }
 
     @Test
     void givenValidaDataWhenAddThirdAccountThenReturnOk() throws IOException {
@@ -49,7 +57,7 @@ class DestinationAccountServiceTest {
         clientToken.setExpiresIn(1699924189);
         AddThirdAccountRequest request = AddThirdAccountRequestFixture.withDefault();
         when(thirdAccountProvider.
-                addThirdAccount(any(),any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
+                addThirdAccount(any(), any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
         when(thirdAccountProvider.generateAccessToken()).thenReturn(clientToken);
 
         // Act
@@ -57,7 +65,7 @@ class DestinationAccountServiceTest {
 
         assertNotNull(response);
         verify(thirdAccountProvider).generateAccessToken();
-        verify(thirdAccountProvider).addThirdAccount(any(),any(), any());
+        verify(thirdAccountProvider).addThirdAccount(any(), any(), any());
 
     }
 
@@ -70,14 +78,14 @@ class DestinationAccountServiceTest {
         AddAchAccountRequest request = AddAchAccountRequestFixture.withDefault();
         when(achAccountProvider.generateAccessToken()).thenReturn(clientToken);
         when(achAccountProvider.
-                addAchAccount(any(),any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
+                addAchAccount(any(), any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
 
         // Act
         GenericResponse response = service.addAchAccount("1212", request, new HashMap<>());
 
         // Assert
         assertNotNull(response);
-        verify(achAccountProvider).addAchAccount(any(),any(), any());
+        verify(achAccountProvider).addAchAccount(any(), any(), any());
         verify(achAccountProvider).generateAccessToken();
     }
 
@@ -112,7 +120,7 @@ class DestinationAccountServiceTest {
         clientToken.setExpiresIn(1699924189);
         AddWalletAccountRequest request = AddWalletAccountRequestFixture.withDefault();
         when(thirdAccountProvider.
-                addWalletAccount(any(),any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
+                addWalletAccount(any(), any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
         when(thirdAccountProvider.generateAccessToken()).thenReturn(clientToken);
 
         // Act
@@ -121,9 +129,16 @@ class DestinationAccountServiceTest {
         // Assert
         assertNotNull(response);
         verify(thirdAccountProvider).generateAccessToken();
-        verify(thirdAccountProvider).addWalletAccount(any(),any(), any());
-
+        verify(thirdAccountProvider).addWalletAccount(any(), any(), any());
     }
 
+    @Test
+    void givenWhenGetAccountTypesThenReturnList() {
+        //Act
+        AccountTypeListResponse response = service.accountTypes();
 
+        //Assert
+        Assertions.assertNotNull(response.getData());
+        assertEquals(response.getData().size(), AccountType.values().length);
+    }
 }

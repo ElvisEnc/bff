@@ -5,6 +5,7 @@ import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import org.springframework.stereotype.Service;
 
@@ -17,4 +18,5 @@ public interface IDestinationAccountService {
     GenericResponse addAchAccount(String personId, AddAchAccountRequest addAchAccountRequest, Map<String, String> parameter) throws IOException;
     GenericResponse delete(String personId, int identifier, String deviceId, String deviceIp, DeleteThirdAccountRequest request) throws IOException;
     GenericResponse addWalletAccount(String personId, AddWalletAccountRequest addWalletAccountRequest, Map<String, String> parameter) throws IOException ;
+    AccountTypeListResponse accountTypes();
 }
