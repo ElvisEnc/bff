@@ -25,8 +25,13 @@ public class AccountStatementCsvProvider implements IAccountStatementCsvProvider
             String[] title = {"Estado", "Tipo", "Monto", "Moneda", "Canal", "Fecha", "Hora", "Balance", "Transacción", "Descripción"};
             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(title).withDelimiter(';').withAutoFlush(true));
 
-            for (AccountReportBasicResponse.AccountReportData data : basicResponseData) {
-                csvPrinter.printRecord(data.getStatus(), data.getMoveType(), data.getAmount(), data.getCurrencyCod(), data.getBranchOffice(), data.getProcessDate(), data.getAccountingTime(), data.getCurrentBalance(), data.getSeatNumber(), data.getDescription().replace("\n", "").replace("\r", ""));
+            if (!basicResponseData.isEmpty())
+                for (AccountReportBasicResponse.AccountReportData data : basicResponseData) {
+                    csvPrinter.printRecord(data.getStatus(), data.getMoveType(), data.getAmount(), data.getCurrencyCod(), data.getBranchOffice(), data.getProcessDate(), data.getAccountingTime(), data.getCurrentBalance(), data.getSeatNumber(), data.getDescription().replace("\n", "").replace("\r", ""));
+                }
+            else {
+                String empty = "Sin registro";
+                csvPrinter.printRecord(empty, empty, empty, empty, empty, empty, empty, empty, empty, empty);
             }
             csvPrinter.close();
 

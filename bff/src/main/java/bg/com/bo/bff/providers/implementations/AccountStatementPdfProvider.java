@@ -37,7 +37,6 @@ public class AccountStatementPdfProvider implements IAccountStatementPdfProvider
     @Override
     public byte[] generatePdf(List<AccountReportBasicResponse.AccountReportData> accountReportData, ExportRequest request, String accountId) throws IOException {
         String range = " desde  " + request.getFilters().getStartDate() + "  hasta  " + request.getFilters().getEndDate();
-        String currency = Objects.equals(accountReportData.get(0).getCurrencyCod(), "BOB") ? "Bolivianos" : "Dolares";
 
         Document document = new Document(PageSize.A4.rotate());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -82,34 +81,33 @@ public class AccountStatementPdfProvider implements IAccountStatementPdfProvider
 
             document.add(new Paragraph(" ", new Font(Font.HELVETICA, rectangleHeight - 10)));
 
-            Font subtitleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
-
-            Paragraph accountSubtitle = new Paragraph("Cuenta: " + accountId, subtitleFont);
-            accountSubtitle.setSpacingAfter(5);
-            document.add(accountSubtitle);
-            Paragraph currencySubtitle = new Paragraph("Moneda: " + currency, subtitleFont);
-            currencySubtitle.setSpacingAfter(25);
-            document.add(currencySubtitle);
-
             PdfPTable table = new PdfPTable(new float[]{2, 2, 3, 2, 1, 2, 5});
             table.setWidthPercentage(99);
 
             Font fontHeader = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, green);
             Font fontData = FontFactory.getFont(FontFactory.HELVETICA, 9, black);
 
-            String[] headers = {"Transacción", "Canal", "Fecha y Hora", "Monto", "Tipo", "Balance", "Descripción"};
-            for (String header : headers) {
-                table.addCell(createCell(header, fontHeader));
+            if (!accountReportData.isEmpty()) {
+                String[] headers = {"Transacción", "Canal", "Fecha y Hora", "Monto", "Tipo", "Balance", "Descripción"};
+                for (String header : headers) {
+                    table.addCell(createCell(header, fontHeader));
+                }
+                for (AccountReportBasicResponse.AccountReportData transaction : accountReportData) {
+                    table.addCell(createCell(String.valueOf(transaction.getSeatNumber()), fontData));
+                    table.addCell(createCell(transaction.getBranchOffice(), fontData));
+                    table.addCell(createCell(transaction.getProcessDate() + " " + transaction.getAccountingTime(), fontData));
+                    table.addCell(createCell(String.valueOf(transaction.getAmount()), fontData));
+                    table.addCell(createCell(transaction.getMoveType(), fontData));
+                    table.addCell(createCell(String.valueOf(transaction.getCurrentBalance()), fontData));
+                    table.addCell(createCell(transaction.getDescription(), fontData));
+                }
             }
+            else {
+                Font subtitleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
 
-            for (AccountReportBasicResponse.AccountReportData transaction : accountReportData) {
-                table.addCell(createCell(String.valueOf(transaction.getSeatNumber()), fontData));
-                table.addCell(createCell(transaction.getBranchOffice(), fontData));
-                table.addCell(createCell(transaction.getProcessDate() + " " + transaction.getAccountingTime(), fontData));
-                table.addCell(createCell(String.valueOf(transaction.getAmount()), fontData));
-                table.addCell(createCell(transaction.getMoveType(), fontData));
-                table.addCell(createCell(String.valueOf(transaction.getCurrentBalance()), fontData));
-                table.addCell(createCell(transaction.getDescription(), fontData));
+                Paragraph accountSubtitle = new Paragraph("SIN REGISTROS", subtitleFont);
+                accountSubtitle.setSpacingAfter(5);
+                document.add(accountSubtitle);
             }
 
             document.add(table);

@@ -145,6 +145,12 @@ public class AccountStatementProvider implements IAccountStatementProvider {
                 return basicResponse;
             } else {
                 AppError error = Util.mapProviderError(responseMW);
+                if (Objects.equals(AppError.MDWACM_008.getDescription(), error.getDescription())) {
+                    AccountReportBasicResponse basicResponse = new AccountReportBasicResponse();
+                    List<AccountReportBasicResponse.AccountReportData> dataEmpty = new ArrayList<>();
+                    basicResponse.setData(dataEmpty);
+                    return basicResponse;
+                }
                 LOGGER.error(responseMW);
                 throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }

@@ -2,7 +2,6 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.ExportRequest;
 import bg.com.bo.bff.application.dtos.response.ExportResponse;
-import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
@@ -43,12 +42,10 @@ public class ExportService implements IExportService {
 
         String format = request.getFormat();
 
-        String base64;
-        if (Objects.equals(format, "PDF")) {
-            base64 = Util.encodeByteArrayToBase64(pdfProvider.generatePdf(basicResponseData, request, accountId));
-        } else if (Objects.equals(format, "CSV")) {
-            base64 = Util.encodeByteArrayToBase64(csvProvider.generateCsv(basicResponseData));
-        } else throw new GenericException();
+        String base64 = Objects.equals(format, "PDF")
+                ? Util.encodeByteArrayToBase64(pdfProvider.generatePdf(basicResponseData, request, accountId))
+                : Util.encodeByteArrayToBase64(csvProvider.generateCsv(basicResponseData));
+
 
         ExportResponse response = new ExportResponse();
         response.setData(base64);
