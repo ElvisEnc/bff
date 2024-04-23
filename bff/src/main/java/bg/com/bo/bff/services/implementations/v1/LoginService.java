@@ -13,7 +13,6 @@ import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
 import bg.com.bo.bff.commons.enums.response.RefreshControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.services.LoginServiceMapper;
-import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
 import bg.com.bo.bff.models.dtos.login.*;
 import bg.com.bo.bff.commons.enums.UserRole;
@@ -51,18 +50,16 @@ public class LoginService implements ILoginServices {
         String encrypted = Util.encodeSha512(loginRequest.getPassword());
         loginRequest.setPassword(encrypted);
 
-        ClientToken clientToken = loginMiddlewareService.tokenLogin();
-        String token = clientToken.getAccessToken();
         String factorId = loginRequest.getType();
         LoginValidationServiceResponse loginValidation;
         if (Objects.equals(factorId, LoginSchemaName.PERSONIDLOGIN.getCode())) {
             LoginMWFactorDataResponse loginMWFactorDataResponse = new LoginMWFactorDataResponse();
             loginMWFactorDataResponse.setPersonId(loginRequest.getUser());
             loginMWFactorDataResponse.setSecondFactor("1");
-            loginValidation = loginMiddlewareService.validateCredentials(loginRequest, ip, token, loginMWFactorDataResponse);
+            loginValidation = loginMiddlewareService.validateCredentials(loginRequest, ip, loginMWFactorDataResponse);
         } else {
-            LoginMWFactorResponse loginMWFactorResponse = loginMiddlewareService.validateFactorUser(loginRequest, ip, token);
-            loginValidation = loginMiddlewareService.validateCredentials(loginRequest, ip, token, loginMWFactorResponse.getData());
+            LoginMWFactorResponse loginMWFactorResponse = loginMiddlewareService.validateFactorUser(loginRequest, ip);
+            loginValidation = loginMiddlewareService.validateCredentials(loginRequest, ip, loginMWFactorResponse.getData());
         }
 
         CreateTokenServiceResponse createToken = jwtService.generateToken(loginValidation.getPersonId(), UserRole.LOGGED_USER);
@@ -129,8 +126,6 @@ public class LoginService implements ILoginServices {
                         .build())
                 .build();
 
-        ClientToken clientToken = loginMiddlewareService.tokenLogin();
-        return loginMiddlewareService.logout(deviceId, deviceIp, deviceName, geoPositionX, geoPositionY, appVersion, personId, userDeviceId, personRoleId, logoutMWRequest, clientToken.getAccessToken()
-        );
+        return loginMiddlewareService.logout(deviceId, deviceIp, deviceName, geoPositionX, geoPositionY, appVersion, logoutMWRequest);
     }
 }

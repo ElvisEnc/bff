@@ -1,128 +1,158 @@
 package bg.com.bo.bff.providers.implementations;
 
+
+import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
 import bg.com.bo.bff.application.dtos.request.Device;
-import bg.com.bo.bff.providers.dtos.responses.ApiDataResponse;
-import bg.com.bo.bff.providers.dtos.responses.login.DeviceEnrollmentMWResponse;
-import bg.com.bo.bff.providers.implementations.DeviceEnrollmentProvider;
-import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
+import bg.com.bo.bff.application.dtos.request.DeviceFixture;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
+import bg.com.bo.bff.application.dtos.request.LoginRequestFixture;
+import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.implementations.LoginMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.responses.ApiDataResponse;
+import bg.com.bo.bff.providers.dtos.responses.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.responses.LogoutMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.responses.login.DeviceEnrollmentMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorDataResponse;
 import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorResponse;
+import bg.com.bo.bff.providers.mappings.login.LoginMWMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.junit.jupiter.api.Assertions;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.UUID;
+import java.util.Collections;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @WireMockTest(proxyMode = true, httpPort = 8080)
 @ExtendWith(WireMockExtension.class)
 @ExtendWith(MockitoExtension.class)
 class LoginMiddlewareProviderTests {
-    @Spy
-    @InjectMocks
-    LoginMiddlewareProvider loginMiddlewareProvider;
-    @InjectMocks
-    DeviceEnrollmentProvider deviceEnrollmentProvider;
-    @Mock
-    IHttpClientFactory httpClientFactoryMock;
-    @Mock
-    CloseableHttpClient closeableHttpClientMock;
-    @Mock
-    CloseableHttpResponse closeableHttpResponseMock;
-    @Mock
-    HttpEntity httpEntityMock;
-    @Mock
-    StatusLine statusLineMock;
-    @Mock
-    MiddlewareConfig middlewareConfig;
-    @Mock
-    ITokenMiddlewareProvider tokenMiddlewareProvider;
-    LoginRequest loginRequest;
-    @Mock
-    Device device;
-    @Mock
-    LoginMWFactorResponse loginMWFactorResponse;
-    @Mock
-    DeviceEnrollmentMWResponse deviceEnrollmentMWResponse;
-    String ip;
-    String accessTokenMW;
+    private LoginMiddlewareProvider loginMiddlewareProvider;
+    private DeviceEnrollmentProvider deviceEnrollmentProvider;
+    private TokenMiddlewareProvider tokenMiddlewareProviderMock;
+    private MiddlewareConfig middlewareConfig;
+    private IHttpClientFactory httpClientFactoryMock;
+    private LoginMWMapper loginMWMapper;
+    private ClientToken clientTokenMock;
+    private ErrorMiddlewareProvider errorMiddlewareProvider;
 
     @BeforeEach
     void init() {
-        device = new Device();
-        loginRequest = new LoginRequest();
-        loginRequest.setType("sdf");
-        loginRequest.setUser("dfsdf");
-        loginRequest.setComplement("a1");
-        loginRequest.setPassword("1q01a");
-        loginRequest.setDeviceIdentification(device);
-        ip = "132.435.463.54";
-        accessTokenMW = UUID.randomUUID().toString();
+        httpClientFactoryMock = Mockito.mock(HttpClientConfig.class);
+        tokenMiddlewareProviderMock = Mockito.mock(TokenMiddlewareProvider.class);
+        middlewareConfig = Mockito.mock(MiddlewareConfig.class);
+        Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
+        loginMiddlewareProvider = new LoginMiddlewareProvider(tokenMiddlewareProviderMock, middlewareConfig, httpClientFactoryMock, loginMWMapper);
+        deviceEnrollmentProvider = new DeviceEnrollmentProvider(httpClientFactoryMock, middlewareConfig, tokenMiddlewareProviderMock);
+
+        clientTokenMock = new ClientToken();
+        clientTokenMock.setAccessToken("34sd3f243sdf43");
+
+        setField(loginMiddlewareProvider, "middlewareConfig", MiddlewareConfigFixture.withDefault(), MiddlewareConfig.class);
+        setField(deviceEnrollmentProvider, "middlewareConfig", MiddlewareConfigFixture.withDefault(), MiddlewareConfig.class);
     }
 
     @Test
     void givenCorrectCredentialsWhenLoginThenReturnSuccess() throws IOException {
         // Arrange
-        loginMWFactorResponse = new LoginMWFactorResponse();
-        Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
-        Mockito.when(closeableHttpResponseMock.getEntity()).thenReturn(httpEntityMock);
-        Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
-        Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(loginMWFactorResponse);
-        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
-        Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
+        LoginMWFactorResponse expectedResponse = new LoginMWFactorResponse();
+        LoginMWFactorDataResponse loginMWFactorDataResponse = new LoginMWFactorDataResponse();
+        loginMWFactorDataResponse.setPersonId("123");
+        expectedResponse.setData(loginMWFactorDataResponse);
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientTokenMock);
+        stubFor(post(anyUrl())
+                .willReturn(okJson(new ObjectMapper().writeValueAsString(expectedResponse))));
+
+        LoginRequest loginRequest = LoginRequestFixture.withDefault();
+        String ip = "testIp";
 
         // Act
-        LoginMWFactorResponse response = loginMiddlewareProvider.validateFactorUser(loginRequest, ip, accessTokenMW);
+        LoginMWFactorResponse actualResponse = loginMiddlewareProvider.validateFactorUser(loginRequest, ip);
 
         // Assert
-        assertNotNull(response);
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse.getData().getPersonId(), actualResponse.getData().getPersonId());
     }
 
     @Test
     void givenUniqueIdWhenValidateDeviceThenReturnSuccessfully() throws IOException {
         // Arrange
-        ObjectMapper objectMapper = new ObjectMapper();
-        deviceEnrollmentMWResponse = new DeviceEnrollmentMWResponse();
-        deviceEnrollmentMWResponse.setStatusCode("enrolled");
-        deviceEnrollmentMWResponse.setPersonId("123");
-        String json = objectMapper.writeValueAsString(ApiDataResponse.builder().data(deviceEnrollmentMWResponse).build());
-        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
-        Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
-        Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenReturn(closeableHttpResponseMock);
-        Mockito.when(closeableHttpResponseMock.getEntity()).thenReturn(httpEntityMock);
-        Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
-        Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
-        Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
+        DeviceEnrollmentMWResponse expectedResponse = new DeviceEnrollmentMWResponse();
+        expectedResponse.setStatusCode("enrolled");
+        expectedResponse.setPersonId("123");
+
+        stubFor(get(anyUrl()).willReturn(okJson(new ObjectMapper().writeValueAsString(ApiDataResponse.builder().data(expectedResponse).build()))));
+
+        Device request = DeviceFixture.withDefault();
+        String token = "dfkjhsdkf";
 
         // Act
-        DeviceEnrollmentMWResponse response = deviceEnrollmentProvider.makeValidateDevice(device, "132132");
+        DeviceEnrollmentMWResponse actualResponse = deviceEnrollmentProvider.makeValidateDevice(request, token);
 
         // Assert
-        Assertions.assertNotNull(response);
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse.getPersonId(), actualResponse.getPersonId());
+    }
+
+    @Test
+    void givenValidDataWhenLogoutThenExpectedResponse() throws IOException {
+        //Arrange
+        GenericResponse expectedResponse = new GenericResponse();
+        expectedResponse.setCode("SUCCESS");
+        expectedResponse.setMessage("SUCCESS");
+        String generic = "sdfgfsdfs";
+        String jsonResponse = new ObjectMapper().writeValueAsString(expectedResponse);
+
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientTokenMock);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        //Act
+        GenericResponse response = loginMiddlewareProvider.logout(generic, generic, generic, generic, generic, generic, LogoutMWRequestFixture.withDefault());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse.getCode(), response.getCode());
+    }
+
+    @Test
+    void givenInvalidDataWhenLogoutThenReturnException() throws IOException {
+        //Arrange
+        errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
+                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
+                        .code("500")
+                        .description("500")
+                        .build()))
+                .build();
+        GenericException expectedResponse = new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientTokenMock);
+        stubFor(post(anyUrl()).willReturn(aResponse()
+                .withStatus(500)
+                .withBody(new ObjectMapper().writeValueAsString(errorMiddlewareProvider))));
+
+        //Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            loginMiddlewareProvider.logout("deviceId", "deviceIp", "deviceName", "geoX", "geoY", "appVersion", LogoutMWRequestFixture.withDefault());
+        });
+
+        //Assert
+        assertEquals(expectedResponse.getCode(), (exception).getCode());
+        assertEquals(expectedResponse.getMessage(), exception.getMessage());
+        verify(1, postRequestedFor(anyUrl()));
     }
 }

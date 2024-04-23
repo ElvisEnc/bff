@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.HttpClientConfig;
+import bg.com.bo.bff.application.dtos.request.LogoutRequest;
 import bg.com.bo.bff.providers.mappings.GenericsMapper;
 import bg.com.bo.bff.mappings.services.keycloak.KeyCloakJsonMapper;
 import bg.com.bo.bff.providers.mappings.keycloak.KeyCloakObjectMapper;
@@ -32,6 +33,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
@@ -47,14 +49,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(WireMockExtension.class)
 @ExtendWith(MockitoExtension.class)
 class JwtKeyCloakProviderTests {
-
     static IHttpClientFactory httpClientFactoryMock;
     static JwtKeyCloakProvider jwtKeyCloakProvider;
-
     private String url = "http://login.fake.api";
-
     private String urlTokenComplement = "/token";
     private String urlCertsComplement = "/certs";
+    private String urlRevokeTokenComplement = "/revoke";
     private String issuerKCServiceParam = "https://bg-gnm-dev.eastus.cloudapp.azure.com/keycloak/realms/kong";
     private String audienceKCServiceParam = "ganamovil-bff";
     private String authorizedPartyKCServiceParam = "ganamovil-bff";
@@ -81,6 +81,7 @@ class JwtKeyCloakProviderTests {
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "audience", audienceKCServiceParam);
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "authorizedParty", authorizedPartyKCServiceParam);
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "subject", subjectKCServiceParam);
+        ReflectionTestUtils.setField(jwtKeyCloakProvider, "urlRevokeComplement", urlRevokeTokenComplement);
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
     }
@@ -141,6 +142,7 @@ class JwtKeyCloakProviderTests {
         assertEquals(algorithm, certs.get(keyCloakKeyId).getAlgorithm());
     }
 
+
     @Test
     void givenValidRefreshTokenWhenRefreshTokenThenReturnNewRefreshToken() throws JsonProcessingException {
         //Arrange
@@ -188,7 +190,7 @@ class JwtKeyCloakProviderTests {
     }
 
     @ParameterizedTest
-    @EnumSource(value=ErrorKCResponse.Error.class, names = {"NOT_FOUND_404", "INVALID_GRANT"}, mode = EnumSource.Mode.EXCLUDE)
+    @EnumSource(value = ErrorKCResponse.Error.class, names = {"NOT_FOUND_404", "INVALID_GRANT"}, mode = EnumSource.Mode.EXCLUDE)
     void givenBadRequestWhenRefreshTokenThenReturnCreateTokenServiceException(ErrorKCResponse.Error error) throws JsonProcessingException {
         //Arrange
         String refreshToken = UUID.randomUUID().toString();
@@ -237,7 +239,7 @@ class JwtKeyCloakProviderTests {
     }
 
     @Test
-    void givenNotHandled400ResponseWhenRefreshTokenThenReturnNotHandledResponseException(){
+    void givenNotHandled400ResponseWhenRefreshTokenThenReturnNotHandledResponseException() {
         //Arrange
         String refreshToken = UUID.randomUUID().toString();
         String message = "NOT_VALID_STATE";
@@ -280,7 +282,7 @@ class JwtKeyCloakProviderTests {
     }
 
     @Test
-    void given404ResponseWhenRefreshTokenThenReturnCreateTokenServiceException(){
+    void given404ResponseWhenRefreshTokenThenReturnCreateTokenServiceException() {
         //Arrange
         String refreshToken = UUID.randomUUID().toString();
         String message = "NOT_A_VALID_CONTENT";
@@ -299,7 +301,7 @@ class JwtKeyCloakProviderTests {
     }
 
     @Test
-    void givenNotHandledResponseWhenRefreshTokenThenReturnNotHandledResponseException(){
+    void givenNotHandledResponseWhenRefreshTokenThenReturnNotHandledResponseException() {
         //Arrange
         String refreshToken = UUID.randomUUID().toString();
         String message = "NOT_A_VALID_CONTENT";
@@ -329,5 +331,80 @@ class JwtKeyCloakProviderTests {
 
         //Assert
         assertNotNull(result);
+    }
+
+
+    @Test
+    void revokeAccessTokenSuccessfully() {
+        // Arrange
+        String testToken = "testAccessToken";
+        stubFor(post(urlEqualTo(urlRevokeTokenComplement))
+                .withRequestBody(containing("access_token"))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.OK.value())));
+
+        // Act
+        boolean result = jwtKeyCloakProvider.revokeAccessToken(testToken);
+
+        // Assert
+        assertTrue(result, "Token should be successfully revoked.");
+        verify(postRequestedFor(urlPathEqualTo(urlRevokeTokenComplement))
+                .withHeader("Content-Type", equalTo("application/x-www-form-urlencoded")));
+    }
+
+    @Test
+    void revokeAccessTokenFailure() {
+        // Arrange
+        String testToken = "testAccessToken";
+        stubFor(post(urlEqualTo(urlRevokeTokenComplement))
+                .withRequestBody(containing("access_token"))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+
+        // Act
+        boolean result = jwtKeyCloakProvider.revokeAccessToken(testToken);
+
+        // Assert
+        assertFalse(result, "Token revocation should fail.");
+        verify(postRequestedFor(urlPathEqualTo(urlRevokeTokenComplement))
+                .withHeader("Content-Type", equalTo("application/x-www-form-urlencoded")));
+    }
+
+    @Test
+    void revokeRefreshTokenSuccessfully() {
+        // Arrange
+        LogoutRequest logoutRequest = new LogoutRequest();
+        logoutRequest.setRefreshToken("testRefreshToken");
+        stubFor(post(urlEqualTo(urlRevokeTokenComplement))
+                .withRequestBody(containing("refresh_token"))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.OK.value())));
+
+        // Act
+        boolean result = jwtKeyCloakProvider.revokeRefreshToken(logoutRequest);
+
+        // Assert
+        assertTrue(result, "Refresh token should be successfully revoked.");
+        verify(postRequestedFor(urlPathEqualTo(urlRevokeTokenComplement))
+                .withHeader("Content-Type", equalTo("application/x-www-form-urlencoded")));
+    }
+
+    @Test
+    void revokeRefreshTokenFailure() {
+        // Arrange
+        LogoutRequest logoutRequest = new LogoutRequest();
+        logoutRequest.setRefreshToken("testRefreshToken");
+        stubFor(post(urlEqualTo(urlRevokeTokenComplement))
+                .withRequestBody(containing("refresh_token"))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+
+        // Act
+        boolean result = jwtKeyCloakProvider.revokeRefreshToken(logoutRequest);
+
+        // Assert
+        assertFalse(result, "Refresh token revocation should fail.");
+        verify(postRequestedFor(urlPathEqualTo(urlRevokeTokenComplement))
+                .withHeader("Content-Type", equalTo("application/x-www-form-urlencoded")));
     }
 }

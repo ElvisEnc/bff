@@ -12,13 +12,12 @@ import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorResponse;
 import java.io.IOException;
 
 public interface ILoginMiddlewareProvider {
-    ClientToken tokenLogin() throws IOException;
 
-    LoginMWFactorResponse validateFactorUser(LoginRequest loginRequest, String ip, String token) throws IOException;
+    LoginMWFactorResponse validateFactorUser(LoginRequest loginRequest, String ip) throws IOException;
 
-    LoginValidationServiceResponse validateCredentials(LoginRequest loginRequest, String ip, String token, LoginMWFactorDataResponse data) throws IOException;
+    LoginValidationServiceResponse validateCredentials(LoginRequest loginRequest, String ip, LoginMWFactorDataResponse data) throws IOException;
 
-    GenericResponse logout(String deviceId, String deviceIp, String deviceName, String geoPositionX, String geoPositionY, String appVersion, String personId, String userDeviceId, String personRoleId, LogoutMWRequest logoutMWRequest, String token);
+    GenericResponse logout(String deviceId, String deviceIp, String deviceName, String geoPositionX, String geoPositionY, String appVersion, LogoutMWRequest logoutMWRequest) throws IOException;
 
     GenericResponse changePassword(String personId, String ip, String deviceId, String deviceUniqueId, String rolePersonId, ChangePasswordRequest changePasswordRequest) throws IOException;
 }

@@ -62,11 +62,13 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
         return httpClientFactory.create();
     }
 
-    public ClientToken tokenLogin() throws IOException {
+    private ClientToken tokenLogin() throws IOException {
         return tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.LOGIN_MANAGER.getName(), middlewareConfig.getClientLogin(), ProjectNameMW.LOGIN_MANAGER.getHeaderKey());
     }
 
-    public LoginMWFactorResponse validateFactorUser(LoginRequest loginRequest, String ip, String token) throws IOException {
+    @Override
+    public LoginMWFactorResponse validateFactorUser(LoginRequest loginRequest, String ip) throws IOException {
+        String token = tokenLogin().getAccessToken();
         try (CloseableHttpClient httpClient = createHttpClient()) {
             LoginMWFactorDeviceRequest loginMWDeviceFactorRequest = LoginMWFactorDeviceRequest.builder()
                     .deviceIp(ip)
@@ -109,7 +111,9 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
         }
     }
 
-    public LoginValidationServiceResponse validateCredentials(LoginRequest loginRequest, String ip, String token, LoginMWFactorDataResponse data) throws IOException {
+    @Override
+    public LoginValidationServiceResponse validateCredentials(LoginRequest loginRequest, String ip, LoginMWFactorDataResponse data) throws IOException {
+        String token = tokenLogin().getAccessToken();
         try (CloseableHttpClient httpClient = createHttpClient()) {
             LoginMWCredendialDeviceRequest loginMWCredendialDeviceRequest = LoginMWCredendialDeviceRequest.builder()
                     .deviceIp(ip)
@@ -175,7 +179,8 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
     }
 
     @Override
-    public GenericResponse logout(String deviceId, String deviceIp, String deviceName, String geoPositionX, String geoPositionY, String appVersion, String personId, String userDeviceId, String personRoleId, LogoutMWRequest logoutMWRequest, String token) {
+    public GenericResponse logout(String deviceId, String deviceIp, String deviceName, String geoPositionX, String geoPositionY, String appVersion, LogoutMWRequest logoutMWRequest) throws IOException {
+        String token = tokenLogin().getAccessToken();
         try (CloseableHttpClient httpClient = createHttpClient()) {
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.LOGIN_MANAGER.getName() + "/bs/v1/users/log-logout-securely";
             HttpPost request = new HttpPost(path);
