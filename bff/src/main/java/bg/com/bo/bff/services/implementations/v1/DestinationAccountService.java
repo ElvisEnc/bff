@@ -6,13 +6,16 @@ import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
 import bg.com.bo.bff.commons.enums.AccountType;
 import bg.com.bo.bff.mappings.services.DestinationAccountServiceMapper;
 import bg.com.bo.bff.providers.dtos.requests.AddAchAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
+import bg.com.bo.bff.providers.mappings.destination.account.IDestinationAccountMapper;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,12 +30,14 @@ public class DestinationAccountService implements IDestinationAccountService {
     private final IThirdAccountProvider thirdAccountProvider;
     private final IAchAccountProvider achAccountProvider;
     private final DestinationAccountServiceMapper mapper;
+    private IDestinationAccountMapper iDestinationAccountMapper;
 
     @Autowired
-    public DestinationAccountService(IThirdAccountProvider thirdAccountProvider, IAchAccountProvider achAccountProvider, DestinationAccountServiceMapper mapper) {
+    public DestinationAccountService(IThirdAccountProvider thirdAccountProvider, IAchAccountProvider achAccountProvider, DestinationAccountServiceMapper mapper, IDestinationAccountMapper iDestinationAccountMapper) {
         this.thirdAccountProvider = thirdAccountProvider;
         this.achAccountProvider = achAccountProvider;
         this.mapper = mapper;
+        this.iDestinationAccountMapper = iDestinationAccountMapper;
     }
 
     @Override
@@ -107,5 +112,11 @@ public class DestinationAccountService implements IDestinationAccountService {
         return AccountTypeListResponse.builder()
                 .data(mapper.convert(values))
                 .build();
+    }
+
+    @Override
+    public BranchOfficeResponse getBranchOffice(Integer bankCode) throws IOException {
+        BranchOfficeMWResponse mWResponse = achAccountProvider.getAllBranchOfficeBank(bankCode);
+        return iDestinationAccountMapper.mapToBranchOfficeResponse(mWResponse);
     }
 }

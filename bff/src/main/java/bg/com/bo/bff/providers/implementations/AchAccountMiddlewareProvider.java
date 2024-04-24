@@ -1,25 +1,22 @@
 package bg.com.bo.bff.providers.implementations;
 
+import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
-import bg.com.bo.bff.application.exceptions.RequestException;
 import bg.com.bo.bff.commons.converters.ErrorResponseConverter;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.ApplicationId;
-import bg.com.bo.bff.commons.enums.CanalMW;
-import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.commons.enums.ErrorExceptions;
-import bg.com.bo.bff.commons.enums.Headers;
+import bg.com.bo.bff.commons.enums.*;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.AddAchAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponse;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -30,7 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class AchAccountMiddlewareProvider implements IAchAccountProvider {
@@ -43,16 +40,19 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
     @Value("${client.secret.ach-accounts}")
     private String clientSecret;
 
-    private final IHttpClientFactory httpClientFactory;
+    ITokenMiddlewareProvider tokenMiddlewareProvider;
+    private MiddlewareConfig middlewareConfig;
+    private IHttpClientFactory httpClientFactory;
     private static final Logger LOGGER = LogManager.getLogger(AchAccountMiddlewareProvider.class.getName());
     private static final String AUTH = "Authorization";
     private static final String MIDDLEWARE_CHANNEL = "middleware-channel";
     private static final String APPLICATION_ID = "application-id";
 
-    public AchAccountMiddlewareProvider(IHttpClientFactory httpClientFactory) {
+    public AchAccountMiddlewareProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
+        this.tokenMiddlewareProvider = tokenMiddlewareProvider;
+        this.middlewareConfig = middlewareConfig;
         this.httpClientFactory = httpClientFactory;
     }
-
 
     private CloseableHttpClient createHttpClient() {
         return httpClientFactory.create();
@@ -60,28 +60,7 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
 
     @Override
     public ClientToken generateAccessToken() throws IOException {
-
-        boolean propagateException = false;
-        try (CloseableHttpClient httpClient = createHttpClient()) {
-            String paramsGenerarClientSecret = "?grant_type=client_credentials";
-            String pathPostToken = url + complementToken + paramsGenerarClientSecret;
-            HttpPost postGenerateAccessToken = new HttpPost(pathPostToken);
-            postGenerateAccessToken.setHeader("Secret", clientSecret);
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            try (CloseableHttpResponse httpResponse = httpClient.execute(postGenerateAccessToken)) {
-                String responseToken = EntityUtils.toString(httpResponse.getEntity());
-                return objectMapper.readValue(responseToken, ClientToken.class);
-            } catch (Exception e) {
-                propagateException = true;
-                LOGGER.error(e);
-                throw new RequestException(ErrorExceptions.ERROR_REQUEST_TOKEN.getMessage());
-            }
-        } catch (Exception e) {
-            if (propagateException) throw e;
-            LOGGER.error(e);
-            throw new RuntimeException(ErrorExceptions.ERROR_CLIENT_TOKEN.getMessage());
-        }
+        return tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.ACH_ACCOUNTS.getName(), middlewareConfig.getClientAchAccount(), ProjectNameMW.ACH_ACCOUNTS.getHeaderKey());
     }
 
     @Override
@@ -127,5 +106,43 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
         httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
         httpRequest.setEntity(entity);
         return httpRequest;
+    }
+
+    @Override
+    public BranchOfficeMWResponse getAllBranchOfficeBank(Integer code) throws IOException {
+        String token = generateAccessToken().getAccessToken();
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.ACH_ACCOUNTS.getName() + "/bs/v1/ach/branch-offices/companies/" + code;
+            HttpGet request = new HttpGet(path);
+            request.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            request.setHeader(Headers.AUT.getName(), "Bearer " + token);
+            request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+
+            CloseableHttpResponse httpResponse = httpClient.execute(request);
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+            if (statusCode == HttpStatus.SC_OK) {
+                return Util.stringToObject(jsonResponse, BranchOfficeMWResponse.class);
+            } else {
+                AppError error = Util.mapProviderError(jsonResponse);
+                String empty = error.getDescription();
+                if (Objects.equals(AppError.MDWAAM_001.getDescription(), empty)) {
+                    return BranchOfficeMWResponse.builder()
+                            .data(BranchOfficeMWResponse.BranchOfficeMWData.builder()
+                                    .response(new ArrayList<>())
+                                    .build())
+                            .build();
+                }
+                LOGGER.error(jsonResponse);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            }
+        } catch (GenericException ex) {
+            LOGGER.error(ex);
+            throw ex;
+        } catch (Exception e) {
+            LOGGER.error(e);
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        }
     }
 }

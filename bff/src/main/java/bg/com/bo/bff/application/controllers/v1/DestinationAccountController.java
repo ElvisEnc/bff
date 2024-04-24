@@ -8,6 +8,7 @@ import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,7 +57,7 @@ public class DestinationAccountController {
             @NotBlank
             String personId,
             @Valid @RequestBody AddThirdAccountRequest addThirdAccountRequest) throws IOException {
-        return ResponseEntity.ok(service.addThirdAccount(personId, addThirdAccountRequest,getParameter(httpServletRequest)));
+        return ResponseEntity.ok(service.addThirdAccount(personId, addThirdAccountRequest, getParameter(httpServletRequest)));
     }
 
     @Operation(summary = "Agendar nueva cuenta de destino ACH.", description = "Agendar nueva cuenta de destino ACH.")
@@ -115,7 +116,7 @@ public class DestinationAccountController {
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/account-types")
-    public ResponseEntity<AccountTypeListResponse> accountTypes(){
+    public ResponseEntity<AccountTypeListResponse> accountTypes() {
         return ResponseEntity.ok(service.accountTypes());
     }
 
@@ -128,8 +129,21 @@ public class DestinationAccountController {
             String headerValue = request.getHeader(headerName);
             parameters.put(headerName, headerValue);
         }
-        parameters.put(DeviceMW.DEVICE_IP.getCode(),request.getRemoteAddr());
+        parameters.put(DeviceMW.DEVICE_IP.getCode(), request.getRemoteAddr());
 
         return parameters;
+    }
+
+    @Operation(summary = "Obtener el listado de Sucursales", description = "Este endpoint obtiene el listado de Sucursales de Otros Bancos.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = BranchOfficeResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("/banks/{bankCode}/branch-offices")
+    public ResponseEntity<BranchOfficeResponse> getListBranchOffice(
+            @Parameter(description = "Este es el código del banco", example = "1017") @PathVariable("bankCode") @NotNull Integer bankCode
+    ) throws IOException {
+        return ResponseEntity.ok(service.getBranchOffice(bankCode));
     }
 }

@@ -15,6 +15,7 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
+import bg.com.bo.bff.providers.mappings.destination.account.IDestinationAccountMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,9 +45,11 @@ class DestinationAccountServiceTest {
 
     private final DestinationAccountServiceMapper mapper = DestinationAccountServiceMapper.INSTANCE;
 
+    private IDestinationAccountMapper iDestinationAccountMapper;
+
     @BeforeEach
-    void init(){
-        service = new DestinationAccountService(thirdAccountProvider, achAccountProvider, mapper);
+    void init() {
+        service = new DestinationAccountService(thirdAccountProvider, achAccountProvider, mapper, iDestinationAccountMapper);
     }
 
     @Test
