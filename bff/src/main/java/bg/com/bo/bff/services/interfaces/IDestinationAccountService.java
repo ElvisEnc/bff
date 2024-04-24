@@ -5,6 +5,7 @@ import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.response.BanksResponse;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
@@ -21,5 +22,6 @@ public interface IDestinationAccountService {
     GenericResponse addWalletAccount(String personId, AddWalletAccountRequest addWalletAccountRequest, Map<String, String> parameter) throws IOException ;
     GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException;
     AccountTypeListResponse accountTypes();
+    BanksResponse getBanks() throws IOException;
     BranchOfficeResponse getBranchOffice(Integer bankCode) throws IOException;
 }

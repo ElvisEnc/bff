@@ -1,14 +1,17 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.Bank;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
+import bg.com.bo.bff.application.dtos.response.BanksResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
 import bg.com.bo.bff.commons.enums.AccountType;
 import bg.com.bo.bff.mappings.services.DestinationAccountServiceMapper;
+import bg.com.bo.bff.models.dtos.BanksMWResponse;
 import bg.com.bo.bff.providers.dtos.requests.AddAchAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
@@ -17,9 +20,7 @@ import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
 import bg.com.bo.bff.providers.mappings.destination.account.IDestinationAccountMapper;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -30,9 +31,8 @@ public class DestinationAccountService implements IDestinationAccountService {
     private final IThirdAccountProvider thirdAccountProvider;
     private final IAchAccountProvider achAccountProvider;
     private final DestinationAccountServiceMapper mapper;
-    private IDestinationAccountMapper iDestinationAccountMapper;
+    private final IDestinationAccountMapper iDestinationAccountMapper;
 
-    @Autowired
     public DestinationAccountService(IThirdAccountProvider thirdAccountProvider, IAchAccountProvider achAccountProvider, DestinationAccountServiceMapper mapper, IDestinationAccountMapper iDestinationAccountMapper) {
         this.thirdAccountProvider = thirdAccountProvider;
         this.achAccountProvider = achAccountProvider;
@@ -104,6 +104,12 @@ public class DestinationAccountService implements IDestinationAccountService {
                         addWalletAccountBasicRequest,
                         parameter
                 );
+    }
+
+    @Override
+    public BanksResponse getBanks() throws IOException {
+        BanksMWResponse result = achAccountProvider.getBanks();
+        return new BanksResponse(result.getData().stream().map(Bank::fromMWBank).toList());
     }
 
     @Override

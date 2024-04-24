@@ -8,10 +8,16 @@ import bg.com.bo.bff.commons.HttpDeleteWithBody;
 import bg.com.bo.bff.commons.converters.DeleteThirdAccountErrorResponseConverter;
 import bg.com.bo.bff.commons.converters.ErrorResponseConverter;
 import bg.com.bo.bff.commons.converters.IErrorResponse;
-import bg.com.bo.bff.commons.enums.*;
+import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.ApplicationId;
+import bg.com.bo.bff.commons.enums.CanalMW;
+import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.Headers;
+import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
+import bg.com.bo.bff.models.dtos.BanksMWResponse;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.AddAchAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.DeleteAchAccountMWRequest;
@@ -20,7 +26,6 @@ import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.ach.account.AchAccountMWtMapper;
-import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountMWtMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -31,12 +36,13 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class AchAccountMiddlewareProvider implements IAchAccountProvider {
@@ -52,7 +58,6 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
     ITokenMiddlewareProvider tokenMiddlewareProvider;
     private MiddlewareConfig middlewareConfig;
     private IHttpClientFactory httpClientFactory;
-
     private final AchAccountMWtMapper mapper;
     private static final Logger LOGGER = LogManager.getLogger(AchAccountMiddlewareProvider.class.getName());
     private static final String AUTH = "Authorization";
@@ -136,6 +141,37 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
                 }
             }
         } catch (HandledException e) {
+            throw e;
+        } catch (Exception e) {
+            LOGGER.error(e);
+            throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
+        }
+    }
+
+    @Override
+    public BanksMWResponse getBanks() throws IOException {
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.ACH_ACCOUNTS.getName(), middlewareConfig.getClientAchAccount(), ProjectNameMW.ACH_ACCOUNTS.getHeaderKey());
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            String urlGetThirdAccounts = url + complementAchAccounts + "/ach/others-bank-list";
+            HttpGet httpRequest = new HttpGet(urlGetThirdAccounts);
+            httpRequest.setHeader(AUTH, "Bearer " + clientToken.getAccessToken());
+            httpRequest.setHeader(MIDDLEWARE_CHANNEL, CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(APPLICATION_ID, ApplicationId.GANAMOVIL.getCode());
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+
+                if (statusCode == HttpStatus.SC_OK) {
+                    return objectMapper.readValue(jsonResponse, BanksMWResponse.class);
+                }
+
+                LOGGER.error(jsonResponse);
+                AppError error = Util.mapProviderError(jsonResponse);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            }
+        } catch (GenericException e) {
             throw e;
         } catch (Exception e) {
             LOGGER.error(e);

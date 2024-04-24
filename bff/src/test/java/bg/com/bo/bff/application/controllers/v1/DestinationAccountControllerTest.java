@@ -7,6 +7,8 @@ import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.requests.AddAchAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.requests.AddThirdAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.requests.AddWalletAccountRequestFixture;
+import bg.com.bo.bff.application.dtos.response.BanksResponse;
+import bg.com.bo.bff.application.dtos.response.BanksResponseFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
@@ -52,6 +54,7 @@ class DestinationAccountControllerTest {
     private static final String URL_ACH = "/api/v1/destination-accounts/1234567/ach-accounts";
     private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/delete";
     private static final String DELETE_ACH_ACCOUNT = "/api/v1/destination-accounts/56/ach-accounts/46";
+    private static final String GET_LIST_BANKS = "/api/v1/destination-accounts/banks";
     private static final String GET_ACCOUNT_TYPES = "/api/v1/destination-accounts/account-types";
     private MockMvc mockMvc;
 
@@ -256,4 +259,28 @@ class DestinationAccountControllerTest {
         //Assert
         verify(service).accountTypes();
     }
+
+    @Test
+    void givenUrlGetBanksWhenGetBanksThenReturnList() throws Exception {
+        // Arrange
+        BanksResponse expected = BanksResponseFixture.withDefault();
+        when(service.getBanks()).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc
+                .perform(get(GET_LIST_BANKS)
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .headers(this.headers)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).getBanks();
+    }
+
 }
