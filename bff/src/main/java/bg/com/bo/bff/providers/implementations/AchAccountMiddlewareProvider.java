@@ -4,16 +4,24 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
+import bg.com.bo.bff.commons.HttpDeleteWithBody;
+import bg.com.bo.bff.commons.converters.DeleteThirdAccountErrorResponseConverter;
 import bg.com.bo.bff.commons.converters.ErrorResponseConverter;
+import bg.com.bo.bff.commons.converters.IErrorResponse;
 import bg.com.bo.bff.commons.enums.*;
+import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.AddAchAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.requests.DeleteAchAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponse;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
+import bg.com.bo.bff.providers.mappings.ach.account.AchAccountMWtMapper;
+import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountMWtMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -23,6 +31,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -36,22 +45,25 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
     @Value("${ach.account.auth.token}")
     private String complementToken;
     @Value("${v1.ach.account}")
-    private String complementAchdAccounts;
+    private String complementAchAccounts;
     @Value("${client.secret.ach-accounts}")
     private String clientSecret;
 
     ITokenMiddlewareProvider tokenMiddlewareProvider;
     private MiddlewareConfig middlewareConfig;
     private IHttpClientFactory httpClientFactory;
+
+    private final AchAccountMWtMapper mapper;
     private static final Logger LOGGER = LogManager.getLogger(AchAccountMiddlewareProvider.class.getName());
     private static final String AUTH = "Authorization";
     private static final String MIDDLEWARE_CHANNEL = "middleware-channel";
     private static final String APPLICATION_ID = "application-id";
 
-    public AchAccountMiddlewareProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
+    public AchAccountMiddlewareProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory, AchAccountMWtMapper mapper) {
         this.tokenMiddlewareProvider = tokenMiddlewareProvider;
         this.middlewareConfig = middlewareConfig;
         this.httpClientFactory = httpClientFactory;
+        this.mapper = mapper;
     }
 
     private CloseableHttpClient createHttpClient() {
@@ -69,7 +81,7 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
         String jsonMapper = Util.objectToString(request);
         StringEntity entity = new StringEntity(jsonMapper);
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            String urlGetThirdAccounts = url + complementAchdAccounts + "/ach";
+            String urlGetThirdAccounts = url + complementAchAccounts + "/ach";
             HttpPost httpRequest = getHttpPost(token, parameters, urlGetThirdAccounts, entity);
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
@@ -84,6 +96,46 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
                 throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }
         } catch (GenericException e) {
+            throw e;
+        } catch (Exception e) {
+            LOGGER.error(e);
+            throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
+        }
+    }
+
+    @Override
+    public GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException {
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.ACH_ACCOUNTS.getName(), middlewareConfig.getClientAchAccount(), ProjectNameMW.ACH_ACCOUNTS.getHeaderKey());
+        DeleteAchAccountMWRequest requestData = mapper.convert(personId, identifier);
+
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.ACH_ACCOUNTS.getName() + "/bs/v1/ach/delete";
+            HttpDeleteWithBody request = new HttpDeleteWithBody(path);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonMapper = objectMapper.writeValueAsString(requestData);
+            StringEntity entity = new StringEntity(jsonMapper);
+            request.setEntity(entity);
+            request.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            request.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+            request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(Headers.DEVICE_ID.getName(), deviceId);
+            request.setHeader(Headers.DEVICE_IP.getName(), deviceIp);
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK)
+                    return GenericResponse.instance(DeleteThirdAccountResponse.SUCCESS);
+                else {
+                    LOGGER.error(jsonResponse);
+                    IErrorResponse errorResponse = DeleteThirdAccountErrorResponseConverter.INSTANCE.convert(jsonResponse);
+                    throw new HandledException(errorResponse);
+                }
+            }
+        } catch (HandledException e) {
             throw e;
         } catch (Exception e) {
             LOGGER.error(e);

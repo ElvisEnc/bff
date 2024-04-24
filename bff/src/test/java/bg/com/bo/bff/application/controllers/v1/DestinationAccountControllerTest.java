@@ -51,6 +51,7 @@ class DestinationAccountControllerTest {
     private static final String URL_WALLET = "/api/v1/destination-accounts/1234567/wallets";
     private static final String URL_ACH = "/api/v1/destination-accounts/1234567/ach-accounts";
     private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/delete";
+    private static final String DELETE_ACH_ACCOUNT = "/api/v1/destination-accounts/56/ach-accounts/46";
     private static final String GET_ACCOUNT_TYPES = "/api/v1/destination-accounts/account-types";
     private MockMvc mockMvc;
 
@@ -220,6 +221,29 @@ class DestinationAccountControllerTest {
         verify(service).addWalletAccount(any(), any(), any());
     }
 
+    @Test
+    void givenValidDataWhenDeleteAchAccountThenReturnOk() throws Exception {
+        // Arrange
+        String personId = "56";
+        int identifier = 46;
+        String ip = "127.0.0.1";
+        String deviceId = "123";
+
+        GenericResponse expected = new GenericResponse();
+
+        when(service.deleteAchAccount(personId, identifier, deviceId, ip)).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc.perform(delete(DELETE_ACH_ACCOUNT)
+                        .header("device-id", deviceId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Assert
+        verify(service).deleteAchAccount(personId, identifier, deviceId, ip);
+    }
     @Test
     void givenRequestWhenGetAccountTypesReturnOk() throws Exception {
         //Act

@@ -119,4 +119,9 @@ public class DestinationAccountService implements IDestinationAccountService {
         BranchOfficeMWResponse mWResponse = achAccountProvider.getAllBranchOfficeBank(bankCode);
         return iDestinationAccountMapper.mapToBranchOfficeResponse(mWResponse);
     }
+
+    @Override
+    public GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException {
+        return achAccountProvider.deleteAchAccount(personId, identifier, deviceId, deviceIp);
+    }
 }

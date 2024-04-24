@@ -136,6 +136,25 @@ class DestinationAccountServiceTest {
     }
 
     @Test
+    void givenValidDataWhenDeleteAchAccountThenReturnOk() throws IOException {
+        // Arrange
+        String personId = "1";
+        int identifier = 1;
+        String deviceId = "1";
+        String ip = "127.0.0.1";
+
+        GenericResponse expectedResponse = new GenericResponse();
+        expectedResponse.setCode("SUCCESS");
+        expectedResponse.setMessage("Se borró la cuenta exitosamente.");
+        when(achAccountProvider.deleteAchAccount(personId, identifier, deviceId, ip)).thenReturn(expectedResponse);
+
+        // Act
+        GenericResponse response = service.deleteAchAccount(personId, identifier, deviceId, ip);
+
+        // Assert
+        verify(achAccountProvider).deleteAchAccount(personId, identifier, deviceId, ip);
+        assertEquals(expectedResponse, response);
+    }    @Test
     void givenWhenGetAccountTypesThenReturnList() {
         //Act
         AccountTypeListResponse response = service.accountTypes();

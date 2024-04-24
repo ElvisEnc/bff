@@ -94,6 +94,23 @@ public class DestinationAccountController {
         return ResponseEntity.ok(service.delete(personId, identifier, deviceId, ip, request));
     }
 
+    @Operation(summary = "Eliminación de cuenta ACH.", description = "Elimina cuenta ACH.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @DeleteMapping("/{personId}/ach-accounts/{identifier}")
+    public ResponseEntity<GenericResponse> deleteAchAccount(
+            @Valid @RequestHeader("device-id") String deviceId,
+            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
+            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
+            HttpServletRequest servletRequest
+    ) throws IOException {
+        String ip = servletRequest.getRemoteAddr();
+        return ResponseEntity.ok(service.deleteAchAccount(personId, identifier, deviceId, ip));
+    }
+
     @Operation(summary = "Agendar nueva cuenta de destino ACH.", description = "Agendar nueva cuenta de destino ACH.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
