@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.ExportRequest;
+import bg.com.bo.bff.application.dtos.request.export.account.statement.ExportRequest;
 import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
 
 import java.io.IOException;

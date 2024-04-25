@@ -1,9 +1,9 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.request.ExportRequest;
-import bg.com.bo.bff.application.dtos.request.accountStatement.ExtractPagination;
-import bg.com.bo.bff.application.dtos.request.accountStatement.ExtractRequest;
+import bg.com.bo.bff.application.dtos.request.export.account.statement.ExportRequest;
+import bg.com.bo.bff.application.dtos.request.account.statement.ExtractPagination;
+import bg.com.bo.bff.application.dtos.request.account.statement.ExtractRequest;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.enums.AppError;

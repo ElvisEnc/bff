@@ -1,13 +1,8 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
-import bg.com.bo.bff.application.dtos.request.ExportRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
-import bg.com.bo.bff.providers.interfaces.IEncryptionProvider;
-import bg.com.bo.bff.providers.interfaces.ILoginAGNProvider;
-import bg.com.bo.bff.services.interfaces.IAccountService;
 import bg.com.bo.bff.services.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

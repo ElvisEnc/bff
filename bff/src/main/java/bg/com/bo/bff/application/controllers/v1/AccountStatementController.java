@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.accountStatement.ExtractRequest;
+import bg.com.bo.bff.application.dtos.request.account.statement.ExtractRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
 import bg.com.bo.bff.services.interfaces.IAccountStatementService;
@@ -33,7 +33,7 @@ public class AccountStatementController {
     @Operation(summary = "Extracto", description = "Obtener el extracto de una cuenta")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Obtiene los extractos dentro de la fecha", content = @Content(schema = @Schema(implementation = ExtractDataResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Algún error en los filtros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Algún error en los filtros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/{accountId}/persons/{personId}")

@@ -1,10 +1,10 @@
 package bg.com.bo.bff.application.dtos.requests;
 
 
-import bg.com.bo.bff.application.dtos.request.accountStatement.AmountRange;
-import bg.com.bo.bff.application.dtos.request.accountStatement.ExtractFilter;
-import bg.com.bo.bff.application.dtos.request.accountStatement.ExtractPagination;
-import bg.com.bo.bff.application.dtos.request.accountStatement.ExtractRequest;
+import bg.com.bo.bff.application.dtos.request.account.statement.AmountRange;
+import bg.com.bo.bff.application.dtos.request.account.statement.ExtractFilter;
+import bg.com.bo.bff.application.dtos.request.account.statement.ExtractPagination;
+import bg.com.bo.bff.application.dtos.request.account.statement.ExtractRequest;
 
 public class ExtractRequestFixture {
     public static ExtractRequest withDefault() {

@@ -10,9 +10,7 @@ import java.util.Objects;
 
 @Component
 public class AccountStatementAdapter {
-    public List<AccountReportBasicResponse.AccountReportData> mapping(AccountReportBasicResponse basicResponse) {
-        List<AccountReportBasicResponse.AccountReportData> reportData = basicResponse.getData();
-
+    public List<AccountReportBasicResponse.AccountReportData> mapping(List<AccountReportBasicResponse.AccountReportData> reportData) {
         Map<String, String> currencyMapping = new HashMap<>();
         currencyMapping.put("032", "ARS");
         currencyMapping.put("068", "BOB");

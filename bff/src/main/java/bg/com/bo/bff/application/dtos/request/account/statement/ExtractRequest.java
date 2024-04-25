@@ -1,4 +1,4 @@
-package bg.com.bo.bff.application.dtos.request.accountStatement;
+package bg.com.bo.bff.application.dtos.request.account.statement;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

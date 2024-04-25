@@ -1,9 +1,8 @@
 package bg.com.bo.bff.providers.implementations;
 
-import bg.com.bo.bff.application.dtos.request.ExportRequest;
+import bg.com.bo.bff.application.dtos.request.export.account.statement.ExportRequest;
 import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementPdfProvider;
-import com.lowagie.text.*;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -13,7 +12,6 @@ import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.*;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
@@ -26,9 +24,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class AccountStatementPdfProvider implements IAccountStatementPdfProvider {

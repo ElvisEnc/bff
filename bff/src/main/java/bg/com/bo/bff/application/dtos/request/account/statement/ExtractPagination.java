@@ -1,4 +1,4 @@
-package bg.com.bo.bff.application.dtos.request.accountStatement;
+package bg.com.bo.bff.application.dtos.request.account.statement;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;

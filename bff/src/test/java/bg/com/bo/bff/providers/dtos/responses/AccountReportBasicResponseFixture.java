@@ -21,7 +21,7 @@ public class AccountReportBasicResponseFixture {
                         .agency("agency")
                         .city("city")
                         .accountingDate("accountingDate")
-                        .processDate("processDate")
+                        .processDate("2024-01-01")
                         .accountingTime("accountingTime")
                         .seatNumber(123465)
                         .codBranchOffice("codBranchOffice")
