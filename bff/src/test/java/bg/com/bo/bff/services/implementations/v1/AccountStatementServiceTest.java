@@ -1,7 +1,7 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.ExtractRequestFixture;
 import bg.com.bo.bff.application.dtos.request.account.statement.ExtractRequest;
-import bg.com.bo.bff.application.dtos.requests.ExtractRequestFixture;
 import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;

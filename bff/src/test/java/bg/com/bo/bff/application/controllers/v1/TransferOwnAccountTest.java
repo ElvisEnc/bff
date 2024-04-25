@@ -24,8 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import bg.com.bo.bff.application.dtos.requests.TransferRequestFixture;
-import bg.com.bo.bff.application.dtos.responses.TransferResponseFixture;
+import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
+import bg.com.bo.bff.application.dtos.response.TransferResponseFixture;
 import bg.com.bo.bff.application.dtos.request.TransferRequest;
 import bg.com.bo.bff.application.dtos.response.TransferResponse;
 import bg.com.bo.bff.commons.utils.Util;
@@ -34,7 +34,7 @@ import bg.com.bo.bff.services.implementations.v1.OwnAccountTransferService;
 import java.io.IOException;
 
 @ExtendWith(MockitoExtension.class)
-public class TransferOwnAccountTest {
+class TransferOwnAccountTest {
 
     private MockMvc mockMvc;
     @InjectMocks

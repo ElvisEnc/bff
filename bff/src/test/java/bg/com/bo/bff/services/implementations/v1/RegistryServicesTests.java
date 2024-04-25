@@ -1,7 +1,7 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
-import bg.com.bo.bff.application.dtos.requests.RegistryRequestFixture;
+import bg.com.bo.bff.application.dtos.request.RegistryRequestFixture;
 import bg.com.bo.bff.application.dtos.response.RegistryResponse;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
@@ -10,7 +10,6 @@ import bg.com.bo.bff.commons.enums.response.RegistryControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.CipherUtils;
 import bg.com.bo.bff.providers.interfaces.IEncryptionProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginAGNProvider;
-import bg.com.bo.bff.services.implementations.v1.RegistryService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

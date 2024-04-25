@@ -40,28 +40,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class LoginControllerTest {
-
     private LoginController loginController;
-
     @Mock
     private ILoginServices iLoginServices;
-
     @Mock
     private IDeviceEnrollmentService iDeviceEnrollmentService;
-
     private final LoginMapper loginMapper = LoginMapper.INSTANCE;
-
     static LoginRequest loginRequest;
     static Device device;
-
     @Mock
     DeviceEnrollmentResponse deviceEnrollmentResponse;
     static String ip;
     @Mock
     static HttpServletRequest servletRequest;
-
     private MockMvc mockMvc;
-
 
     @BeforeAll
     public static void setup() {
@@ -70,7 +62,6 @@ class LoginControllerTest {
         loginRequest.setPassword("abc123");
         ip = "123.123.123.123";
         device = new Device();
-
     }
 
     @BeforeEach
@@ -135,7 +126,7 @@ class LoginControllerTest {
     }
 
     @Test
-    void fivenDeviceWhenRequestValidateEnrolledThenSuccessfully() throws IOException {
+    void givenDeviceWhenRequestValidateEnrolledThenSuccessfully() throws IOException {
         // Arrange
         deviceEnrollmentResponse = new DeviceEnrollmentResponse();
         Mockito.when(iDeviceEnrollmentService.validation(device)).thenReturn(deviceEnrollmentResponse);

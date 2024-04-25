@@ -3,7 +3,7 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
-import bg.com.bo.bff.application.dtos.requests.ExtractRequestFixture;
+import bg.com.bo.bff.application.dtos.request.ExtractRequestFixture;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;

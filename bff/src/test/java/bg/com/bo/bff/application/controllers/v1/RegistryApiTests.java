@@ -1,9 +1,9 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
-import bg.com.bo.bff.application.dtos.requests.RegistryRequestFixture;
+import bg.com.bo.bff.application.dtos.request.RegistryRequestFixture;
 import bg.com.bo.bff.application.dtos.response.RegistryResponse;
-import bg.com.bo.bff.application.dtos.responses.RegistryResponseFixture;
+import bg.com.bo.bff.application.dtos.response.RegistryResponseFixture;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.IRegistryService;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class RegistryApiTests {
+class RegistryApiTests {
 
     private MockMvc mockMvc;
 

@@ -1,7 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
+import bg.com.bo.bff.application.dtos.request.ExtractRequestFixture;
 import bg.com.bo.bff.application.dtos.request.account.statement.ExtractRequest;
-import bg.com.bo.bff.application.dtos.requests.ExtractRequestFixture;
 import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
 import bg.com.bo.bff.application.dtos.response.ExtractDataResponseFixture;
 import bg.com.bo.bff.commons.utils.Util;

@@ -1,4 +1,4 @@
-package bg.com.bo.bff.application.dtos.responses;
+package bg.com.bo.bff.application.dtos.response;
 
 import bg.com.bo.bff.application.dtos.response.TransferResponse;
 

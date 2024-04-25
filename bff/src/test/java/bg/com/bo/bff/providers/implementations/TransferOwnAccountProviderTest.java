@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-import bg.com.bo.bff.providers.implementations.TransferOwnAccountProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpEntity;
@@ -31,8 +30,8 @@ import java.util.List;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.application.dtos.requests.TransferRequestFixture;
-import bg.com.bo.bff.application.dtos.responses.TransferResponseFixture;
+import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
+import bg.com.bo.bff.application.dtos.response.TransferResponseFixture;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.application.dtos.response.TransferResponse;

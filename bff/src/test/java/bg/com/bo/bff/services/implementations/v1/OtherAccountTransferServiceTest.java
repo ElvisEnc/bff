@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import bg.com.bo.bff.services.implementations.v1.OtherAccountTransferService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
-import bg.com.bo.bff.application.dtos.requests.TransferRequestFixture;
-import bg.com.bo.bff.application.dtos.responses.TransferResponseFixture;
+import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
+import bg.com.bo.bff.application.dtos.response.TransferResponseFixture;
 import bg.com.bo.bff.application.dtos.response.TransferResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferOtherAccountProvider;
 

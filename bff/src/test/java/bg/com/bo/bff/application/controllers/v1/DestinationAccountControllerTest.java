@@ -4,12 +4,10 @@ import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
-import bg.com.bo.bff.application.dtos.requests.AddAchAccountRequestFixture;
-import bg.com.bo.bff.application.dtos.requests.AddThirdAccountRequestFixture;
-import bg.com.bo.bff.application.dtos.requests.AddWalletAccountRequestFixture;
-import bg.com.bo.bff.application.dtos.response.BanksResponse;
-import bg.com.bo.bff.application.dtos.response.BanksResponseFixture;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.request.AddAchAccountRequestFixture;
+import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequestFixture;
+import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequestFixture;
+import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
@@ -43,12 +41,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 class DestinationAccountControllerTest {
-
     private static final String URL_THIRD = "/api/v1/destination-accounts/1234567/third-accounts";
     private static final String URL_WALLET = "/api/v1/destination-accounts/1234567/wallets";
     private static final String URL_ACH = "/api/v1/destination-accounts/1234567/ach-accounts";
@@ -56,26 +52,22 @@ class DestinationAccountControllerTest {
     private static final String DELETE_ACH_ACCOUNT = "/api/v1/destination-accounts/56/ach-accounts/46";
     private static final String GET_LIST_BANKS = "/api/v1/destination-accounts/banks";
     private static final String GET_ACCOUNT_TYPES = "/api/v1/destination-accounts/account-types";
+    private static final String GET_BRANCH_OFFICE = "/api/v1/destination-accounts/banks/{bankCode}/branch-offices";
     private MockMvc mockMvc;
 
     @Spy
     @InjectMocks
     private DestinationAccountController controller;
-
     @Mock
     private IDestinationAccountService service;
-
     @Mock
     private HttpServletRequest httpServletRequest;
-
     private ObjectMapper objectMapper;
     private HttpHeaders headers = new HttpHeaders();
-
     private Enumeration<String> enumerations;
 
     @BeforeEach
     void setUp() {
-
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .build();
         this.objectMapper = new ObjectMapper()
@@ -96,8 +88,6 @@ class DestinationAccountControllerTest {
 
         Vector<String> lists = new Vector<>(map.keySet().stream().toList());
         this.enumerations = lists.elements();
-
-
     }
 
     @Test
@@ -247,16 +237,17 @@ class DestinationAccountControllerTest {
         // Assert
         verify(service).deleteAchAccount(personId, identifier, deviceId, ip);
     }
+
     @Test
     void givenRequestWhenGetAccountTypesReturnOk() throws Exception {
-        //Act
+        // Act
         MvcResult result = mockMvc.perform(get(GET_ACCOUNT_TYPES)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        //Assert
+        // Assert
         verify(service).accountTypes();
     }
 
@@ -283,4 +274,23 @@ class DestinationAccountControllerTest {
         verify(service).getBanks();
     }
 
+    @Test
+    void givenBankCodeWhenGetBranchOfficeThenListBranchOffice() throws Exception {
+        // Arrange
+        Integer bankCode = 1017;
+        BranchOfficeResponse mockResponse = BranchOfficeResponseFixture.withDefault();
+        when(service.getBranchOffice(bankCode)).thenReturn(mockResponse);
+
+        // Act
+        mockMvc.perform(get(GET_BRANCH_OFFICE, bankCode)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data[0].id").value(mockResponse.getData().get(0).getId()))
+                .andExpect(jsonPath("$.data[0].description").value(mockResponse.getData().get(0).getDescription()));
+
+        // Assert
+        verify(service).getBranchOffice(bankCode);
+    }
 }

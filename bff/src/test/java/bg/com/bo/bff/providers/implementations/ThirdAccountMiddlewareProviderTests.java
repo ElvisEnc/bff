@@ -2,8 +2,8 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
-import bg.com.bo.bff.application.dtos.requests.AddThirdAccountBasicRequestFixture;
-import bg.com.bo.bff.application.dtos.requests.AddWalletAccountBasicRequestFixture;
+import bg.com.bo.bff.application.dtos.request.AddThirdAccountBasicRequestFixture;
+import bg.com.bo.bff.application.dtos.request.AddWalletAccountBasicRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
@@ -15,7 +15,6 @@ import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.DeleteThirdAccountMWRequest;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountListMapper;
-import bg.com.bo.bff.providers.implementations.ThirdAccountMiddlewareProvider;
 import bg.com.bo.bff.providers.dtos.responses.ThirdAccountListMWResponse;
 import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountMWtMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,7 +55,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 @WireMockTest(proxyMode = true, httpPort = 8080)
 @ExtendWith(WireMockExtension.class)
 @ExtendWith(MockitoExtension.class)
-public class ThirdAccountMiddlewareProviderTests {
+class ThirdAccountMiddlewareProviderTests {
     @Autowired
     private ThirdAccountMiddlewareProvider thirdAccountMiddlewareService;
 

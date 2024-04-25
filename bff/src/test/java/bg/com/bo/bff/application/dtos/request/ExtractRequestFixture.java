@@ -1,4 +1,4 @@
-package bg.com.bo.bff.application.dtos.requests;
+package bg.com.bo.bff.application.dtos.request;
 
 
 import bg.com.bo.bff.application.dtos.request.account.statement.AmountRange;

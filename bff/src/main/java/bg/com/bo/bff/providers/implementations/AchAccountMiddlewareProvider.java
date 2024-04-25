@@ -152,7 +152,7 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
     public BanksMWResponse getBanks() throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.ACH_ACCOUNTS.getName(), middlewareConfig.getClientAchAccount(), ProjectNameMW.ACH_ACCOUNTS.getHeaderKey());
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            String urlGetThirdAccounts = url + complementAchAccounts + "/ach/others-bank-list";
+            String urlGetThirdAccounts = middlewareConfig.getUrlBase() + ProjectNameMW.ACH_ACCOUNTS.getName() + "/bs/v1/ach/others-bank-list";
             HttpGet httpRequest = new HttpGet(urlGetThirdAccounts);
             httpRequest.setHeader(AUTH, "Bearer " + clientToken.getAccessToken());
             httpRequest.setHeader(MIDDLEWARE_CHANNEL, CanalMW.GANAMOVIL.getCanal());
@@ -207,23 +207,24 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
             request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
             request.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
 
-            CloseableHttpResponse httpResponse = httpClient.execute(request);
-            int statusCode = httpResponse.getStatusLine().getStatusCode();
-            String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
-            if (statusCode == HttpStatus.SC_OK) {
-                return Util.stringToObject(jsonResponse, BranchOfficeMWResponse.class);
-            } else {
-                AppError error = Util.mapProviderError(jsonResponse);
-                String empty = error.getDescription();
-                if (Objects.equals(AppError.MDWAAM_001.getDescription(), empty)) {
-                    return BranchOfficeMWResponse.builder()
-                            .data(BranchOfficeMWResponse.BranchOfficeMWData.builder()
-                                    .response(new ArrayList<>())
-                                    .build())
-                            .build();
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK) {
+                    return Util.stringToObject(jsonResponse, BranchOfficeMWResponse.class);
+                } else {
+                    AppError error = Util.mapProviderError(jsonResponse);
+                    String empty = error.getDescription();
+                    if (Objects.equals(AppError.MDWAAM_001.getDescription(), empty)) {
+                        return BranchOfficeMWResponse.builder()
+                                .data(BranchOfficeMWResponse.BranchOfficeMWData.builder()
+                                        .response(new ArrayList<>())
+                                        .build())
+                                .build();
+                    }
+                    LOGGER.error(jsonResponse);
+                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
                 }
-                LOGGER.error(jsonResponse);
-                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }
         } catch (GenericException ex) {
             LOGGER.error(ex);
