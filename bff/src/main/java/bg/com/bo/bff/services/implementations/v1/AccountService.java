@@ -1,22 +1,39 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
+import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
+import bg.com.bo.bff.providers.dtos.requests.UpdateTransactionLimitMWRequest;
 import bg.com.bo.bff.providers.interfaces.IAccountProvider;
 import bg.com.bo.bff.services.interfaces.IAccountService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class AccountService implements IAccountService {
-    @Autowired
-    private IAccountProvider iAccountMiddlewareService;
+
+    private final IAccountProvider iAccountMiddlewareService;
+
+    public AccountService(IAccountProvider iAccountMiddlewareService) {
+        this.iAccountMiddlewareService = iAccountMiddlewareService;
+    }
 
     public AccountListResponse getAccounts(String personId, String documentNumber) throws IOException {
         ClientMWToken clientToken = iAccountMiddlewareService.generateAccountAccessToken();
         String token = clientToken.getAccessToken();
         return iAccountMiddlewareService.getAccounts(token, personId, documentNumber);
+    }
+
+    @Override
+    public GenericResponse updateTransactionLimit(String personId, String accountId, UpdateTransactionLimitRequest request, Map<String, String> parameter) throws IOException {
+        UpdateTransactionLimitMWRequest requestMW = UpdateTransactionLimitMWRequest.builder()
+                .availableTransaction(request.getAmountLimit())
+                .transactionPermitDay(request.getCountLimit())
+                .build();
+        return iAccountMiddlewareService.updateTransactionLimit(personId, accountId, requestMW, parameter);
+
     }
 }

@@ -5,12 +5,12 @@ import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
-import bg.com.bo.bff.application.dtos.response.BanksResponse;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
+import bg.com.bo.bff.application.dtos.response.BanksResponse;
+import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,9 +34,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/destination-accounts")
@@ -65,7 +62,7 @@ public class DestinationAccountController {
             @NotBlank
             String personId,
             @Valid @RequestBody AddThirdAccountRequest addThirdAccountRequest) throws IOException {
-        return ResponseEntity.ok(service.addThirdAccount(personId, addThirdAccountRequest, getParameter(httpServletRequest)));
+        return ResponseEntity.ok(service.addThirdAccount(personId, addThirdAccountRequest, Headers.getParameter(httpServletRequest)));
     }
 
     @Operation(summary = "Agendar nueva cuenta de destino ACH.", description = "Agendar nueva cuenta de destino ACH.")
@@ -81,7 +78,7 @@ public class DestinationAccountController {
             @NotBlank
             String personId,
             @Valid @RequestBody AddAchAccountRequest addAchAccountRequest) throws IOException {
-        return ResponseEntity.ok(service.addAchAccount(personId, addAchAccountRequest, getParameter(httpServletRequest)));
+        return ResponseEntity.ok(service.addAchAccount(personId, addAchAccountRequest, Headers.getParameter(httpServletRequest)));
     }
 
     @Operation(summary = "Eliminación de cuenta de terceros.", description = "Elimina cuenta de terceros.")
@@ -119,7 +116,7 @@ public class DestinationAccountController {
         return ResponseEntity.ok(service.deleteAchAccount(personId, identifier, deviceId, ip));
     }
 
-    @Operation(summary = "Agendar nueva cuenta de destino ACH.", description = "Agendar nueva cuenta de destino ACH.")
+    @Operation(summary = "Agendar nueva cuenta de destino Billetera.", description = "Agendar nueva cuenta de destino Billetera.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
@@ -132,7 +129,7 @@ public class DestinationAccountController {
             @NotBlank
             String personId,
             @Valid @RequestBody AddWalletAccountRequest addWalletAccountRequest) throws IOException {
-        return ResponseEntity.ok(service.addWalletAccount(personId, addWalletAccountRequest, getParameter(httpServletRequest)));
+        return ResponseEntity.ok(service.addWalletAccount(personId, addWalletAccountRequest, Headers.getParameter(httpServletRequest)));
     }
 
     @Operation(summary = "Lista de entidades financieras.", description = "Lista de entidades financieras.")
@@ -156,19 +153,7 @@ public class DestinationAccountController {
         return ResponseEntity.ok(service.accountTypes());
     }
 
-    private Map<String, String> getParameter(HttpServletRequest request) {
-        Map<String, String> parameters = new HashMap<>();
 
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            String headerValue = request.getHeader(headerName);
-            parameters.put(headerName, headerValue);
-        }
-        parameters.put(DeviceMW.DEVICE_IP.getCode(), request.getRemoteAddr());
-
-        return parameters;
-    }
 
     @Operation(summary = "Obtener el listado de Sucursales", description = "Este endpoint obtiene el listado de Sucursales de Otros Bancos.")
     @ApiResponses(value = {

@@ -1,21 +1,39 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.commons.enums.*;
-import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.responses.accounts.AccountListMWResponse;
-import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
-import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
+import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
+import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.exceptions.BadRequestException;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.application.exceptions.NotAcceptableException;
 import bg.com.bo.bff.application.exceptions.RequestException;
-import bg.com.bo.bff.providers.mappings.account.AccountListMapper;
+import bg.com.bo.bff.commons.converters.ErrorResponseConverter;
+import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.CanalMW;
+import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.Headers;
+import bg.com.bo.bff.commons.enums.HttpError;
+import bg.com.bo.bff.commons.enums.PersonRol;
+import bg.com.bo.bff.commons.enums.ProjectNameMW;
+import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.models.ClientToken;
+import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
+import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.requests.UpdateTransactionLimitMWRequest;
+import bg.com.bo.bff.providers.dtos.responses.accounts.AccountListMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.accounts.TransactionLimitUpdateAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountProvider;
+import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
+import bg.com.bo.bff.providers.mappings.account.AccountListMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +43,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Map;
 
 
 @Service
@@ -42,9 +61,10 @@ public class AccountMiddlewareProvider implements IAccountProvider {
     private String clientSecret;
 
     private final MiddlewareConfig middlewareConfig;
-    private IHttpClientFactory httpClientFactory;
+    private final ITokenMiddlewareProvider tokenMiddlewareProvider;
+    private final IHttpClientFactory httpClientFactory;
 
-    private AccountListMapper accountListMapper;
+    private final AccountListMapper accountListMapper;
     private static final String AUTH = "Authorization";
     private static final String MIDDLEWARE_CHANNEL = "middleware-channel";
     private static final String APPLICATION_ID = "application-id";
@@ -52,8 +72,9 @@ public class AccountMiddlewareProvider implements IAccountProvider {
     private static final Logger logger = LogManager.getLogger(AccountMiddlewareProvider.class.getName());
 
     @Autowired
-    public AccountMiddlewareProvider(MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory, AccountListMapper accountListMapper) {
+    public AccountMiddlewareProvider(MiddlewareConfig middlewareConfig, ITokenMiddlewareProvider tokenMiddlewareProvider, IHttpClientFactory httpClientFactory, AccountListMapper accountListMapper) {
         this.middlewareConfig = middlewareConfig;
+        this.tokenMiddlewareProvider = tokenMiddlewareProvider;
         this.httpClientFactory = httpClientFactory;
         this.accountListMapper = accountListMapper;
     }
@@ -133,6 +154,52 @@ public class AccountMiddlewareProvider implements IAccountProvider {
                 throw e;
             logger.error(e);
             throw new RuntimeException("Hubo un error no controlado al crear el clienteGetAccounts");
+        }
+    }
+
+    @Override
+    public GenericResponse updateTransactionLimit(String personId, String accountId,
+                                                  UpdateTransactionLimitMWRequest request,
+                                                  Map<String, String> parameter) throws IOException {
+
+        String path =String.format("%s%s/bs/v1/accounts/%s/persons/%s/companies/%s/limits",
+                middlewareConfig.getUrlBase(), ProjectNameMW.OWN_ACCOUNT_MANAGER.getName(),accountId,personId,personId);
+
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.OWN_ACCOUNT_MANAGER.getName(), middlewareConfig.getClientOwnManager(), ProjectNameMW.OWN_ACCOUNT_MANAGER.getHeaderKey());
+
+        String jsonMapper = Util.objectToString(request);
+        StringEntity entity = new StringEntity(jsonMapper);
+        HttpPut httpRequest = new HttpPut(path);
+        httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+        httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameter.get(DeviceMW.DEVICE_ID.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameter.get(DeviceMW.DEVICE_IP.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_NAME.getCode(), parameter.get(DeviceMW.DEVICE_NAME.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_X.getCode(), parameter.get(DeviceMW.GEO_POSITION_X.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameter.get(DeviceMW.GEO_POSITION_Y.getCode()));
+        httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameter.get(DeviceMW.APP_VERSION.getCode()));
+        httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+        httpRequest.setEntity(entity);
+
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+
+                if (statusCode == HttpStatus.SC_OK) {
+                    return GenericResponse.instance(TransactionLimitUpdateAccountResponse.SUCCESS);
+                }
+                logger.error(jsonResponse);
+                AppError error = Util.mapProviderError(jsonResponse);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            }
+        } catch (GenericException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error(e);
+            throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
         }
     }
 }
