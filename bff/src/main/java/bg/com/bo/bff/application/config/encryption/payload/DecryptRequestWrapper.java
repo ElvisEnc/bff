@@ -122,13 +122,23 @@ public class DecryptRequestWrapper extends HttpServletRequestWrapper {
      * @throws InvalidAlgorithmParameterException
      */
     private void getDecryptedPayload(EncryptionPayload encryptedPayload, SecretKey payloadSecretKey, IvParameterSpec iv) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-        String decryptedPayload = CipherUtils.decrypt(EncryptionAlgorithm.AES_256_CBC_PKCS5_PADDING, encryptedPayload.getBody(), payloadSecretKey, iv);
-        String contentType = encryptedPayload.getContentType();
+        String decryptedPayload = "";
+        String contentType = null;
 
-        this.encryptionPayloadDecrypted =  EncryptionPayload.builder()
+        if (encryptedPayload != null){
+            decryptedPayload = encryptedPayload.getBody();
+            if (decryptedPayload != null && !decryptedPayload.isEmpty())
+                decryptedPayload = CipherUtils.decrypt(EncryptionAlgorithm.AES_256_CBC_PKCS5_PADDING, encryptedPayload.getBody(), payloadSecretKey, iv);
+
+            contentType = encryptedPayload.getContentType();
+        }
+
+        this.encryptionPayloadDecrypted = EncryptionPayload.builder()
                 .body(decryptedPayload)
-                .contentType(contentType)
                 .build();
+
+        if (contentType != null)
+            this.encryptionPayloadDecrypted.setContentType(contentType);
     }
 
     /**
@@ -139,6 +149,8 @@ public class DecryptRequestWrapper extends HttpServletRequestWrapper {
      */
     private static EncryptionPayload getRawPayload(HttpServletRequest request) throws IOException {
         String rawPayload = Util.getPayload(request);
+        if (rawPayload.isEmpty())
+            return null;
         return Util.stringToObject(rawPayload, EncryptionPayload.class);
     }
 
