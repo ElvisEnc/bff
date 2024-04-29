@@ -8,13 +8,17 @@ import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
 import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
 import bg.com.bo.bff.commons.enums.response.RegistryControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.CipherUtils;
+import bg.com.bo.bff.models.EncryptInfo;
 import bg.com.bo.bff.providers.interfaces.IEncryptionProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginAGNProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 
 import java.security.KeyPair;
@@ -36,6 +40,12 @@ public class RegistryServicesTests {
     @Mock
     private ILoginAGNProvider loginAGNProvider;
 
+    @Mock
+    private CacheManager cacheManager;
+
+    @Mock
+    private Cache cache;
+
     @InjectMocks
     private RegistryService service;
 
@@ -51,6 +61,8 @@ public class RegistryServicesTests {
 
         when(loginAGNProvider.login(request)).thenReturn(true);
         when(encryptionProvider.createKeys()).thenReturn(keyPair);
+        Mockito.doNothing().when(cache).evict(any(EncryptInfo.class));
+        when(cacheManager.getCache(any())).thenReturn(cache);
         when(loginAGNProvider.registerDevice(eq(request), any())).thenReturn(true);
 
         // Act
