@@ -136,6 +136,28 @@ class DestinationAccountServiceTest {
     }
 
     @Test
+    void givenValidaDataWhenDeleteWalletAccountThenReturnOk() throws IOException {
+        // Arrange
+        String personId = "1";
+        int accountNumber = 1;
+        int identifier = 1;
+        String deviceId = "1";
+        String deviceIp = "127.0.0.1";
+
+        GenericResponse expectedResponse = new GenericResponse();
+        expectedResponse.setCode("SUCCESS");
+        expectedResponse.setMessage("Se borró la cuenta exitosamente.");
+        when(thirdAccountProvider.deleteWalletAccount(personId, identifier, accountNumber, deviceId, deviceIp)).thenReturn(expectedResponse);
+
+        // Act
+        GenericResponse response = service.deleteWalletAccount(personId, identifier, accountNumber, deviceId, deviceIp);
+
+        // Assert
+        verify(thirdAccountProvider).deleteWalletAccount(personId, identifier, accountNumber, deviceId, deviceIp);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
     void givenValidDataWhenDeleteAchAccountThenReturnOk() throws IOException {
         // Arrange
         String personId = "1";

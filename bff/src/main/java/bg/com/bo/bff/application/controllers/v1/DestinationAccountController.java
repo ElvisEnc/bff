@@ -116,6 +116,24 @@ public class DestinationAccountController {
         return ResponseEntity.ok(service.deleteAchAccount(personId, identifier, deviceId, ip));
     }
 
+    @Operation(summary = "Eliminación de cuenta billetera.", description = "Elimina cuenta de billetera.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @DeleteMapping("/{personId}/wallets/{identifier}/wallet-accounts/{accountNumber}")
+    public ResponseEntity<GenericResponse> deleteWalletAccount (
+            @Valid @RequestHeader("device-id") String deviceId,
+            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
+            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
+            @PathVariable("accountNumber") @NotNull @Parameter(description = "Este es el número de la cuenta", example = "12345") int accountNumber,
+            HttpServletRequest servletRequest
+    ) throws IOException {
+        String ip = servletRequest.getRemoteAddr();
+        return ResponseEntity.ok(service.deleteWalletAccount(personId, identifier, accountNumber, deviceId, ip));
+    }
+
     @Operation(summary = "Agendar nueva cuenta de destino Billetera.", description = "Agendar nueva cuenta de destino Billetera.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),

@@ -20,7 +20,8 @@ public class DeleteThirdAccountErrorResponseConverter extends ErrorResponseConve
         MDWRLIB_0012(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWRLIB-0012", "Internal server error."),
         MDWRLIB_0009(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWRLIB-0009", "Internal server error."),
         MDWPGL_405(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWPGL-405", "Internal server error."),
-        MDWRACTM_004(HttpStatus.BAD_REQUEST, "INVALID_DATA", "MDWRACTM-004", "Datos no válidos.");
+        MDWRACTM_004(HttpStatus.BAD_REQUEST, "INVALID_DATA", "MDWRACTM-004", "Datos no válidos."),
+        MDWRACTM_028(HttpStatus.BAD_REQUEST, "INVALID_DATA", "MDWRACTM-028", "No se encontraron registros para eliminar.");
 
 
         private final HttpStatus httpCode;

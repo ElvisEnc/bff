@@ -201,6 +201,36 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
         return getGenericResponse(token, parameters, jsonMapper, PATH_ADD_WALLET);
     }
 
+    @Override
+    public GenericResponse deleteWalletAccount(String personId, int identifier, int accountNumber, String deviceId, String deviceIp) throws IOException {
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.THIRD_ACCOUNTS.getName(), middlewareConfig.getClientThirdAccount(), ProjectNameMW.THIRD_ACCOUNTS.getHeaderKey());
+        IErrorResponse errorResponse = ErrorResponseConverter.GenericErrorResponse.DEFAULT;
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.THIRD_ACCOUNTS.getName() + "/bs/v1/wallets/" + identifier + "/persons/" + personId + "/wallet-accounts/" + accountNumber;
+            HttpDeleteWithBody request = new HttpDeleteWithBody(path);
+            request.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            request.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+            request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(Headers.DEVICE_ID.getName(), deviceId);
+            request.setHeader(Headers.DEVICE_IP.getName(), deviceIp);
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK)
+                    return GenericResponse.instance(DeleteThirdAccountResponse.SUCCESS);
+                else {
+                    logger.error(jsonResponse);
+                    errorResponse = DeleteThirdAccountErrorResponseConverter.INSTANCE.convert(jsonResponse);
+                    throw new HandledException(errorResponse);
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e);
+            throw new HandledException(errorResponse, e);
+        }
+    }
+
     private GenericResponse getGenericResponse(String token, Map<String, String> parameters, String jsonMapper,String pathUrl) throws UnsupportedEncodingException {
         StringEntity entity = new StringEntity(jsonMapper);
         try (CloseableHttpClient httpClient = createHttpClient()) {

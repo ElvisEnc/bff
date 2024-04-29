@@ -50,6 +50,7 @@ class DestinationAccountControllerTest {
     private static final String URL_ACH = "/api/v1/destination-accounts/1234567/ach-accounts";
     private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/delete";
     private static final String DELETE_ACH_ACCOUNT = "/api/v1/destination-accounts/56/ach-accounts/46";
+    private static final String DELETE_WALLET_ACCOUNT = "/api/v1/destination-accounts/123/wallets/456/wallet-accounts/789";
     private static final String GET_LIST_BANKS = "/api/v1/destination-accounts/banks";
     private static final String GET_ACCOUNT_TYPES = "/api/v1/destination-accounts/account-types";
     private static final String GET_BRANCH_OFFICE = "/api/v1/destination-accounts/banks/{bankCode}/branch-offices";
@@ -212,6 +213,20 @@ class DestinationAccountControllerTest {
         assertEquals(response, actual);
         verify(httpServletRequest).getHeaderNames();
         verify(service).addWalletAccount(any(), any(), any());
+    }
+
+    @Test
+    void givenValidaDAtaWhenDeleteWalletAccountThenReturnOk() throws Exception {
+        // Arrange
+        String deviceId = "123";
+
+        // Act and Assert
+        MvcResult result = mockMvc.perform(delete(DELETE_WALLET_ACCOUNT)
+                        .header("device-id", deviceId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 
     @Test

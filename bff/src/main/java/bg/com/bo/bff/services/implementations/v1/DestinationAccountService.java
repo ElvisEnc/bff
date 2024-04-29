@@ -105,6 +105,10 @@ public class DestinationAccountService implements IDestinationAccountService {
                         parameter
                 );
     }
+    @Override
+    public GenericResponse deleteWalletAccount(String personId, int identifier, int accountNumber, String deviceId, String deviceIp) throws IOException {
+        return thirdAccountProvider.deleteWalletAccount(personId, identifier, accountNumber, deviceId, deviceIp);
+    }
 
     @Override
     public BanksResponse getBanks() throws IOException {

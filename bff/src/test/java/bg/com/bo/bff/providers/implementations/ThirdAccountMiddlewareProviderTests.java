@@ -318,4 +318,36 @@ class ThirdAccountMiddlewareProviderTests {
         Mockito.verify(statusLineMock).getStatusCode();
     }
 
+    @Test
+    void givenValidaDataWhenDeleteWalletAccountThenReturnOk() throws IOException {
+        // Arrange
+        String personId = "169494";
+        int identifier = 7289842;
+        int accountNumber = 77887845;
+        String deviceId = "123";
+        String ip = "192.0.0.1";
+
+
+        Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
+        Mockito.when(tokenMiddlewareProvider.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientToken);
+        Mockito.when(clientToken.getAccessToken()).thenReturn("");
+        Mockito.when(middlewareConfig.getUrlBase()).thenReturn(MiddlewareConfigFixture.withDefault().getUrlBase());
+
+        DeleteThirdAccountMWRequest request = new DeleteThirdAccountMWRequest();
+        request.setAccountNumber(String.valueOf(accountNumber));
+        request.setIdentifier(String.valueOf(identifier));
+        request.setPersonId(personId);
+
+        GenericResponse expectedResponse = GenericResponse.instance(DeleteThirdAccountResponse.SUCCESS);
+        String jsonResponse = Util.objectToString(expectedResponse);
+
+        stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = provider.deleteWalletAccount(personId, identifier, accountNumber, deviceId, ip);
+
+        // Assert
+        assertEquals(expectedResponse.getCode(), response.getCode());
+        assertEquals(expectedResponse.getMessage(), response.getMessage());
+    }
 }
