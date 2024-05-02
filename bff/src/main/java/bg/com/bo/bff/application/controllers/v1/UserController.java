@@ -44,10 +44,10 @@ public class UserController {
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
             @Valid @RequestHeader("device-id") String deviceId,
             @Valid @RequestHeader("role-person-id") String rolePersonId,
-            @Valid @RequestHeader("device-unique-id") String deviceUniqueId,
+            @Valid @RequestHeader("user-device-id") String userDeviceId,
             @Valid @RequestBody ChangePasswordRequest changePasswordRequest, HttpServletRequest servletRequest
     ) throws IOException {
         String ip = servletRequest.getRemoteAddr();
-        return ResponseEntity.ok(userService.changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, changePasswordRequest));
+        return ResponseEntity.ok(userService.changePassword(personId, ip, deviceId, userDeviceId, rolePersonId, changePasswordRequest));
     }
 }

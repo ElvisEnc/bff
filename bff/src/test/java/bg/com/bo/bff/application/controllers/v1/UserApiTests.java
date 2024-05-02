@@ -47,18 +47,18 @@ class UserApiTests {
 
         GenericResponse expected = new GenericResponse();
         String ip = "127.0.0.1";
-        String deviceId = "123";
-        String deviceUniqueId = "3cae84faa9b64750";
+        String deviceId = "3cae84faa9b64750";
+        String userDeviceId = "123";
         String rolePersonId = "1";
         String personId = "999";
 
-        when(userService.changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, request)).thenReturn(expected);
+        when(userService.changePassword(personId, ip, deviceId, userDeviceId, rolePersonId, request)).thenReturn(expected);
 
         // Act
         mockMvc.perform(put(URL_CHANGE_PASSWORD)
                         .header("device-id", deviceId)
                         .header("role-person-id", rolePersonId)
-                        .header("device-unique-id", deviceUniqueId)
+                        .header("user-device-id", userDeviceId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Util.objectToString(request, false)))
@@ -66,7 +66,7 @@ class UserApiTests {
                 .andReturn();
 
         // Arrange
-        verify(userService).changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, request);
+        verify(userService).changePassword(personId, ip, deviceId, userDeviceId, rolePersonId, request);
     }
 
     @Test

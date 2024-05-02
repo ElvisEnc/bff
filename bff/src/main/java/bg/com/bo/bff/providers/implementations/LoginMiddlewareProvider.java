@@ -224,11 +224,11 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
     }
 
     @Override
-    public GenericResponse changePassword(String personId, String ip, String deviceId, String deviceUniqueId, String rolePersonId, ChangePasswordRequest changePasswordRequest) throws IOException {
+    public GenericResponse changePassword(String personId, String ip, String deviceId, String userDeviceId, String rolePersonId, ChangePasswordRequest changePasswordRequest) throws IOException {
         ChangePasswordMWRequest changePasswordMWRequest = loginMWMapper.convert(changePasswordRequest);
         MWOwnerAccountRequest owner = new MWOwnerAccountRequest();
         owner.setPersonId(personId);
-        owner.setUserDeviceId(deviceId);
+        owner.setUserDeviceId(userDeviceId);
         owner.setPersonRoleId(rolePersonId);
         changePasswordMWRequest.setOwnerAccount(owner);
 
@@ -246,7 +246,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             request.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
             request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
             request.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
-            request.setHeader(Headers.DEVICE_ID.getName(), deviceUniqueId);
+            request.setHeader(Headers.DEVICE_ID.getName(), deviceId);
             request.setHeader(Headers.DEVICE_IP.getName(), "192.168.1.2");
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {

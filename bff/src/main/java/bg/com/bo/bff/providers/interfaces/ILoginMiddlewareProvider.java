@@ -19,5 +19,5 @@ public interface ILoginMiddlewareProvider {
 
     GenericResponse logout(String deviceId, String deviceIp, String deviceName, String geoPositionX, String geoPositionY, String appVersion, LogoutMWRequest logoutMWRequest) throws IOException;
 
-    GenericResponse changePassword(String personId, String ip, String deviceId, String deviceUniqueId, String rolePersonId, ChangePasswordRequest changePasswordRequest) throws IOException;
+    GenericResponse changePassword(String personId, String ip, String deviceId, String userDeviceId, String rolePersonId, ChangePasswordRequest changePasswordRequest) throws IOException;
 }

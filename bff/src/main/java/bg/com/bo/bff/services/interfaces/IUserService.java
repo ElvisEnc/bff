@@ -7,5 +7,5 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 
 public interface IUserService {
-    GenericResponse changePassword(String personId, String ip, String deviceId, String deviceUniqueId, String rolePersonId, ChangePasswordRequest changePasswordRequest) throws IOException;
+    GenericResponse changePassword(String personId, String ip, String deviceId, String userDeviceId, String rolePersonId, ChangePasswordRequest changePasswordRequest) throws IOException;
 }

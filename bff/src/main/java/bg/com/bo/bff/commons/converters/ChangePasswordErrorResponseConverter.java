@@ -16,7 +16,7 @@ public class ChangePasswordErrorResponseConverter extends ErrorResponseConverter
         MDWPGL_500(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWPGL-500", "Internal server error."),
         MDWRLIB_0001(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWRLIB-0001", "Internal server error."),
         MDWRLIB_0011(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWRLIB-0011", "Internal server error."),
-        MDWPGL_400(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWPGL-400", "Internal server error."),
+        MDWPGL_400(HttpStatus.INTERNAL_SERVER_ERROR, "INVALID_DATA", "MDWPGL-400", "Datos inválidos."),
         MDWPGL_404(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWPGL-404", "Internal server error."),
         MDWRLIB_0009(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWRLIB-0009", "Internal server error."),
         MDWPGL_405(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWPGL-405", "Internal server error."),
