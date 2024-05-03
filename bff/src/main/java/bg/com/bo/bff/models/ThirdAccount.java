@@ -2,8 +2,15 @@ package bg.com.bo.bff.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@lombok.Data
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ThirdAccount {
     @Schema(example = "6577483", description = "Id")

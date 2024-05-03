@@ -1,11 +1,13 @@
 package bg.com.bo.bff.models;
 
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
-@lombok.Data
-@ToString
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ThirdAccountListResponse {
     private List<ThirdAccount> data;
 }

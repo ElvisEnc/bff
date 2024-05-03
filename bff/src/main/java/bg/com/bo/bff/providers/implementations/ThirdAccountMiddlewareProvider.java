@@ -40,7 +40,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
@@ -289,15 +291,17 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
         try (CloseableHttpClient httpClient = createHttpClient()) {
             HttpGet httpRequest = httpGet(path, token, parameters);
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
-
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
-
                 if (statusCode == HttpStatus.SC_OK) {
                     return Util.stringToObject(jsonResponse, ThirdAccountListResponse.class);
                 }
-                logger.error(jsonResponse);
                 AppError error = Util.mapProviderError(jsonResponse);
+                String empty = error.getDescription();
+                if (Objects.equals(AppError.MDWRACTM_002.getDescription(), empty)) {
+                    return new ThirdAccountListResponse(new ArrayList<>());
+                }
+                logger.error(jsonResponse);
                 throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }
         } catch (GenericException e) {
