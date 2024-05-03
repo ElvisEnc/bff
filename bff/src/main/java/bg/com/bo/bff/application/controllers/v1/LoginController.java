@@ -33,7 +33,6 @@ import java.io.IOException;
 @Tag(name = "Login Controller", description = "Controlador del Login")
 @Validated
 public class LoginController {
-
     private ILoginServices iLoginServices;
     private IDeviceEnrollmentService iDeviceEnrollmentService;
     private LoginMapper loginMapper;
@@ -91,7 +90,6 @@ public class LoginController {
         return ResponseEntity.ok(response);
     }
 
-
     @Operation(summary = "Logout Request", description = "Endpoint para cerrar sesión")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Logout Success", content = @Content(schema = @Schema(implementation = LoginResult.class), mediaType = "application/json")),
@@ -105,7 +103,7 @@ public class LoginController {
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
-            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId", example = "13021") Integer personId,
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el código de persona", example = "13021") Integer personId,
             @RequestHeader("user-device-id") @NotNull @Parameter(description = "Este es el userDeviceId", example = "70") Integer userDeviceId,
             @RequestHeader("person-role-id") @NotNull @Parameter(description = "Este es el personRoleId", example = "50") Integer personRoleId,
             HttpServletRequest servletRequest,

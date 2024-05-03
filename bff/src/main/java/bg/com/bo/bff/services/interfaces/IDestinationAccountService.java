@@ -1,14 +1,15 @@
 package bg.com.bo.bff.services.interfaces;
 
-
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
 import bg.com.bo.bff.application.dtos.response.BanksResponse;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,4 +26,5 @@ public interface IDestinationAccountService {
     AccountTypeListResponse accountTypes();
     BanksResponse getBanks() throws IOException;
     BranchOfficeResponse getBranchOffice(Integer bankCode) throws IOException;
+    DestinationAccountResponse getDestinationAccounts(Integer personId, DestinationAccountRequest request, Map<String, String> parameter) throws IOException;
 }

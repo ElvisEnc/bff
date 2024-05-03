@@ -1,13 +1,11 @@
 package bg.com.bo.bff.commons.filters;
 
 import bg.com.bo.bff.commons.filters.interfaces.IFilter;
-import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PageFilter implements IFilter<AccountReportBasicResponse.AccountReportData> {
-
+public class PageFilter<T> implements IFilter<T> {
     private int page;
     private int pageSize;
 
@@ -17,7 +15,7 @@ public class PageFilter implements IFilter<AccountReportBasicResponse.AccountRep
     }
 
     @Override
-    public List<AccountReportBasicResponse.AccountReportData> apply(List<AccountReportBasicResponse.AccountReportData> list) {
+    public List<T> apply(List<T> list) {
         int start = (page - 1) * pageSize;
         int end = start + pageSize - 1;
 

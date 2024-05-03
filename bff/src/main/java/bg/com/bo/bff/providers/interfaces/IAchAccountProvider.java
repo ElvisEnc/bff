@@ -5,6 +5,7 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.dtos.BanksMWResponse;
 import bg.com.bo.bff.providers.dtos.requests.AddAchAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMWResponse;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,4 +16,5 @@ public interface IAchAccountProvider {
     GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException;
     BranchOfficeMWResponse getAllBranchOfficeBank(Integer code) throws IOException;
     BanksMWResponse getBanks() throws IOException;
+    AchAccountMWResponse getAchAccounts(Integer personId, Map<String, String> parameters) throws IOException;
 }

@@ -8,12 +8,7 @@ import bg.com.bo.bff.commons.HttpDeleteWithBody;
 import bg.com.bo.bff.commons.converters.DeleteThirdAccountErrorResponseConverter;
 import bg.com.bo.bff.commons.converters.ErrorResponseConverter;
 import bg.com.bo.bff.commons.converters.IErrorResponse;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.ApplicationId;
-import bg.com.bo.bff.commons.enums.CanalMW;
-import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.commons.enums.Headers;
-import bg.com.bo.bff.commons.enums.ProjectNameMW;
+import bg.com.bo.bff.commons.enums.*;
 import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
@@ -22,6 +17,8 @@ import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.AddAchAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.DeleteAchAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMW;
+import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMWResponse;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
@@ -233,5 +230,51 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
             LOGGER.error(e);
             throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
         }
+    }
+
+    @Override
+    public AchAccountMWResponse getAchAccounts(Integer personId, Map<String, String> parameters) throws IOException {
+        String token = generateAccessToken().getAccessToken();
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.ACH_ACCOUNTS.getName() + "/bs/v1/ach/ach-accounts/persons/" + personId + "/companies/" + personId;
+            HttpGet request = httpGet(path, token, parameters);
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK) {
+                    return Util.stringToObject(jsonResponse, AchAccountMWResponse.class);
+                } else {
+                    AppError error = Util.mapProviderError(jsonResponse);
+                    String empty = error.getDescription();
+                    if (Objects.equals(AppError.MDWAAM_001.getDescription(), empty)) {
+                        return AchAccountMWResponse.builder()
+                                .data(new ArrayList<>())
+                                .build();
+                    }
+                    LOGGER.error(jsonResponse);
+                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                }
+            }
+        } catch (GenericException ex) {
+            LOGGER.error(ex);
+            throw ex;
+        } catch (Exception e) {
+            LOGGER.error(e);
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        }
+    }
+
+    private HttpGet httpGet(String url, String token, Map<String, String> parameters) {
+        HttpGet httpRequest = new HttpGet(url);
+        httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + token);
+        httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(Headers.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
+        httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_NAME.getCode(), parameters.get(DeviceMW.DEVICE_NAME.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_X.getCode(), parameters.get(DeviceMW.GEO_POSITION_X.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode()));
+        httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode()));
+        return httpRequest;
     }
 }

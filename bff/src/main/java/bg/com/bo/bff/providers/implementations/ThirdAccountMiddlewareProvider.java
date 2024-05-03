@@ -61,8 +61,8 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     private static final String AUTH = "Authorization";
     private static final String MIDDLEWARE_CHANNEL = "middleware-channel";
     private static final String APPLICATION_ID = "application-id";
-    private static final String PATH_ADD_THIRD_ACCOUNT="/third-party-accounts";
-    private static final String PATH_ADD_WALLET ="/wallets";
+    private static final String PATH_ADD_THIRD_ACCOUNT = "/third-party-accounts";
+    private static final String PATH_ADD_WALLET = "/wallets";
 
     @Autowired
     public ThirdAccountMiddlewareProvider(IHttpClientFactory httpClientFactory, ThirdAccountListMapper thirdAccountListMapper, MiddlewareConfig middlewareConfig, ITokenMiddlewareProvider tokenMiddlewareProvider, ThirdAccountMWtMapper mapper) {
@@ -105,16 +105,18 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
         boolean propagateException = false;
         try (CloseableHttpClient httpClient = createHttpClient()) {
             String channel = "2";
-            String urlGetThirdAccounts = url + complementThirdAccounts + "/persons/" + company + "/companies/" + personId;
+            String urlGetThirdAccounts = url + complementThirdAccounts + "/persons/" + company + "/companies/" + personId + "/devices/0/roles/5";
             HttpGet getThirdAccounts = new HttpGet(urlGetThirdAccounts);
             getThirdAccounts.setHeader(AUTH, "Bearer " + token);
             getThirdAccounts.setHeader(MIDDLEWARE_CHANNEL, channel);
             getThirdAccounts.setHeader(APPLICATION_ID, channel);
+            getThirdAccounts.setHeader(Headers.DEVICE_ID.getName(), "12s4d3f4s");
+            getThirdAccounts.setHeader(Headers.DEVICE_IP.getName(), "127.0.0.1");
             ObjectMapper objectMapper = new ObjectMapper();
             try (CloseableHttpResponse httpResponse = httpClient.execute(getThirdAccounts)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String responseThirdAccounts = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
-                    String responseThirdAccounts = EntityUtils.toString(httpResponse.getEntity());
                     ThirdAccountListMWResponse responseMW = objectMapper.readValue(responseThirdAccounts, ThirdAccountListMWResponse.class);
                     ThirdAccountListResponse listResponse = thirdAccountListMapper.convert(responseMW);
                     return listResponse;
@@ -171,8 +173,7 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
-                if (statusCode == HttpStatus.SC_OK)
-                    return GenericResponse.instance(DeleteThirdAccountResponse.SUCCESS);
+                if (statusCode == HttpStatus.SC_OK) return GenericResponse.instance(DeleteThirdAccountResponse.SUCCESS);
                 else {
                     logger.error(jsonResponse);
                     IErrorResponse errorResponse = DeleteThirdAccountErrorResponseConverter.INSTANCE.convert(jsonResponse);
@@ -191,11 +192,11 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     public GenericResponse addThirdAccount(String token, AddThirdAccountBasicRequest request, Map<String, String> parameters) throws IOException {
 
         String jsonMapper = Util.objectToString(request);
-        return getGenericResponse(token, parameters, jsonMapper,PATH_ADD_THIRD_ACCOUNT);
+        return getGenericResponse(token, parameters, jsonMapper, PATH_ADD_THIRD_ACCOUNT);
     }
 
     @Override
-    public GenericResponse addWalletAccount(String token, AddWalletAccountBasicRequest request, Map<String, String> parameters) throws IOException{
+    public GenericResponse addWalletAccount(String token, AddWalletAccountBasicRequest request, Map<String, String> parameters) throws IOException {
 
         String jsonMapper = Util.objectToString(request);
         return getGenericResponse(token, parameters, jsonMapper, PATH_ADD_WALLET);
@@ -231,7 +232,7 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
         }
     }
 
-    private GenericResponse getGenericResponse(String token, Map<String, String> parameters, String jsonMapper,String pathUrl) throws UnsupportedEncodingException {
+    private GenericResponse getGenericResponse(String token, Map<String, String> parameters, String jsonMapper, String pathUrl) throws UnsupportedEncodingException {
         StringEntity entity = new StringEntity(jsonMapper);
         try (CloseableHttpClient httpClient = createHttpClient()) {
             String urlGetThirdAccounts = url + complementThirdAccounts + pathUrl;
@@ -269,6 +270,56 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
         httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode()));
         httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
         httpRequest.setEntity(entity);
+        return httpRequest;
+    }
+
+    @Override
+    public ThirdAccountListResponse getThirdAccounts(Integer personId, String token, Map<String, String> parameters) throws IOException {
+        String path = middlewareConfig.getUrlBase() + ProjectNameMW.THIRD_ACCOUNTS.getName() + "/bs/v1/persons/" + personId + "/companies/" + personId + "/devices/" + PersonRol.PERSONA.getId() + "/roles/" + PersonRol.PERSONA.getId();
+        return getThirdAndWalletAccounts(path, token, parameters);
+    }
+
+    @Override
+    public ThirdAccountListResponse getWalletAccounts(Integer personId, String token, Map<String, String> parameters) {
+        String path = middlewareConfig.getUrlBase() + ProjectNameMW.THIRD_ACCOUNTS.getName() + "/bs/v1/wallets/companies/" + personId + "/persons/" + personId;
+        return getThirdAndWalletAccounts(path, token, parameters);
+    }
+
+    private ThirdAccountListResponse getThirdAndWalletAccounts(String path, String token, Map<String, String> parameters) {
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            HttpGet httpRequest = httpGet(path, token, parameters);
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
+
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+
+                if (statusCode == HttpStatus.SC_OK) {
+                    return Util.stringToObject(jsonResponse, ThirdAccountListResponse.class);
+                }
+                logger.error(jsonResponse);
+                AppError error = Util.mapProviderError(jsonResponse);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            }
+        } catch (GenericException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error(e);
+            throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
+        }
+    }
+
+    private HttpGet httpGet(String url, String token, Map<String, String> parameters) {
+        HttpGet httpRequest = new HttpGet(url);
+        httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + token);
+        httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(Headers.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
+        httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_NAME.getCode(), parameters.get(DeviceMW.DEVICE_NAME.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_X.getCode(), parameters.get(DeviceMW.GEO_POSITION_X.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode()));
+        httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode()));
+        httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
         return httpRequest;
     }
 }

@@ -16,7 +16,6 @@ import static org.springframework.data.redis.serializer.RedisSerializationContex
 @EnableCaching
 @Configuration
 public class CacheConfig {
-
     @Value("${cache.ttl.default}")
     private Integer defaultTtl;
 
@@ -32,6 +31,8 @@ public class CacheConfig {
     @Value("${cache.account.statement.ttl}")
     private Integer accountStatementTtl;
 
+    @Value("${cache.destination.accounts.ttl}")
+    private Integer destinationAccountTtl;
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return builder -> builder
@@ -50,6 +51,12 @@ public class CacheConfig {
                 .withCacheConfiguration(Constants.ACCOUNTS_STATEMENTS,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(accountStatementTtl))
+                                .disableCachingNullValues()
+                                .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                                .prefixCacheNameWith(cachePrefix))
+                .withCacheConfiguration(Constants.DESTINATION_ACCOUNTS,
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofMinutes(destinationAccountTtl))
                                 .disableCachingNullValues()
                                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                                 .prefixCacheNameWith(cachePrefix));

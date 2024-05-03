@@ -1,16 +1,18 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.BanksResponse;
 import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
 import bg.com.bo.bff.commons.utils.Headers;
+import bg.com.bo.bff.models.ThirdAccountListResponse;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,25 +26,20 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
 @RestController
+@Validated
 @RequestMapping("api/v1/destination-accounts")
 @Tag(name = "Destination Account Controller", description = "Controlador de cuentas destinoo")
 public class DestinationAccountController {
 
     private final HttpServletRequest httpServletRequest;
 
-    private final IDestinationAccountService service;
+    private IDestinationAccountService service;
 
     public DestinationAccountController(HttpServletRequest httpServletRequest, IDestinationAccountService service) {
         this.httpServletRequest = httpServletRequest;
@@ -145,7 +142,7 @@ public class DestinationAccountController {
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @DeleteMapping("/{personId}/wallets/{identifier}/wallet-accounts/{accountNumber}")
-    public ResponseEntity<GenericResponse> deleteWalletAccount (
+    public ResponseEntity<GenericResponse> deleteWalletAccount(
             @Valid @RequestHeader("device-id") String deviceId,
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
             @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
@@ -204,8 +201,6 @@ public class DestinationAccountController {
         return ResponseEntity.ok(service.accountTypes());
     }
 
-
-
     @Operation(summary = "Obtener el listado de Sucursales", description = "Este endpoint obtiene el listado de Sucursales de Otros Bancos.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = BranchOfficeResponse.class), mediaType = "application/json")),
@@ -217,5 +212,24 @@ public class DestinationAccountController {
             @Parameter(description = "Este es el código del banco", example = "1017") @PathVariable("bankCode") @NotNull Integer bankCode
     ) throws IOException {
         return ResponseEntity.ok(service.getBranchOffice(bankCode));
+    }
+
+    @Operation(summary = "Destination Accounts", description = "Listado de todas las cuentas de Destino para el módulo de Transferencia")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtiene todas las cuentas propias, terceros, billeteras y ACH, ", content = @Content(schema = @Schema(implementation = ThirdAccountListResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PostMapping("/persons/{personId}")
+    public ResponseEntity<DestinationAccountResponse> getDestinationAccounts(
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el código de persona", example = "1234567") Integer personId,
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @Valid @RequestBody DestinationAccountRequest request
+    ) throws IOException {
+        return ResponseEntity.ok(service.getDestinationAccounts(personId, request, Headers.getParameter(httpServletRequest)));
     }
 }

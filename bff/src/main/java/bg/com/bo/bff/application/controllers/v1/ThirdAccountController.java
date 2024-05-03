@@ -2,7 +2,6 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.models.ThirdAccountListResponse;
-import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.services.interfaces.IThirdAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

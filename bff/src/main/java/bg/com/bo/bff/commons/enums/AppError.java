@@ -42,7 +42,20 @@ public enum AppError {
     // Branch Office Bank
     MDWAAM002(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWAAM002", "Datos Invalidos"),
     MDWAAM_001(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWAAM-001", "No tiene datos"),
-    MDWRLIB_0009(HttpStatus.FORBIDDEN, "NOT_FOUND", "MDWRLIB-0009", "Forbidden"),
+    MDWRLIB_0009(HttpStatus.FORBIDDEN, "FORBIDDEN", "MDWRLIB-0009", "Forbidden"),
+
+    // Cuentas Terceros
+    MDWRACTM_002(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWRACTM-002", "No se encontraron cuentas"),
+    MDWRLIB_0012(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRLIB-0012", "Channel not implemented yet"),
+    MDWRACTM_015(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRACTM-015", "Params must be the same for CHANNEL 2"),
+    MDWRACTM_016(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRACTM-016", "Params must not be the same for CHANNEL 6"),
+
+    // Cuentas Ach
+    MDWHDR_01(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWHDR-01", "Invalid Header channel"),
+    MDWHDR_02(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWHDR-02", "Channel not implemented yet"),
+    MDWAAM_006(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWAAM-006", "Params must be the same for CHANNEL 2"),
+    MDWAAM_010(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWAAM-010", "No tiene datos"),
+    MDWAAM_004(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWAAM-004", "No tiene datos"),
 
     // Genericos
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "Error en los parametros"),

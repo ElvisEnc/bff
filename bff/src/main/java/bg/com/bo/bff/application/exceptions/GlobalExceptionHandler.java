@@ -20,15 +20,30 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
     private static final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class.getName());
 
-    @ExceptionHandler({HttpMessageNotReadableException.class, UnexpectedTypeException.class, MethodArgumentNotValidException.class, NullPointerException.class, MissingRequestHeaderException.class, MethodArgumentTypeMismatchException.class})
-    public ResponseEntity<ErrorResponse> handleValidateException(Exception exception) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), HttpStatus.BAD_REQUEST.getReasonPhrase());
+    @ExceptionHandler({MissingRequestHeaderException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class, ConstraintViolationException.class, UnexpectedTypeException.class})
+    public ResponseEntity<ErrorResponse> handleValidationException(Exception exception) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), exception.getMessage());
         logger.error(exception);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationMessageException(MethodArgumentNotValidException ex) {
+        List<String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.toList());
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), String.join(", ", errors));
+        logger.error("Validation error: ", ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
@@ -58,13 +73,6 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(HttpError.ERROR_400.getName(), exception.getMessage());
         logger.error(exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleNotBlankParamsException(ConstraintViolationException exception) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpError.ERROR_422.getName(), exception.getMessage());
-        logger.error(exception);
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorResponse);
     }
 
     @ExceptionHandler({Exception.class, NotHandledResponseException.class, CreateTokenServiceException.class, RequestException.class, JwtServiceException.class})
