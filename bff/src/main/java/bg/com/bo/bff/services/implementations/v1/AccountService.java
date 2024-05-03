@@ -2,6 +2,9 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponse;
+import bg.com.bo.bff.application.dtos.response.TransactionLimitData;
+import bg.com.bo.bff.providers.dtos.TransactionLimitListMWResponse;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
 import bg.com.bo.bff.providers.dtos.requests.UpdateTransactionLimitMWRequest;
@@ -34,6 +37,18 @@ public class AccountService implements IAccountService {
                 .transactionPermitDay(request.getCountLimit())
                 .build();
         return iAccountMiddlewareService.updateTransactionLimit(personId, accountId, requestMW, parameter);
+
+    }
+
+    @Override
+    public GetTransactionLimitResponse getTransactionLimit(String personId, String accountId, Map<String, String> parameter) throws IOException {
+        TransactionLimitListMWResponse result = iAccountMiddlewareService.getTransactionLimit(personId, accountId, parameter);
+       return new GetTransactionLimitResponse(
+                TransactionLimitData.builder()
+                        .amountLimit(result.getData().getAvailableTransaction())
+                        .countLimit(result.getData().getTransactionPermitDay())
+                        .build()
+        );
 
     }
 }

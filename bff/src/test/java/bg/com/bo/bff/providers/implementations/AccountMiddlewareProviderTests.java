@@ -10,7 +10,9 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.TransactionLimitListMWResponse;
 import bg.com.bo.bff.providers.dtos.requests.UpdateTransactionLimitMWRequest;
+import bg.com.bo.bff.providers.dtos.responses.TransactionLimitListMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AccountListMWMetadata;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AccountListMWResponse;
 import bg.com.bo.bff.providers.dtos.responses.accounts.TransactionLimitUpdateAccountResponse;
@@ -224,6 +226,35 @@ class AccountMiddlewareProviderTests {
         //Assert
         assertEquals(TransactionLimitUpdateAccountResponse.SUCCESS.getCode(),actual.getCode());
         assertEquals(TransactionLimitUpdateAccountResponse.SUCCESS.getMessage(),actual.getMessage());
+
+    }
+
+    @Test
+    void givenPersonAndIdAccountAndAmountWhenTransactionLimitUpdateThenGetTransactionLimitMWResponse() throws IOException {
+        // Arrange
+        String personId = "123456789";
+        String accountId = "1234";
+        TransactionLimitListMWResponse expected = TransactionLimitListMWResponseFixture.withDefault();
+        String jsonAccountsResponseMock = objectMapperMWResponse.writeValueAsString(expected);
+        InputStream accountsResponseMock = new ByteArrayInputStream(jsonAccountsResponseMock.getBytes());
+        Mockito.when(tokenMiddlewareProvider.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientToken);
+        Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
+        Mockito.when(closeableHttpClientMock.execute(any(HttpGet.class))).thenReturn(closeableHttpResponseMock);
+        Mockito.when(closeableHttpResponseMock.getEntity()).thenReturn(httpEntityMock);
+        Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
+        Mockito.when(httpEntityMock.getContent()).thenReturn(accountsResponseMock);
+        Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
+
+        //Act
+        TransactionLimitListMWResponse actual = accountMiddlewareService.getTransactionLimit(personId, accountId, parameters);
+
+        //Assert
+        assertEquals(expected.getData().getType(),actual.getData().getType());
+        assertEquals(expected.getData().getIdentifier(),actual.getData().getIdentifier());
+        assertEquals(expected.getData().getTransactionPermitDay(),actual.getData().getTransactionPermitDay());
+        assertEquals(expected.getData().getCurrencyCod(),actual.getData().getCurrencyCod());
+        assertEquals(expected.getData().getAvailableTransaction(),actual.getData().getAvailableTransaction());
+        assertEquals(expected.getData().getAvailableTransactionGroup(),actual.getData().getAvailableTransactionGroup());
 
     }
 

@@ -3,6 +3,9 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.requests.UpdateTransactionLimitRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponse;
+import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponseFixture;
+import bg.com.bo.bff.providers.dtos.responses.TransactionLimitListMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.responses.accounts.TransactionLimitUpdateAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountProvider;
 import org.junit.jupiter.api.Test;
@@ -45,5 +48,21 @@ class AccountServiceTest {
         assertEquals(response.getMessage(),TransactionLimitUpdateAccountResponse.SUCCESS.getMessage());
         verify(provider).updateTransactionLimit(any(),any(),any(),any());
 
+    }
+
+    @Test
+    void givenPersonAndIdAccountAndAmountWhenTransactionLimitUpdateThenGetTransactionLimitResponse() throws IOException {
+        // Arrange
+        GetTransactionLimitResponse expected = GetTransactionLimitResponseFixture.withDefault();
+        when(provider.getTransactionLimit(any(),any(), any())).thenReturn(TransactionLimitListMWResponseFixture.withDefault());
+
+        // Act
+        GetTransactionLimitResponse actual = service.getTransactionLimit("1212", "122334", new HashMap<>());
+
+        // Assert
+        assertNotNull(actual);
+        assertEquals(expected.getData().getAmountLimit(),actual.getData().getAmountLimit());
+        assertEquals(expected.getData().getCountLimit(),actual.getData().getCountLimit());
+        verify(provider).getTransactionLimit(any(),any(),any());
     }
 }

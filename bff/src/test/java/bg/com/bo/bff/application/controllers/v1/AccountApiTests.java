@@ -3,7 +3,10 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.requests.UpdateTransactionLimitRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponse;
+import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.Headers;
 import bg.com.bo.bff.models.Account;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
@@ -46,6 +49,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,6 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AccountApiTests {
 
     private static final String TRANSACTION_LIMIT_UPDATE_URL = "/api/v1/accounts/persons/{personId}/account/{accountId}/transactional-limits";
+    private static final String TRANSACTION_LIMIT_GET_URL = "/api/v1/accounts/persons/{personId}/account/{accountId}/transactional-limits";
 
     private MockMvc mockMvc;
 
@@ -93,6 +98,12 @@ class AccountApiTests {
                 .configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false)
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
         headers.add("topaz-channel", "2");
+        headers.add(DeviceMW.DEVICE_ID.getCode(), "121j1hjh1jh1jh");
+        headers.add(DeviceMW.DEVICE_NAME.getCode(), "Android");
+        headers.add(DeviceMW.GEO_POSITION_X.getCode(), "1101,1");
+        headers.add(DeviceMW.GEO_POSITION_Y.getCode(), "11101,1");
+        headers.add(DeviceMW.APP_VERSION.getCode(),"1.0.0");
+        headers.add(DeviceMW.DEVICE_IP.getCode(), "127.0.0.1");
     }
 
     @Test
@@ -124,30 +135,59 @@ class AccountApiTests {
     }
 
     @Test
-    void givenPersonAndIdAccountAndAmountWhenTransactionLimitUpdateThenGenericResponseSuccess() throws Exception {
+    void givenPersonAndIdAccountWhenGetTransactionLimitThenGenericResponseSuccess() throws Exception {
         // Arrange
         String personId="123456";
         String accountId="123456";
         GenericResponse expected = GenericResponse.instance(AddAccountResponse.SUCCESS);
         UpdateTransactionLimitRequest request = UpdateTransactionLimitRequestFixture.withDefault();
-        when(httpServletRequest.getHeaderNames()).thenReturn(this.enumerations);
         when(service.updateTransactionLimit(any(), any(), any(), any())).thenReturn(expected);
         String json = objectMapper.writeValueAsString(request);
+
         // Act
         MvcResult result = mockMvc
                 .perform(put(TRANSACTION_LIMIT_UPDATE_URL,personId,accountId)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .headers(this.headers)
+                )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
         String response = objectMapper.writeValueAsString(expected);
         String actual = result.getResponse().getContentAsString();
+
         // Assert
         assertEquals(response, actual);
-        verify(httpServletRequest).getHeaderNames();
         verify(service).updateTransactionLimit(any(),any(), any(), any());
     }
+
+    @Test
+    void givenPersonAndIdAccountAndAmountWhenTransactionLimitUpdateThenGetTransactionLimitResponse() throws Exception {
+        // Arrange
+        String personId="123456";
+        String accountId="123456";
+        GetTransactionLimitResponse expected = GetTransactionLimitResponseFixture.withDefault();
+        UpdateTransactionLimitRequest request = UpdateTransactionLimitRequestFixture.withDefault();
+        when(service.getTransactionLimit(any(), any(), any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc
+                .perform(get(TRANSACTION_LIMIT_GET_URL,personId,accountId)
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .headers(this.headers))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).getTransactionLimit(any(),any(), any());
+    }
+
 
 }

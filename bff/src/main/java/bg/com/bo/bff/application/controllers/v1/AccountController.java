@@ -1,8 +1,10 @@
 package bg.com.bo.bff.application.controllers.v1;
 
+import bg.com.bo.bff.HeaderDeviceMW;
 import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponse;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.services.interfaces.IAccountService;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -65,6 +68,11 @@ public class AccountController {
     })
     @PutMapping("/persons/{personId}/account/{accountId}/transactional-limits")
     public ResponseEntity<GenericResponse> updateTransactioLimit(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId")
             @NotBlank
             @Parameter(description = "Este es el personId", example = "12345") String personId,
@@ -73,6 +81,38 @@ public class AccountController {
             @Parameter(description = "Este es el personId", example = "12345") String accountId,
             @Valid @RequestBody UpdateTransactionLimitRequest request
     ) throws IOException {
-        return ResponseEntity.ok(iAccountService.updateTransactionLimit(personId,accountId,request, Headers.getParameter(httpServletRequest)));
+        return ResponseEntity.ok(iAccountService.updateTransactionLimit(personId,accountId,request, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
+    }
+
+    @GetMapping("/persons/{personId}/account/{accountId}/transactional-limits")
+    public ResponseEntity<GetTransactionLimitResponse> getTransactioLimit(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId")
+            @NotBlank
+            @Parameter(description = "Este es el personId", example = "12345")
+            String personId,
+            @PathVariable("accountId")
+            @NotBlank
+            @Parameter(description = "Este es el personId", example = "12345") String accountId
+    ) throws IOException {
+        return ResponseEntity.ok(iAccountService.getTransactionLimit(personId,accountId, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
     }
 }
+
+

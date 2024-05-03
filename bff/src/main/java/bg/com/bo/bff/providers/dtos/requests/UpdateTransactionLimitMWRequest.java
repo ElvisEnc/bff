@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UpdateTransactionLimitMWRequest {
-    private Integer availableTransaction;
-    private Integer transactionPermitDay;
+    private String availableTransaction;
+    private String transactionPermitDay;
 
 }
 

@@ -57,12 +57,23 @@ public class DestinationAccountController {
     })
     @PutMapping("/{personId}/third-accounts")
     public ResponseEntity<GenericResponse> addThirdAccounts(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @Parameter(description = "Este es el personId", example = "1234567")
             @PathVariable("personId")
             @NotBlank
             String personId,
             @Valid @RequestBody AddThirdAccountRequest addThirdAccountRequest) throws IOException {
-        return ResponseEntity.ok(service.addThirdAccount(personId, addThirdAccountRequest, Headers.getParameter(httpServletRequest)));
+        return ResponseEntity.ok(service.addThirdAccount(personId, addThirdAccountRequest, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
     }
 
     @Operation(summary = "Agendar nueva cuenta de destino ACH.", description = "Agendar nueva cuenta de destino ACH.")
@@ -73,12 +84,23 @@ public class DestinationAccountController {
     })
     @PutMapping("/{personId}/ach-accounts")
     public ResponseEntity<GenericResponse> addAchAccounts(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @Parameter(description = "Este es el personId", example = "1234567")
             @PathVariable("personId")
             @NotBlank
             String personId,
             @Valid @RequestBody AddAchAccountRequest addAchAccountRequest) throws IOException {
-        return ResponseEntity.ok(service.addAchAccount(personId, addAchAccountRequest, Headers.getParameter(httpServletRequest)));
+        return ResponseEntity.ok(service.addAchAccount(personId, addAchAccountRequest, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
     }
 
     @Operation(summary = "Eliminación de cuenta de terceros.", description = "Elimina cuenta de terceros.")
@@ -142,12 +164,23 @@ public class DestinationAccountController {
     })
     @PutMapping("/{personId}/wallets")
     public ResponseEntity<GenericResponse> addWalletAccounts(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @Parameter(description = "Este es el personId", example = "1234567")
             @PathVariable("personId")
             @NotBlank
             String personId,
             @Valid @RequestBody AddWalletAccountRequest addWalletAccountRequest) throws IOException {
-        return ResponseEntity.ok(service.addWalletAccount(personId, addWalletAccountRequest, Headers.getParameter(httpServletRequest)));
+        return ResponseEntity.ok(service.addWalletAccount(personId, addWalletAccountRequest, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
     }
 
     @Operation(summary = "Lista de entidades financieras.", description = "Lista de entidades financieras.")

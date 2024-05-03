@@ -1,8 +1,8 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.providers.dtos.TransactionLimitListMWResponse;
 import bg.com.bo.bff.application.exceptions.BadRequestException;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
@@ -65,9 +65,8 @@ public class AccountMiddlewareProvider implements IAccountProvider {
     private final IHttpClientFactory httpClientFactory;
 
     private final AccountListMapper accountListMapper;
-    private static final String AUTH = "Authorization";
-    private static final String MIDDLEWARE_CHANNEL = "middleware-channel";
-    private static final String APPLICATION_ID = "application-id";
+    private static final String URL_GET_TRANSACTION_LIMIT = "%s%s/bs/v1/accounts/limits/persons/%s/accounts/%s/companies/%s";
+    private static final String URL_PUT_TRANSACTION_LIMIT = "%s%s/bs/v1/accounts/%s/persons/%s/companies/%s/limits";
 
     private static final Logger logger = LogManager.getLogger(AccountMiddlewareProvider.class.getName());
 
@@ -162,7 +161,7 @@ public class AccountMiddlewareProvider implements IAccountProvider {
                                                   UpdateTransactionLimitMWRequest request,
                                                   Map<String, String> parameter) throws IOException {
 
-        String path =String.format("%s%s/bs/v1/accounts/%s/persons/%s/companies/%s/limits",
+        String path =String.format(URL_PUT_TRANSACTION_LIMIT,
                 middlewareConfig.getUrlBase(), ProjectNameMW.OWN_ACCOUNT_MANAGER.getName(),accountId,personId,personId);
 
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.OWN_ACCOUNT_MANAGER.getName(), middlewareConfig.getClientOwnManager(), ProjectNameMW.OWN_ACCOUNT_MANAGER.getHeaderKey());
@@ -190,6 +189,47 @@ public class AccountMiddlewareProvider implements IAccountProvider {
 
                 if (statusCode == HttpStatus.SC_OK) {
                     return GenericResponse.instance(TransactionLimitUpdateAccountResponse.SUCCESS);
+                }
+                logger.error(jsonResponse);
+                AppError error = Util.mapProviderError(jsonResponse);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            }
+        } catch (GenericException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error(e);
+            throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
+        }
+    }
+
+    @Override
+    public TransactionLimitListMWResponse getTransactionLimit(String personId, String accountId, Map<String, String> parameter) throws IOException {
+        String path =String.format(URL_GET_TRANSACTION_LIMIT,
+                middlewareConfig.getUrlBase(),
+                ProjectNameMW.OWN_ACCOUNT_MANAGER.getName(),personId,accountId,personId);
+
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.OWN_ACCOUNT_MANAGER.getName(), middlewareConfig.getClientOwnManager(), ProjectNameMW.OWN_ACCOUNT_MANAGER.getHeaderKey());
+
+        HttpGet httpRequest = new HttpGet(path);
+        httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+        httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameter.get(DeviceMW.DEVICE_ID.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameter.get(DeviceMW.DEVICE_IP.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_NAME.getCode(), parameter.get(DeviceMW.DEVICE_NAME.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_X.getCode(), parameter.get(DeviceMW.GEO_POSITION_X.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameter.get(DeviceMW.GEO_POSITION_Y.getCode()));
+        httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameter.get(DeviceMW.APP_VERSION.getCode()));
+        httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+
+                if (statusCode == HttpStatus.SC_OK) {
+                  return Util.stringToObject(jsonResponse, TransactionLimitListMWResponse.class);
                 }
                 logger.error(jsonResponse);
                 AppError error = Util.mapProviderError(jsonResponse);

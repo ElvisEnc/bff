@@ -89,6 +89,13 @@ class DestinationAccountControllerTest {
 
         Vector<String> lists = new Vector<>(map.keySet().stream().toList());
         this.enumerations = lists.elements();
+
+        headers.add(DeviceMW.DEVICE_ID.getCode(), "121j1hjh1jh1jh");
+        headers.add(DeviceMW.DEVICE_NAME.getCode(), "Android");
+        headers.add(DeviceMW.GEO_POSITION_X.getCode(), "1101,1");
+        headers.add(DeviceMW.GEO_POSITION_Y.getCode(), "11101,1");
+        headers.add(DeviceMW.APP_VERSION.getCode(),"1.0.0");
+        headers.add(DeviceMW.DEVICE_IP.getCode(), "127.0.0.1");
     }
 
     @Test
@@ -96,7 +103,6 @@ class DestinationAccountControllerTest {
         // Arrange
         GenericResponse expected = GenericResponse.instance(AddThirdAccountResponse.SUCCESS);
         AddThirdAccountRequest request = AddThirdAccountRequestFixture.withDefault();
-        when(httpServletRequest.getHeaderNames()).thenReturn(this.enumerations);
         when(service.addThirdAccount(any(), any(), any())).thenReturn(expected);
 
         // Act
@@ -114,7 +120,6 @@ class DestinationAccountControllerTest {
 
         // Assert
         assertEquals(response, actual);
-        verify(httpServletRequest).getHeaderNames();
         verify(service).addThirdAccount(any(), any(), any());
     }
 
@@ -123,7 +128,6 @@ class DestinationAccountControllerTest {
         // Arrange
         GenericResponse expected = GenericResponse.instance(AddAccountResponse.SUCCESS);
         AddAchAccountRequest request = AddAchAccountRequestFixture.withDefault();
-        when(httpServletRequest.getHeaderNames()).thenReturn(this.enumerations);
         when(service.addAchAccount(any(), any(), any())).thenReturn(expected);
 
         // Act
@@ -139,7 +143,6 @@ class DestinationAccountControllerTest {
         String actual = result.getResponse().getContentAsString();
         // Assert
         assertEquals(response, actual);
-        verify(httpServletRequest).getHeaderNames();
         verify(service).addAchAccount(any(), any(), any());
     }
 
@@ -193,7 +196,7 @@ class DestinationAccountControllerTest {
         // Arrange
         GenericResponse expected = GenericResponse.instance(AddThirdAccountResponse.SUCCESS);
         AddWalletAccountRequest request = AddWalletAccountRequestFixture.withDefault();
-        when(httpServletRequest.getHeaderNames()).thenReturn(this.enumerations);
+
         when(service.addWalletAccount(any(), any(), any())).thenReturn(expected);
 
         // Act
@@ -211,7 +214,6 @@ class DestinationAccountControllerTest {
 
         // Assert
         assertEquals(response, actual);
-        verify(httpServletRequest).getHeaderNames();
         verify(service).addWalletAccount(any(), any(), any());
     }
 
