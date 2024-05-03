@@ -16,6 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,7 @@ public class ExportController {
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping(value = "/accounts/{accountId}", produces = {"application/pdf", "text/csv"})
+    @Secured("LOGGED_USER")
     public ResponseEntity<ExportResponse> generateExtractReport(
             @PathVariable("accountId") @NotNull @Parameter(description = "id de la cuenta", example = "7456455") Integer accountId,
             @Valid @RequestBody ExportRequest body
