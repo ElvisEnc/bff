@@ -10,7 +10,8 @@ public enum ProjectNameMW {
     OWN_ACCOUNT_MANAGER("/own-accounts-manager", "OWN ACCOUNT MANAGER", "Secret"),
     TRANSFER_MANAGER("/transaction-manager", "TRANSACTION MANAGER", "Authorization"),
     THIRD_ACCOUNTS("/third-accounts-manager", "THIRD ACCOUNTS MANAGER", "Secret"),
-    ACH_ACCOUNTS("/ach-account-manager", "ACH ACCOUNTS MANAGER", "Secret");
+    ACH_ACCOUNTS("/ach-account-manager", "ACH ACCOUNTS MANAGER", "Secret"),
+    DPF_MANAGER("/dpf-manager", "DPF MANAGER", "Secret");
 
     private final String name;
     private final String description;
