@@ -2,9 +2,9 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.exceptions.HandledException;
+import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
-import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.Util;
@@ -35,7 +35,6 @@ import java.security.NoSuchAlgorithmException;
 
 @Service
 public class EncryptionProvider implements IEncryptionProvider {
-
     ITokenMiddlewareProvider tokenMiddlewareProvider;
     private final MiddlewareConfig middlewareConfig;
     private IHttpClientFactory httpClientFactory;
@@ -48,7 +47,7 @@ public class EncryptionProvider implements IEncryptionProvider {
         this.httpClientFactory = httpClientFactory;
     }
 
-    @Cacheable(value = Constants.ENCRYPTION_KEYS_CACHE_NAME)
+    @Cacheable(value = CacheConstants.ENCRYPTION_KEYS_CACHE_NAME)
     public UserEncryptionKeys getEncryptionKeys(EncryptInfo encodeInfo) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.LOGIN_MANAGER.getName(), middlewareConfig.getClientLogin(), ProjectNameMW.LOGIN_MANAGER.getHeaderKey());
 

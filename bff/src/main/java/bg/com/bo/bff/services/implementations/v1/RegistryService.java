@@ -3,7 +3,7 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
 import bg.com.bo.bff.application.dtos.response.RegistryResponse;
 import bg.com.bo.bff.application.exceptions.HandledException;
-import bg.com.bo.bff.commons.constants.Constants;
+import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
 import bg.com.bo.bff.commons.enums.response.RegistryControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.CipherUtils;
@@ -48,7 +48,7 @@ public class RegistryService implements IRegistryService {
                 EncryptInfo encryptInfo = new EncryptInfo();
                 encryptInfo.setPersonId(registryRequest.getCredentials().getPersonId());
                 encryptInfo.setUniqueId(registryRequest.getDeviceIdentificator().getUniqueId());
-                cacheManager.getCache(Constants.ENCRYPTION_KEYS_CACHE_NAME).evict(encryptInfo);
+                cacheManager.getCache(CacheConstants.ENCRYPTION_KEYS_CACHE_NAME).evict(encryptInfo);
 
                 RegistryResponse response = new RegistryResponse();
                 response.setAppKey(userEncryptionKeys.getAppPublicKey());

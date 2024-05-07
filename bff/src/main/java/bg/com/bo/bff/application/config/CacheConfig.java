@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.config;
 
-import bg.com.bo.bff.commons.constants.Constants;
+import bg.com.bo.bff.commons.constants.CacheConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.cache.annotation.EnableCaching;
@@ -36,25 +36,25 @@ public class CacheConfig {
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return builder -> builder
-                .withCacheConfiguration(Constants.CERTS_CACHE_NAME,
+                .withCacheConfiguration(CacheConstants.CERTS_CACHE_NAME,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(cacheCertsTtl))
                                 .disableCachingNullValues()
                                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                                 .prefixCacheNameWith(cachePrefix))
-                .withCacheConfiguration(Constants.ENCRYPTION_KEYS_CACHE_NAME,
+                .withCacheConfiguration(CacheConstants.ENCRYPTION_KEYS_CACHE_NAME,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(encryptionKeysTtl))
                                 .disableCachingNullValues()
                                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                                 .prefixCacheNameWith(cachePrefix))
-                .withCacheConfiguration(Constants.ACCOUNTS_STATEMENTS,
+                .withCacheConfiguration(CacheConstants.ACCOUNTS_STATEMENTS,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(accountStatementTtl))
                                 .disableCachingNullValues()
                                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                                 .prefixCacheNameWith(cachePrefix))
-                .withCacheConfiguration(Constants.DESTINATION_ACCOUNTS,
+                .withCacheConfiguration(CacheConstants.DESTINATION_ACCOUNTS,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(destinationAccountTtl))
                                 .disableCachingNullValues()

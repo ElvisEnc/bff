@@ -12,7 +12,7 @@ import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
-import bg.com.bo.bff.commons.constants.Constants;
+import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.AccountType;
 import bg.com.bo.bff.commons.enums.DestinationAccountBG;
 import bg.com.bo.bff.commons.enums.DestinationAccountType;
@@ -178,8 +178,8 @@ public class DestinationAccountService implements IDestinationAccountService {
         return response;
     }
 
-    @Caching(cacheable = {@Cacheable(value = Constants.DESTINATION_ACCOUNTS, key = "#personId", condition = "#isInitial == false")},
-            put = {@CachePut(value = Constants.DESTINATION_ACCOUNTS, key = "#personId", condition = "#isInitial == true")})
+    @Caching(cacheable = {@Cacheable(value = CacheConstants.DESTINATION_ACCOUNTS, key = "#personId", condition = "#isInitial == false")},
+            put = {@CachePut(value = CacheConstants.DESTINATION_ACCOUNTS, key = "#personId", condition = "#isInitial == true")})
     public List<DestinationAccount> getListDestinationAccount(Integer personId, Map<String, String> parameter, Boolean isInitial) throws IOException {
         String tokenThirdAccounts = thirdAccountProvider.generateAccessToken().getAccessToken();
         ThirdAccountListResponse thirdAccountsResponse = thirdAccountProvider.getThirdAccounts(personId, tokenThirdAccounts, parameter);

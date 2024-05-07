@@ -1,5 +1,6 @@
 package bg.com.bo.bff.integrations;
 
+import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.integrations.embeddedRedis.EmbeddedRedisConfiguration;
 import bg.com.bo.bff.integrations.embeddedRedis.TestCacheConfig;
 import bg.com.bo.bff.integrations.embeddedRedis.TestHttpClientConfig;
@@ -7,7 +8,6 @@ import bg.com.bo.bff.providers.mappings.GenericsMapper;
 import bg.com.bo.bff.mappings.services.keycloak.KeyCloakJsonMapper;
 import bg.com.bo.bff.providers.mappings.keycloak.KeyCloakObjectMapper;
 import bg.com.bo.bff.providers.mappings.keycloak.KeyCloakMapper;
-import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.models.jwt.JwtKey;
 import bg.com.bo.bff.providers.dtos.responses.keycloak.KeyCloakCertListResponse;
 import bg.com.bo.bff.providers.dtos.responses.keycloak.KeyCloakKeyResponse;
@@ -134,6 +134,6 @@ class JwtKeyCloakServiceWithCacheIntegrationTests {
     }
 
     private Object itemFromCache() {
-        return cacheManager.getCache(Constants.CERTS_CACHE_NAME).get("certs").get();
+        return cacheManager.getCache(CacheConstants.CERTS_CACHE_NAME).get("certs").get();
     }
 }

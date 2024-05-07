@@ -5,7 +5,7 @@ import bg.com.bo.bff.application.dtos.request.export.account.statement.ExportReq
 import bg.com.bo.bff.application.dtos.request.account.statement.ExtractPagination;
 import bg.com.bo.bff.application.dtos.request.account.statement.ExtractRequest;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.constants.Constants;
+import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.Headers;
@@ -61,8 +61,8 @@ public class AccountStatementProvider implements IAccountStatementProvider {
         return tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.OWN_ACCOUNT_MANAGER.getName(), middlewareConfig.getClientOwnManager(), ProjectNameMW.OWN_ACCOUNT_MANAGER.getHeaderKey());
     }
 
-    @Caching(cacheable = {@Cacheable(value = Constants.ACCOUNTS_STATEMENTS, key = "#extractId", condition = "#clearCache == false")},
-            put = {@CachePut(value = Constants.ACCOUNTS_STATEMENTS, key = "#extractId", condition = "#clearCache == true")})
+    @Caching(cacheable = {@Cacheable(value = CacheConstants.ACCOUNTS_STATEMENTS, key = "#extractId", condition = "#clearCache == false")},
+            put = {@CachePut(value = CacheConstants.ACCOUNTS_STATEMENTS, key = "#extractId", condition = "#clearCache == true")})
     @Override
     public AccountReportBasicResponse getAccountStatement(ExtractRequest request, String token, String accountId, String extractId, Boolean clearCache) {
         ExtractPagination pagination = request.getFilters().getPagination();

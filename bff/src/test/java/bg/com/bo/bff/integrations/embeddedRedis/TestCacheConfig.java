@@ -1,6 +1,6 @@
 package bg.com.bo.bff.integrations.embeddedRedis;
 
-import bg.com.bo.bff.commons.constants.Constants;
+import bg.com.bo.bff.commons.constants.CacheConstants;
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +16,7 @@ public class TestCacheConfig {
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return builder -> builder
-                .withCacheConfiguration(Constants.CERTS_CACHE_NAME,
+                .withCacheConfiguration(CacheConstants.CERTS_CACHE_NAME,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(60))
                                 .disableCachingNullValues()

@@ -2,9 +2,9 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.dtos.request.LogoutRequest;
 import bg.com.bo.bff.application.exceptions.*;
+import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.providers.mappings.IGenericsMapper;
 import bg.com.bo.bff.providers.mappings.keycloak.KeyCloakMapper;
-import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.providers.dtos.requests.keycloak.CustomClaimsData;
 import bg.com.bo.bff.providers.dtos.responses.keycloak.ErrorKCResponse;
 import bg.com.bo.bff.models.dtos.login.CreateTokenServiceResponse;
@@ -130,7 +130,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
      *
      * @return un HashMap de los actuales key de KeyCloak.
      */
-    @Cacheable(value = Constants.CERTS_CACHE_NAME, key = "#root.methodName")
+    @Cacheable(value = CacheConstants.CERTS_CACHE_NAME, key = "#root.methodName")
     public Map<String, JwtKey> certs() {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String pathPostToken = urlBase + urlCertsComplement;
