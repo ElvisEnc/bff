@@ -40,13 +40,20 @@ public class DPFController {
     })
     @GetMapping("persons/{personId}")
     public ResponseEntity<DPFListResponse> getListDPFs(
-            @Parameter(description = "Este es el deviceId", example = "123")
-            @Valid @RequestHeader("device-id") String deviceId,
-            @Parameter(description = "Este es el personId", example = "1234567")
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId")
             @NotBlank
-            @NotNull
-            String personId) throws Exception {
-        return ResponseEntity.ok(service.getDPFsList(personId, deviceId, Headers.getParameter(httpServletRequest)));
+            @Parameter(description = "Este es el personId", example = "12345") String personId
+    ) throws Exception {
+        return ResponseEntity.ok(service.getDPFsList(personId, deviceId, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion)));
     }
 }

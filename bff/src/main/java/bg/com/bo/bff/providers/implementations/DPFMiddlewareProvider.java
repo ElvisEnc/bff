@@ -11,6 +11,7 @@ import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.responses.DPFMWResponse;
 import bg.com.bo.bff.providers.interfaces.IDPFProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
+import bg.com.bo.bff.providers.mappings.dpf.DPFMapper;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -32,8 +33,8 @@ public class DPFMiddlewareProvider implements IDPFProvider {
     private String complementDpf;
 
     ITokenMiddlewareProvider tokenMiddlewareProvider;
-    private MiddlewareConfig middlewareConfig;
-    private IHttpClientFactory httpClientFactory;
+    private final MiddlewareConfig middlewareConfig;
+    private final IHttpClientFactory httpClientFactory;
     private static final Logger LOGGER = LogManager.getLogger(AchAccountMiddlewareProvider.class.getName());
 
     public DPFMiddlewareProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
@@ -50,7 +51,7 @@ public class DPFMiddlewareProvider implements IDPFProvider {
     public DPFMWResponse getDPFsList(String personId, String deviceId, Map<String, String> parameters) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.DPF_MANAGER.getName(), middlewareConfig.getDpfManager(), ProjectNameMW.DPF_MANAGER.getHeaderKey());
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            String urlGetListDPFs = url + complementDpf + "/accounts/persons/" + personId + "/companies/" + personId;
+            String urlGetListDPFs = middlewareConfig.getUrlBase() + ProjectNameMW.DPF_MANAGER.getName() + "/bs/v1/accounts/persons/" + personId + "/companies/" + personId;
             HttpGet request = new HttpGet(urlGetListDPFs);
             request.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
             request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
