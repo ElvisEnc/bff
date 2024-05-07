@@ -7,7 +7,11 @@ import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequestFixture;
+import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
+import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
@@ -41,6 +45,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,6 +59,7 @@ class DestinationAccountControllerTest {
     private static final String GET_LIST_BANKS = "/api/v1/destination-accounts/banks";
     private static final String GET_ACCOUNT_TYPES = "/api/v1/destination-accounts/account-types";
     private static final String GET_BRANCH_OFFICE = "/api/v1/destination-accounts/banks/{bankCode}/branch-offices";
+    private static final String GET_DESTINATION_ACCOUNT = "/api/v1/destination-accounts/persons/1020";
     private MockMvc mockMvc;
 
     @Spy
@@ -94,7 +100,7 @@ class DestinationAccountControllerTest {
         headers.add(DeviceMW.DEVICE_NAME.getCode(), "Android");
         headers.add(DeviceMW.GEO_POSITION_X.getCode(), "1101,1");
         headers.add(DeviceMW.GEO_POSITION_Y.getCode(), "11101,1");
-        headers.add(DeviceMW.APP_VERSION.getCode(),"1.0.0");
+        headers.add(DeviceMW.APP_VERSION.getCode(), "1.0.0");
         headers.add(DeviceMW.DEVICE_IP.getCode(), "127.0.0.1");
     }
 
@@ -218,7 +224,7 @@ class DestinationAccountControllerTest {
     }
 
     @Test
-    void givenValidaDAtaWhenDeleteWalletAccountThenReturnOk() throws Exception {
+    void givenValidaDataWhenDeleteWalletAccountThenReturnOk() throws Exception {
         // Arrange
         String deviceId = "123";
 
@@ -309,5 +315,30 @@ class DestinationAccountControllerTest {
 
         // Assert
         verify(service).getBranchOffice(bankCode);
+    }
+
+    @Test
+    void givenPersonCodeWhenGetDestinationAccountsThenAllList() throws Exception {
+        // Arrange
+        DestinationAccountRequest requestMock = DestinationAccountRequestFixture.withDefault();
+        DestinationAccountResponse responseExpected = DestinationAccountResponseFixture.withDefault();
+        when(httpServletRequest.getHeaderNames()).thenReturn(this.enumerations);
+        when(service.getDestinationAccounts(any(), any(), any())).thenReturn(responseExpected);
+
+        // Act
+        MvcResult result = mockMvc.perform(post(GET_DESTINATION_ACCOUNT)
+                        .content(objectMapper.writeValueAsString(requestMock))
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .headers(this.headers)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(responseExpected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).getDestinationAccounts(any(), any(), any());
     }
 }

@@ -80,27 +80,7 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     }
 
     public ClientToken generateAccessToken() throws IOException {
-        boolean propagateException = false;
-        try (CloseableHttpClient httpClient = createHttpClient()) {
-            String paramsGenerarClientSecret = "?grant_type=client_credentials";
-            String pathPostToken = url + complementToken + paramsGenerarClientSecret;
-            HttpPost postGenerateAccessToken = new HttpPost(pathPostToken);
-            postGenerateAccessToken.setHeader("Secret", clientSecret);
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            try (CloseableHttpResponse httpResponse = httpClient.execute(postGenerateAccessToken)) {
-                String responseToken = EntityUtils.toString(httpResponse.getEntity());
-                return objectMapper.readValue(responseToken, ClientToken.class);
-            } catch (Exception e) {
-                propagateException = true;
-                logger.error(e);
-                throw new RequestException(ErrorExceptions.ERROR_REQUEST_TOKEN.getMessage());
-            }
-        } catch (Exception e) {
-            if (propagateException) throw e;
-            logger.error(e);
-            throw new RuntimeException(ErrorExceptions.ERROR_CLIENT_TOKEN.getMessage());
-        }
+        return tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.THIRD_ACCOUNTS.getName(), middlewareConfig.getClientThirdAccount(), ProjectNameMW.ACH_ACCOUNTS.getHeaderKey());
     }
 
     public ThirdAccountListResponse getListThirdAccounts(String token, String personId, String company) throws IOException {
@@ -152,6 +132,20 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     }
 
     @Override
+    public GenericResponse addThirdAccount(String token, AddThirdAccountBasicRequest request, Map<String, String> parameters) throws IOException {
+
+        String jsonMapper = Util.objectToString(request);
+        return getGenericResponse(token, parameters, jsonMapper, PATH_ADD_THIRD_ACCOUNT);
+    }
+
+    @Override
+    public GenericResponse addWalletAccount(String token, AddWalletAccountBasicRequest request, Map<String, String> parameters) throws IOException {
+
+        String jsonMapper = Util.objectToString(request);
+        return getGenericResponse(token, parameters, jsonMapper, PATH_ADD_WALLET);
+    }
+
+    @Override
     public GenericResponse delete(String personId, int identifier, int accountId, String deviceId, String deviceIp) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.THIRD_ACCOUNTS.getName(), middlewareConfig.getClientThirdAccount(), ProjectNameMW.THIRD_ACCOUNTS.getHeaderKey());
         DeleteThirdAccountMWRequest requestData = mapper.convert(personId, identifier, accountId);
@@ -188,20 +182,6 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
             logger.error(e);
             throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
         }
-    }
-
-    @Override
-    public GenericResponse addThirdAccount(String token, AddThirdAccountBasicRequest request, Map<String, String> parameters) throws IOException {
-
-        String jsonMapper = Util.objectToString(request);
-        return getGenericResponse(token, parameters, jsonMapper, PATH_ADD_THIRD_ACCOUNT);
-    }
-
-    @Override
-    public GenericResponse addWalletAccount(String token, AddWalletAccountBasicRequest request, Map<String, String> parameters) throws IOException {
-
-        String jsonMapper = Util.objectToString(request);
-        return getGenericResponse(token, parameters, jsonMapper, PATH_ADD_WALLET);
     }
 
     @Override

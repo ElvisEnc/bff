@@ -5,6 +5,7 @@ import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountBasicRequestFixture;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountBasicRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.*;
@@ -13,6 +14,8 @@ import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.DeleteThirdAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.responses.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountListMapper;
 import bg.com.bo.bff.providers.dtos.responses.ThirdAccountListMWResponse;
@@ -41,41 +44,36 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @WireMockTest(proxyMode = true, httpPort = 8080)
 @ExtendWith(WireMockExtension.class)
 @ExtendWith(MockitoExtension.class)
 class ThirdAccountMiddlewareProviderTests {
-    @Autowired
-    private ThirdAccountMiddlewareProvider thirdAccountMiddlewareService;
-
-    @Mock
-    private MiddlewareConfig middlewareConfig;
-
     @Mock
     private ITokenMiddlewareProvider tokenMiddlewareProvider;
-
+    @Mock
+    private MiddlewareConfig middlewareConfig;
+    @Mock
+    private IHttpClientFactory httpClientFactoryMock;
+    @Autowired
+    private ThirdAccountMiddlewareProvider thirdAccountMiddlewareService;
     @Mock
     private ThirdAccountMWtMapper thirdAccountMWtMapper;
     @Mock
-    private IHttpClientFactory httpClientFactoryMock;
-    @Mock
-    private ClientToken clientToken;
+    private ClientToken clientTokenMock;
     @Mock
     private ThirdAccountMWtMapper mapper;
     @InjectMocks
     private ThirdAccountMiddlewareProvider provider;
-
     @Mock
     CloseableHttpClient closeableHttpClientMock;
     @Mock
@@ -248,8 +246,8 @@ class ThirdAccountMiddlewareProviderTests {
         String ip = "127.0.0.1";
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
-        Mockito.when(tokenMiddlewareProvider.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientToken);
-        Mockito.when(clientToken.getAccessToken()).thenReturn("");
+        Mockito.when(tokenMiddlewareProvider.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientTokenMock);
+        Mockito.when(clientTokenMock.getAccessToken()).thenReturn("");
         Mockito.when(middlewareConfig.getUrlBase()).thenReturn(MiddlewareConfigFixture.withDefault().getUrlBase());
 
         DeleteThirdAccountMWRequest request = new DeleteThirdAccountMWRequest();
@@ -297,7 +295,7 @@ class ThirdAccountMiddlewareProviderTests {
     @Test
     void givenValidaDataWhenAddWalletAccountThenReturnOk() throws IOException {
         // Arrange
-        final String token= "1212121";
+        final String token = "1212121";
         final AddWalletAccountBasicRequest request = AddWalletAccountBasicRequestFixture.withDefaultOK();
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
@@ -327,10 +325,9 @@ class ThirdAccountMiddlewareProviderTests {
         String deviceId = "123";
         String ip = "192.0.0.1";
 
-
         Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
-        Mockito.when(tokenMiddlewareProvider.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientToken);
-        Mockito.when(clientToken.getAccessToken()).thenReturn("");
+        Mockito.when(tokenMiddlewareProvider.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientTokenMock);
+        Mockito.when(clientTokenMock.getAccessToken()).thenReturn("");
         Mockito.when(middlewareConfig.getUrlBase()).thenReturn(MiddlewareConfigFixture.withDefault().getUrlBase());
 
         DeleteThirdAccountMWRequest request = new DeleteThirdAccountMWRequest();
@@ -349,5 +346,76 @@ class ThirdAccountMiddlewareProviderTests {
         // Assert
         assertEquals(expectedResponse.getCode(), response.getCode());
         assertEquals(expectedResponse.getMessage(), response.getMessage());
+    }
+
+    @Test
+    void givePersonCodeWhenGetThirdAccountsThenSuccess() throws IOException {
+        // Arrange
+        Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
+        Mockito.when(middlewareConfig.getUrlBase()).thenReturn(MiddlewareConfigFixture.withDefault().getUrlBase());
+        String jsonExpected = Util.objectToString(ThirdAccountListResponseFixture.withDefault());
+        stubFor(get(anyUrl()).willReturn(okJson(jsonExpected)));
+
+        // Act
+        ThirdAccountListResponse response = provider.getThirdAccounts(12345, "token", new HashMap<>());
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response.getData(), ThirdAccountListResponseFixture.withDefault().getData());
+    }
+
+    @Test
+    void givePersonCodeWhenGetWalletsAccountsThenSuccess() throws IOException {
+        // Arrange
+        Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
+        Mockito.when(middlewareConfig.getUrlBase()).thenReturn(MiddlewareConfigFixture.withDefault().getUrlBase());
+        String jsonExpected = Util.objectToString(ThirdAccountListResponseFixture.withDefault());
+        stubFor(get(anyUrl()).willReturn(okJson(jsonExpected)));
+
+        // Act
+        ThirdAccountListResponse response = provider.getWalletAccounts(12345, "token", new HashMap<>());
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response.getData(), ThirdAccountListResponseFixture.withDefault().getData());
+    }
+
+    @Test
+    void giveValidBankCodeWhenUnexpectedErrorOccursThenGenericException() throws IOException {
+        // Arrange
+        Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
+        Mockito.when(middlewareConfig.getUrlBase()).thenReturn(MiddlewareConfigFixture.withDefault().getUrlBase());
+        ErrorMiddlewareProvider errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
+                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
+                        .code("MDWHDR-01")
+                        .description("MDWHDR-01")
+                        .build()))
+                .build();
+        stubFor(get(anyUrl()).willReturn(aResponse()
+                .withStatus(400)
+                .withBody(Util.objectToString(errorMiddlewareProvider))));
+
+        // Act
+        Exception exception = assertThrows(Exception.class, () -> {
+            provider.getWalletAccounts(12345, "token", new HashMap<>());
+        });
+
+        // Assert
+        assertEquals(exception.getMessage(), AppError.MDWHDR_01.getMessage());
+    }
+
+    @Test
+    void giveValidBankCodeWhenUnexpectedErrorOccursThenRuntimeException() throws IOException {
+        // Arrange
+        Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
+        Mockito.when(middlewareConfig.getUrlBase()).thenReturn(MiddlewareConfigFixture.withDefault().getUrlBase());
+
+        // Act
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            provider.getWalletAccounts(12345, "token", new HashMap<>());
+        });
+
+        // Assert
+        assertEquals("Internal server error.", exception.getMessage());
     }
 }

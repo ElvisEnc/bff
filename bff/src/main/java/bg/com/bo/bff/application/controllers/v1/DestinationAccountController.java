@@ -73,86 +73,6 @@ public class DestinationAccountController {
         )));
     }
 
-    @Operation(summary = "Agendar nueva cuenta de destino ACH.", description = "Agendar nueva cuenta de destino ACH.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
-    })
-    @PutMapping("/{personId}/ach-accounts")
-    public ResponseEntity<GenericResponse> addAchAccounts(
-            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
-            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
-            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
-            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
-            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
-            @Parameter(description = "Este es el personId", example = "1234567")
-            @PathVariable("personId")
-            @NotBlank
-            String personId,
-            @Valid @RequestBody AddAchAccountRequest addAchAccountRequest) throws IOException {
-        return ResponseEntity.ok(service.addAchAccount(personId, addAchAccountRequest, Headers.getParameter(httpServletRequest,
-                deviceId,
-                deviceName,
-                geoPositionX,
-                geoPositionY,
-                appVersion
-        )));
-    }
-
-    @Operation(summary = "Eliminación de cuenta de terceros.", description = "Elimina cuenta de terceros.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
-    })
-    @DeleteMapping("/{personId}/third-accounts/{identifier}/delete")
-    public ResponseEntity<GenericResponse> deleteThirdAccount(
-            @Valid @RequestHeader("device-id") String deviceId,
-            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
-            @Valid @RequestBody DeleteThirdAccountRequest request,
-            HttpServletRequest servletRequest
-    ) throws IOException {
-        String ip = servletRequest.getRemoteAddr();
-        return ResponseEntity.ok(service.delete(personId, identifier, deviceId, ip, request));
-    }
-
-    @Operation(summary = "Eliminación de cuenta ACH.", description = "Elimina cuenta ACH.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
-    })
-    @DeleteMapping("/{personId}/ach-accounts/{identifier}")
-    public ResponseEntity<GenericResponse> deleteAchAccount(
-            @Valid @RequestHeader("device-id") String deviceId,
-            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
-            HttpServletRequest servletRequest
-    ) throws IOException {
-        String ip = servletRequest.getRemoteAddr();
-        return ResponseEntity.ok(service.deleteAchAccount(personId, identifier, deviceId, ip));
-    }
-
-    @Operation(summary = "Eliminación de cuenta billetera.", description = "Elimina cuenta de billetera.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
-    })
-    @DeleteMapping("/{personId}/wallets/{identifier}/wallet-accounts/{accountNumber}")
-    public ResponseEntity<GenericResponse> deleteWalletAccount(
-            @Valid @RequestHeader("device-id") String deviceId,
-            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
-            @PathVariable("accountNumber") @NotNull @Parameter(description = "Este es el número de la cuenta", example = "12345") int accountNumber,
-            HttpServletRequest servletRequest
-    ) throws IOException {
-        String ip = servletRequest.getRemoteAddr();
-        return ResponseEntity.ok(service.deleteWalletAccount(personId, identifier, accountNumber, deviceId, ip));
-    }
-
     @Operation(summary = "Agendar nueva cuenta de destino Billetera.", description = "Agendar nueva cuenta de destino Billetera.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
@@ -180,6 +100,33 @@ public class DestinationAccountController {
         )));
     }
 
+    @Operation(summary = "Agendar nueva cuenta de destino ACH.", description = "Agendar nueva cuenta de destino ACH.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PutMapping("/{personId}/ach-accounts")
+    public ResponseEntity<GenericResponse> addAchAccounts(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @Parameter(description = "Este es el personId", example = "1234567")
+            @PathVariable("personId")
+            @NotBlank
+            String personId,
+            @Valid @RequestBody AddAchAccountRequest addAchAccountRequest) throws IOException {
+        return ResponseEntity.ok(service.addAchAccount(personId, addAchAccountRequest, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
+    }
+
     @Operation(summary = "Lista de entidades financieras.", description = "Lista de entidades financieras.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = BanksResponse.class), mediaType = "application/json")),
@@ -189,16 +136,6 @@ public class DestinationAccountController {
     @GetMapping("/banks")
     public ResponseEntity<BanksResponse> getBanks() throws IOException {
         return ResponseEntity.ok(service.getBanks());
-    }
-
-    @Operation(summary = "Obtiener lista de tipos de cuenta.", description = "Obtiene un listado de todos los tipos de cuentas.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AccountTypeListResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
-    })
-    @GetMapping("/account-types")
-    public ResponseEntity<AccountTypeListResponse> accountTypes() {
-        return ResponseEntity.ok(service.accountTypes());
     }
 
     @Operation(summary = "Obtener el listado de Sucursales", description = "Este endpoint obtiene el listado de Sucursales de Otros Bancos.")
@@ -212,6 +149,69 @@ public class DestinationAccountController {
             @Parameter(description = "Este es el código del banco", example = "1017") @PathVariable("bankCode") @NotNull Integer bankCode
     ) throws IOException {
         return ResponseEntity.ok(service.getBranchOffice(bankCode));
+    }
+
+    @Operation(summary = "Obtiener lista de tipos de cuenta.", description = "Obtiene un listado de todos los tipos de cuentas.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AccountTypeListResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("/account-types")
+    public ResponseEntity<AccountTypeListResponse> accountTypes() {
+        return ResponseEntity.ok(service.accountTypes());
+    }
+
+    @Operation(summary = "Eliminación de cuenta de terceros.", description = "Elimina cuenta de terceros.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @DeleteMapping("/{personId}/third-accounts/{identifier}/delete")
+    public ResponseEntity<GenericResponse> deleteThirdAccount(
+            @Valid @RequestHeader("device-id") String deviceId,
+            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
+            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
+            @Valid @RequestBody DeleteThirdAccountRequest request,
+            HttpServletRequest servletRequest
+    ) throws IOException {
+        String ip = servletRequest.getRemoteAddr();
+        return ResponseEntity.ok(service.delete(personId, identifier, deviceId, ip, request));
+    }
+
+    @Operation(summary = "Eliminación de cuenta billetera.", description = "Elimina cuenta de billetera.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @DeleteMapping("/{personId}/wallets/{identifier}/wallet-accounts/{accountNumber}")
+    public ResponseEntity<GenericResponse> deleteWalletAccount(
+            @Valid @RequestHeader("device-id") String deviceId,
+            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
+            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
+            @PathVariable("accountNumber") @NotNull @Parameter(description = "Este es el número de la cuenta", example = "12345") int accountNumber,
+            HttpServletRequest servletRequest
+    ) throws IOException {
+        String ip = servletRequest.getRemoteAddr();
+        return ResponseEntity.ok(service.deleteWalletAccount(personId, identifier, accountNumber, deviceId, ip));
+    }
+
+    @Operation(summary = "Eliminación de cuenta ACH.", description = "Elimina cuenta ACH.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @DeleteMapping("/{personId}/ach-accounts/{identifier}")
+    public ResponseEntity<GenericResponse> deleteAchAccount(
+            @Valid @RequestHeader("device-id") String deviceId,
+            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
+            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
+            HttpServletRequest servletRequest
+    ) throws IOException {
+        String ip = servletRequest.getRemoteAddr();
+        return ResponseEntity.ok(service.deleteAchAccount(personId, identifier, deviceId, ip));
     }
 
     @Operation(summary = "Destination Accounts", description = "Listado de todas las cuentas de Destino para el módulo de Transferencia")

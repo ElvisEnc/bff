@@ -79,6 +79,23 @@ public class DestinationAccountService implements IDestinationAccountService {
     }
 
     @Override
+    public GenericResponse addWalletAccount(String personId, AddWalletAccountRequest request, Map<String, String> parameter) throws IOException {
+        AddWalletAccountBasicRequest addWalletAccountBasicRequest = AddWalletAccountBasicRequest.builder()
+                .personId(personId)
+                .companyPersonId(personId)
+                .toAccountNumber(request.getToAccountNumber())
+                .reference(request.getReference())
+                .isFavorite(request.getIsFavorite())
+                .build();
+        return thirdAccountProvider
+                .addWalletAccount(
+                        thirdAccountProvider.generateAccessToken().getAccessToken(),
+                        addWalletAccountBasicRequest,
+                        parameter
+                );
+    }
+
+    @Override
     public GenericResponse addAchAccount(String personId, AddAchAccountRequest addAchAccountRequest, Map<String, String> parameters) throws IOException {
 
         AddAchAccountBasicRequest addAchAccountBasicRequest = AddAchAccountBasicRequest.builder()
@@ -105,36 +122,15 @@ public class DestinationAccountService implements IDestinationAccountService {
     }
 
     @Override
-    public GenericResponse delete(String personId, int identifier, String deviceId, String deviceIp, DeleteThirdAccountRequest request) throws IOException {
-        return thirdAccountProvider.delete(personId, identifier, request.getAccountId(), deviceId, deviceIp);
-    }
-
-    @Override
-    public GenericResponse addWalletAccount(String personId, AddWalletAccountRequest request, Map<String, String> parameter) throws IOException {
-        AddWalletAccountBasicRequest addWalletAccountBasicRequest = AddWalletAccountBasicRequest.builder()
-                .personId(personId)
-                .companyPersonId(personId)
-                .toAccountNumber(request.getToAccountNumber())
-                .reference(request.getReference())
-                .isFavorite(request.getIsFavorite())
-                .build();
-        return thirdAccountProvider
-                .addWalletAccount(
-                        thirdAccountProvider.generateAccessToken().getAccessToken(),
-                        addWalletAccountBasicRequest,
-                        parameter
-                );
-    }
-
-    @Override
-    public GenericResponse deleteWalletAccount(String personId, int identifier, int accountNumber, String deviceId, String deviceIp) throws IOException {
-        return thirdAccountProvider.deleteWalletAccount(personId, identifier, accountNumber, deviceId, deviceIp);
-    }
-
-    @Override
     public BanksResponse getBanks() throws IOException {
         BanksMWResponse result = achAccountProvider.getBanks();
         return new BanksResponse(result.getData().stream().map(Bank::fromMWBank).toList());
+    }
+
+    @Override
+    public BranchOfficeResponse getBranchOffice(Integer bankCode) throws IOException {
+        BranchOfficeMWResponse mWResponse = achAccountProvider.getAllBranchOfficeBank(bankCode);
+        return iDestinationAccountMapper.mapToBranchOfficeResponse(mWResponse);
     }
 
     @Override
@@ -146,10 +142,15 @@ public class DestinationAccountService implements IDestinationAccountService {
     }
 
     @Override
-    public BranchOfficeResponse getBranchOffice(Integer bankCode) throws IOException {
-        BranchOfficeMWResponse mWResponse = achAccountProvider.getAllBranchOfficeBank(bankCode);
-        return iDestinationAccountMapper.mapToBranchOfficeResponse(mWResponse);
+    public GenericResponse delete(String personId, int identifier, String deviceId, String deviceIp, DeleteThirdAccountRequest request) throws IOException {
+        return thirdAccountProvider.delete(personId, identifier, request.getAccountId(), deviceId, deviceIp);
     }
+
+    @Override
+    public GenericResponse deleteWalletAccount(String personId, int identifier, int accountNumber, String deviceId, String deviceIp) throws IOException {
+        return thirdAccountProvider.deleteWalletAccount(personId, identifier, accountNumber, deviceId, deviceIp);
+    }
+
 
     @Override
     public GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException {
@@ -158,7 +159,7 @@ public class DestinationAccountService implements IDestinationAccountService {
 
     @Override
     public DestinationAccountResponse getDestinationAccounts(Integer personId, DestinationAccountRequest request, Map<String, String> parameter) throws IOException {
-        Boolean needAllRecords = request.getPagination() == null || request.getPagination().getPage() == 1;
+        Boolean needAllRecords = (request.getPagination() == null || request.getPagination().getPage() == 1) && (request.getName() == null || request.getName().isEmpty());
         List<DestinationAccount> allAccounts = self.getListDestinationAccount(personId, parameter, needAllRecords);
         DestinationAccountResponse response = DestinationAccountResponse.builder()
                 .total(allAccounts.size())

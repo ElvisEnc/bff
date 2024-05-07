@@ -14,7 +14,7 @@ public interface IAchAccountProvider {
     ClientToken generateAccessToken() throws IOException;
     GenericResponse addAchAccount(String accessToken, AddAchAccountBasicRequest addAchAccountBasicRequest, Map<String, String> parameters) throws IOException;
     GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException;
-    BranchOfficeMWResponse getAllBranchOfficeBank(Integer code) throws IOException;
     BanksMWResponse getBanks() throws IOException;
+    BranchOfficeMWResponse getAllBranchOfficeBank(Integer code) throws IOException;
     AchAccountMWResponse getAchAccounts(Integer personId, Map<String, String> parameters) throws IOException;
 }

@@ -12,6 +12,8 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.dtos.BanksMWResponse;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.responses.*;
+import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMWResponseFixture;
 import bg.com.bo.bff.providers.mappings.ach.account.AchAccountMWtMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -24,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -170,6 +173,72 @@ class AchAccountMiddlewareProviderTest {
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
             achAccountMiddlewareProvider.getAllBranchOfficeBank(123);
+        });
+
+        // Assert
+        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void givePersonCodeWhenGetAchAccountsThenExpectResponse() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(AchAccountMWResponseFixture.withDefault());
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        AchAccountMWResponse response = achAccountMiddlewareProvider.getAchAccounts(1233, new HashMap<>());
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response.getData(), AchAccountMWResponseFixture.withDefault().getData());
+    }
+
+    @Test
+    void givePersonCodeWhenGetAchAccountsThenReturnEmptyData() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
+                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
+                        .code("MDWAAM-001")
+                        .description("MDWAAM_001")
+                        .build()))
+                .build();
+        stubFor(get(anyUrl()).willReturn(aResponse()
+                .withStatus(404)
+                .withBody(Util.objectToString(errorMiddlewareProvider))));
+
+        // Act
+        AchAccountMWResponse response = achAccountMiddlewareProvider.getAchAccounts(1233, new HashMap<>());
+
+        // Assert
+        assertTrue(response.getData().isEmpty());
+    }
+
+    @Test
+    void giveUnexpectedErrorOccursWhenGetAchAccountsThenGenericException() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        Mockito.when(httpClientFactoryMock.create()).thenThrow(new GenericException("Generic"));
+
+        // Act
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            achAccountMiddlewareProvider.getAchAccounts(1233, new HashMap<>());
+        });
+
+        // Assert
+        assertEquals("Generic", exception.getMessage());
+    }
+
+    @Test
+    void giveErrorWhenGetAchAccountsThenRuntimeException() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
+
+        // Act
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            achAccountMiddlewareProvider.getAchAccounts(1233, new HashMap<>());
         });
 
         // Assert

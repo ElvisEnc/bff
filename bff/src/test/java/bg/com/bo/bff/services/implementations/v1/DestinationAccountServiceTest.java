@@ -8,13 +8,19 @@ import bg.com.bo.bff.application.dtos.request.AddAchAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
+import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
+import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponseFixture;
 import bg.com.bo.bff.commons.enums.AccountType;
 import bg.com.bo.bff.mappings.services.DestinationAccountServiceMapper;
 import bg.com.bo.bff.models.ClientToken;
+import bg.com.bo.bff.models.ThirdAccountListResponse;
+import bg.com.bo.bff.models.ThirdAccountListResponseFixture;
 import bg.com.bo.bff.models.dtos.BanksMWResponse;
 import bg.com.bo.bff.providers.dtos.responses.BanksMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponse;
 import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
@@ -28,13 +34,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.*;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DestinationAccountServiceTest {
@@ -199,9 +204,9 @@ class DestinationAccountServiceTest {
         BanksResponse actual = service.getBanks();
 
         // Assert
-        assertEquals(expected.getData().size(),actual.getData().size());
-        assertEquals(expected.getData().get(0).getCode(),actual.getData().get(0).getCode());
-        assertEquals(expected.getData().get(0).getDescription(),actual.getData().get(0).getDescription());
+        assertEquals(expected.getData().size(), actual.getData().size());
+        assertEquals(expected.getData().get(0).getCode(), actual.getData().get(0).getCode());
+        assertEquals(expected.getData().get(0).getDescription(), actual.getData().get(0).getDescription());
 
         verify(achAccountProvider).getBanks();
     }
@@ -210,8 +215,8 @@ class DestinationAccountServiceTest {
     void giveValidBankCodeWhenGetAllBranchOfficeBankThenReturnSuccess() throws IOException {
         // Arrange
         Integer bankCode = 123;
-        BranchOfficeMWResponse responseMWMock=BranchOfficeMWResponseFixture.withDefault();
-        BranchOfficeResponse expectedResponse=BranchOfficeResponseFixture.withDefault();
+        BranchOfficeMWResponse responseMWMock = BranchOfficeMWResponseFixture.withDefault();
+        BranchOfficeResponse expectedResponse = BranchOfficeResponseFixture.withDefault();
         Mockito.when(achAccountProvider.getAllBranchOfficeBank(Mockito.any()))
                 .thenReturn(responseMWMock);
         Mockito.when(iDestinationAccountMapper.mapToBranchOfficeResponse(responseMWMock)).thenReturn(expectedResponse);
@@ -224,5 +229,45 @@ class DestinationAccountServiceTest {
         assertEquals(expectedResponse, response);
         verify(achAccountProvider).getAllBranchOfficeBank(bankCode);
         verify(iDestinationAccountMapper).mapToBranchOfficeResponse(responseMWMock);
+    }
+
+    @Test
+    void givenPersonIdAndParameterWhenGetListDestinationAccountThenReturnList() throws IOException {
+        // Arrange
+        Integer personId = 1234567;
+        Map<String, String> parameter = new HashMap<>();
+        Boolean isInitial = true;
+        String accessToken = "tokentoken";
+        ClientToken clientToken = new ClientToken();
+        clientToken.setAccessToken(accessToken);
+
+        ThirdAccountListResponse thirdAccountsResponse = ThirdAccountListResponseFixture.withDefault();
+        ThirdAccountListResponse walletAccountsResponse = ThirdAccountListResponseFixture.withDefault();
+        AchAccountMWResponse achAccountMWResponse = AchAccountMWResponseFixture.withDefault();
+
+        when(thirdAccountProvider.generateAccessToken()).thenReturn(clientToken);
+        when(thirdAccountProvider.getThirdAccounts(personId, accessToken, parameter)).thenReturn(thirdAccountsResponse);
+        when(thirdAccountProvider.getWalletAccounts(personId, accessToken, parameter)).thenReturn(walletAccountsResponse);
+        when(achAccountProvider.getAchAccounts(personId, parameter)).thenReturn(achAccountMWResponse);
+
+        DestinationAccount thirdDestinationAccount = DestinationAccountResponseFixture.getDestinationAccountDefault();
+        DestinationAccount walletDestinationAccount = DestinationAccountResponseFixture.getDestinationAccountDefault();
+        DestinationAccount achDestinationAccount = DestinationAccountResponseFixture.getDestinationAccountDefault();
+
+        when(iDestinationAccountMapper.convertThirdAccountToDestinationAccount(any(), any(), any())).thenReturn(thirdDestinationAccount);
+        when(iDestinationAccountMapper.convertThirdAccountToDestinationAccount(any(), any(), any())).thenReturn(walletDestinationAccount);
+        when(iDestinationAccountMapper.convertAchAccountToDestinationAccount(any())).thenReturn(achDestinationAccount);
+
+        // Act
+        List<DestinationAccount> result = service.getListDestinationAccount(personId, parameter, isInitial);
+
+        // Assert
+        assertEquals(3, result.size());
+        verify(thirdAccountProvider).generateAccessToken();
+        verify(thirdAccountProvider).getThirdAccounts(personId, accessToken, parameter);
+        verify(thirdAccountProvider).getWalletAccounts(personId, accessToken, parameter);
+        verify(achAccountProvider).getAchAccounts(personId, parameter);
+        verify(iDestinationAccountMapper, times(2)).convertThirdAccountToDestinationAccount(any(), any(), any());
+        verify(iDestinationAccountMapper).convertAchAccountToDestinationAccount(any());
     }
 }

@@ -18,13 +18,13 @@ import java.util.Map;
 @Service
 public interface IDestinationAccountService {
     GenericResponse addThirdAccount(String personId, AddThirdAccountRequest addThirdAccountRequest, Map<String, String> parameters) throws IOException;
-    GenericResponse addAchAccount(String personId, AddAchAccountRequest addAchAccountRequest, Map<String, String> parameter) throws IOException;
-    GenericResponse delete(String personId, int identifier, String deviceId, String deviceIp, DeleteThirdAccountRequest request) throws IOException;
     GenericResponse addWalletAccount(String personId, AddWalletAccountRequest addWalletAccountRequest, Map<String, String> parameter) throws IOException ;
-    GenericResponse deleteWalletAccount(String personId, int identifier, int accountNumber,String deviceId, String deviceIp) throws IOException;
-    GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException;
-    AccountTypeListResponse accountTypes();
+    GenericResponse addAchAccount(String personId, AddAchAccountRequest addAchAccountRequest, Map<String, String> parameter) throws IOException;
     BanksResponse getBanks() throws IOException;
     BranchOfficeResponse getBranchOffice(Integer bankCode) throws IOException;
+    AccountTypeListResponse accountTypes();
+    GenericResponse delete(String personId, int identifier, String deviceId, String deviceIp, DeleteThirdAccountRequest request) throws IOException;
+    GenericResponse deleteWalletAccount(String personId, int identifier, int accountNumber,String deviceId, String deviceIp) throws IOException;
+    GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException;
     DestinationAccountResponse getDestinationAccounts(Integer personId, DestinationAccountRequest request, Map<String, String> parameter) throws IOException;
 }
