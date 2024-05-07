@@ -200,8 +200,8 @@ class AchAccountMiddlewareProviderTest {
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
                 .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
-                        .code("MDWAAM-001")
-                        .description("MDWAAM_001")
+                        .code("MDWAAM-004")
+                        .description("MDWAAM_004")
                         .build()))
                 .build();
         stubFor(get(anyUrl()).willReturn(aResponse()

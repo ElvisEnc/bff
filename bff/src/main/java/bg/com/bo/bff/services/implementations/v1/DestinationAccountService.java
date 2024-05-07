@@ -162,7 +162,7 @@ public class DestinationAccountService implements IDestinationAccountService {
         Boolean needAllRecords = (request.getPagination() == null || request.getPagination().getPage() == 1) && (request.getName() == null || request.getName().isEmpty());
         List<DestinationAccount> allAccounts = self.getListDestinationAccount(personId, parameter, needAllRecords);
         DestinationAccountResponse response = DestinationAccountResponse.builder()
-                .total(allAccounts.size())
+                .totalAccounts(allAccounts.size())
                 .build();
 
         String searchByName = request.getName();
@@ -175,6 +175,7 @@ public class DestinationAccountService implements IDestinationAccountService {
             allAccounts = new PageFilter(page, pageSize).apply(allAccounts);
         }
         response.setData(allAccounts);
+        response.setTotal(allAccounts.size());
         return response;
     }
 

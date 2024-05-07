@@ -14,4 +14,5 @@ import java.util.List;
 public class DestinationAccountResponse {
     private List<DestinationAccount> data;
     private Integer total;
+    private Integer totalAccounts;
 }

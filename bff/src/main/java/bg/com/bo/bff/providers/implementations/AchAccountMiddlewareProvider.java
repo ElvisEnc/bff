@@ -245,7 +245,7 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
                 } else {
                     AppError error = Util.mapProviderError(jsonResponse);
                     String empty = error.getDescription();
-                    if (Objects.equals(AppError.MDWAAM_001.getDescription(), empty)) {
+                    if (Objects.equals(AppError.MDWAAM_004.getDescription(), empty) || Objects.equals(AppError.MDWAAM_010.getDescription(), empty)) {
                         return AchAccountMWResponse.builder()
                                 .data(new ArrayList<>())
                                 .build();
