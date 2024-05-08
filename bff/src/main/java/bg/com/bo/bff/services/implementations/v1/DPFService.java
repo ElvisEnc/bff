@@ -1,5 +1,6 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.response.DPFDataResponse;
 import bg.com.bo.bff.application.dtos.response.DPFListResponse;
 import bg.com.bo.bff.providers.dtos.responses.DPFMWResponse;
 import bg.com.bo.bff.providers.interfaces.IDPFProvider;
@@ -8,7 +9,7 @@ import bg.com.bo.bff.services.interfaces.IDPFService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DPFService implements IDPFService {
@@ -27,6 +28,10 @@ public class DPFService implements IDPFService {
                 deviceId,
                 parameters
         );
-        return  idpfMapper.mapToDPFListResponse(mWResponse);
+
+        DPFListResponse dpfListResponse = idpfMapper.mapToDPFListResponse(mWResponse);
+        dpfListResponse.getData().sort(Comparator.comparing(DPFDataResponse::getExpirationDate));
+
+        return dpfListResponse;
     }
 }
