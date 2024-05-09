@@ -3,11 +3,9 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.Pcc01Request;
 import bg.com.bo.bff.application.dtos.response.Pcc01Response;
-import bg.com.bo.bff.application.exceptions.NotAcceptableException;
-import bg.com.bo.bff.application.exceptions.RequestException;
-import bg.com.bo.bff.commons.enums.CanalMW;
-import bg.com.bo.bff.commons.enums.HttpError;
-import bg.com.bo.bff.commons.enums.ProjectNameMW;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.*;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.responses.Pcc01MWResponse;
@@ -15,6 +13,7 @@ import bg.com.bo.bff.providers.interfaces.ITransferProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.pcc01.Pcc01Mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -48,46 +47,35 @@ public class TransferMiddlewareProvider implements ITransferProvider {
 
     public Pcc01Response validateControl(Pcc01Request request) throws IOException {
         ClientToken token = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
-
         try (CloseableHttpClient httpClient = createHttpClient()) {
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/money-laundering/validate-digital";
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonMapper = objectMapper.writeValueAsString(request);
             StringEntity entity = new StringEntity(jsonMapper);
-            HttpPost requestPost = new HttpPost(path);
-            requestPost.setHeader("Content-Type", "application/json");
-            requestPost.setHeader("Authorization", "Bearer " + token.getAccessToken());
-            requestPost.setHeader("topaz-channel", CanalMW.GANAMOVIL.getCanal());
-            requestPost.setHeader("Accept", "application/json");
-            requestPost.setEntity(entity);
-            try (CloseableHttpResponse httpResponse = httpClient.execute(requestPost)) {
+            HttpPost httpRequest = new HttpPost(path);
+            httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + token.getAccessToken());
+            httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(Headers.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
+            httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            httpRequest.setEntity(entity);
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String responseEntity = EntityUtils.toString(httpResponse.getEntity());
-                switch (statusCode) {
-                    case 200: {
-                        Pcc01MWResponse pcc01MWResponse = objectMapper.readValue(responseEntity, Pcc01MWResponse.class);
-                        Pcc01Response response = pcc01Mapper.convert(pcc01MWResponse);
-                        return response;
-                    }
-                    case 406:
-                        throw new NotAcceptableException(HttpError.ERROR_406.getDescription());
-                    default: {
-                        throw new UnsupportedOperationException(HttpError.ERROR_500.getDescription());
-                    }
+                if(statusCode == HttpStatus.SC_OK){
+                    Pcc01MWResponse pcc01MWResponse = objectMapper.readValue(responseEntity, Pcc01MWResponse.class);
+                    return pcc01Mapper.convert(pcc01MWResponse);
+                }else {
+                    AppError error = Util.mapProviderError(responseEntity);
+                    LOGGER.error(responseEntity);
+                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
                 }
-            } catch (NotAcceptableException | UnsupportedOperationException e) {
-                LOGGER.error(e);
-                throw new RequestException("Hubo un error no controlado al realizar el Get");
-            } catch (Exception e) {
-                LOGGER.error(e);
-                throw new RequestException("Hubo un error no controlado al realizar el getListThridAccounts");
             }
-        } catch (NotAcceptableException | UnsupportedOperationException e) {
-            LOGGER.error(e);
-            throw new RequestException("Hubo un error no controlado al realizar el Get");
+        }  catch (GenericException ex) {
+            LOGGER.error(ex);
+            throw ex;
         } catch (Exception e) {
             LOGGER.error(e);
-            throw new RuntimeException("Hubo un error no controlado al crear el clienteGetAccounts");
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
         }
     }
 }
