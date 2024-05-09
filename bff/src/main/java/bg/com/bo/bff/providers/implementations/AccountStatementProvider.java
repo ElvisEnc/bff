@@ -94,8 +94,12 @@ public class AccountStatementProvider implements IAccountStatementProvider {
                 return objectMapper.readValue(responseMW, AccountReportBasicResponse.class);
             } else {
                 AppError error = Util.mapProviderError(responseMW);
-                String noRecords = error.getDescription();
-                if (Objects.equals(AppError.MDWACM_008.getDescription(), noRecords)) {
+
+                List<String> noRecordList = new ArrayList<>();
+                noRecordList.add(AppError.MDWACM_008.getDescription());
+                noRecordList.add(AppError.MDWACM_002.getDescription());
+
+                if (noRecordList.contains(error.getDescription())) {
                     AccountReportBasicResponse basicResponse = new AccountReportBasicResponse();
                     List<AccountReportBasicResponse.AccountReportData> dataEmpty = new ArrayList<>();
                     basicResponse.setData(dataEmpty);
@@ -145,7 +149,12 @@ public class AccountStatementProvider implements IAccountStatementProvider {
                 return basicResponse;
             } else {
                 AppError error = Util.mapProviderError(responseMW);
-                if (Objects.equals(AppError.MDWACM_008.getDescription(), error.getDescription())) {
+
+                List<String> noRecordList = new ArrayList<>();
+                noRecordList.add(AppError.MDWACM_008.getDescription());
+                noRecordList.add(AppError.MDWACM_002.getDescription());
+
+                if (noRecordList.contains(error.getDescription())) {
                     AccountReportBasicResponse basicResponse = new AccountReportBasicResponse();
                     List<AccountReportBasicResponse.AccountReportData> dataEmpty = new ArrayList<>();
                     basicResponse.setData(dataEmpty);

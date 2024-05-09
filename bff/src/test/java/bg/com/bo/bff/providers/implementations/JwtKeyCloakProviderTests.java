@@ -190,7 +190,7 @@ class JwtKeyCloakProviderTests {
     }
 
     @ParameterizedTest
-    @EnumSource(value = ErrorKCResponse.Error.class, names = {"NOT_FOUND_404", "INVALID_GRANT"}, mode = EnumSource.Mode.EXCLUDE)
+    @EnumSource(value = ErrorKCResponse.Error.class, names = {"NOT_FOUND_404", "INVALID_GRANT", "NOT_AVAILABLE"}, mode = EnumSource.Mode.EXCLUDE)
     void givenBadRequestWhenRefreshTokenThenReturnCreateTokenServiceException(ErrorKCResponse.Error error) throws JsonProcessingException {
         //Arrange
         String refreshToken = UUID.randomUUID().toString();

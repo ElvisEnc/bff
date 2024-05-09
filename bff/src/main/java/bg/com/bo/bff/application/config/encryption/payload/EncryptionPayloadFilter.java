@@ -2,6 +2,7 @@ package bg.com.bo.bff.application.config.encryption.payload;
 
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.exceptions.NotEncodedInfoException;
+import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;
 import jakarta.servlet.FilterChain;
@@ -24,7 +25,10 @@ import java.io.IOException;
 public class EncryptionPayloadFilter extends OncePerRequestFilter {
 
     @Value("${encryption.url.exclude.pattern}")
-    String urlExcludePatterns;
+    private String urlExcludePatterns;
+
+    @Value("${encryption.exclude.key}")
+    private String encryptionExcludeKey;
 
     private IEncryptionService encryptionService;
 
@@ -68,8 +72,13 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getServletPath();
+        String eek = request.getHeader(Constants.ENCRYPTION_EXCLUDE_KEY_HEADER);
+        if (encryptionExcludeKey != null && eek != null
+                && !eek.isBlank() && !encryptionExcludeKey.isBlank()
+                && eek.equals(encryptionExcludeKey))
+            return true;
 
+        String path = request.getServletPath();
         String[] urlPatterns = urlExcludePatterns.split(",");
 
         for (String reg : urlPatterns)

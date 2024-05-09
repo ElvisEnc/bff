@@ -20,7 +20,8 @@ public class ErrorKCResponse {
         INVALID_REQUEST("invalid_request"),
         UNSUPPORTED_GRANT_TYPE("unsupported_grant_type"),
         INVALID_GRANT("invalid_grant"),
-        NOT_FOUND_404("not_found");
+        NOT_FOUND_404("not_found"),
+        NOT_AVAILABLE("not_available");
 
         private final String code;
     }

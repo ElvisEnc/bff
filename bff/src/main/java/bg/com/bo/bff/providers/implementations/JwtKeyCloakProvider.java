@@ -196,17 +196,16 @@ public class JwtKeyCloakProvider implements IJwtProvider {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 CreateTokenServiceResponse createTokenResponse = new CreateTokenServiceResponse();
                 ObjectMapper objectMapper = new ObjectMapper();
+
+                String response = EntityUtils.toString(httpResponse.getEntity());
                 switch (statusCode) {
                     case 200:
-                        String responseToken = EntityUtils.toString(httpResponse.getEntity());
-                        CreateTokenKCResponse createTokenKCResponse = objectMapper.readValue(responseToken, CreateTokenKCResponse.class);
+                        CreateTokenKCResponse createTokenKCResponse = objectMapper.readValue(response, CreateTokenKCResponse.class);
                         createTokenResponse.setTokenData(keyCloakMapper.getObjectMapper().convert(createTokenKCResponse));
                         createTokenResponse.setStatusCode(CreateTokenServiceResponse.StatusCode.SUCCESS);
                         break;
                     case 400:
-                        String errorResponse = EntityUtils.toString(httpResponse.getEntity());
-
-                        ErrorKCResponse errorKCResponse = getErrorKCResponse(objectMapper, errorResponse);
+                        ErrorKCResponse errorKCResponse = getErrorKCResponse(objectMapper, response);
 
                         if (errorKCResponse.getError().equals(ErrorKCResponse.Error.UNAUTHORIZED_CLIENT.getCode()))
                             throw new CreateTokenServiceException(ErrorKCResponse.Error.UNAUTHORIZED_CLIENT.name(), String.format("Cliente no autorizado. Descripcion: %s", errorKCResponse.getErrorDescription()));
@@ -225,10 +224,14 @@ public class JwtKeyCloakProvider implements IJwtProvider {
                         else throw new NotHandledResponseException(errorKCResponse.getError());
                         break;
                     case 404:
-                        String response = EntityUtils.toString(httpResponse.getEntity());
                         throw new CreateTokenServiceException(ErrorKCResponse.Error.NOT_FOUND_404.name(), String.format("Error en el request. Respuesta: %s", response));
+                    case 503:
+                        logger.error("Servicio de token NO Disponible.");
+                        logger.error(response);
+                        throw new CreateTokenServiceException(ErrorKCResponse.Error.NOT_AVAILABLE.name(), "Internal Server Error");
                     default:
-                        throw new NotHandledResponseException(EntityUtils.toString(httpResponse.getEntity()));
+                        logger.error(response);
+                        throw new NotHandledResponseException(response);
                 }
 
                 return createTokenResponse;
@@ -296,10 +299,9 @@ public class JwtKeyCloakProvider implements IJwtProvider {
         try {
             boolean issuerValidation = issuer.equals(jwtAccess.getPayload().getIssuer());
             boolean authorizedPartyValidation = authorizedParty.equals(jwtAccess.getPayload().getAuthorizedParty());
-            boolean subjectValidation = subject.equals(jwtAccess.getPayload().getSubject());
             boolean rolesValidation = jwtAccess.getPayload().getAudience().contains(audience);
 
-            return rolesValidation && authorizedPartyValidation && subjectValidation && issuerValidation;
+            return rolesValidation && authorizedPartyValidation && issuerValidation;
         } catch (Exception e) {
             logger.error("Hubo un error inesperado al validar el token.");
             return false;
