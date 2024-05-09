@@ -5,6 +5,8 @@ import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountBasicRequestFixture;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountBasicRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.ValidateAccountResponse;
+import bg.com.bo.bff.application.dtos.response.ValidateAccountResponseFixture;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
@@ -85,7 +87,7 @@ class ThirdAccountMiddlewareProviderTests {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(provider, "url", "http://localhost");
+        ReflectionTestUtils.setField(provider, "url", "http://localhost:8080");
         ReflectionTestUtils.setField(provider, "complementToken", "/third-accounts-manager");
         ReflectionTestUtils.setField(provider, "complementThirdAccounts", "/third-accounts-manager/bs/v1");
         ReflectionTestUtils.setField(provider, "clientSecret", "db");
@@ -417,5 +419,23 @@ class ThirdAccountMiddlewareProviderTests {
 
         // Assert
         assertEquals("Internal server error.", exception.getMessage());
+    }
+    @Test
+    void givenAccountNumberAndClientNameWhenGetValidateDestinationAccountThenValidateAccountResponse() throws IOException {
+        // Arrange
+        final String accountNumber ="1310766620";
+        final String clientName ="BANCO";
+        final ValidateAccountResponse expected = ValidateAccountResponseFixture.withDefault();
+        final String jsonResponse = Util.objectToString(expected);
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+        Mockito.when(tokenMiddlewareProvider.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientTokenMock);
+        Mockito.when(clientTokenMock.getAccessToken()).thenReturn("");
+        Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
+
+        // Act
+        ValidateAccountResponse actual = provider.validateAccount(accountNumber, clientName, new HashMap<>());
+
+        // Assert
+        assertEquals(expected.getData(), actual.getData());
     }
 }

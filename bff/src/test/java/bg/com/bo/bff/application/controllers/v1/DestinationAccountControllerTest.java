@@ -60,6 +60,7 @@ class DestinationAccountControllerTest {
     private static final String GET_ACCOUNT_TYPES = "/api/v1/destination-accounts/account-types";
     private static final String GET_BRANCH_OFFICE = "/api/v1/destination-accounts/banks/{bankCode}/branch-offices";
     private static final String GET_DESTINATION_ACCOUNT = "/api/v1/destination-accounts/persons/1020";
+    private static final String GET_VALIDATE_ACCOUNT = "/api/v1/destination-accounts?accountNumber=79509515&clientName=Pa";
     private MockMvc mockMvc;
 
     @Spy
@@ -222,9 +223,8 @@ class DestinationAccountControllerTest {
         assertEquals(response, actual);
         verify(service).addWalletAccount(any(), any(), any());
     }
-
     @Test
-    void givenValidaDataWhenDeleteWalletAccountThenReturnOk() throws Exception {
+    void givenValidaDAtaWhenDeleteWalletAccountThenReturnOk() throws Exception {
         // Arrange
         String deviceId = "123";
 
@@ -322,7 +322,6 @@ class DestinationAccountControllerTest {
         // Arrange
         DestinationAccountRequest requestMock = DestinationAccountRequestFixture.withDefault();
         DestinationAccountResponse responseExpected = DestinationAccountResponseFixture.withDefault();
-        when(httpServletRequest.getHeaderNames()).thenReturn(this.enumerations);
         when(service.getDestinationAccounts(any(), any(), any())).thenReturn(responseExpected);
 
         // Act
@@ -341,4 +340,30 @@ class DestinationAccountControllerTest {
         assertEquals(response, actual);
         verify(service).getDestinationAccounts(any(), any(), any());
     }
+
+    @Test
+    void givenAccountNumberAndClientNameWhenGetValidateDestinationAccountThenValidateAccountResponse() throws Exception {
+        // Arrange
+        ValidateAccountResponse expected = ValidateAccountResponseFixture.withDefault();
+        when(service.getValidateDestinationAccounts(any(),any(),any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc
+                .perform(get(GET_VALIDATE_ACCOUNT)
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .headers(this.headers)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).getValidateDestinationAccounts(any(),any(),any());
+
+    }
+
 }

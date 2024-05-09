@@ -20,7 +20,7 @@ public enum AppError {
     MDWLM_24(HttpStatus.UNAUTHORIZED, "NOT_ENROLLED", "MDWLM-24", "Estimado cliente, está intentando iniciar sesión en un nuevo dispositivo, necesitamos validar su identidad"),
     MDWLM_25(HttpStatus.UNAUTHORIZED, "RESTRICTED_USER", "MDWLM-25", "Estimado cliente, necesitamos por favor que visite nuestras oficinas para validar su identidad"),
 
-    MDWRLIB_0003(HttpStatus.NOT_ACCEPTABLE, "NOT_ENROLLED", "MDWRLIB-0003", "Dispositivo no enrolado"),
+    MDWRLIB_0003(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWRLIB-0003", "Error en los datos"),
 
     // Logout
     MDWRLIB_0001(HttpStatus.BAD_REQUEST, "NOT_ENROLLED", "MDWRLIB-0001", "Error en los headers. Channel"),
@@ -49,6 +49,8 @@ public enum AppError {
     MDWRLIB_0012(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRLIB-0012", "Channel not implemented yet"),
     MDWRACTM_015(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRACTM-015", "Params must be the same for CHANNEL 2"),
     MDWRACTM_016(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRACTM-016", "Params must not be the same for CHANNEL 6"),
+    MDWRACTM_017(HttpStatus.NOT_FOUND, "NOT_ACCOUNT", "MDWRACTM-017", "No se encontró la cuenta con los datos otorgados."),
+
 
     // Cuentas Ach
     MDWHDR_01(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWHDR-01", "Invalid Header channel"),

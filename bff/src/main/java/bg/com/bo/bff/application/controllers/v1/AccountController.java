@@ -1,6 +1,5 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.HeaderDeviceMW;
 import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;

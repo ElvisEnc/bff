@@ -2,6 +2,7 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.ValidateAccountResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.HttpDeleteWithBody;
@@ -265,6 +266,43 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     public ThirdAccountListResponse getWalletAccounts(Integer personId, String token, Map<String, String> parameters) {
         String path = middlewareConfig.getUrlBase() + ProjectNameMW.THIRD_ACCOUNTS.getName() + "/bs/v1/wallets/companies/" + personId + "/persons/" + personId;
         return getThirdAndWalletAccounts(path, token, parameters);
+    }
+
+    @Override
+    public ValidateAccountResponse validateAccount(String accountNumber, String clientName, Map<String,String> parameters ) throws IOException {
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.THIRD_ACCOUNTS.getName(), middlewareConfig.getClientThirdAccount(), ProjectNameMW.THIRD_ACCOUNTS.getHeaderKey());
+
+        String urlValidateAccount = url + complementThirdAccounts + "/"+accountNumber+"/party-accounts/" +clientName ;
+
+
+        HttpGet httpRequest = new HttpGet(urlValidateAccount);
+        httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+        httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(Headers.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
+        httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_NAME.getCode(), parameters.get(DeviceMW.DEVICE_NAME.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_X.getCode(), parameters.get(DeviceMW.GEO_POSITION_X.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode()));
+        httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode()));
+        httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK) {
+                    return Util.stringToObject(jsonResponse, ValidateAccountResponse.class);
+                }
+                AppError error = Util.mapProviderError(jsonResponse);
+                logger.error(jsonResponse);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            }
+        } catch (GenericException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error(e);
+            throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
+        }
     }
 
     private ThirdAccountListResponse getThirdAndWalletAccounts(String path, String token, Map<String, String> parameters) {

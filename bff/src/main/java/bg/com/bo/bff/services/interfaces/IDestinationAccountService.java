@@ -9,6 +9,7 @@ import bg.com.bo.bff.application.dtos.response.BanksResponse;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
+import bg.com.bo.bff.application.dtos.response.ValidateAccountResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
 import org.springframework.stereotype.Service;
 
@@ -27,4 +28,5 @@ public interface IDestinationAccountService {
     GenericResponse deleteWalletAccount(String personId, int identifier, int accountNumber,String deviceId, String deviceIp) throws IOException;
     GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException;
     DestinationAccountResponse getDestinationAccounts(Integer personId, DestinationAccountRequest request, Map<String, String> parameter) throws IOException;
+    ValidateAccountResponse getValidateDestinationAccounts(String accountNumber, String clientName, Map<String, String> parameter) throws IOException;
 }

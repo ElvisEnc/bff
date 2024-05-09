@@ -10,6 +10,7 @@ import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.BanksResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
+import bg.com.bo.bff.application.dtos.response.ValidateAccountResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
 import bg.com.bo.bff.commons.constants.CacheConstants;
@@ -202,5 +203,9 @@ public class DestinationAccountService implements IDestinationAccountService {
 
         allAccounts.sort(Comparator.comparing(DestinationAccount::getClientName, String.CASE_INSENSITIVE_ORDER));
         return allAccounts;
+    }
+    @Override
+    public ValidateAccountResponse getValidateDestinationAccounts(String accountNumber, String clientName, Map<String, String> parameter) throws IOException {
+        return thirdAccountProvider.validateAccount(accountNumber,clientName,parameter);
     }
 }

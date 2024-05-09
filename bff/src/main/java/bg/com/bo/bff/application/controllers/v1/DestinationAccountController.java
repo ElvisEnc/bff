@@ -10,6 +10,7 @@ import bg.com.bo.bff.application.dtos.response.BanksResponse;
 import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.ValidateAccountResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.models.ThirdAccountListResponse;
@@ -24,7 +25,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -230,6 +234,50 @@ public class DestinationAccountController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @Valid @RequestBody DestinationAccountRequest request
     ) throws IOException {
-        return ResponseEntity.ok(service.getDestinationAccounts(personId, request, Headers.getParameter(httpServletRequest)));
+        return ResponseEntity.ok(service.getDestinationAccounts(personId, request,  Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
+    }
+    @Operation(summary = "Validate Accounts", description = "Valida las cuentas de terceros y billetera")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Valida las cuentas de terceros y billetera,", content = @Content(schema = @Schema(implementation = ValidateAccountResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("")
+    public ResponseEntity<ValidateAccountResponse> getValidationDestinationAccount(
+
+            @Parameter(description = "Nro. de Cuenta", example = "1234567", required = true)
+            @RequestParam(name = "accountNumber", required = true)
+            @NotBlank(message = "No debe tener espacios en blanco")
+            @NotNull(message = "No debe ser nulo")
+            @Size( min = 8, max = 15, message = "El campo accountNumber debe tener un minimo 8 y un maximo de 15 caracteres")
+            @Pattern(regexp = "\\d+", message = "El campo accountNumber solo debe tener números")
+            final String accountNumber,
+
+            @Parameter(description = "Nombre de cliente", example = "Gutierrez",required = true)
+            @RequestParam(value = "clientName", required = true)
+            @NotBlank(message = "No debe tener espacios en blanco")
+            @NotNull(message = "No debe ser nulo")
+            @Size( min = 2, max = 100, message = "Debe tener un minimo 2 y un maximo de 100 caracteres")
+            final String clientName,
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion
+    ) throws IOException {
+        return ResponseEntity.ok(service.getValidateDestinationAccounts(accountNumber,
+                clientName,  Headers.getParameter(httpServletRequest,
+                        deviceId,
+                        deviceName,
+                        geoPositionX,
+                        geoPositionY,
+                        appVersion
+                )));
     }
 }
