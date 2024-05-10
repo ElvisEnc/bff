@@ -33,6 +33,10 @@ public class CacheConfig {
 
     @Value("${cache.destination.accounts.ttl}")
     private Integer destinationAccountTtl;
+
+    @Value("${cache.qr.generated.paid.ttl}")
+    private Integer qrListGeneratedAndPaidTtl;
+
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return builder -> builder
@@ -57,6 +61,12 @@ public class CacheConfig {
                 .withCacheConfiguration(CacheConstants.DESTINATION_ACCOUNTS,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(destinationAccountTtl))
+                                .disableCachingNullValues()
+                                .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                                .prefixCacheNameWith(cachePrefix))
+                .withCacheConfiguration(CacheConstants.QR_GENERATED_PAID,
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofMinutes(qrListGeneratedAndPaidTtl))
                                 .disableCachingNullValues()
                                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                                 .prefixCacheNameWith(cachePrefix));

@@ -13,7 +13,6 @@ import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.ValidateAccountResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
 import bg.com.bo.bff.commons.utils.Headers;
-import bg.com.bo.bff.models.ThirdAccountListResponse;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -220,7 +219,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Destination Accounts", description = "Listado de todas las cuentas de Destino para el módulo de Transferencia")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene todas las cuentas propias, terceros, billeteras y ACH, ", content = @Content(schema = @Schema(implementation = ThirdAccountListResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Obtiene todas las cuentas propias, terceros, billeteras y ACH", content = @Content(schema = @Schema(implementation = DestinationAccountResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })

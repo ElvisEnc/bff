@@ -1,11 +1,13 @@
 package bg.com.bo.bff.providers.interfaces;
 
+import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.dtos.BanksMWResponse;
 import bg.com.bo.bff.providers.dtos.requests.AddAchAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponse;
 import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.qr.QrListMWResponse;
 
 import java.io.IOException;
 import java.util.Map;
@@ -17,4 +19,5 @@ public interface IAchAccountProvider {
     BanksMWResponse getBanks() throws IOException;
     BranchOfficeMWResponse getAllBranchOfficeBank(Integer code) throws IOException;
     AchAccountMWResponse getAchAccounts(Integer personId, Map<String, String> parameters) throws IOException;
+    QrListMWResponse getListQr(QrListRequest request, Integer personId,Map<String, String> parameters) throws IOException;
 }

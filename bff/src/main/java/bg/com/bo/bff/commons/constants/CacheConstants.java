@@ -8,4 +8,5 @@ public final class CacheConstants {
     public static final String ENCRYPTION_KEYS_CACHE_NAME = "encryptionkeys";
     public static final String ACCOUNTS_STATEMENTS = "accountstatements";
     public static final String DESTINATION_ACCOUNTS = "destinationaccounts";
+    public static final String QR_GENERATED_PAID = "qrlistgeneratedpaid";
 }

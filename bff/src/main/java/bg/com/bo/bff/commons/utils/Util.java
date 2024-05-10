@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,6 +21,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +32,7 @@ import java.util.regex.Pattern;
 
 public class Util {
     private static final ObjectMapper objectMapper = createObjectMapper();
+    private static final Logger LOGGER = LogManager.getLogger(Util.class.getName());
 
     private Util() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
@@ -125,6 +132,24 @@ public class Util {
             }
         }
         return stringBuilder.toString();
+    }
+
+    public static String formatDate(String dateString) {
+        List<DateTimeFormatter> formatters = Arrays.asList(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+                DateTimeFormatter.ofPattern("yyyy/MM/dd"),
+                DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        );
+
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                LocalDate date = LocalDate.parse(dateString, formatter);
+                return date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+            } catch (DateTimeParseException e) {
+                LOGGER.error(e);
+            }
+        }
+        return dateString;
     }
 
     public static AppError mapProviderError(String jsonResponse) throws IOException {

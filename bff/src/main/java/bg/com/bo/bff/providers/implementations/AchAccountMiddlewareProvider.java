@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
@@ -16,9 +17,11 @@ import bg.com.bo.bff.models.dtos.BanksMWResponse;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.AddAchAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.DeleteAchAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.requests.QrListMWRequest;
 import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponse;
 import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMWResponse;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
+import bg.com.bo.bff.providers.dtos.responses.qr.QrListMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.ach.account.AchAccountMWtMapper;
@@ -176,7 +179,6 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
     }
 
     private HttpPost getHttpPost(String token, Map<String, String> parameters, String urlGetThirdAccounts, StringEntity entity) {
-
         HttpPost httpRequest = new HttpPost(urlGetThirdAccounts);
         httpRequest.setHeader(AUTH, "Bearer " + token);
         httpRequest.setHeader(MIDDLEWARE_CHANNEL, CanalMW.GANAMOVIL.getCanal());
@@ -275,5 +277,44 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
         httpRequest.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode()));
         httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode()));
         return httpRequest;
+    }
+
+    @Override
+    public QrListMWResponse getListQr(QrListRequest request, Integer personId, Map<String, String> parameters) throws IOException {
+        String token = generateAccessToken().getAccessToken();
+        QrListMWRequest qrListMWRequest = QrListMWRequest.builder()
+                .personId(String.valueOf(personId))
+                .startDate(request.getFilters().getPeriod().getStart())
+                .endDate(request.getFilters().getPeriod().getEnd())
+                .build();
+        String jsonRequest = Util.objectToString(qrListMWRequest);
+        StringEntity entity = new StringEntity(jsonRequest);
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.ACH_ACCOUNTS.getName() + "/bs/v1/ach/transactions-qr";
+            HttpPost httpRequest = getHttpPost(token, parameters, path, entity);
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK) {
+                    return Util.stringToObject(jsonResponse, QrListMWResponse.class);
+                } else {
+                    AppError error = Util.mapProviderError(jsonResponse);
+                    String empty = error.getDescription();
+                    if (Objects.equals(AppError.MDWAAM_001.getDescription(), empty)) {
+                        return QrListMWResponse.builder()
+                                .data(new ArrayList<>())
+                                .build();
+                    }
+                    LOGGER.error(jsonResponse);
+                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                }
+            }
+        } catch (GenericException ex) {
+            LOGGER.error(ex);
+            throw ex;
+        } catch (Exception e) {
+            LOGGER.error(e);
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        }
     }
 }
