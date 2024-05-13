@@ -1,6 +1,7 @@
 package bg.com.bo.bff.commons.utils;
 
 import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.Currency;
 import bg.com.bo.bff.providers.dtos.responses.ApiErrorResponse;
 import bg.com.bo.bff.providers.dtos.responses.ErrorDetailResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,14 +26,20 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
-import java.util.Base64;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Util {
     private static final ObjectMapper objectMapper = createObjectMapper();
     private static final Logger LOGGER = LogManager.getLogger(Util.class.getName());
+    private static final Map<String, Currency> currencyMap = new HashMap<>();
+
+    static {
+        currencyMap.put("068", Currency.BOB);
+        currencyMap.put("978", Currency.EUR);
+        currencyMap.put("840", Currency.USD);
+        currencyMap.put("1000", Currency.UFV);
+    }
 
     private Util() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
@@ -167,7 +174,17 @@ public class Util {
     public static String getStringFromEncodedBytes(byte[] decryptedData) {
         return new String(decryptedData, StandardCharsets.UTF_8);
     }
+
     public static String encodeByteArrayToBase64(byte[] data) {
         return Base64.getEncoder().encodeToString(data);
+    }
+
+    public static String convertCurrency(String currencyCode) {
+        Currency currencyType = currencyMap.get(currencyCode);
+        if (currencyType != null) {
+            return currencyType.getSymbol();
+        } else {
+            return "Unknown";
+        }
     }
 }

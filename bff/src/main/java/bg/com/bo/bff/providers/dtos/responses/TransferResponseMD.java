@@ -1,98 +1,85 @@
 package bg.com.bo.bff.providers.dtos.responses;
 
+import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.commons.utils.UtilDate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class TransferResponseMD {
+    @JsonProperty("data")
+    private TransferMDData data;
 
-    @JsonProperty
-    @Schema(description = "idReceipt")
-    private String idReceipt;
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TransferMDData {
+        @JsonProperty("idReceipt")
+        private String idReceipt;
+        @JsonProperty("accountingEntry")
+        private String accountingEntry;
+        @JsonProperty("accountingDate")
+        private String accountingDate;
+        @JsonProperty("accountingTime")
+        private String accountingTime;
+        @JsonProperty("amountDebited")
+        private BigDecimal amountDebited;
+        @JsonProperty("amountCredited")
+        private BigDecimal amountCredited;
+        @JsonProperty("exchangeRateDebit")
+        private BigDecimal exchangeRateDebit;
+        @JsonProperty("exchangeRateCredit")
+        private BigDecimal exchangeRateCredit;
+        @JsonProperty("amount")
+        private BigDecimal amount;
+        @JsonProperty("currency")
+        private String currency;
+        @JsonProperty("fromAccountNumber")
+        private String fromAccountNumber;
+        @JsonProperty("fromHolder")
+        private String fromHolder;
+        @JsonProperty("toAccountNumber")
+        private String toAccountNumber;
+        @JsonProperty("toHolder")
+        private String toHolder;
+        @JsonProperty("description")
+        private String description;
+        @JsonProperty("fromCurrency")
+        private String fromCurrency;
+        @JsonProperty("toCurrency")
+        private String toCurrency;
+    }
 
-    @JsonProperty
-    @Schema(description = "Accounting Entry")
-    private String accountingEntry;
+    public static TransferResponseMD toFormat(TransferResponseMD response) {
+        return TransferResponseMD.builder()
+                .data(TransferMDData.builder()
+                        .idReceipt(response.getData().getIdReceipt())
+                        .accountingEntry(response.getData().getAccountingEntry())
+                        .accountingDate(UtilDate.formatDateLong(response.getData().getAccountingDate()))
+                        .accountingTime(UtilDate.formatTime(response.getData().getAccountingTime()))
+                        .amountDebited(response.getData().getAmountDebited())
+                        .amountCredited(response.getData().getAmountCredited())
+                        .exchangeRateDebit(response.getData().getExchangeRateDebit())
+                        .exchangeRateCredit(response.getData().getExchangeRateCredit())
+                        .amount(response.getData().getAmount())
+                        .currency(Util.convertCurrency(response.getData().getCurrency()))
+                        .fromAccountNumber(response.getData().getFromAccountNumber())
+                        .fromHolder(response.getData().getFromHolder())
+                        .toAccountNumber(response.getData().getToAccountNumber())
+                        .toHolder(response.getData().getToHolder())
+                        .description(response.getData().getDescription())
+                        .fromCurrency(response.getData().getFromCurrency())
+                        .toCurrency(response.getData().getToCurrency())
+                        .build())
+                .build();
 
-    @JsonProperty
-    @Schema(description = "Accounting Date")
-    private LocalDate accountingDate;
-
-    @JsonProperty
-    @Schema(description = "accountingTime")
-    private String accountingTime;
-
-    @JsonProperty
-    @Schema(description = "Status")
-    private String status;
-
-    @JsonProperty
-    @Schema(description = "amountDebited")
-    private BigDecimal amountDebited;
-
-    @JsonProperty
-    @Schema(description = "amountCredited")
-    private BigDecimal amountCredited;
-
-    @JsonProperty
-    @Schema(description = "exchangeRateDebit")
-    private BigDecimal exchangeRateDebit;
-
-    @JsonProperty
-    @Schema(description = "exchangeRateCredit")
-    private BigDecimal exchangeRateCredit;
-
-    @JsonProperty
-    @Schema(description = "Amount")
-    private BigDecimal amount;
-
-    @JsonProperty
-    @Schema(description = "Currency")
-    private String currency;
-
-    @JsonProperty
-    @Schema(description = "From account number")
-    private String fromAccountNumber;
-
-    @JsonProperty
-    @Schema(description = "From account holder")
-    private String fromHolder;
-
-    @JsonProperty
-    @Schema(description = "To account number")
-    private String toAccountNumber;
-
-    @JsonProperty
-    @Schema(description = "To account holder")
-    private String toHolder;
-
-    @JsonProperty
-    @Schema(description = "Description")
-    private String description;
-
-    @JsonProperty
-    @Schema(description = "toBankName")
-    private String toBankName;
-
-    @JsonProperty
-    @Schema(description = "From currency")
-    private String fromCurrency;
-
-    @JsonProperty
-    @Schema(description = "to currency")
-    private String toCurrency;
+    }
 
 }
