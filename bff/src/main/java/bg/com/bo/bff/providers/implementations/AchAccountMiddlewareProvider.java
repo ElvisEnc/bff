@@ -280,7 +280,7 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
     }
 
     @Override
-    public QrListMWResponse getListQr(QrListRequest request, Integer personId, Map<String, String> parameters) throws IOException {
+    public QrListMWResponse getListQrGeneratePaidMW(QrListRequest request, Integer personId, Map<String, String> parameters) throws IOException {
         String token = generateAccessToken().getAccessToken();
         QrListMWRequest qrListMWRequest = QrListMWRequest.builder()
                 .personId(String.valueOf(personId))

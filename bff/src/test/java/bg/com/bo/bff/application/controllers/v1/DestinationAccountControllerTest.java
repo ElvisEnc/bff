@@ -223,6 +223,7 @@ class DestinationAccountControllerTest {
         assertEquals(response, actual);
         verify(service).addWalletAccount(any(), any(), any());
     }
+
     @Test
     void givenValidaDAtaWhenDeleteWalletAccountThenReturnOk() throws Exception {
         // Arrange
@@ -345,7 +346,7 @@ class DestinationAccountControllerTest {
     void givenAccountNumberAndClientNameWhenGetValidateDestinationAccountThenValidateAccountResponse() throws Exception {
         // Arrange
         ValidateAccountResponse expected = ValidateAccountResponseFixture.withDefault();
-        when(service.getValidateDestinationAccounts(any(),any(),any())).thenReturn(expected);
+        when(service.getValidateDestinationAccounts(any(), any(), any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc
@@ -362,8 +363,6 @@ class DestinationAccountControllerTest {
 
         // Assert
         assertEquals(response, actual);
-        verify(service).getValidateDestinationAccounts(any(),any(),any());
-
+        verify(service).getValidateDestinationAccounts(any(), any(), any());
     }
-
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class QrListResponse {
     private List<QrGeneratedPaid> generated;
-    private Integer totalGenerated;
     private List<QrGeneratedPaid> paid;
+    private Integer totalGenerated;
     private Integer totalPaid;
 }

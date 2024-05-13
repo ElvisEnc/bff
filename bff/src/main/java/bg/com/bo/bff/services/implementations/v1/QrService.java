@@ -11,6 +11,7 @@ import bg.com.bo.bff.providers.dtos.responses.qr.QrListMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.mappings.qr.IQrMapper;
 import bg.com.bo.bff.services.interfaces.IQrService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -29,12 +30,12 @@ import java.util.stream.Collectors;
 public class QrService implements IQrService {
     private final IAchAccountProvider iAchAccountProvider;
     private final IQrMapper iQrMapper;
-    private final QrService self;
+    @Autowired
+    private QrService self;
 
-    public QrService(IAchAccountProvider iAchAccountProvider, IQrMapper iQrMapper, QrService self) {
+    public QrService(IAchAccountProvider iAchAccountProvider, IQrMapper iQrMapper) {
         this.iAchAccountProvider = iAchAccountProvider;
         this.iQrMapper = iQrMapper;
-        this.self = self;
     }
 
     @Override
@@ -72,7 +73,7 @@ public class QrService implements IQrService {
     @Caching(cacheable = {@Cacheable(value = CacheConstants.QR_GENERATED_PAID, key = "#key", condition = "#isInitial == false")},
             put = {@CachePut(value = CacheConstants.QR_GENERATED_PAID, key = "#key", condition = "#isInitial == true")})
     public List<QrGeneratedPaid> getListQrMW(QrListRequest request, Integer personId, Map<String, String> parameters, String key, Boolean isInitial) throws IOException {
-        QrListMWResponse qrListMWResponse = iAchAccountProvider.getListQr(request, personId, parameters);
+        QrListMWResponse qrListMWResponse = iAchAccountProvider.getListQrGeneratePaidMW(request, personId, parameters);
         List<QrGeneratedPaid> list = new ArrayList<>();
         for (QrGeneratedPaidMW generatedPaidMW : qrListMWResponse.getData()) {
             list.add(iQrMapper.convert(generatedPaidMW));

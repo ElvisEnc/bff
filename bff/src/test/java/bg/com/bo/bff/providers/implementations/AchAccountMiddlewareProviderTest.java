@@ -3,6 +3,7 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
+import bg.com.bo.bff.application.dtos.request.qr.QrListRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
@@ -14,6 +15,8 @@ import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.responses.*;
 import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMWResponse;
 import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.responses.qr.QrListMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.qr.QrListMWResponseFixture;
 import bg.com.bo.bff.providers.mappings.ach.account.AchAccountMWtMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -239,6 +242,72 @@ class AchAccountMiddlewareProviderTest {
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
             achAccountMiddlewareProvider.getAchAccounts(1233, new HashMap<>());
+        });
+
+        // Assert
+        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void givePersonCodeWhenGetQrListThenExpectResponse() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(QrListMWResponseFixture.withDefault());
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        QrListMWResponse response = achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrListRequestFixture.withDefault(), 123, new HashMap<>());
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response.getData(), QrListMWResponseFixture.withDefault().getData());
+    }
+
+    @Test
+    void givePersonCodeWhenGetQrListThenReturnEmptyData() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
+                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
+                        .code("MDWAAM-001")
+                        .description("MDWAAM-001")
+                        .build()))
+                .build();
+        stubFor(post(anyUrl()).willReturn(aResponse()
+                .withStatus(404)
+                .withBody(Util.objectToString(errorMiddlewareProvider))));
+
+        // Act
+        QrListMWResponse response = achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrListRequestFixture.withDefault(), 123, new HashMap<>());
+
+        // Assert
+        assertTrue(response.getData().isEmpty());
+    }
+
+    @Test
+    void giveUnexpectedErrorOccursWhenQrListThenGenericException() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        Mockito.when(httpClientFactoryMock.create()).thenThrow(new GenericException("Generic"));
+
+        // Act
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrListRequestFixture.withDefault(), 123, new HashMap<>());
+        });
+
+        // Assert
+        assertEquals("Generic", exception.getMessage());
+    }
+
+    @Test
+    void giveErrorWhenGetQrListThenRuntimeException() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
+
+        // Act
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrListRequestFixture.withDefault(), 123, new HashMap<>());
         });
 
         // Assert

@@ -19,5 +19,5 @@ public interface IAchAccountProvider {
     BanksMWResponse getBanks() throws IOException;
     BranchOfficeMWResponse getAllBranchOfficeBank(Integer code) throws IOException;
     AchAccountMWResponse getAchAccounts(Integer personId, Map<String, String> parameters) throws IOException;
-    QrListMWResponse getListQr(QrListRequest request, Integer personId,Map<String, String> parameters) throws IOException;
+    QrListMWResponse getListQrGeneratePaidMW(QrListRequest request, Integer personId, Map<String, String> parameters) throws IOException;
 }
