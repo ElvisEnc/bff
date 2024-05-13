@@ -30,8 +30,7 @@ public class AddAchAccountRequest {
     @Schema(example = "S", description = "Esta habilitado", requiredMode = Schema.RequiredMode.REQUIRED)
     private String isEnabled;
 
-    @JsonProperty(required = true)
-    @NotBlank(message = "Invalid reference.")
+
     @Schema(example = "Referencias ", description = "Referencia", requiredMode = Schema.RequiredMode.REQUIRED)
     private String reference;
 

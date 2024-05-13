@@ -24,8 +24,6 @@ public class AddWalletAccountRequest {
     @Schema(example = "123456", description = "Nro de cuenta destino.", requiredMode = Schema.RequiredMode.REQUIRED)
     private String toAccountNumber;
 
-    @JsonProperty(required = true)
-    @NotBlank(message = "Invalid reference.")
     @Schema(example = "Referencias ", description = "Referencia", requiredMode = Schema.RequiredMode.REQUIRED)
     private String reference;
 
