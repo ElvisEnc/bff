@@ -34,7 +34,7 @@ public class DestinationAccountMapper implements IDestinationAccountMapper {
         return DestinationAccount.builder()
                 .id(Long.valueOf(account.getId()))
                 .accountId(Long.valueOf(account.getAccountId()))
-                .accountNumber(Long.valueOf(account.getAccountNumber()))
+                .accountNumber(Long.valueOf(account.getAccountNumber().trim()))
                 .currencyCode(account.getCurrencyCode())
                 .currencyAcronym(account.getCurrencyAcronym())
                 .clientName(account.getClientName())
