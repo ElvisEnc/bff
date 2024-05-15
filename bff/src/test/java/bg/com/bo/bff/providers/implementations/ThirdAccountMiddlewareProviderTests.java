@@ -16,7 +16,6 @@ import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.requests.DeleteThirdAccountMWRequest;
-import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.responses.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountListMapper;
@@ -243,7 +242,7 @@ class ThirdAccountMiddlewareProviderTests {
         // Arrange
         String personId = "1";
         int identifier = 1;
-        int accountId = 1;
+        int accountNumber = 1;
         String deviceId = "1";
         String ip = "127.0.0.1";
 
@@ -253,7 +252,7 @@ class ThirdAccountMiddlewareProviderTests {
         Mockito.when(middlewareConfig.getUrlBase()).thenReturn(MiddlewareConfigFixture.withDefault().getUrlBase());
 
         DeleteThirdAccountMWRequest request = new DeleteThirdAccountMWRequest();
-        request.setAccountNumber(String.valueOf(accountId));
+        request.setAccountNumber(String.valueOf(accountNumber));
         request.setIdentifier(String.valueOf(identifier));
         request.setPersonId(personId);
 
@@ -263,7 +262,7 @@ class ThirdAccountMiddlewareProviderTests {
         stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = provider.delete(personId, identifier, accountId, deviceId, ip);
+        GenericResponse response = provider.deleteThirdAccount(personId, identifier, accountNumber, deviceId, ip);
 
         // Assert
         assertEquals(expectedResponse.getCode(), response.getCode());

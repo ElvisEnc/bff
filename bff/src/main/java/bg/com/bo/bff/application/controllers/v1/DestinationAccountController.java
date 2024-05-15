@@ -3,7 +3,6 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
-import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.BanksResponse;
@@ -23,10 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -169,16 +165,16 @@ public class DestinationAccountController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
-    @DeleteMapping("/{personId}/third-accounts/{identifier}/delete")
+    @DeleteMapping("/{personId}/third-accounts/{identifier}/accounts/{accountNumber}")
     public ResponseEntity<GenericResponse> deleteThirdAccount(
             @Valid @RequestHeader("device-id") String deviceId,
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
-            @Valid @RequestBody DeleteThirdAccountRequest request,
+            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
+            @PathVariable("accountNumber") @NotNull(message = "Invalid accountNumber") @Min(value = 1, message = "Invalid accountNumber")  @Schema(example = "1234", description = "Account ID de la cuenta.") long accountNumber,
             HttpServletRequest servletRequest
     ) throws IOException {
         String ip = servletRequest.getRemoteAddr();
-        return ResponseEntity.ok(service.delete(personId, identifier, deviceId, ip, request));
+        return ResponseEntity.ok(service.deleteThirdAccount(personId, identifier, accountNumber, deviceId, ip));
     }
 
     @Operation(summary = "Eliminación de cuenta billetera.", description = "Elimina cuenta de billetera.")
@@ -191,8 +187,8 @@ public class DestinationAccountController {
     public ResponseEntity<GenericResponse> deleteWalletAccount(
             @Valid @RequestHeader("device-id") String deviceId,
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
-            @PathVariable("accountNumber") @NotNull @Parameter(description = "Este es el número de la cuenta", example = "12345") int accountNumber,
+            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
+            @PathVariable("accountNumber") @NotNull @Parameter(description = "Este es el número de la cuenta", example = "12345") long accountNumber,
             HttpServletRequest servletRequest
     ) throws IOException {
         String ip = servletRequest.getRemoteAddr();
@@ -209,7 +205,7 @@ public class DestinationAccountController {
     public ResponseEntity<GenericResponse> deleteAchAccount(
             @Valid @RequestHeader("device-id") String deviceId,
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") int identifier,
+            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
             HttpServletRequest servletRequest
     ) throws IOException {
         String ip = servletRequest.getRemoteAddr();

@@ -3,7 +3,6 @@ package bg.com.bo.bff.services.interfaces;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
-import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
 import bg.com.bo.bff.application.dtos.response.BanksResponse;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
@@ -24,9 +23,9 @@ public interface IDestinationAccountService {
     BanksResponse getBanks() throws IOException;
     BranchOfficeResponse getBranchOffice(Integer bankCode) throws IOException;
     AccountTypeListResponse accountTypes();
-    GenericResponse delete(String personId, int identifier, String deviceId, String deviceIp, DeleteThirdAccountRequest request) throws IOException;
-    GenericResponse deleteWalletAccount(String personId, int identifier, int accountNumber,String deviceId, String deviceIp) throws IOException;
-    GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException;
+    GenericResponse deleteThirdAccount(String personId, long identifier, long accountNumber, String deviceId, String deviceIp) throws IOException;
+    GenericResponse deleteWalletAccount(String personId, long identifier, long accountNumber,String deviceId, String deviceIp) throws IOException;
+    GenericResponse deleteAchAccount(String personId, long identifier, String deviceId, String deviceIp) throws IOException;
     DestinationAccountResponse getDestinationAccounts(Integer personId, DestinationAccountRequest request, Map<String, String> parameter) throws IOException;
     ValidateAccountResponse getValidateDestinationAccounts(String accountNumber, String clientName, Map<String, String> parameter) throws IOException;
 }

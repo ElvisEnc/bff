@@ -4,7 +4,6 @@ import bg.com.bo.bff.application.dtos.Bank;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
-import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.BanksResponse;
@@ -143,18 +142,18 @@ public class DestinationAccountService implements IDestinationAccountService {
     }
 
     @Override
-    public GenericResponse delete(String personId, int identifier, String deviceId, String deviceIp, DeleteThirdAccountRequest request) throws IOException {
-        return thirdAccountProvider.delete(personId, identifier, request.getAccountId(), deviceId, deviceIp);
+    public GenericResponse deleteThirdAccount(String personId, long identifier, long accountNumber, String deviceId, String deviceIp) throws IOException {
+        return thirdAccountProvider.deleteThirdAccount(personId, identifier, accountNumber, deviceId, deviceIp);
     }
 
     @Override
-    public GenericResponse deleteWalletAccount(String personId, int identifier, int accountNumber, String deviceId, String deviceIp) throws IOException {
+    public GenericResponse deleteWalletAccount(String personId, long identifier, long accountNumber, String deviceId, String deviceIp) throws IOException {
         return thirdAccountProvider.deleteWalletAccount(personId, identifier, accountNumber, deviceId, deviceIp);
     }
 
 
     @Override
-    public GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException {
+    public GenericResponse deleteAchAccount(String personId, long identifier, String deviceId, String deviceIp) throws IOException {
         return achAccountProvider.deleteAchAccount(personId, identifier, deviceId, deviceIp);
     }
 

@@ -14,5 +14,5 @@ public interface ThirdAccountMWtMapper {
     ThirdAccountListResponse convert(ThirdAccountListMWResponse accountListMWResponse);
 
     @Mapping(target = "accountNumber", source = "accountId")
-    DeleteThirdAccountMWRequest convert(String personId, int identifier, int accountId);
+    DeleteThirdAccountMWRequest convert(String personId, long identifier, long accountId);
 }

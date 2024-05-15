@@ -147,7 +147,7 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     }
 
     @Override
-    public GenericResponse delete(String personId, int identifier, int accountId, String deviceId, String deviceIp) throws IOException {
+    public GenericResponse deleteThirdAccount(String personId, long identifier, long accountId, String deviceId, String deviceIp) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.THIRD_ACCOUNTS.getName(), middlewareConfig.getClientThirdAccount(), ProjectNameMW.THIRD_ACCOUNTS.getHeaderKey());
         DeleteThirdAccountMWRequest requestData = mapper.convert(personId, identifier, accountId);
 
@@ -186,7 +186,7 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     }
 
     @Override
-    public GenericResponse deleteWalletAccount(String personId, int identifier, int accountNumber, String deviceId, String deviceIp) throws IOException {
+    public GenericResponse deleteWalletAccount(String personId, long identifier, long accountNumber, String deviceId, String deviceIp) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.THIRD_ACCOUNTS.getName(), middlewareConfig.getClientThirdAccount(), ProjectNameMW.THIRD_ACCOUNTS.getHeaderKey());
         IErrorResponse errorResponse = ErrorResponseConverter.GenericErrorResponse.DEFAULT;
         try (CloseableHttpClient httpClient = createHttpClient()) {

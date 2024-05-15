@@ -3,7 +3,6 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
-import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequestFixture;
@@ -13,7 +12,6 @@ import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddThirdAccountResponse;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
@@ -53,7 +51,7 @@ class DestinationAccountControllerTest {
     private static final String URL_THIRD = "/api/v1/destination-accounts/1234567/third-accounts";
     private static final String URL_WALLET = "/api/v1/destination-accounts/1234567/wallets";
     private static final String URL_ACH = "/api/v1/destination-accounts/1234567/ach-accounts";
-    private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/delete";
+    private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/accounts/";
     private static final String DELETE_ACH_ACCOUNT = "/api/v1/destination-accounts/56/ach-accounts/46";
     private static final String DELETE_WALLET_ACCOUNT = "/api/v1/destination-accounts/123/wallets/456/wallet-accounts/789";
     private static final String GET_LIST_BANKS = "/api/v1/destination-accounts/banks";
@@ -157,45 +155,25 @@ class DestinationAccountControllerTest {
     void givenValidDataWhenDeleteThirdAccountThenReturnOk() throws Exception {
         // Arrange
         String personId = "23";
-        int identifier = 46;
+        long identifier = 46;
         String ip = "127.0.0.1";
         String deviceId = "123";
-
-        DeleteThirdAccountRequest request = new DeleteThirdAccountRequest();
-        request.setAccountId(1);
+        long accountNumber = 1;
 
         GenericResponse expected = new GenericResponse();
 
-        when(service.delete(personId, identifier, deviceId, ip, request)).thenReturn(expected);
+        when(service.deleteThirdAccount(personId, identifier, accountNumber, deviceId, ip)).thenReturn(expected);
 
         // Act
-        MvcResult result = mockMvc.perform(delete(DELETE_THIRD_ACCOUNT)
+        MvcResult result = mockMvc.perform(delete(DELETE_THIRD_ACCOUNT + accountNumber)
                         .header("device-id", deviceId)
                         .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(Util.objectToString(request, false)))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
         // Assert
-        verify(service).delete(personId, identifier, deviceId, ip, request);
-    }
-
-    @Test
-    void givenInvalidDataWhenDeleteThirdAccountThenReturnOk() throws Exception {
-        // Arrange
-        String deviceId = "123";
-        DeleteThirdAccountRequest request = new DeleteThirdAccountRequest();
-        request.setAccountId(0);
-
-        // Act and Assert
-        MvcResult result = mockMvc.perform(delete(DELETE_THIRD_ACCOUNT)
-                        .header("device-id", deviceId)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(Util.objectToString(request, false)))
-                .andExpect(status().isBadRequest())
-                .andReturn();
+        verify(service).deleteThirdAccount(personId, identifier, accountNumber, deviceId, ip);
     }
 
     @Test
@@ -242,7 +220,7 @@ class DestinationAccountControllerTest {
     void givenValidDataWhenDeleteAchAccountThenReturnOk() throws Exception {
         // Arrange
         String personId = "56";
-        int identifier = 46;
+        long identifier = 46;
         String ip = "127.0.0.1";
         String deviceId = "123";
 

@@ -8,5 +8,5 @@ import org.mapstruct.factory.Mappers;
 public interface AchAccountMWtMapper {
     AchAccountMWtMapper INSTANCE = Mappers.getMapper(AchAccountMWtMapper.class);
 
-    DeleteAchAccountMWRequest convert(String personId, int identifier);
+    DeleteAchAccountMWRequest convert(String personId, long identifier);
 }

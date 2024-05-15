@@ -108,7 +108,7 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
     }
 
     @Override
-    public GenericResponse deleteAchAccount(String personId, int identifier, String deviceId, String deviceIp) throws IOException {
+    public GenericResponse deleteAchAccount(String personId, long identifier, String deviceId, String deviceIp) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.ACH_ACCOUNTS.getName(), middlewareConfig.getClientAchAccount(), ProjectNameMW.ACH_ACCOUNTS.getHeaderKey());
         DeleteAchAccountMWRequest requestData = mapper.convert(personId, identifier);
 

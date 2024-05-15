@@ -3,7 +3,6 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
-import bg.com.bo.bff.application.dtos.request.DeleteThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequestFixture;
@@ -104,8 +103,7 @@ class DestinationAccountServiceTest {
     @Test
     void givenValidDataWhenDeleteAccountThenReturnOk() throws IOException {
         // Arrange
-        DeleteThirdAccountRequest request = new DeleteThirdAccountRequest();
-        request.setAccountId(1);
+        long accountNumber = 1;
         String personId = "1";
         int identifier = 1;
         String deviceId = "1";
@@ -114,13 +112,13 @@ class DestinationAccountServiceTest {
         GenericResponse expectedResponse = new GenericResponse();
         expectedResponse.setCode("SUCCESS");
         expectedResponse.setMessage("Satisfactorio");
-        when(thirdAccountProvider.delete(personId, identifier, request.getAccountId(), deviceId, ip)).thenReturn(expectedResponse);
+        when(thirdAccountProvider.deleteThirdAccount(personId, identifier, accountNumber, deviceId, ip)).thenReturn(expectedResponse);
 
         // Act
-        GenericResponse response = service.delete(personId, identifier, deviceId, ip, request);
+        GenericResponse response = service.deleteThirdAccount(personId, identifier, accountNumber, deviceId, ip);
 
         // Assert
-        verify(thirdAccountProvider).delete(personId, identifier, request.getAccountId(), deviceId, ip);
+        verify(thirdAccountProvider).deleteThirdAccount(personId, identifier, accountNumber, deviceId, ip);
         assertEquals(expectedResponse, response);
     }
 
