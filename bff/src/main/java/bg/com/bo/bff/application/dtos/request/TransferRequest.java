@@ -80,6 +80,7 @@ public class TransferRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonRootName(value = "DataTransferRequest")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Data {

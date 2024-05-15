@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import bg.com.bo.bff.application.dtos.request.Pcc01Request;
 import bg.com.bo.bff.application.dtos.response.Pcc01Response;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.services.implementations.v1.OtherAccountTransferService;
+import bg.com.bo.bff.services.implementations.v1.TransferService;
 import bg.com.bo.bff.services.interfaces.ITransferService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Assertions;
@@ -32,31 +32,22 @@ import bg.com.bo.bff.application.dtos.response.TransferResponseFixture;
 import bg.com.bo.bff.application.dtos.request.TransferRequest;
 import bg.com.bo.bff.application.dtos.response.TransferResponse;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.services.implementations.v1.OwnAccountTransferService;
 
 import java.io.IOException;
 
 @ExtendWith(MockitoExtension.class)
-class TransferOwnAccountTest {
+class TransferAccountTest {
 
     private MockMvc mockMvc;
     @InjectMocks
     private TransferController controller;
 
     @Mock
-    private OwnAccountTransferService services;
+    private TransferService service;
 
-    @Mock
-    private OtherAccountTransferService thirdServices;
-
-    @Mock
-    private ITransferService pcc01Service;
     @Mock
     private HttpServletRequest httpServletRequest;
     HttpHeaders headers = new HttpHeaders();
-
-    private static String URL_POST_OWN = "/api/v1/transfers/persons/12345/accounts/12345678/own-account";
-    private static String URL_POST_THIRD = "/api/v1/transfers/persons/1234567/third-accounts";
 
     @BeforeEach
     void setUp() {
@@ -70,11 +61,12 @@ class TransferOwnAccountTest {
     }
 
     @Test
-    void transfer() throws Exception {
+    void transferOwnAccount() throws Exception {
         TransferResponse expected = TransferResponseFixture.withDefault();
         TransferRequest request = TransferRequestFixture.withDefault();
-        when(services.transfer(any(), any(), any(), any())).thenReturn(expected);
+        when(service.transferOwnAccount(any(), any(), any(), any())).thenReturn(expected);
 
+        String URL_POST_OWN = "/api/v1/transfers/persons/12345/accounts/12345678/own-account";
         mockMvc.perform(post(URL_POST_OWN)
                         .headers(this.headers)
                         .accept(MediaType.APPLICATION_JSON)
@@ -83,18 +75,25 @@ class TransferOwnAccountTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
-        verify(services).transfer(any(), any(), any(), any());
+        verify(service).transferOwnAccount(any(), any(), any(), any());
     }
 
     @Test
     void transferThirdAccounts() throws Exception {
         TransferResponse expected = TransferResponseFixture.withDefault();
         TransferRequest request = TransferRequestFixture.withDefault();
-        when(thirdServices.transfer(any(), any())).thenReturn(expected);
+        when(service.transferThirdAccount(any(), any(), any(), any())).thenReturn(expected);
 
-        mockMvc.perform(post(URL_POST_THIRD).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(Util.objectToString(request, false))).andExpect(status().isOk()).andReturn();
-
-        verify(thirdServices).transfer(any(), any());
+        String URL_POST_THIRD = "/api/v1/transfers/persons/12345/accounts/12345678/third-account";
+        mockMvc.perform(post(URL_POST_THIRD)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request, false)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        verify(service).transferThirdAccount(any(), any(), any(), any());
     }
 
     @Test
@@ -102,7 +101,7 @@ class TransferOwnAccountTest {
         // Arrange
         Pcc01Request pcc01Request = new Pcc01Request();
         Pcc01Response pcc01Response = new Pcc01Response();
-        Mockito.when(pcc01Service.makeControl(pcc01Request)).thenReturn(pcc01Response);
+        Mockito.when(service.makeControl(pcc01Request)).thenReturn(pcc01Response);
 
         // Act
         ResponseEntity<Pcc01Response> response = controller.control(pcc01Request);

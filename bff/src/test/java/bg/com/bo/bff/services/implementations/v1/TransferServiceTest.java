@@ -9,6 +9,7 @@ import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.providers.dtos.responses.TransferMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 import bg.com.bo.bff.providers.implementations.GenerateImageProvider;
+import bg.com.bo.bff.providers.interfaces.ITransferProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,16 +21,15 @@ import java.util.Map;
 
 import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
 import bg.com.bo.bff.application.dtos.response.TransferResponse;
-import bg.com.bo.bff.providers.interfaces.ITransferOwnAccountProvider;
 
 @ExtendWith(MockitoExtension.class)
-class OwnAccountTransferServiceTest {
+class TransferServiceTest {
 
     @Mock
-    private OwnAccountTransferService service;
+    private TransferService service;
 
     @Mock
-    private ITransferOwnAccountProvider provider;
+    private ITransferProvider provider;
 
     @Mock
     private GenerateImageProvider providerImage;
@@ -44,18 +44,28 @@ class OwnAccountTransferServiceTest {
                 DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
                 DeviceMW.APP_VERSION.getCode(), "1.0.0"
         );
-        this.service = new OwnAccountTransferService(provider, providerImage);
+        this.service = new TransferService(provider, providerImage);
     }
 
     @Test
-    void transfer() throws IOException {
+    void transferOwnAccount() throws IOException {
         TransferResponseMD expected = TransferMWResponseFixture.withDefault();
-        when(provider.transfer(any(), any(), any(), any())).thenReturn(expected);
+        when(provider.transferOwnAccount(any(), any(), any(), any())).thenReturn(expected);
 
-        TransferResponse response = service.transfer("123456", "123", TransferRequestFixture.withDefault(), map);
+        TransferResponse response = service.transferOwnAccount("123456", "123", TransferRequestFixture.withDefault(), map);
         assertNotNull(response);
 
-        verify(provider).transfer(any(), any(), any(), any());
+        verify(provider).transferOwnAccount(any(), any(), any(), any());
+    }
 
+    @Test
+    void transferThirdAccount() throws IOException {
+        TransferResponseMD expected = TransferMWResponseFixture.withDefault();
+        when(provider.transferThirdAccount(any(), any(), any(), any())).thenReturn(expected);
+
+        TransferResponse response = service.transferThirdAccount("123456", "123", TransferRequestFixture.withDefault(), map);
+        assertNotNull(response);
+
+        verify(provider).transferThirdAccount(any(), any(), any(), any());
     }
 }

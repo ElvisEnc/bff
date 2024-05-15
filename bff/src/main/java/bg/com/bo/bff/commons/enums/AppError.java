@@ -65,17 +65,24 @@ public enum AppError {
     MDWRLIB_0013(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRLIB-0013", "Error en los headers. DeviceId"),
 
     //Transferencias
+    MDWTRM_001(HttpStatus.BAD_REQUEST, "SOURCE_ACCOUNT_KO", "MDWTRM-001", "No se pudo obtener datos de la cuenta de origen"),
     MDWTRM_002(HttpStatus.BAD_REQUEST, "SOURCE_ACCOUNT_KO", "MDWTRM-002", "La cuenta de origen no se encuentra operativa"),
     MDWTRM_003(HttpStatus.BAD_REQUEST, "TARGET_ACCOUNT_NOT_FOUND", "MDWTRM-003", "Error al obtener datos de la cuenta de destino"),
     MDWTRM_004(HttpStatus.BAD_REQUEST, "TARGET_ACCOUNT_KO", "MDWTRM-004", "La cuenta de destino no se encuentra operativa"),
     MDWTRM_005(HttpStatus.BAD_REQUEST, "SAME_ACCOUNT", "MDWTRM-005", "La cuenta de origen y de destino no pueden ser la misma"),
     MDWTRM_006(HttpStatus.BAD_REQUEST, "NOT_FOUND_AVAILABLE", "MDWTRM-006", "No se pudo realizar la conversión del monto"),
     MDWTRM_007(HttpStatus.BAD_REQUEST, "ERROR_ITF", "MDWTRM-007", "No se pudo realizar el cálculo del ITF"),
+    MDWTRM_008(HttpStatus.BAD_REQUEST, "NO_FUNDS_AVAILABLE", "MDWTRM-008", "La cuenta no tiene fondos suficientes para realizar la transferencia"),
     MDWTRM_010(HttpStatus.BAD_REQUEST, "LIMIT_KO", "MDWTRM-010", "No se pudo realizar la transferencia, límites superados"),
     MDWTRM_011(HttpStatus.BAD_REQUEST, "VALIDATE_COMBINATION", "MDWTRM-011", "Se requieren permisos de firmantes para realizar la transferencia"),
     MDWTRM_012(HttpStatus.INTERNAL_SERVER_ERROR, "TRANSFER_KO", "MDWTRM-012", "Error de procesamiento de transferencia"),
+    MDWTRM_013(HttpStatus.BAD_REQUEST, "NOT_FOUND_AVAILABLE", "MDWTRM-013", "No se pudo obtener los datos del préstamo"),
+    MDWTRM_014(HttpStatus.BAD_REQUEST, "PAYMENT_LOAND_ERROR", "MDWTRM-014", "Se produjo un error al procesar el pago del préstamo"),
+    MDWTRM_015(HttpStatus.BAD_REQUEST, "NOT_FOUND_RECEIPT", "MDWTRM-015", "Hubo un problema al recuperar los datos del bono"),
+    MDWTRM_016(HttpStatus.BAD_REQUEST, "VOUCHER_PAYMENT_KO", "MDWTRM-016", "Se produjo un error al recuperar los datos del comprobante de préstamo"),
     MDWTRM_018(HttpStatus.BAD_REQUEST, "INVALID_CURRENCY", "MDWTRM-018", "Problemas con el tipo de la moneda"),
     MDWTRM_023(HttpStatus.BAD_REQUEST, "TRANSACTION_NOT_ALLOWED", "MDWTRM-023", "No se pudo realizar la transacción, no esta permitida"),
+    MDWTRM_041(HttpStatus.BAD_REQUEST, "LIMIT_KO", "MDWTRM-041", "No se pudo realizar la transferencia, actualiza el límite diario"),
 
     // Genericos
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "Error en los parametros"),

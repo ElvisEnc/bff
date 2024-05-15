@@ -9,6 +9,7 @@ import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.implementations.TransferMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.pcc01.Pcc01Mapper;
+import bg.com.bo.bff.providers.mappings.transfer.TransferMWtMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -71,7 +72,7 @@ class Pcc01MiddlewareProviderTest {
 
     @BeforeEach
     void setup() {
-        pcc01MiddlewareProvider = new TransferMiddlewareProvider(tokenMiddlewareProviderMock, httpClientFactoryMock, Pcc01Mapper.INSTANCE, middlewareConfigMock);
+        pcc01MiddlewareProvider = new TransferMiddlewareProvider(tokenMiddlewareProviderMock, httpClientFactoryMock, Pcc01Mapper.INSTANCE, middlewareConfigMock, TransferMWtMapper.INSTANCE);
         pcc01Request = new Pcc01Request();
         pcc01Request.setCurrency("840");
         pcc01Request.setAmount(10.00);
