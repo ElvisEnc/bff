@@ -1,12 +1,11 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
-import bg.com.bo.bff.application.dtos.requests.UpdateTransactionLimitRequestFixture;
+import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponse;
 import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.commons.enums.Headers;
 import bg.com.bo.bff.models.Account;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
@@ -54,7 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-class AccountApiTests {
+class AccountControllerTest {
 
     private static final String TRANSACTION_LIMIT_UPDATE_URL = "/api/v1/accounts/persons/{personId}/account/{accountId}/transactional-limits";
     private static final String TRANSACTION_LIMIT_GET_URL = "/api/v1/accounts/persons/{personId}/account/{accountId}/transactional-limits";

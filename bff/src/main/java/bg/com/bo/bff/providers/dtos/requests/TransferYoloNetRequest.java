@@ -12,19 +12,19 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransferYoloNetRequest {
-    private String intCodIdioma;           // 1,
-    private String intPersonaRol;          // 32992,
-    private String intCodAplicacion;       // 20
-    private String strTokenSegundoFactor;   // "0",
-    private Integer intCodPersona;          // 1086139,
-    private Integer intJtsCuentaOrigen;     // 1943770,
-    private Integer strNroCuentaOrigen;      //  "1310104470",
-    private Integer intNroCuentaDestino;    // 70292838,
-    private BigDecimal dblImporteTransaccion;  // 1478,
-    private String intMonedaTran;          // 0.5,
-    private String strDescripcion;          // "Transferencia billetera",
-    private String strOrigenUIF;            // "",
-    private String strDestinoUIF;           // "",
-    private String strMotivoUIF;            // "",
-    private String strGlosaDestino;         // "Transferencia billetera",
+    private String intCodIdioma;
+    private String intPersonaRol;
+    private String intCodAplicacion;
+    private String strTokenSegundoFactor;
+    private Integer intCodPersona;
+    private Integer intJtsCuentaOrigen;
+    private Integer strNroCuentaOrigen;
+    private Integer intNroCuentaDestino;
+    private BigDecimal dblImporteTransaccion;
+    private String intMonedaTran;
+    private String strDescripcion;
+    private String strOrigenUIF;
+    private String strDestinoUIF;
+    private String strMotivoUIF;
+    private String strGlosaDestino;
 }

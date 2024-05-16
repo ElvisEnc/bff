@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.requests.UpdateTransactionLimitMWRequestFixture;
+import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitMWRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.exceptions.RequestException;
 import bg.com.bo.bff.commons.enums.DeviceMW;

@@ -18,14 +18,17 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 @Service
 public class TransferYoloNetProvider implements ITransferYoloNetProvider {
-    private IHttpClientFactory httpClientFactory;
-    private IYoloMapper iYoloMapper;
+    @Value("${url.autoservicio.net}")
+    private String urlProviderYoloNet;
+    private final IHttpClientFactory httpClientFactory;
+    private final IYoloMapper iYoloMapper;
     private static final Logger LOGGER = LogManager.getLogger(TransferYoloNetProvider.class.getName());
 
     public TransferYoloNetProvider(IHttpClientFactory httpClientFactory, IYoloMapper iYoloMapper) {
@@ -35,25 +38,9 @@ public class TransferYoloNetProvider implements ITransferYoloNetProvider {
 
     @Override
     public TransferResponseMD transferToYolo(Integer personId, Integer accountId, Integer accountNumber, TransferRequest request) throws IOException {
-        TransferYoloNetRequest requestDataYolo = TransferYoloNetRequest.builder()
-                .intCodIdioma(AppDataYoloNet.COD_IDIOMA.getValue())
-                .intPersonaRol(AppDataYoloNet.COD_ROL.getValue())
-                .intCodAplicacion(AppDataYoloNet.COD_APP.getValue())
-                .strTokenSegundoFactor(AppDataYoloNet.SECOND_FACTOR.getValue())
-                .intCodPersona(personId)
-                .intJtsCuentaOrigen(accountId)
-                .strNroCuentaOrigen(accountNumber)
-                .intNroCuentaDestino(request.getTargetAccount().getId())
-                .dblImporteTransaccion(request.getAmount().getAmount())
-                .intMonedaTran(request.getAmount().getCurrency())
-                .strDescripcion(request.getData().getDescription())
-                .strOrigenUIF(request.getData().getSourceOfFounds())
-                .strDestinoUIF(request.getData().getDestinationOfFounds())
-                .strMotivoUIF(request.getData().getDestinationOfFounds())
-                .strGlosaDestino(request.getData().getDescription())
-                .build();
+        TransferYoloNetRequest requestDataYolo = iYoloMapper.mapperRequest(personId, accountId, accountNumber, request);
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
-            String path = AppDataYoloNet.URL.getValue();
+            String path = urlProviderYoloNet + "Transferencias/RealizarTranferenciaBilletera";
             String jsonMapper = Util.objectToString(requestDataYolo);
             StringEntity entity = new StringEntity(jsonMapper);
 
@@ -66,7 +53,7 @@ public class TransferYoloNetProvider implements ITransferYoloNetProvider {
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
                     TransferYoloNetResponse response = Util.stringToObject(jsonResponse, TransferYoloNetResponse.class);
-                    return TransferResponseMD.toFormat(iYoloMapper.convert(response));
+                    return TransferResponseMD.toFormat(iYoloMapper.convertResponse(response));
                 }
                 LOGGER.error(jsonResponse);
                 AppError error = Util.mapProviderError(jsonResponse);

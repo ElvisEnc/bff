@@ -64,7 +64,6 @@ public class TransferController {
                 appVersion)));
     }
 
-
     @Operation(summary = "Transfer Third Accounts Request", description = "Transferencias a cuentas de terceros")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Devuelve el identificador de un comprobante", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json")),
@@ -118,7 +117,6 @@ public class TransferController {
             @ApiResponse(responseCode = "400", description = "Existe un error en los datos otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Ocurrio un error no controlado.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
-
     @PostMapping("/validate-digital")
     public ResponseEntity<Pcc01Response> control(@Valid @RequestBody Pcc01Request request) throws IOException {
         return ResponseEntity.ok(service.makeControl(request));

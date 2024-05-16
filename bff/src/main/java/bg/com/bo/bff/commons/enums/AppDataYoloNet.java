@@ -9,8 +9,7 @@ public enum AppDataYoloNet {
     COD_IDIOMA("1"),
     COD_ROL("7"),
     COD_APP("20"),
-    SECOND_FACTOR(""),
-    URL("http://172.16.1.13/AutoServicio/api/Transferencias/RealizarTranferenciaBilletera");
+    SECOND_FACTOR("");
 
     private final String value;
 }

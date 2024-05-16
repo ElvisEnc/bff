@@ -212,8 +212,8 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
                     return Util.stringToObject(jsonResponse, BranchOfficeMWResponse.class);
                 } else {
                     AppError error = Util.mapProviderError(jsonResponse);
-                    String empty = error.getDescription();
-                    if (Objects.equals(AppError.MDWAAM_001.getDescription(), empty)) {
+                    String empty = error.getCodeMiddleware();
+                    if (Objects.equals(AppError.MDWAAM_001.getCodeMiddleware(), empty)) {
                         return BranchOfficeMWResponse.builder()
                                 .data(BranchOfficeMWResponse.BranchOfficeMWData.builder()
                                         .response(new ArrayList<>())
@@ -246,8 +246,8 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
                     return Util.stringToObject(jsonResponse, AchAccountMWResponse.class);
                 } else {
                     AppError error = Util.mapProviderError(jsonResponse);
-                    String empty = error.getDescription();
-                    if (Objects.equals(AppError.MDWAAM_004.getDescription(), empty) || Objects.equals(AppError.MDWAAM_010.getDescription(), empty)) {
+                    String empty = error.getCodeMiddleware();
+                    if (Objects.equals(AppError.MDWAAM_004.getCodeMiddleware(), empty) || Objects.equals(AppError.MDWAAM_010.getCodeMiddleware(), empty)) {
                         return AchAccountMWResponse.builder()
                                 .data(new ArrayList<>())
                                 .build();
@@ -299,8 +299,8 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
                     return Util.stringToObject(jsonResponse, QrListMWResponse.class);
                 } else {
                     AppError error = Util.mapProviderError(jsonResponse);
-                    String empty = error.getDescription();
-                    if (Objects.equals(AppError.MDWAAM_001.getDescription(), empty)) {
+                    String empty = error.getCodeMiddleware();
+                    if (Objects.equals(AppError.MDWAAM_001.getCodeMiddleware(), empty)) {
                         return QrListMWResponse.builder()
                                 .data(new ArrayList<>())
                                 .build();

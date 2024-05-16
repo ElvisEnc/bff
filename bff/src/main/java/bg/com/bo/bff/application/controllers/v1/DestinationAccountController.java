@@ -244,7 +244,6 @@ public class DestinationAccountController {
     })
     @GetMapping("")
     public ResponseEntity<ValidateAccountResponse> getValidationDestinationAccount(
-
             @Parameter(description = "Nro. de Cuenta", example = "1234567", required = true)
             @RequestParam(name = "accountNumber", required = true)
             @NotBlank(message = "No debe tener espacios en blanco")

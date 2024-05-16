@@ -66,8 +66,8 @@ public class DeviceEnrollmentProvider implements IDeviceEnrollmentProvider {
             } else {
                 LOGGER.error(jsonResponse);
                 AppError error = Util.mapProviderError(jsonResponse);
-                String notEnrolled= error.getDescription();
-                if(Objects.equals(notEnrolled, AppError.MDWRLIB_0003.getDescription())) {
+                String notEnrolled= error.getCodeMiddleware();
+                if(Objects.equals(notEnrolled, AppError.MDWRLIB_0003.getCodeMiddleware())) {
                     DeviceEnrollmentMWResponse notEnrolledReponse = new DeviceEnrollmentMWResponse();
                     notEnrolledReponse.setStatusCode("NOT_ENROLLED");
                     return notEnrolledReponse;

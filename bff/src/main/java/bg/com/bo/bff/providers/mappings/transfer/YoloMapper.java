@@ -1,5 +1,8 @@
 package bg.com.bo.bff.providers.mappings.transfer;
 
+import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
+import bg.com.bo.bff.commons.enums.AppDataYoloNet;
+import bg.com.bo.bff.providers.dtos.requests.TransferYoloNetRequest;
 import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 import bg.com.bo.bff.providers.dtos.responses.TransferYoloNetResponse;
 import org.springframework.stereotype.Component;
@@ -10,10 +13,30 @@ import java.util.Map;
 import java.util.Objects;
 
 @Component
-public class YoloMapper implements IYoloMapper{
+public class YoloMapper implements IYoloMapper {
+
+    public TransferYoloNetRequest mapperRequest(Integer personId, Integer accountId, Integer accountNumber, TransferRequest request) {
+        return TransferYoloNetRequest.builder()
+                .intCodIdioma(AppDataYoloNet.COD_IDIOMA.getValue())
+                .intPersonaRol(AppDataYoloNet.COD_ROL.getValue())
+                .intCodAplicacion(AppDataYoloNet.COD_APP.getValue())
+                .strTokenSegundoFactor(AppDataYoloNet.SECOND_FACTOR.getValue())
+                .intCodPersona(personId)
+                .intJtsCuentaOrigen(accountId)
+                .strNroCuentaOrigen(accountNumber)
+                .intNroCuentaDestino(request.getTargetAccount().getId())
+                .dblImporteTransaccion(request.getAmount().getAmount())
+                .intMonedaTran(request.getAmount().getCurrency())
+                .strDescripcion(request.getData().getDescription())
+                .strOrigenUIF(request.getData().getSourceOfFounds())
+                .strDestinoUIF(request.getData().getDestinationOfFounds())
+                .strMotivoUIF(request.getData().getDestinationOfFounds())
+                .strGlosaDestino(request.getData().getDescription())
+                .build();
+    }
 
     @Override
-    public TransferResponseMD convert(TransferYoloNetResponse yoloNetResponse){
+    public TransferResponseMD convertResponse(TransferYoloNetResponse yoloNetResponse) {
         TransferResponseMD.TransferMDData transferResponse = TransferResponseMD.TransferMDData.builder().build();
         Object firstElement = yoloNetResponse.getDatos().get(0);
 

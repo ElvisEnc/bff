@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class ThirdAccountApiTest {
+class ThirdAccountControllerTest {
     @InjectMocks
     private ThirdAccountController accountController;
 

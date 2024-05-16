@@ -92,13 +92,13 @@ public enum AppError {
 
     private final HttpStatus httpCode;
     private final String code;
-    private final String description;
+    private final String codeMiddleware;
     private final String message;
 
     public static AppError findByCode(String description) {
 
         for (AppError constant : AppError.values()) {
-            if (constant.getDescription().equals(description)) {
+            if (constant.getCodeMiddleware().equals(description)) {
                 return constant;
             }
         }

@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class AccountStatementProvider implements IAccountStatementProvider {
@@ -96,10 +95,10 @@ public class AccountStatementProvider implements IAccountStatementProvider {
                 AppError error = Util.mapProviderError(responseMW);
 
                 List<String> noRecordList = new ArrayList<>();
-                noRecordList.add(AppError.MDWACM_008.getDescription());
-                noRecordList.add(AppError.MDWACM_002.getDescription());
+                noRecordList.add(AppError.MDWACM_008.getCodeMiddleware());
+                noRecordList.add(AppError.MDWACM_002.getCodeMiddleware());
 
-                if (noRecordList.contains(error.getDescription())) {
+                if (noRecordList.contains(error.getCodeMiddleware())) {
                     AccountReportBasicResponse basicResponse = new AccountReportBasicResponse();
                     List<AccountReportBasicResponse.AccountReportData> dataEmpty = new ArrayList<>();
                     basicResponse.setData(dataEmpty);
@@ -151,10 +150,10 @@ public class AccountStatementProvider implements IAccountStatementProvider {
                 AppError error = Util.mapProviderError(responseMW);
 
                 List<String> noRecordList = new ArrayList<>();
-                noRecordList.add(AppError.MDWACM_008.getDescription());
-                noRecordList.add(AppError.MDWACM_002.getDescription());
+                noRecordList.add(AppError.MDWACM_008.getCodeMiddleware());
+                noRecordList.add(AppError.MDWACM_002.getCodeMiddleware());
 
-                if (noRecordList.contains(error.getDescription())) {
+                if (noRecordList.contains(error.getCodeMiddleware())) {
                     AccountReportBasicResponse basicResponse = new AccountReportBasicResponse();
                     List<AccountReportBasicResponse.AccountReportData> dataEmpty = new ArrayList<>();
                     basicResponse.setData(dataEmpty);

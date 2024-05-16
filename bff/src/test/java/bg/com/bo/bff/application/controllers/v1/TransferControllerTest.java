@@ -60,18 +60,39 @@ class TransferControllerTest {
     }
 
     @Test
-    void givenRequestWhenPcc01ControlThenResponseValidate() throws IOException {
-        // Arrange
-        Pcc01Request pcc01Request = new Pcc01Request();
-        Pcc01Response pcc01Response = new Pcc01Response();
-        Mockito.when(transferService.makeControl(pcc01Request)).thenReturn(pcc01Response);
+    void transferOwnAccount() throws Exception {
+        TransferResponse expected = TransferResponseFixture.withDefault();
+        TransferRequest request = TransferRequestFixture.withDefault();
+        when(transferService.transferOwnAccount(any(), any(), any(), any())).thenReturn(expected);
 
-        // Act
-        ResponseEntity<Pcc01Response> response = controller.control(pcc01Request);
+        String URL_POST_OWN = "/api/v1/transfers/persons/12345/accounts/12345678/own-account";
+        mockMvc.perform(post(URL_POST_OWN)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request, false)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        verify(transferService).transferOwnAccount(any(), any(), any(), any());
+    }
 
-        // Assert
-        assert response.getStatusCode().value() == HttpStatus.OK.value();
-        Assertions.assertNotNull(response.getBody());
+    @Test
+    void transferThirdAccounts() throws Exception {
+        TransferResponse expected = TransferResponseFixture.withDefault();
+        TransferRequest request = TransferRequestFixture.withDefault();
+        when(transferService.transferThirdAccount(any(), any(), any(), any())).thenReturn(expected);
+
+        String URL_POST_THIRD = "/api/v1/transfers/persons/12345/accounts/12345678/third-account";
+        mockMvc.perform(post(URL_POST_THIRD)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request, false)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        verify(transferService).transferThirdAccount(any(), any(), any(), any());
     }
 
     @Test
@@ -93,5 +114,20 @@ class TransferControllerTest {
 
         // Assert
         verify(transferService).transferWallet(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void givenRequestWhenPcc01ControlThenResponseValidate() throws IOException {
+        // Arrange
+        Pcc01Request pcc01Request = new Pcc01Request();
+        Pcc01Response pcc01Response = new Pcc01Response();
+        Mockito.when(transferService.makeControl(pcc01Request)).thenReturn(pcc01Response);
+
+        // Act
+        ResponseEntity<Pcc01Response> response = controller.control(pcc01Request);
+
+        // Assert
+        assert response.getStatusCode().value() == HttpStatus.OK.value();
+        Assertions.assertNotNull(response.getBody());
     }
 }

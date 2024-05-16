@@ -1,7 +1,7 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
-import bg.com.bo.bff.application.dtos.requests.UpdateTransactionLimitRequestFixture;
+import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponse;
 import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponseFixture;
