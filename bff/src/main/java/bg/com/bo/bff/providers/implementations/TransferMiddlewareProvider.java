@@ -2,7 +2,7 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.Pcc01Request;
-import bg.com.bo.bff.application.dtos.request.TransferRequest;
+import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.dtos.response.Pcc01Response;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.*;
@@ -68,16 +68,16 @@ public class TransferMiddlewareProvider implements ITransferProvider {
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String responseEntity = EntityUtils.toString(httpResponse.getEntity());
-                if(statusCode == HttpStatus.SC_OK){
+                if (statusCode == HttpStatus.SC_OK) {
                     Pcc01MWResponse pcc01MWResponse = objectMapper.readValue(responseEntity, Pcc01MWResponse.class);
                     return pcc01Mapper.convert(pcc01MWResponse);
-                }else {
+                } else {
                     AppError error = Util.mapProviderError(responseEntity);
                     LOGGER.error(responseEntity);
                     throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
                 }
             }
-        }  catch (GenericException ex) {
+        } catch (GenericException ex) {
             LOGGER.error(ex);
             throw ex;
         } catch (Exception e) {
@@ -88,9 +88,7 @@ public class TransferMiddlewareProvider implements ITransferProvider {
 
     @Override
     public TransferResponseMD transferOwnAccount(String personId, String accountId, TransferRequest request, Map<String, String> parameters) throws IOException {
-
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
-
         TransferMWRequest requestData = transferMapper.convert(personId, accountId, request);
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
@@ -113,7 +111,6 @@ public class TransferMiddlewareProvider implements ITransferProvider {
                 if (statusCode == HttpStatus.SC_OK) {
                     return TransferResponseMD.toFormat(Util.stringToObject(jsonResponse, TransferResponseMD.class));
                 }
-
                 LOGGER.error(jsonResponse);
                 AppError error = Util.mapProviderError(jsonResponse);
                 throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
@@ -129,16 +126,12 @@ public class TransferMiddlewareProvider implements ITransferProvider {
 
     @Override
     public TransferResponseMD transferThirdAccount(String personId, String accountId, TransferRequest request, Map<String, String> parameters) throws IOException {
-
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
-
         TransferMWRequest requestData = transferMapper.convert(personId, accountId, request);
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
-
             String pathGetAccounts = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/transfer/same-bank/to-other-accounts/";
             HttpPost httpPost = new HttpPost(pathGetAccounts);
-
             httpPost.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
             httpPost.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
             httpPost.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
@@ -155,7 +148,6 @@ public class TransferMiddlewareProvider implements ITransferProvider {
                 if (statusCode == HttpStatus.SC_OK) {
                     return TransferResponseMD.toFormat(Util.stringToObject(jsonResponse, TransferResponseMD.class));
                 }
-
                 LOGGER.error(jsonResponse);
                 AppError error = Util.mapProviderError(jsonResponse);
                 throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());

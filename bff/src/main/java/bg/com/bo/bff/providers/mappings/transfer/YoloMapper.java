@@ -1,0 +1,60 @@
+package bg.com.bo.bff.providers.mappings.transfer;
+
+import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
+import bg.com.bo.bff.providers.dtos.responses.TransferYoloNetResponse;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+@Component
+public class YoloMapper implements IYoloMapper{
+
+    @Override
+    public TransferResponseMD convert(TransferYoloNetResponse yoloNetResponse){
+        TransferResponseMD.TransferMDData transferResponse = TransferResponseMD.TransferMDData.builder().build();
+        Object firstElement = yoloNetResponse.getDatos().get(0);
+
+        Map<String, Object> firstMap = (Map<String, Object>) firstElement;
+        transferResponse.setIdReceipt(String.valueOf(firstMap.get("NroTransaccion")));
+        String mensaje = (String) firstMap.get("Mensaje");
+        Integer tipoSolicitud = (Integer) firstMap.get("TipoSolicitud");
+
+        Object secondElement = yoloNetResponse.getDatos().get(1);
+
+        List<Object> secondList = (List<Object>) secondElement;
+        for (Object obj : secondList) {
+            if (obj instanceof Map) {
+                Map<String, Object> map = (Map<String, Object>) obj;
+                transferResponse.setAccountingEntry(String.valueOf(map.get("NRO_TRANSFERENCIA")));
+                transferResponse.setAccountingDate((String) map.get("FECHATRANSACCION"));
+                transferResponse.setAccountingTime((String) map.get("HORATRANSACCION"));
+                String equivalenteMontoOrigen = ((String) map.get("EQUIVALENTE_MONTO_ORIGEN")).trim().replaceAll(",", "");
+                transferResponse.setAmountDebited(new BigDecimal(equivalenteMontoOrigen));
+                String equivalenteMontoDestino = ((String) map.get("EQUIVALENTE_MONTO_DESTINO")).trim().replaceAll(",", "");
+                transferResponse.setAmountCredited(new BigDecimal(equivalenteMontoDestino));
+                String tipoCambioOrigen = ((String) map.get("TIPO_CAMBIO_ORIGEN")).trim().replaceAll(",", "");
+                transferResponse.setExchangeRateDebit(new BigDecimal(tipoCambioOrigen));
+                String tipoCambio = ((String) map.get("TIPO_CAMBIO")).trim().replaceAll(",", "");
+                transferResponse.setExchangeRateCredit(new BigDecimal(tipoCambio));
+                String importeOrigen = ((String) map.get("IMPORTE_ORIGEN")).trim().replaceAll(",", "");
+                transferResponse.setAmount(new BigDecimal(importeOrigen));
+                String moneda = Objects.equals(map.get("MONEDA_ORIGEN"), "Bs") ? "068" : "840";
+                transferResponse.setCurrency(moneda);
+                transferResponse.setFromAccountNumber((String) map.get("CUENTA_ORIGEN"));
+                transferResponse.setFromHolder((String) map.get("NOMBRE_CLIENTE_ORIGEN"));
+                transferResponse.setToAccountNumber((String) map.get("CUENTA_DESTINO"));
+                transferResponse.setToHolder((String) map.get("NOMBRE_CLIENTE_DESTINO"));
+                transferResponse.setDescription((String) map.get("DESCRIPCION_ORIGEN"));
+                transferResponse.setFromCurrency(moneda);
+                transferResponse.setToCurrency(moneda);
+            }
+        }
+
+        return TransferResponseMD.builder()
+                .data(transferResponse)
+                .build();
+    }
+}

@@ -1,5 +1,8 @@
 package bg.com.bo.bff.providers.implementations;
 
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.AppError;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -12,7 +15,6 @@ import java.io.IOException;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.application.exceptions.RequestException;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
@@ -34,26 +36,28 @@ public class TokenMiddlewareProvider implements ITokenMiddlewareProvider {
 
     @Override
     public ClientToken generateAccountAccessToken(String project, String clientSecret, String headerKeyToken) throws IOException {
-        boolean propagateException = false;
-
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String pathPostToken = middlewareConfig.getUrlBase() + project + middlewareConfig.getTokenPath();
             HttpPost postGenerateAccessToken = new HttpPost(pathPostToken);
             postGenerateAccessToken.setHeader(headerKeyToken, clientSecret);
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(postGenerateAccessToken)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String responseToken = EntityUtils.toString(httpResponse.getEntity());
-                return Util.stringToObject(responseToken, ClientToken.class);
-            } catch (Exception e) {
-                propagateException = true;
-                LOGGER.error(e);
-                throw new RequestException("Hubo un error no controlado al realizar el requestToken");
+                if (statusCode == HttpStatus.SC_OK)
+                    return Util.stringToObject(responseToken, ClientToken.class);
+                else {
+                    AppError error = Util.mapProviderError(responseToken);
+                    LOGGER.error(responseToken);
+                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                }
             }
+        } catch (GenericException ex) {
+            LOGGER.error(ex);
+            throw ex;
         } catch (Exception e) {
-            if (propagateException)
-                throw e;
             LOGGER.error(e);
-            throw new RuntimeException("Hubo un error no controlado al crear el clienteToken");
+            throw new GenericException("Hubo un error no controlado al crear el clienteToken");
         }
     }
 }

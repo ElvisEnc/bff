@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DestinationAccountRequest {
-    @Schema(example = "Kar", description = "Nombre a buscar entre las cuentas a transferir")
+    @Schema(example = "", description = "Nombre a buscar entre las cuentas a transferir")
     @Pattern(regexp = "^$|.{3,}", message = "El nombre puede ser vacío o tiene que tener arriba de 3 caracteres")
     private String name;
 

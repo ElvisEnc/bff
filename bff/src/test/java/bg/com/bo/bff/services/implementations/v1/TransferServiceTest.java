@@ -1,15 +1,13 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
+import bg.com.bo.bff.application.dtos.response.TransferResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.providers.dtos.responses.TransferMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
-import bg.com.bo.bff.providers.implementations.GenerateImageProvider;
+import bg.com.bo.bff.providers.interfaces.IGenerateImage;
 import bg.com.bo.bff.providers.interfaces.ITransferProvider;
+import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,21 +17,25 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.util.Map;
 
-import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
-import bg.com.bo.bff.application.dtos.response.TransferResponse;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TransferServiceTest {
-
-    @Mock
     private TransferService service;
-
     @Mock
-    private ITransferProvider provider;
-
+    private ITransferProvider transferProvider;
     @Mock
-    private GenerateImageProvider providerImage;
+    private IGenerateImage generateImageProvider;
+    @Mock
+    private ITransferYoloNetProvider transferYoloNetProvider;
     private Map<String, String> map;
+    private final Integer personId = 123;
+    private final Integer accountId = 10213215;
+    private final Integer accountNumber = 121235468;
+
     @BeforeEach
     void setUp() {
         this.map = Map.of(
@@ -44,28 +46,42 @@ class TransferServiceTest {
                 DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
                 DeviceMW.APP_VERSION.getCode(), "1.0.0"
         );
-        this.service = new TransferService(provider, providerImage);
+        this.service = new TransferService(transferProvider, generateImageProvider, transferYoloNetProvider);
     }
 
     @Test
     void transferOwnAccount() throws IOException {
         TransferResponseMD expected = TransferMWResponseFixture.withDefault();
-        when(provider.transferOwnAccount(any(), any(), any(), any())).thenReturn(expected);
+        when(transferProvider.transferOwnAccount(any(), any(), any(), any())).thenReturn(expected);
 
         TransferResponse response = service.transferOwnAccount("123456", "123", TransferRequestFixture.withDefault(), map);
         assertNotNull(response);
 
-        verify(provider).transferOwnAccount(any(), any(), any(), any());
+        verify(transferProvider).transferOwnAccount(any(), any(), any(), any());
     }
 
     @Test
     void transferThirdAccount() throws IOException {
         TransferResponseMD expected = TransferMWResponseFixture.withDefault();
-        when(provider.transferThirdAccount(any(), any(), any(), any())).thenReturn(expected);
+        when(transferProvider.transferThirdAccount(any(), any(), any(), any())).thenReturn(expected);
 
         TransferResponse response = service.transferThirdAccount("123456", "123", TransferRequestFixture.withDefault(), map);
         assertNotNull(response);
 
-        verify(provider).transferThirdAccount(any(), any(), any(), any());
+        verify(transferProvider).transferThirdAccount(any(), any(), any(), any());
+    }
+
+    @Test
+    void givePersonCodeAndAccountWhenTransferWalletThenReturnSuccess() throws IOException {
+        // Arrange
+        TransferResponseMD expected = TransferMWResponseFixture.withDefault();
+        when(transferYoloNetProvider.transferToYolo(any(), any(), any(), any())).thenReturn(expected);
+
+        // Act
+        TransferResponse response = service.transferWallet(personId,accountId,accountNumber, TransferRequestFixture.withDefault(),map);
+
+        // Assert
+        assertNotNull(response);
+        verify(transferYoloNetProvider).transferToYolo(any(), any(), any(), any());
     }
 }

@@ -1,10 +1,7 @@
 package bg.com.bo.bff.providers.mappings.transfer;
 
-import bg.com.bo.bff.application.dtos.request.TransferRequest;
-import bg.com.bo.bff.models.ThirdAccountListResponse;
-import bg.com.bo.bff.providers.dtos.requests.DeleteThirdAccountMWRequest;
+import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.providers.dtos.requests.TransferMWRequest;
-import bg.com.bo.bff.providers.dtos.responses.ThirdAccountListMWResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;

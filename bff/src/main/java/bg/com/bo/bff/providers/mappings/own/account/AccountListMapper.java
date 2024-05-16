@@ -1,4 +1,4 @@
-package bg.com.bo.bff.providers.mappings.account;
+package bg.com.bo.bff.providers.mappings.own.account;
 
 import bg.com.bo.bff.providers.dtos.responses.accounts.AccountListMWResponse;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;

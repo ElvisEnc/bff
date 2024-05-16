@@ -11,7 +11,7 @@ import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementCsvProvider;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementPdfProvider;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
-import bg.com.bo.bff.commons.adapters.AccountStatementAdapter;
+import bg.com.bo.bff.providers.mappings.account.statement.AccountStatementAdapter;
 import bg.com.bo.bff.services.interfaces.IExportService;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,6 @@ import java.io.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class ExportService implements IExportService {

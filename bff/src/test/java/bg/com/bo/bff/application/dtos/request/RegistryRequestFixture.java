@@ -1,11 +1,9 @@
 package bg.com.bo.bff.application.dtos.request;
 
-import bg.com.bo.bff.application.dtos.request.TransferRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryCredentialsRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryDeviceIdentificatorRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryOldDeviceIdentificatorRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
-import bg.com.bo.bff.providers.dtos.requests.loginagn.CredentialsRequest;
 
 public class RegistryRequestFixture {
 

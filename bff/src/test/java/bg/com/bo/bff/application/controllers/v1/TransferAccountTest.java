@@ -10,7 +10,6 @@ import bg.com.bo.bff.application.dtos.request.Pcc01Request;
 import bg.com.bo.bff.application.dtos.response.Pcc01Response;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.services.implementations.v1.TransferService;
-import bg.com.bo.bff.services.interfaces.ITransferService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +28,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
 import bg.com.bo.bff.application.dtos.response.TransferResponseFixture;
-import bg.com.bo.bff.application.dtos.request.TransferRequest;
+import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.dtos.response.TransferResponse;
 import bg.com.bo.bff.commons.utils.Util;
 
@@ -37,14 +36,11 @@ import java.io.IOException;
 
 @ExtendWith(MockitoExtension.class)
 class TransferAccountTest {
-
     private MockMvc mockMvc;
     @InjectMocks
     private TransferController controller;
-
     @Mock
     private TransferService service;
-
     @Mock
     private HttpServletRequest httpServletRequest;
     HttpHeaders headers = new HttpHeaders();

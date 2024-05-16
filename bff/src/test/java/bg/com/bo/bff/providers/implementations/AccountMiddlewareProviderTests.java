@@ -17,7 +17,7 @@ import bg.com.bo.bff.providers.dtos.responses.accounts.AccountListMWMetadata;
 import bg.com.bo.bff.providers.dtos.responses.accounts.AccountListMWResponse;
 import bg.com.bo.bff.providers.dtos.responses.accounts.TransactionLimitUpdateAccountResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
-import bg.com.bo.bff.providers.mappings.account.AccountListMapper;
+import bg.com.bo.bff.providers.mappings.own.account.AccountListMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;

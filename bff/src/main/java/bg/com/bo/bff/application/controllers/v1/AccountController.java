@@ -58,11 +58,10 @@ public class AccountController {
             return ResponseEntity.ok(iAccountService.getAccounts(personId, document));
     }
 
-    @Operation(summary = "Own Accounts Request", description = "Este es el endpoint donde el usuario actualizará el límite diario y la cantidad de retiros.")
+    @Operation(summary = "Update Transactional Limits Request", description = "Este es el endpoint donde el usuario actualizará el límite diario y la cantidad de retiros.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "actualizará el límite diario y la cantidad de retiros", content = @Content(schema = @Schema(implementation = GenericResponse.class),mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Actualización del límite diario y la cantidad de retiros", content = @Content(schema = @Schema(implementation = GenericResponse.class),mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "El document no corresponde al personId, devuelve un 406 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Un error interno, devuelve un 500 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PutMapping("/persons/{personId}/account/{accountId}/transactional-limits")
@@ -89,6 +88,12 @@ public class AccountController {
         )));
     }
 
+    @Operation(summary = "Transaccional Limit Request", description = "Endpoint para obtener el límite transaccional")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtiene el límite transaccional", content = @Content(schema = @Schema(implementation = GenericResponse.class),mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Un error interno, devuelve un 500 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
     @GetMapping("/persons/{personId}/account/{accountId}/transactional-limits")
     public ResponseEntity<GetTransactionLimitResponse> getTransactioLimit(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
