@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum DeviceMW {
+    MIDDLEWARE_CHANNEL("middleware-channel"),
     DEVICE_ID("device-id"),
     DEVICE_IP("device-ip"),
     DEVICE_NAME("device-name"),

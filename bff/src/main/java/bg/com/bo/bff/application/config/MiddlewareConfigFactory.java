@@ -30,6 +30,9 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.dpf}")
     private String clientSecretDPFManager;
 
+    @Value("${client.secret.generate.qr.manager}")
+    private String clientSecretGenerateQrManager;
+
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
@@ -41,6 +44,7 @@ public class MiddlewareConfigFactory {
                 .clientThirdAccount(clientSecretThirdAccounts)
                 .clientAchAccount(client_secret_ach_accounts)
                 .dpfManager(clientSecretDPFManager)
+                .clientGenerateQrManager(clientSecretGenerateQrManager)
                 .build();
     }
 }

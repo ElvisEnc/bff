@@ -1,10 +1,14 @@
 package bg.com.bo.bff.application.controllers.v1;
 
+import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
+import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequestFixture;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequestFixture;
+import bg.com.bo.bff.application.dtos.response.QRCodeGenerateResponseFixture;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
 import bg.com.bo.bff.services.interfaces.IQrService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +27,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
@@ -37,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class QrControllerTest {
+    private static final String GENERATE_QR_URL = "/api/v1/qrs/generate";
     private MockMvc mockMvc;
 
     @Spy
@@ -113,6 +120,31 @@ class QrControllerTest {
         // Assert
         assertEquals(response, actual);
         verify(service).getQrGeneratedPaid(any(), any(), any());
+        assertNotNull(result);
+    }
+    @Test
+    void givenQRCodeGenerateRequestWhenGenerateQRThenQRCodeGenerateResponse() throws Exception {
+        // Arrange
+        QRCodeGenerateResponse expected = QRCodeGenerateResponseFixture.withDefault();
+        QRCodeGenerateRequest request = QRCodeGenerateRequestFixture.whitDefault();
+        when(service.generateQR(any(),any())).thenReturn(expected);
+
+        // Act
+
+        MvcResult result = mockMvc.perform(post(GENERATE_QR_URL)
+                        .content(objectMapper.writeValueAsString(request))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).generateQR(any(), any());
         assertNotNull(result);
     }
 }

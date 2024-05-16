@@ -1,14 +1,18 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.filters.OrderFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
+import bg.com.bo.bff.providers.dtos.requests.QRCodeGenerateMWRequest;
+import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.dtos.responses.qr.QrGeneratedPaidMW;
 import bg.com.bo.bff.providers.dtos.responses.qr.QrListMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
+import bg.com.bo.bff.providers.interfaces.IQRProvider;
 import bg.com.bo.bff.providers.mappings.qr.IQrMapper;
 import bg.com.bo.bff.services.interfaces.IQrService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +34,14 @@ import java.util.stream.Collectors;
 public class QrService implements IQrService {
     private final IAchAccountProvider iAchAccountProvider;
     private final IQrMapper iQrMapper;
+    private final IQRProvider qrProvider;
     @Autowired
     private QrService self;
 
-    public QrService(IAchAccountProvider iAchAccountProvider, IQrMapper iQrMapper) {
+    public QrService(IAchAccountProvider iAchAccountProvider, IQrMapper iQrMapper, IQRProvider qrProvider) {
         this.iAchAccountProvider = iAchAccountProvider;
         this.iQrMapper = iQrMapper;
+        this.qrProvider = qrProvider;
     }
 
     @Override
@@ -79,5 +85,12 @@ public class QrService implements IQrService {
             list.add(iQrMapper.convert(generatedPaidMW));
         }
         return list;
+    }
+
+    @Override
+    public QRCodeGenerateResponse generateQR(QRCodeGenerateRequest request, Map<String, String> parameters) throws IOException {
+
+        QRCodeGenerateMWRequest requestMW = iQrMapper.convert(request);
+        return qrProvider.generate(requestMW, parameters);
     }
 }

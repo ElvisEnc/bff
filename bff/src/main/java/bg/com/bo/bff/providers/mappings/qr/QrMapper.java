@@ -1,14 +1,18 @@
 package bg.com.bo.bff.providers.mappings.qr;
 
+import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.requests.QRCodeGenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.responses.qr.QrGeneratedPaidMW;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+
 @Component
 public class QrMapper implements IQrMapper{
+    private static final String SCHEME_NAME =  "PersonId";
     @Override
     public QrGeneratedPaid convert(QrGeneratedPaidMW mw) {
         return QrGeneratedPaid.builder()
@@ -32,5 +36,28 @@ public class QrMapper implements IQrMapper{
                 .status(mw.getStatus())
                 .registrationDate(Util.formatDate(mw.getRegistrationDate()))
                 .build();
+    }
+
+    @Override
+    public QRCodeGenerateMWRequest convert(QRCodeGenerateRequest request) {
+        QRCodeGenerateMWRequest requestMW = QRCodeGenerateMWRequest.builder()
+                .companyName(request.getCompanyName())
+                .amount(request.getAmount())
+                .currency(request.getCurrency())
+                .reference(request.getReference())
+                .typeDueDate(request.getTypeDueDate())
+                .codService(request.getCodService())
+                .singleUse(request.getSingleUse())
+                .accountNumber(request.getAccountNumber())
+                .field(request.getField())
+                .serialNumber(request.getSerialNumber())
+                .operationType(request.getOperationType())
+                .personId(request.getPersonId())
+                .userRegister(request.getUserRegister())
+                .typeReturn(request.getTypeReturn())
+                .formatImage(request.getFormatImage())
+                .build();
+        requestMW.setOwnerAccount(SCHEME_NAME,request.getPersonId());
+        return requestMW;
     }
 }

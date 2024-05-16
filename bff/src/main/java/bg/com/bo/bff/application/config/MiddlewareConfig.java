@@ -21,4 +21,6 @@ public class MiddlewareConfig {
     private String clientAchAccount;
     
     private String dpfManager;
+
+    private String clientGenerateQrManager;
 }
