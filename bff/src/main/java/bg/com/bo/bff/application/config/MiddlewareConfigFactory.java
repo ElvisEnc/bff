@@ -15,6 +15,9 @@ public class MiddlewareConfigFactory {
     @Value("${mw.client_transfer}")
     private String client_secret_transfer;
 
+    @Value("${client.secret.tranfer-ach}")
+    private String clientSecretTransferACH;
+
     @Value("${client.secret.login}")
     private String client_secret_login;
 
@@ -41,6 +44,7 @@ public class MiddlewareConfigFactory {
                 .clientLogin(client_secret_login)
                 .clientOwnManager(client_secret_own)
                 .clientTransfer(client_secret_transfer)
+                .clientTransferACH(clientSecretTransferACH)
                 .clientThirdAccount(clientSecretThirdAccounts)
                 .clientAchAccount(client_secret_ach_accounts)
                 .dpfManager(clientSecretDPFManager)

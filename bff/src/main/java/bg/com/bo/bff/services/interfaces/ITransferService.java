@@ -10,10 +10,8 @@ import java.util.Map;
 
 public interface ITransferService {
     TransferResponse transferOwnAccount(String personId, String accountId, TransferRequest transferRequest, Map<String, String> parameter) throws IOException;
-
     TransferResponse transferThirdAccount(String personId, String accountId, TransferRequest transferRequest, Map<String, String> parameter) throws IOException;
-
     TransferResponse transferWallet(Integer personId, Integer accountId, Integer accountNumber, TransferRequest transferRequest, Map<String, String> parameter) throws IOException;
-
+    TransferResponse transferAchAccount(String personId, String accountId, TransferRequest transferRequest, Map<String, String> parameter) throws IOException;
     Pcc01Response makeControl(Pcc01Request request) throws IOException;
 }

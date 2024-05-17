@@ -96,6 +96,24 @@ class TransferControllerTest {
     }
 
     @Test
+    void transferACHAccounts() throws Exception {
+        TransferResponse expected = TransferResponseFixture.withDefault();
+        TransferRequest request = TransferRequestFixture.withDefault();
+        when(transferService.transferAchAccount(any(), any(), any(), any())).thenReturn(expected);
+
+        String URL_POST_ACH = "/api/v1/transfers/persons/12345/accounts/12345678/ach";
+        mockMvc.perform(post(URL_POST_ACH)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request, false)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        verify(transferService).transferAchAccount(any(), any(), any(), any());
+    }
+
+    @Test
     void givePersonCodeAndAccountWhenTransferYoloThenReturnSuccess() throws Exception {
         // Arrange
         TransferResponse expected = TransferResponseFixture.withDefault();

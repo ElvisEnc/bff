@@ -18,15 +18,15 @@ import java.math.BigDecimal;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AmountTransfer {
-    @NotNull(message = "Invalid currency")
-    @NotBlank(message = "Currency cannot be empty")
-    @Pattern(regexp = "\\d+", message = "Currency must contain only numbers")
-    @Schema(description = "Currency code", example = "068")
+    @NotNull(message = "La moneda es obligatoria")
+    @NotBlank(message = "La moneda no puede estar vacía")
+    @Pattern(regexp = "\\d+", message = "La moneda debe contener solo números")
+    @Schema(description = "Código de la moneda", example = "068")
     private String currency;
 
-    @NotNull(message = "Invalid amount")
-    @DecimalMin(value = "0", inclusive = false, message = "Amount must be greater than zero")
-    @Digits(integer = 13, fraction = 2, message = "Invalid amount")
-    @Schema(description = "Transfer amount", example = "100.00")
+    @NotNull(message = "El monto es obligatorio")
+    @DecimalMin(value = "0", inclusive = false, message = "El monto debe ser mayor que cero")
+    @Digits(integer = 13, fraction = 2, message = "El monto debe tener hasta 13 dígitos enteros y 2 decimales")
+    @Schema(description = "Monto de la transferencia", example = "100.00")
     private BigDecimal amount;
 }

@@ -3,6 +3,7 @@ package bg.com.bo.bff.providers.interfaces;
 import bg.com.bo.bff.application.dtos.request.Pcc01Request;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.dtos.response.Pcc01Response;
+import bg.com.bo.bff.providers.dtos.responses.TransferResponseACHMD;
 import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 
 import java.io.IOException;

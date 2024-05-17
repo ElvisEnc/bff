@@ -33,12 +33,25 @@ public class Util {
     private static final ObjectMapper objectMapper = createObjectMapper();
     private static final Logger LOGGER = LogManager.getLogger(Util.class.getName());
     private static final Map<String, Currency> currencyMap = new HashMap<>();
+    private static final Map<String, Map<String, String>> schemeNameMap = new HashMap<>();
 
     static {
         currencyMap.put("068", Currency.BOB);
         currencyMap.put("978", Currency.EUR);
         currencyMap.put("840", Currency.USD);
         currencyMap.put("1000", Currency.UFV);
+
+        Map<String, String> ownMap = new HashMap<>();
+        ownMap.put("owner", "personId");
+        ownMap.put("debtor", "accountId");
+        ownMap.put("creditor", "accountId");
+        schemeNameMap.put("own", ownMap);
+
+        Map<String, String> achMap = new HashMap<>();
+        achMap.put("owner", "PersonId");
+        achMap.put("debtor", "AccountId");
+        achMap.put("creditor", "TrustListAccountId");
+        schemeNameMap.put("ach", achMap);
     }
 
     private Util() {
@@ -186,5 +199,9 @@ public class Util {
         } else {
             return "Unknown";
         }
+    }
+
+    public static String getTransferSchemeName(String type, String key) {
+        return schemeNameMap.getOrDefault(type, new HashMap<>()).getOrDefault(key, key);
     }
 }

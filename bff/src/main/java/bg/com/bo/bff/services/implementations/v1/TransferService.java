@@ -6,6 +6,7 @@ import bg.com.bo.bff.application.dtos.response.Pcc01Response;
 import bg.com.bo.bff.application.dtos.response.TransferResponse;
 import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 import bg.com.bo.bff.providers.interfaces.IGenerateImage;
+import bg.com.bo.bff.providers.interfaces.ITransferACHProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
 import bg.com.bo.bff.services.interfaces.ITransferService;
@@ -17,12 +18,14 @@ import java.util.Map;
 
 @Service
 public class TransferService implements ITransferService {
-    private ITransferProvider transferProvider;
+    private final ITransferProvider transferProvider;
+    private final ITransferACHProvider transferACHProvider;
     private final IGenerateImage generateImageProvider;
     private final ITransferYoloNetProvider transferYoloNetProvider;
 
-    public TransferService(ITransferProvider transferProvider, IGenerateImage generateImageProvider, ITransferYoloNetProvider transferYoloNetProvider) {
+    public TransferService(ITransferProvider transferProvider, ITransferACHProvider transferACHProvider, IGenerateImage generateImageProvider, ITransferYoloNetProvider transferYoloNetProvider) {
         this.transferProvider = transferProvider;
+        this.transferACHProvider = transferACHProvider;
         this.generateImageProvider = generateImageProvider;
         this.transferYoloNetProvider = transferYoloNetProvider;
     }
@@ -51,6 +54,16 @@ public class TransferService implements ITransferService {
     @Override
     public TransferResponse transferWallet(Integer personId, Integer accountId, Integer accountNumber, TransferRequest transferRequest, Map<String, String> parameter) throws IOException {
         TransferResponseMD responseMD = transferYoloNetProvider.transferToYolo(personId, accountId, accountNumber, transferRequest);
+        String newImage = generateImageProvider.generateImage(responseMD);
+        return TransferResponse.builder()
+                .data(newImage)
+                .format(transferRequest.getFormat())
+                .build();
+    }
+
+    @Override
+    public TransferResponse transferAchAccount(String personId, String accountId, TransferRequest transferRequest, Map<String, String> parameter) throws IOException {
+        TransferResponseMD responseMD = transferACHProvider.transferAchAccount(personId, accountId, transferRequest, parameter);
         String newImage = generateImageProvider.generateImage(responseMD);
         return TransferResponse.builder()
                 .data(newImage)

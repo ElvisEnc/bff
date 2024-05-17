@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TargetAccount {
-    @NotNull(message = "Invalid id")
-    @Schema(description = "Identifier of the target account", example = "123456789")
+    @NotNull(message = "Id no válido")
+    @Schema(description = "Identificador de la cuenta de destino", example = "123456789")
     private Integer id;
 }

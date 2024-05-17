@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class TransferMiddlewareProvider implements ITransferProvider {
@@ -89,7 +90,7 @@ public class TransferMiddlewareProvider implements ITransferProvider {
     @Override
     public TransferResponseMD transferOwnAccount(String personId, String accountId, TransferRequest request, Map<String, String> parameters) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
-        TransferMWRequest requestData = transferMapper.convert(personId, accountId, request);
+        TransferMWRequest requestData = transferMapper.convert("own", personId, accountId, request);
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String pathGetAccounts = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/transfer/same-bank/to-own-account/";
@@ -109,7 +110,14 @@ public class TransferMiddlewareProvider implements ITransferProvider {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
-                    return TransferResponseMD.toFormat(Util.stringToObject(jsonResponse, TransferResponseMD.class));
+                    TransferResponseMD response = Util.stringToObject(jsonResponse, TransferResponseMD.class);
+                    if (!Objects.equals(response.getData().getStatus(), "PENDING")) {
+                        return TransferResponseMD.toFormat(response);
+                    } else {
+                        LOGGER.error(jsonResponse);
+                        AppError error = AppError.MDWTRM_PENDING;
+                        throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                    }
                 }
                 LOGGER.error(jsonResponse);
                 AppError error = Util.mapProviderError(jsonResponse);
@@ -127,7 +135,7 @@ public class TransferMiddlewareProvider implements ITransferProvider {
     @Override
     public TransferResponseMD transferThirdAccount(String personId, String accountId, TransferRequest request, Map<String, String> parameters) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
-        TransferMWRequest requestData = transferMapper.convert(personId, accountId, request);
+        TransferMWRequest requestData = transferMapper.convert("own", personId, accountId, request);
 
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String pathGetAccounts = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/transfer/same-bank/to-other-accounts/";
@@ -146,7 +154,14 @@ public class TransferMiddlewareProvider implements ITransferProvider {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
-                    return TransferResponseMD.toFormat(Util.stringToObject(jsonResponse, TransferResponseMD.class));
+                    TransferResponseMD response = Util.stringToObject(jsonResponse, TransferResponseMD.class);
+                    if (!Objects.equals(response.getData().getStatus(), "PENDING")) {
+                        return TransferResponseMD.toFormat(response);
+                    } else {
+                        LOGGER.error(jsonResponse);
+                        AppError error = AppError.MDWTRM_PENDING;
+                        throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                    }
                 }
                 LOGGER.error(jsonResponse);
                 AppError error = Util.mapProviderError(jsonResponse);

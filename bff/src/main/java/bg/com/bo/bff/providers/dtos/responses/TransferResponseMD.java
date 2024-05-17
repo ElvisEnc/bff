@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.*;
 
 @Data
@@ -21,6 +22,8 @@ public class TransferResponseMD {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class TransferMDData {
+        @JsonProperty("status")
+        private String status;
         @JsonProperty("idReceipt")
         private String idReceipt;
         @JsonProperty("accountingEntry")
@@ -55,11 +58,19 @@ public class TransferResponseMD {
         private String fromCurrency;
         @JsonProperty("toCurrency")
         private String toCurrency;
+
+        @JsonSetter("status")
+        public void setStatus(String status) {
+            this.status = (status != null) ? status : "APPROVED";
+        }
     }
+
+
 
     public static TransferResponseMD toFormat(TransferResponseMD response) {
         return TransferResponseMD.builder()
                 .data(TransferMDData.builder()
+                        .status(response.getData().getStatus())
                         .idReceipt(response.getData().getIdReceipt())
                         .accountingEntry(response.getData().getAccountingEntry())
                         .accountingDate(UtilDate.formatDateLong(response.getData().getAccountingDate()))

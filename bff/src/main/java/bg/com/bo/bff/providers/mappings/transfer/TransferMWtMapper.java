@@ -2,6 +2,7 @@ package bg.com.bo.bff.providers.mappings.transfer;
 
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.providers.dtos.requests.TransferMWRequest;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -12,11 +13,11 @@ public interface TransferMWtMapper {
     TransferMWtMapper INSTANCE = Mappers.getMapper(TransferMWtMapper.class);
 
     @Mappings({
-            @Mapping(target = "ownerAccount.schemeName", constant = "personId"),
+            @Mapping(target = "ownerAccount.schemeName", expression = "java(bg.com.bo.bff.commons.utils.Util.getTransferSchemeName(typeTransfer, \"owner\"))"),
             @Mapping(target = "ownerAccount.personId", source = "personId"),
-            @Mapping(target = "debtorAccount.schemeName", constant = "accountId"),
+            @Mapping(target = "debtorAccount.schemeName", expression = "java(bg.com.bo.bff.commons.utils.Util.getTransferSchemeName(typeTransfer, \"debtor\"))"),
             @Mapping(target = "debtorAccount.identification", source = "accountId"),
-            @Mapping(target = "creditorAccount.schemeName", constant = "accountId"),
+            @Mapping(target = "creditorAccount.schemeName", expression = "java(bg.com.bo.bff.commons.utils.Util.getTransferSchemeName(typeTransfer, \"creditor\"))"),
             @Mapping(target = "creditorAccount.identification", source = "transferRequest.targetAccount.id"),
             @Mapping(target = "instructedAmount.currency", source = "transferRequest.amount.currency"),
             @Mapping(target = "instructedAmount.amount", source = "transferRequest.amount.amount"),
@@ -24,7 +25,7 @@ public interface TransferMWtMapper {
             @Mapping(target = "supplementaryData.sourceOfFunds", source = "transferRequest.data.sourceOfFounds"),
             @Mapping(target = "supplementaryData.destinationOfFunds", source = "transferRequest.data.destinationOfFounds")
     })
-    TransferMWRequest convert(String personId, String accountId, TransferRequest transferRequest);
+    TransferMWRequest convert(@Context String typeTransfer, String personId, String accountId, TransferRequest transferRequest);
 }
 
 

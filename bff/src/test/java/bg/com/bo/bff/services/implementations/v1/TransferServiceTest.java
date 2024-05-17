@@ -6,6 +6,7 @@ import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.providers.dtos.responses.TransferMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 import bg.com.bo.bff.providers.interfaces.IGenerateImage;
+import bg.com.bo.bff.providers.interfaces.ITransferACHProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,8 @@ class TransferServiceTest {
     @Mock
     private ITransferProvider transferProvider;
     @Mock
+    private ITransferACHProvider transferACHProvider;
+    @Mock
     private IGenerateImage generateImageProvider;
     @Mock
     private ITransferYoloNetProvider transferYoloNetProvider;
@@ -46,7 +49,7 @@ class TransferServiceTest {
                 DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
                 DeviceMW.APP_VERSION.getCode(), "1.0.0"
         );
-        this.service = new TransferService(transferProvider, generateImageProvider, transferYoloNetProvider);
+        this.service = new TransferService(transferProvider, transferACHProvider, generateImageProvider, transferYoloNetProvider);
     }
 
     @Test
@@ -69,6 +72,17 @@ class TransferServiceTest {
         assertNotNull(response);
 
         verify(transferProvider).transferThirdAccount(any(), any(), any(), any());
+    }
+
+    @Test
+    void transferACHAccount() throws IOException {
+        TransferResponseMD expected = TransferMWResponseFixture.withDefault();
+        when(transferACHProvider.transferAchAccount(any(), any(), any(), any())).thenReturn(expected);
+
+        TransferResponse response = service.transferAchAccount("123456", "123", TransferRequestFixture.withDefault(), map);
+        assertNotNull(response);
+
+        verify(transferACHProvider).transferAchAccount(any(), any(), any(), any());
     }
 
     @Test

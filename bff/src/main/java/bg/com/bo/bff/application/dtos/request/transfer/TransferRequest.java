@@ -27,15 +27,18 @@ public class TransferRequest {
     private TargetAccount targetAccount;
 
     @Valid
-    @NotNull(message = "Invalid amount")
+    @NotNull(message = "Monto no válido")
     @JsonProperty(required = true)
     private AmountTransfer amount;
 
+    @Valid
     @JsonProperty
-    @NotNull(message = "Invalid data")
+    @NotNull(message = "Datos no válidos")
     private DataTransfer data;
 
+    @Valid
+    @NotNull(message = "Formato no válido")
     @JsonProperty(required = true)
-    @Schema(description = "Format of the transfer request", allowableValues = {"JPG", "PNG"}, example = "JPG")
+    @Schema(description = "Formato del comprobante", allowableValues = {"JPG", "PNG"}, example = "PNG")
     private String format;
 }

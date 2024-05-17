@@ -16,6 +16,8 @@ public class MiddlewareConfig {
 
     private String clientTransfer;
 
+    private String clientTransferACH;
+
     private String clientThirdAccount;
 
     private String clientAchAccount;

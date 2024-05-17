@@ -18,15 +18,17 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DataTransfer {
-    @NotBlank(message = "Description cannot be empty")
-    @NotNull(message = "Invalid description")
-    @Size(min = 3, message = "Description must be greater than 3 character")
-    @Schema(description = "Description of the transfer", example = "Payment of services")
+    @NotBlank(message = "La descripción no puede estar vacía")
+    @NotNull(message = "Descripción no válida")
+    @Size(min = 3, max = 50, message = "La descripción debe tener entre 3 y 50 caracteres.")
+    @Schema(description = "Descripción de la transferencia", example = "Pago de servicios")
     private String description;
 
-    @Schema(description = "Source of funds for the transfer", example = "Salary")
+    @Size(min = 25, max = 100, message = "La fuente de los fondos debe tener entre 25 y 100 caracteres.")
+    @Schema(description = "Fuente de fondos para la transferencia", example = "Fuente de fondos para la transferencia")
     private String sourceOfFounds;
 
-    @Schema(description = "Destination of funds for the transfer", example = "Services")
+    @Size(min = 25, max = 100, message = "El destino de los fondos debe tener entre 25 y 100 caracteres.")
+    @Schema(description = "Destino de los fondos para la transferencia", example = "Destino de los fondos para la transferencia")
     private String destinationOfFounds;
 }
