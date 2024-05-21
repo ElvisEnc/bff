@@ -2,6 +2,8 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
 import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequestFixture;
+import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
+import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequestFixture;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequestFixture;
 import bg.com.bo.bff.application.dtos.response.QRCodeGenerateResponseFixture;
@@ -44,6 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class QrControllerTest {
     private static final String GENERATE_QR_URL = "/api/v1/qrs/generate";
+    private static final String REGENERATE_QR_URL = "/api/v1/qrs/regenerate";
     private MockMvc mockMvc;
 
     @Spy
@@ -145,6 +148,31 @@ class QrControllerTest {
         // Assert
         assertEquals(response, actual);
         verify(service).generateQR(any(), any());
+        assertNotNull(result);
+    }
+
+    @Test
+    void givenQRCodeRegenerateRequestWhenGenerateQRThenQRCodeGenerateResponse() throws Exception {
+        // Arrange
+        QRCodeGenerateResponse expected = QRCodeGenerateResponseFixture.withDefault();
+        QRCodeRegenerateRequest request = QRCodeRegenerateRequestFixture.withDefault();
+        when(service.regenerateQR(any(),any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc.perform(post(REGENERATE_QR_URL)
+                        .content(objectMapper.writeValueAsString(request))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).regenerateQR(any(), any());
         assertNotNull(result);
     }
 }

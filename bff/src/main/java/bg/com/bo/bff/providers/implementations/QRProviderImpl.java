@@ -13,6 +13,7 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.QRCodeGenerateMWRequest;
+import bg.com.bo.bff.providers.dtos.requests.QRCodeRegenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.interfaces.IQRProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
@@ -38,6 +39,9 @@ public class QRProviderImpl implements IQRProvider {
     private final MiddlewareConfig middlewareConfig;
     private final IHttpClientFactory httpClientFactory;
 
+    private static final String GENERATE = "/bs/v1/qrcode/generate";
+    private static final String REGENERATE= "/bs/v1/qrcode/encrypt";
+
     private static final Logger logger = LogManager.getLogger(QRProviderImpl.class.getName());
 
     public QRProviderImpl(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
@@ -48,17 +52,28 @@ public class QRProviderImpl implements IQRProvider {
 
     @Override
     public QRCodeGenerateResponse generate(final QRCodeGenerateMWRequest request, final Map<String, String> parameters) throws IOException {
-         ClientToken clientToken = tokenMiddlewareProvider.
+
+        final String jsonMapper = Util.objectToString(request);
+        return getQrCodeGenerateResponse(parameters, jsonMapper, GENERATE);
+    }
+
+    @Override
+    public QRCodeGenerateResponse regenerate(QRCodeRegenerateMWRequest request, Map<String, String> parameters) throws IOException {
+
+        final String jsonMapper = Util.objectToString(request);
+        return getQrCodeGenerateResponse(parameters, jsonMapper, REGENERATE);
+    }
+
+    private QRCodeGenerateResponse getQrCodeGenerateResponse(Map<String, String> parameters, String jsonMapper,String url) throws IOException {
+        ClientToken clientToken = tokenMiddlewareProvider.
                 generateAccountAccessToken(ProjectNameMW.GENERATE_QR_MANAGER.getName(),
                         middlewareConfig.getClientGenerateQrManager(),
                         ProjectNameMW.GENERATE_QR_MANAGER.getHeaderKey()
                 );
-
-        final String jsonMapper = Util.objectToString(request);
         final StringEntity entity = new StringEntity(jsonMapper);
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
 
-            String path = middlewareConfig.getUrlBase() + ProjectNameMW.GENERATE_QR_MANAGER.getName() + "/bs/v1/qrcode/generate";
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.GENERATE_QR_MANAGER.getName() + url;
             HttpPost httpPost = new HttpPost(path);
 
             httpPost.setHeaders(getHeadersMW(parameters));
@@ -67,8 +82,8 @@ public class QRProviderImpl implements IQRProvider {
             httpPost.setEntity(entity);
             ObjectMapper objectMapper = new ObjectMapper();
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
-                 int statusCode = httpResponse.getStatusLine().getStatusCode();
-                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
                     QRCodeGenerateResponse result = objectMapper.readValue(jsonResponse, QRCodeGenerateResponse.class);
                     return result;

@@ -2,11 +2,13 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.QRCodeGenerateMWRequestFixture;
+import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateMWRequestFixture;
 import bg.com.bo.bff.application.dtos.response.QRCodeGenerateResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.QRCodeGenerateMWRequest;
+import bg.com.bo.bff.providers.dtos.requests.QRCodeRegenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -77,6 +79,26 @@ class QRProviderImplTest {
         
         //Act
         QRCodeGenerateResponse actual = provider.generate(request,this.map);
+
+        //Asserts
+        assertEquals(new ObjectMapper().writeValueAsString(expected), new ObjectMapper().writeValueAsString(actual));
+    }
+
+@Test
+     void givenQRCodeReGenerateRequestWhenGenerateQRThenQRCodeGenerateResponse() throws IOException {
+        //Arrange
+        ClientToken clientToken = new ClientToken();
+        clientToken.setAccessToken(UUID.randomUUID().toString());
+        QRCodeGenerateResponse expected = QRCodeGenerateResponseFixture.withDefault();
+        String jsonResponse = new ObjectMapper().writeValueAsString(expected);
+         QRCodeRegenerateMWRequest request = QRCodeRegenerateMWRequestFixture.withDefault();
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientToken);
+        when(middlewareConfig.getUrlBase()).thenReturn("http://localhost:8080");
+        when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
+
+        //Act
+        QRCodeGenerateResponse actual = provider.regenerate(request,this.map);
 
         //Asserts
         assertEquals(new ObjectMapper().writeValueAsString(expected), new ObjectMapper().writeValueAsString(actual));

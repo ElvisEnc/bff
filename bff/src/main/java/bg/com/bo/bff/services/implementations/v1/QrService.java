@@ -1,6 +1,7 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
+import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
@@ -8,6 +9,7 @@ import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.filters.OrderFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.providers.dtos.requests.QRCodeGenerateMWRequest;
+import bg.com.bo.bff.providers.dtos.requests.QRCodeRegenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.dtos.responses.qr.QrGeneratedPaidMW;
 import bg.com.bo.bff.providers.dtos.responses.qr.QrListMWResponse;
@@ -92,5 +94,11 @@ public class QrService implements IQrService {
 
         QRCodeGenerateMWRequest requestMW = iQrMapper.convert(request);
         return qrProvider.generate(requestMW, parameters);
+    }
+
+    @Override
+    public QRCodeGenerateResponse regenerateQR(QRCodeRegenerateRequest request, Map<String, String> parameter) throws IOException {
+        QRCodeRegenerateMWRequest requestMW = this.iQrMapper.convert(request);
+        return this.qrProvider.regenerate(requestMW, parameter);
     }
 }

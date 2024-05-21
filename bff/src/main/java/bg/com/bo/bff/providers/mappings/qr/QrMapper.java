@@ -1,9 +1,11 @@
 package bg.com.bo.bff.providers.mappings.qr;
 
 import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
+import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.requests.QRCodeGenerateMWRequest;
+import bg.com.bo.bff.providers.dtos.requests.QRCodeRegenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.responses.qr.QrGeneratedPaidMW;
 import org.springframework.stereotype.Component;
 
@@ -59,5 +61,23 @@ public class QrMapper implements IQrMapper{
                 .build();
         requestMW.setOwnerAccount(SCHEME_NAME,request.getPersonId());
         return requestMW;
+    }
+
+    @Override
+    public QRCodeRegenerateMWRequest convert(QRCodeRegenerateRequest request) {
+      return new QRCodeRegenerateMWRequest(String
+              .format("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s",
+                      request.getIdQr(),
+                      request.getCompanyName(),
+                      request.getIdentificationNumber(),
+                      request.getEif(),
+                      request.getAccountNumber(),
+                      request.getAmount(),
+                      request.getReference(),
+                      request.getExpirationDate(),
+                      request.getSingleUse(),
+                      request.getCodService(),
+                      request.getField())
+      );
     }
 }

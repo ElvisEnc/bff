@@ -2,6 +2,8 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
 import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequestFixture;
+import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
+import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequestFixture;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequestFixture;
 import bg.com.bo.bff.application.dtos.response.QRCodeGenerateResponseFixture;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
@@ -79,5 +81,21 @@ class QrServiceTest {
         Assertions.assertNotNull(actual);
         assertEquals(expected,actual);
         verify(qrProvider).generate(any(),any());
+    }
+
+    @Test
+    void givenQRCodeRegenerateRequestWhenGenerateQRThenQRCodeGenerateResponse() throws IOException {
+        // Arrange
+        QRCodeGenerateResponse expected = QRCodeGenerateResponseFixture.withDefault();
+        QRCodeRegenerateRequest request = QRCodeRegenerateRequestFixture.withDefault();
+        when(qrProvider.regenerate(any(),any())).thenReturn(expected);
+
+        // Act
+        QRCodeGenerateResponse actual = service.regenerateQR(request, new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(actual);
+        assertEquals(expected,actual);
+        verify(qrProvider).regenerate(any(),any());
     }
 }
