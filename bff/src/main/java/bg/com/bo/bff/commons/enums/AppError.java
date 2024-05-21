@@ -76,7 +76,7 @@ public enum AppError {
     MDWTRM_009(HttpStatus.BAD_REQUEST, "VALIDATE_LIMITS", "MDWTRM-009", "No se pudo validar los limites"),
     MDWTRM_010(HttpStatus.BAD_REQUEST, "LIMIT_KO", "MDWTRM-010", "No se pudo realizar la transferencia, límites superados"),
     MDWTRM_011(HttpStatus.BAD_REQUEST, "VALIDATE_COMBINATION", "MDWTRM-011", "Se requieren permisos de firmantes para realizar la transferencia"),
-    MDWTRM_012(HttpStatus.INTERNAL_SERVER_ERROR, "TRANSFER_KO", "MDWTRM-012", "Error de procesamiento de transferencia"),
+    MDWTRM_012(HttpStatus.BAD_REQUEST, "TRANSFER_KO", "MDWTRM-012", "La moneda es distinta a la de la cuenta a debitar y a la de acreditar"),
     MDWTRM_013(HttpStatus.BAD_REQUEST, "NOT_FOUND_AVAILABLE", "MDWTRM-013", "No se pudo obtener los datos del préstamo"),
     MDWTRM_014(HttpStatus.BAD_REQUEST, "PAYMENT_LOAND_ERROR", "MDWTRM-014", "Se produjo un error al procesar el pago del préstamo"),
     MDWTRM_015(HttpStatus.BAD_REQUEST, "NOT_FOUND_RECEIPT", "MDWTRM-015", "Hubo un problema al recuperar los datos del bono"),

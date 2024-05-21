@@ -3,9 +3,9 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.Pcc01Request;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.dtos.response.Pcc01Response;
-import bg.com.bo.bff.application.dtos.response.TransferResponse;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.commons.utils.Headers;
+import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 import bg.com.bo.bff.services.interfaces.ITransferService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
@@ -38,14 +38,12 @@ public class TransferController {
 
     @Operation(summary = "Transfer Own Accounts Request", description = "Transferencias")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Devuelve el identificador de un comprobante", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponseMD.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "401", description = "Token expirado, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "El document no corresponde al personId, devuelve un 406 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Un error interno, devuelve un 500 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accounts/{accountId}/own-account")
-    public ResponseEntity<TransferResponse> ownTransfer(
+    public ResponseEntity<TransferResponseMD> ownTransfer(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
@@ -66,12 +64,12 @@ public class TransferController {
 
     @Operation(summary = "Transfer Third Accounts Request", description = "Transferencias a cuentas de terceros")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Devuelve el identificador de un comprobante", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponseMD.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Un error interno, devuelve un 500 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accounts/{accountId}/third-account")
-    public ResponseEntity<TransferResponse> thirdTransfer(
+    public ResponseEntity<TransferResponseMD> thirdTransfer(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
@@ -92,12 +90,12 @@ public class TransferController {
 
     @Operation(summary = "Transfer to Wallet Accounts Request", description = "Transferencias a billetera Yolo")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Comprobante de la transferencia en base64", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponseMD.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accountId/{accountId}/accountNumber/{accountNumber}/wallet")
-    public ResponseEntity<TransferResponse> walletTransfer(
+    public ResponseEntity<TransferResponseMD> walletTransfer(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
@@ -113,12 +111,12 @@ public class TransferController {
 
     @Operation(summary = "Transfer to ACH Accounts", description = "Transferencias a cuenta de otros bancos")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Comprobante de la transferencia en base64", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponseMD.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accounts/{accountId}/ach")
-    public ResponseEntity<TransferResponse> achTransfer(
+    public ResponseEntity<TransferResponseMD> achTransfer(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,

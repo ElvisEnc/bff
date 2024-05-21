@@ -62,7 +62,6 @@ public class DestinationAccountService implements IDestinationAccountService {
 
     @Override
     public GenericResponse addThirdAccount(String personId, AddThirdAccountRequest request, Map<String, String> parameters) throws IOException {
-
         AddThirdAccountBasicRequest addThirdAccountBasicRequest = AddThirdAccountBasicRequest.builder()
                 .personId(personId)
                 .companyPersonId(personId)

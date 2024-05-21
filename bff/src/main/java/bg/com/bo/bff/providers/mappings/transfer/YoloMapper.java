@@ -2,6 +2,7 @@ package bg.com.bo.bff.providers.mappings.transfer;
 
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.commons.enums.AppDataYoloNet;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.requests.TransferYoloNetRequest;
 import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 import bg.com.bo.bff.providers.dtos.responses.TransferYoloNetResponse;
@@ -24,13 +25,13 @@ public class YoloMapper implements IYoloMapper {
                 .intCodPersona(personId)
                 .intJtsCuentaOrigen(accountId)
                 .strNroCuentaOrigen(accountNumber)
-                .intNroCuentaDestino(request.getTargetAccount().getId())
+                .intNroCuentaDestino(Integer.valueOf(request.getTargetAccount().getId()))
                 .dblImporteTransaccion(request.getAmount().getAmount())
-                .intMonedaTran(request.getAmount().getCurrency())
+                .intMonedaTran(Util.convertCurrency(request.getAmount().getCurrency()))
                 .strDescripcion(request.getData().getDescription())
-                .strOrigenUIF(request.getData().getSourceOfFounds())
-                .strDestinoUIF(request.getData().getDestinationOfFounds())
-                .strMotivoUIF(request.getData().getDestinationOfFounds())
+                .strOrigenUIF(request.getData().getSourceOfFounds() != null ? request.getData().getSourceOfFounds() : "")
+                .strDestinoUIF(request.getData().getDestinationOfFounds() != null ? request.getData().getDestinationOfFounds() : "")
+                .strMotivoUIF(request.getData().getDestinationOfFounds() != null ? request.getData().getDestinationOfFounds() : "")
                 .strGlosaDestino(request.getData().getDescription())
                 .build();
     }

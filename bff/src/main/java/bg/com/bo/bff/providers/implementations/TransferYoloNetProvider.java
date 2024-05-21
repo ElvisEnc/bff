@@ -6,6 +6,7 @@ import bg.com.bo.bff.commons.enums.*;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.requests.TransferYoloNetRequest;
+import bg.com.bo.bff.providers.dtos.responses.DynamicAppError;
 import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 import bg.com.bo.bff.providers.dtos.responses.TransferYoloNetResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Service
 public class TransferYoloNetProvider implements ITransferYoloNetProvider {
@@ -53,7 +55,13 @@ public class TransferYoloNetProvider implements ITransferYoloNetProvider {
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
                     TransferYoloNetResponse response = Util.stringToObject(jsonResponse, TransferYoloNetResponse.class);
-                    return TransferResponseMD.toFormat(iYoloMapper.convertResponse(response));
+                    if (response.getCodigoError().equals(AppDataYoloNet.CODIGO_EXITO.getValue())) {
+                        return TransferResponseMD.toFormat(iYoloMapper.convertResponse(response));
+                    } else {
+                        LOGGER.error(jsonResponse);
+                        DynamicAppError error = Util.mapNetProviderError(jsonResponse);
+                        throw new GenericException(error.getMessage(), error.getStatus(), error.getProviderCode());
+                    }
                 }
                 LOGGER.error(jsonResponse);
                 AppError error = Util.mapProviderError(jsonResponse);

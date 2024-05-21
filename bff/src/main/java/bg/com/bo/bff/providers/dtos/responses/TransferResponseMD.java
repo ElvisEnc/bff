@@ -1,7 +1,5 @@
 package bg.com.bo.bff.providers.dtos.responses;
 
-import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.commons.utils.UtilDate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
@@ -28,6 +26,8 @@ public class TransferResponseMD {
         private String idReceipt;
         @JsonProperty("accountingEntry")
         private String accountingEntry;
+        @JsonProperty("transferAchId")
+        private String transferAchId;
         @JsonProperty("accountingDate")
         private String accountingDate;
         @JsonProperty("accountingTime")
@@ -63,24 +63,28 @@ public class TransferResponseMD {
         public void setStatus(String status) {
             this.status = (status != null) ? status : "APPROVED";
         }
+
+        @JsonSetter("transferAchId")
+        public void setTransferAchId(String transferAchId) {
+            this.transferAchId = (transferAchId != null) ? transferAchId : "0";
+        }
     }
-
-
 
     public static TransferResponseMD toFormat(TransferResponseMD response) {
         return TransferResponseMD.builder()
                 .data(TransferMDData.builder()
-                        .status(response.getData().getStatus())
+                        .status(response.getData().getStatus() != null ? response.getData().getStatus() : "APPROVED")
                         .idReceipt(response.getData().getIdReceipt())
+                        .transferAchId(response.getData().getTransferAchId() != null ? response.getData().getTransferAchId() : "0")
                         .accountingEntry(response.getData().getAccountingEntry())
-                        .accountingDate(UtilDate.formatDateLong(response.getData().getAccountingDate()))
-                        .accountingTime(UtilDate.formatTime(response.getData().getAccountingTime()))
+                        .accountingDate(response.getData().getAccountingDate())
+                        .accountingTime(response.getData().getAccountingTime())
                         .amountDebited(response.getData().getAmountDebited())
                         .amountCredited(response.getData().getAmountCredited())
                         .exchangeRateDebit(response.getData().getExchangeRateDebit())
                         .exchangeRateCredit(response.getData().getExchangeRateCredit())
                         .amount(response.getData().getAmount())
-                        .currency(Util.convertCurrency(response.getData().getCurrency()))
+                        .currency(response.getData().getCurrency())
                         .fromAccountNumber(response.getData().getFromAccountNumber())
                         .fromHolder(response.getData().getFromHolder())
                         .toAccountNumber(response.getData().getToAccountNumber())
@@ -90,7 +94,5 @@ public class TransferResponseMD {
                         .toCurrency(response.getData().getToCurrency())
                         .build())
                 .build();
-
     }
-
 }

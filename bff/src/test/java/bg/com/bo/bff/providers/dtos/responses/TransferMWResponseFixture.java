@@ -7,6 +7,7 @@ public class TransferMWResponseFixture {
         return TransferResponseMD.builder()
                 .data(TransferResponseMD.TransferMDData.builder()
                         .status("APPROVED")
+                        .transferAchId("1010110101")
                         .accountingEntry("000000")
                         .accountingDate("05/05/2024")
                         .accountingTime("10:00:00")

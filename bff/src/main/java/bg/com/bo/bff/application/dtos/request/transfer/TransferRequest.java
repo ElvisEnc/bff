@@ -35,10 +35,4 @@ public class TransferRequest {
     @JsonProperty
     @NotNull(message = "Datos no válidos")
     private DataTransfer data;
-
-    @Valid
-    @NotNull(message = "Formato no válido")
-    @JsonProperty(required = true)
-    @Schema(description = "Formato del comprobante", allowableValues = {"JPG", "PNG"}, example = "PNG")
-    private String format;
 }

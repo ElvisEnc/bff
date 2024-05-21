@@ -1,9 +1,6 @@
 package bg.com.bo.bff.providers.dtos.responses;
-import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.commons.utils.UtilDate;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -98,15 +95,16 @@ public class TransferResponseACHMD {
                 .data(TransferResponseMD.TransferMDData.builder()
                         .status(response.getData().getStatus())
                         .idReceipt(response.getData().getIdReceipt())
+                        .transferAchId(response.getData().getTransferAchId())
                         .accountingEntry(response.getData().getReceiptDetail().getAccountingEntry())
-                        .accountingDate(UtilDate.formatDateLong(response.getData().getReceiptDetail().getAccountingDate()))
-                        .accountingTime(UtilDate.formatTime(response.getData().getReceiptDetail().getAccountingTime()))
+                        .accountingDate(response.getData().getReceiptDetail().getAccountingDate())
+                        .accountingTime(response.getData().getReceiptDetail().getAccountingTime())
                         .amountDebited(response.getData().getReceiptDetail().getAmountDebited())
                         .amountCredited(response.getData().getReceiptDetail().getAmountCredited())
                         .exchangeRateDebit(response.getData().getReceiptDetail().getExchangeRateDebit())
                         .exchangeRateCredit(response.getData().getReceiptDetail().getExchangeRateCredit())
                         .amount(response.getData().getReceiptDetail().getAmount())
-                        .currency(Util.convertCurrency(response.getData().getReceiptDetail().getCurrency()))
+                        .currency(response.getData().getReceiptDetail().getCurrency())
                         .fromAccountNumber(response.getData().getReceiptDetail().getFromAccountNumber())
                         .fromHolder(response.getData().getReceiptDetail().getFromHolder())
                         .toAccountNumber(response.getData().getReceiptDetail().getToAccountNumber())
@@ -118,34 +116,6 @@ public class TransferResponseACHMD {
                 .build();
 
     }
-//
-//    public static TransferResponseACHMD toFormat(TransferResponseACHMD response) {
-//        return TransferResponseACHMD.builder()
-//                .data(ResponseACH.builder()
-//                        .status(response.getData().getStatus())
-//                        .idReceipt(response.getData().getIdReceipt())
-//                        .transferAchId(response.getData().getTransferAchId())
-//                        .receiptDetail(ResponseACH.ReceiptDetail.builder()
-//                                .accountingEntry(response.getData().getReceiptDetail().getAccountingEntry())
-//                                .accountingDate(UtilDate.formatDateLong(response.getData().getReceiptDetail().getAccountingDate()))
-//                                .accountingTime(UtilDate.formatTime(response.getData().getReceiptDetail().getAccountingTime()))
-//                                .amountDebited(response.getData().getReceiptDetail().getAmountDebited())
-//                                .amountCredited(response.getData().getReceiptDetail().getAmountCredited())
-//                                .exchangeRateDebit(response.getData().getReceiptDetail().getExchangeRateDebit())
-//                                .exchangeRateCredit(response.getData().getReceiptDetail().getExchangeRateCredit())
-//                                .amount(response.getData().getReceiptDetail().getAmount())
-//                                .currency(response.getData().getReceiptDetail().getCurrency())
-//                                .fromAccountNumber(response.getData().getReceiptDetail().getFromAccountNumber())
-//                                .fromHolder(response.getData().getReceiptDetail().getFromHolder())
-//                                .toAccountNumber(response.getData().getReceiptDetail().getToAccountNumber())
-//                                .toHolder(response.getData().getReceiptDetail().getToHolder())
-//                                .description(response.getData().getReceiptDetail().getDescription())
-//                                .fromCurrency(response.getData().getReceiptDetail().getFromCurrency())
-//                                .toCurrency(response.getData().getReceiptDetail().getToCurrency())
-//                                .build())
-//                        .build())
-//                .build();
-//    }
 }
 
 

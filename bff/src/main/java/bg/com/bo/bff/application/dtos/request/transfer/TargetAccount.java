@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +19,9 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TargetAccount {
     @NotNull(message = "Id no válido")
+    @NotBlank(message = "El id no puede estar vacío")
+    @Pattern(regexp = "\\d{7,15}", message = "El id debe contener entre 7 y 15 dígitos")
     @Schema(description = "Identificador de la cuenta de destino", example = "123456789")
-    private Integer id;
+    private String id;
+
 }

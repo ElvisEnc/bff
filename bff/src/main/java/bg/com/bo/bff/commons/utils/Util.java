@@ -2,7 +2,9 @@ package bg.com.bo.bff.commons.utils;
 
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.Currency;
+import bg.com.bo.bff.providers.dtos.responses.DynamicAppError;
 import bg.com.bo.bff.providers.dtos.responses.ApiErrorResponse;
+import bg.com.bo.bff.providers.dtos.responses.ApiNetErrorResponse;
 import bg.com.bo.bff.providers.dtos.responses.ErrorDetailResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -180,6 +183,12 @@ public class Util {
         return AppError.findByCode(providerErrorCode);
     }
 
+    public static DynamicAppError mapNetProviderError(String jsonResponse) throws IOException {
+        ApiErrorResponse response = new ApiErrorResponse( HttpStatus.BAD_REQUEST, "Error");
+        ApiNetErrorResponse providerResponse = Util.stringToObject(jsonResponse, ApiNetErrorResponse.class);
+        return new DynamicAppError(response.getStatus(), providerResponse.getCodigoError(), providerResponse.getMensaje());
+    }
+
     public static byte[] getEncodedBytes(String data) {
         return data.getBytes(StandardCharsets.UTF_8);
     }
@@ -195,9 +204,9 @@ public class Util {
     public static String convertCurrency(String currencyCode) {
         Currency currencyType = currencyMap.get(currencyCode);
         if (currencyType != null) {
-            return currencyType.getSymbol();
+            return currencyType.getCode();
         } else {
-            return "Unknown";
+            return "10000";
         }
     }
 
