@@ -1,6 +1,8 @@
 package bg.com.bo.bff.providers.dtos.requests.login;
 
-@lombok.Data
+import lombok.Data;
+
+@Data
 public class MWOwnerAccountRequest {
     private String personId;
     private String userDeviceId;

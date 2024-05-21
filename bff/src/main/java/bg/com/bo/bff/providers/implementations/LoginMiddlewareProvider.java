@@ -24,6 +24,7 @@ import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorResponse;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
+import bg.com.bo.bff.providers.mappings.login.ILoginMapper;
 import bg.com.bo.bff.providers.mappings.login.LoginMWMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
@@ -42,19 +43,19 @@ import java.io.IOException;
 @Service
 public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
     ITokenMiddlewareProvider tokenMiddlewareProvider;
-
     private final MiddlewareConfig middlewareConfig;
-
     private IHttpClientFactory httpClientFactory;
     private LoginMWMapper loginMWMapper;
+    private ILoginMapper mapper;
 
     private static final Logger logger = LogManager.getLogger(LoginMiddlewareProvider.class.getName());
 
-    public LoginMiddlewareProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory, LoginMWMapper loginMWMapper) {
+    public LoginMiddlewareProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory, LoginMWMapper loginMWMapper, ILoginMapper mapper) {
         this.tokenMiddlewareProvider = tokenMiddlewareProvider;
         this.middlewareConfig = middlewareConfig;
         this.httpClientFactory = httpClientFactory;
         this.loginMWMapper = loginMWMapper;
+        this.mapper = mapper;
     }
 
 
@@ -114,29 +115,12 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
     @Override
     public LoginValidationServiceResponse validateCredentials(LoginRequest loginRequest, String ip, LoginMWFactorDataResponse data) throws IOException {
         String token = tokenLogin().getAccessToken();
+        LoginMWCredentialRequest loginMWRequest = mapper.mapperRequest(loginRequest, ip, data);
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            LoginMWCredendialDeviceRequest loginMWCredendialDeviceRequest = LoginMWCredendialDeviceRequest.builder()
-                    .deviceIp(ip)
-                    .deviceId(loginRequest.getDeviceIdentification().getUniqueId())
-                    .deviceName(loginRequest.getDeviceIdentification().getSystemName())
-                    .geoPositionX(loginRequest.getDeviceIdentification().getGeoPositionX())
-                    .geoPositionY(loginRequest.getDeviceIdentification().getGeoPositionY())
-                    .build();
-
-            LoginMWCredentialRequest loginMWRequest = LoginMWCredentialRequest.builder()
-                    .personId(data.getPersonId())
-                    .password(loginRequest.getPassword())
-                    .deviceData(loginMWCredendialDeviceRequest)
-                    .idGeneratorUuid(data.getIdGeneratorUuid())
-                    .loginType(loginRequest.getType())
-                    .tokenFinger(data.getSecondFactor())
-                    .appVersion(loginRequest.getAppVersion())
-                    .build();
-
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.LOGIN_MANAGER.getName() + "/bs/v1/users/validate-credentials";
             HttpPost request = new HttpPost(path);
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonMapper = objectMapper.writeValueAsString(loginMWRequest);
+
+            String jsonMapper = Util.objectToString(loginMWRequest);
             StringEntity entity = new StringEntity(jsonMapper);
             request.setEntity(entity);
             request.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
@@ -144,30 +128,31 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
             request.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
 
-            CloseableHttpResponse httpResponse = httpClient.execute(request);
-            int statusCode = httpResponse.getStatusLine().getStatusCode();
-            String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
 
-            if (statusCode == HttpStatus.SC_OK) {
-                LoginMWCredentialResponse loginMWCredentialResponse = objectMapper.readValue(jsonResponse, LoginMWCredentialResponse.class);
-                String codError = loginMWCredentialResponse.getData().getCodError();
-                switch (codError) {
-                    case "0000": {
-                        LoginValidationServiceResponse loginResult = new LoginValidationServiceResponse();
-                        loginResult.setPersonId(data.getPersonId());
-                        loginResult.setUserDeviceId(String.valueOf(loginMWCredentialResponse.getData().getUserDeviceId()));
-                        loginResult.setRolePersonId(String.valueOf(loginMWCredentialResponse.getData().getRoleList().get(0).getRolePersonId()));
-                        loginResult.setStatusCode("SUCCESS");
-                        return loginResult;
+                if (statusCode == HttpStatus.SC_OK) {
+                    LoginMWCredentialResponse loginMWCredentialResponse = Util.stringToObject(jsonResponse, LoginMWCredentialResponse.class);
+                    String codError = loginMWCredentialResponse.getData().getCodError();
+                    switch (codError) {
+                        case "0000": {
+                            LoginValidationServiceResponse loginResult = new LoginValidationServiceResponse();
+                            loginResult.setPersonId(data.getPersonId());
+                            loginResult.setUserDeviceId(String.valueOf(loginMWCredentialResponse.getData().getUserDeviceId()));
+                            loginResult.setRolePersonId(String.valueOf(loginMWCredentialResponse.getData().getRoleList().get(0).getRolePersonId()));
+                            loginResult.setStatusCode("SUCCESS");
+                            return loginResult;
+                        }
+                        default:
+                            logger.error(jsonResponse);
+                            throw new GenericException("Errores 200 sin mapear", AppError.MDWAAM_004.getHttpCode(), AppError.MDWAAM_004.getCode());
                     }
-                    default:
-                        logger.error(jsonResponse);
-                        throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+                } else {
+                    logger.error(jsonResponse);
+                    AppError error = Util.mapProviderError(jsonResponse);
+                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
                 }
-            } else {
-                logger.error(jsonResponse);
-                AppError error = Util.mapProviderError(jsonResponse);
-                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }
         } catch (GenericException ex) {
             logger.error(ex);
@@ -225,12 +210,8 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
 
     @Override
     public GenericResponse changePassword(String personId, String ip, String deviceId, String userDeviceId, String rolePersonId, ChangePasswordRequest changePasswordRequest) throws IOException {
-        ChangePasswordMWRequest changePasswordMWRequest = loginMWMapper.convert(changePasswordRequest);
-        MWOwnerAccountRequest owner = new MWOwnerAccountRequest();
-        owner.setPersonId(personId);
-        owner.setUserDeviceId(userDeviceId);
-        owner.setPersonRoleId(rolePersonId);
-        changePasswordMWRequest.setOwnerAccount(owner);
+        MWOwnerAccountRequest owner = loginMWMapper.convert(personId, userDeviceId, rolePersonId);
+        ChangePasswordMWRequest changePasswordMWRequest = loginMWMapper.convert(changePasswordRequest, owner);
 
         ClientToken clientToken = tokenLogin();
 

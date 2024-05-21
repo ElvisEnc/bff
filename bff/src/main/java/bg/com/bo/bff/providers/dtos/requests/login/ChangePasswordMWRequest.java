@@ -1,6 +1,8 @@
 package bg.com.bo.bff.providers.dtos.requests.login;
 
-@lombok.Data
+import lombok.Data;
+
+@Data
 public class ChangePasswordMWRequest {
     private String previousPassword;
     private String newPassword;

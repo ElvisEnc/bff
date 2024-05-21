@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.providers.dtos.requests.login.ChangePasswordMWRequest;
 import bg.com.bo.bff.providers.dtos.requests.login.LoginMWFactorRequest;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
+import bg.com.bo.bff.providers.dtos.requests.login.MWOwnerAccountRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -19,6 +20,9 @@ public interface LoginMWMapper {
 
     @Mapping(target = "newPassword", expression = "java(bg.com.bo.bff.commons.utils.Util.encodeSha512(input.getNewPassword()))")
     @Mapping(target = "previousPassword", expression = "java(bg.com.bo.bff.commons.utils.Util.encodeSha512(input.getOldPassword()))")
-    @Mapping(target = "ownerAccount", ignore = true)
-    ChangePasswordMWRequest convert(ChangePasswordRequest input);
+    @Mapping(target = "ownerAccount", source = "ownerAccountRequest")
+    ChangePasswordMWRequest convert(ChangePasswordRequest input, MWOwnerAccountRequest ownerAccountRequest);
+
+    @Mapping(target = "personRoleId", source = "rolePersonId")
+    MWOwnerAccountRequest convert(String personId, String userDeviceId, String rolePersonId);
 }

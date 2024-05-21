@@ -1,8 +1,12 @@
 package bg.com.bo.bff.models.dtos.login;
 
-@lombok.Data
-@lombok.NoArgsConstructor
-@lombok.AllArgsConstructor
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoginValidationServiceResponse {
     private String statusCode;
     private String personId;

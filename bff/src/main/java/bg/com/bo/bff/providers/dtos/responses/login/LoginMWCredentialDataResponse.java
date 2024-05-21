@@ -1,8 +1,9 @@
 package bg.com.bo.bff.providers.dtos.responses.login;
 
+import lombok.Data;
 import java.util.List;
 
-@lombok.Data
+@Data
 public class LoginMWCredentialDataResponse {
     private String securityImage;
     private String secondFactor;
@@ -14,7 +15,7 @@ public class LoginMWCredentialDataResponse {
     private String codError;
     private String desError;
 
-    @lombok.Data
+    @Data
     public static class Role {
         private Integer rolePersonId;
         private String description;

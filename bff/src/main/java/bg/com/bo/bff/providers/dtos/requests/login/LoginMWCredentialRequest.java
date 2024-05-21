@@ -1,8 +1,9 @@
 package bg.com.bo.bff.providers.dtos.requests.login;
 
 import lombok.Builder;
+import lombok.Data;
 
-@lombok.Data
+@Data
 @Builder
 public class LoginMWCredentialRequest {
     private String personId;

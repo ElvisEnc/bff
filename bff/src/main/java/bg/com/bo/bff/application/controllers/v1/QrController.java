@@ -40,7 +40,7 @@ public class QrController {
         this.iQrService = iQrService;
     }
 
-    @Operation(summary = "QR Generated and Paid", description = "Lista de QR Generados y Pagados")
+    @Operation(summary = "List of QR Generated and Paid", description = "Lista de QR Generados y Pagados")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Obtiene todos los QR generados y Pagados", content = @Content(schema = @Schema(implementation = QrListResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),

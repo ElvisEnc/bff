@@ -2,9 +2,10 @@ package bg.com.bo.bff.providers.dtos.responses.login;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@lombok.Data
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginMWFactorDataResponse {
