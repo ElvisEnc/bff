@@ -2,6 +2,8 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.GetContactResponseFixture;
+import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.IUserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -80,5 +83,23 @@ class UserControllerTest {
                         .content(Util.objectToString(request, false)))
                 .andExpect(status().isBadRequest())
                 .andReturn();
+    }
+
+    @Test
+    void givenValidDataWhenGetContactInformation() throws Exception {
+        // Assert
+        ContactResponse expected = GetContactResponseFixture.withDefault();
+        when(userService.getContactInfo()).thenReturn(expected);
+
+        // Act
+        String url = "/api/v1/users/contact";
+        mockMvc.perform(get(url)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Arrange
+        verify(userService).getContactInfo();
     }
 }

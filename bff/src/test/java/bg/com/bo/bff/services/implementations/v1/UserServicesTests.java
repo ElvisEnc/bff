@@ -2,6 +2,8 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.GetContactResponseFixture;
+import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
@@ -168,5 +170,19 @@ public class UserServicesTests {
         // Assert
         assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
         assertEquals(expectedResponse.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void givenValidDataWhenGetContactInformation() throws IOException {
+        // Arrange
+        ContactResponse expected = GetContactResponseFixture.withDefault();
+        when(provider.getContactInfo()).thenReturn(expected);
+
+        // Act
+        ContactResponse response = service.getContactInfo();
+
+        // Assert
+        verify(provider).getContactInfo();
+        assertEquals(expected, response);
     }
 }

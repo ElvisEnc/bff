@@ -3,6 +3,7 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.IErrorResponse;
@@ -15,6 +16,7 @@ import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.enums.response.user.UserControllerResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
+import bg.com.bo.bff.models.UserContact;
 import bg.com.bo.bff.providers.dtos.requests.login.*;
 import bg.com.bo.bff.providers.dtos.responses.login.LoginMWCredentialResponse;
 import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorDataResponse;
@@ -39,6 +41,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
@@ -245,6 +248,21 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
         } catch (Exception e) {
             logger.error(e);
             throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
+        }
+    }
+
+    @Override
+    public ContactResponse getContactInfo() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonContact = null;
+        try (InputStream file =  getClass().getResourceAsStream("/files/ContactResponse.json")) {
+            assert file != null;
+            jsonContact = new String(file.readAllBytes());
+            UserContact userContact = objectMapper.readValue(jsonContact, UserContact.class);
+            String jsonResponse = Util.objectToString(userContact.getCompanyContactDetail());
+            return Util.stringToObject(jsonResponse, ContactResponse.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

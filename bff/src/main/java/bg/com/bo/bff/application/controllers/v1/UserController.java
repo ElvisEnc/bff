@@ -3,6 +3,7 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.services.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,5 +50,17 @@ public class UserController {
     ) throws IOException {
         String ip = servletRequest.getRemoteAddr();
         return ResponseEntity.ok(userService.changePassword(personId, ip, deviceId, userDeviceId, rolePersonId, changePasswordRequest));
+    }
+
+    @Operation(summary = "Obtener la información de datos de contacto.", description = "Obtiene la información de contacto del Banco Ganadero.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Información de contacto.", content = @Content(schema = @Schema(implementation = ContactResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("/contact")
+    public ResponseEntity<ContactResponse> getContactDetails(
+
+    ) throws IOException {
+        return ResponseEntity.ok(userService.getContactInfo());
     }
 }

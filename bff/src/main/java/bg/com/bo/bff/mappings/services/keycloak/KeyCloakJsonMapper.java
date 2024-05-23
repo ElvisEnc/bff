@@ -1,5 +1,6 @@
 package bg.com.bo.bff.mappings.services.keycloak;
 
+import bg.com.bo.bff.models.UserContact;
 import bg.com.bo.bff.models.jwt.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,0 +1,17 @@
+{
+  "companyContact": {
+    "socialNetworks": {
+      "facebook": "https://www.facebook.com/bg.com.bo",
+      "likedin": "https://www.linkedin.com/company/bancoganadero-sa",
+      "youtube": "https://www.youtube.com/@BancoGanaderoSA"
+    },
+    "attentionLines": {
+      "helpNumber": "800-10-3999",
+      "creditNumber": "800-17-9656"
+    },
+    "contact": {
+      "whatsapp": "https://wa.me/59172103001",
+      "countryNumberCode": "591"
+    }
+  }
+}

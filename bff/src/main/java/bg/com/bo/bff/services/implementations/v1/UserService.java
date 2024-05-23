@@ -2,6 +2,7 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
@@ -33,5 +34,10 @@ public class UserService implements IUserService {
         validator.validate(changePasswordRequest.getNewPassword());
 
         return loginMiddlewareProvider.changePassword(personId, ip, deviceId, userDeviceId, rolePersonId, changePasswordRequest);
+    }
+
+    @Override
+    public ContactResponse getContactInfo() {
+        return loginMiddlewareProvider.getContactInfo();
     }
 }
