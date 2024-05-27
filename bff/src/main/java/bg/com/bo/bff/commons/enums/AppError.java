@@ -99,6 +99,22 @@ public enum AppError {
     MDWTRM_400(HttpStatus.BAD_REQUEST, "INVALID_CURRENCY", "MDWPGL-400", "Problemas con el tipo de la moneda"),
     MDWTRM_PENDING(HttpStatus.OK, "TRANSFER_PENDING", "MDWPGL-PENDING", "La transferencia está pendiente de aprobación por el titular. Por favor, espera la confirmación"),
 
+    //QR
+
+    MDWGQM_001(HttpStatus.BAD_REQUEST, "GENERATE_QR_IMAGE", "MDWGQM-001", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),
+    MDWGQM_002(HttpStatus.BAD_REQUEST, "GENERATE_QR_IMAGE_BASE_64", "MDWGQM-002", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),
+    MDWGQM_003(HttpStatus.BAD_REQUEST, "DECODE_IMAGE_BASE_64", "MDWGQM-003", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),
+    MDWGQM_012(HttpStatus.BAD_REQUEST, "ERROR_ENCRYPT", "MDWGQM-012", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),
+    MDWGQM_015(HttpStatus.BAD_REQUEST, "ERROR_DECRYPT", "MDWGQM-015", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),
+    MDWGQM_007(HttpStatus.BAD_REQUEST, "ERROR_DATA_ACCOUNT_ORIGIN", "MDWGQM-007", "Hubo un error al obtener los datos de la cuenta origen, revise los datos e intente nuevamente."),
+    MDWGQM_009(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWGQM-009", "Internal server error."),
+    MDWGQM_010(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWGQM-010", "Internal server error."),
+    MDWGQM_013(HttpStatus.BAD_REQUEST, "ACCOUNT_CURRENCY_ORIGIN_DIFFERENT", "MDWGQM-013", "La moneda de la cuenta origen es distinta."),
+    MDWGQM_014(HttpStatus.BAD_REQUEST, "FORMAT_IS_NOT_VALID_ENTITY", "MDWGQM-014", "El formato de la entidad bancaria no es válido o no existe."),
+    MDWGQM_011(HttpStatus.BAD_REQUEST, "ERROR_DATE", "MDWGQM-011", "La fecha otogada no es correcta."),
+    MDWGQM_004(HttpStatus.BAD_REQUEST, "CONVERTING_DATE_FORMAT", "MDWGQM-004", "El formato de la fecha no es correcta."),
+    MDWGQM_008(HttpStatus.BAD_REQUEST, "SOURCE_ACCOUNT_KO", "MDWGQM-008", "La cuenta de origen no se encuentra operativa"),
+
     // Genericos
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "Error en los parametros"),
     MDWACM_012(HttpStatus.BAD_REQUEST, "DATA_INVALID", "MDWACM-012", "Datos Invalidos"),

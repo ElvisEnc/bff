@@ -75,7 +75,7 @@ public class QrController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
 
             @RequestBody
-            final QRCodeGenerateRequest request
+            final @Valid QRCodeGenerateRequest request
     ) throws IOException {
 
         return ResponseEntity.ok(iQrService.generateQR(request, Headers.getParameter(httpServletRequest)));
@@ -97,7 +97,7 @@ public class QrController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
 
             @RequestBody
-            final QRCodeRegenerateRequest request
+            final @Valid QRCodeRegenerateRequest request
     ) throws IOException {
 
         return ResponseEntity.ok(iQrService.regenerateQR(request, Headers.getParameter(httpServletRequest)));

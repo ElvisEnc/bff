@@ -38,11 +38,11 @@ public class QRCodeRegenerateRequest {
     @Schema(example = "BOB", description = "Este es el código de la moneda")
     private String currency;
 
-    @NotBlank(message = "El monto no puede estar vacío")
+
     @Schema(example = "100.50", description = "Este es el monto de pago")
     private String amount;
 
-    @NotBlank(message = "La referencia no puede estar vacío")
+
     @Schema(example = "Gastos Generales", description = "Esta es la referencia")
     private String reference;
 
