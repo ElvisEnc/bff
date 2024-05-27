@@ -8,7 +8,6 @@ import bg.com.bo.bff.application.mappings.login.LoginMapper;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.models.dtos.login.*;
 import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
-import bg.com.bo.bff.services.interfaces.IDeviceEnrollmentService;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,14 +33,12 @@ import java.io.IOException;
 @Validated
 public class LoginController {
     private final ILoginServices iLoginServices;
-    private final IDeviceEnrollmentService iDeviceEnrollmentService;
     private final LoginMapper loginMapper;
     private final HttpServletRequest httpServletRequest;
 
     @Autowired
-    public LoginController(ILoginServices iLoginServices, IDeviceEnrollmentService iDeviceEnrollmentService, LoginMapper loginMapper, HttpServletRequest httpServletRequest) {
+    public LoginController(ILoginServices iLoginServices, LoginMapper loginMapper, HttpServletRequest httpServletRequest) {
         this.iLoginServices = iLoginServices;
-        this.iDeviceEnrollmentService = iDeviceEnrollmentService;
         this.loginMapper = loginMapper;
         this.httpServletRequest = httpServletRequest;
     }
@@ -102,7 +99,7 @@ public class LoginController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion
 
           ) throws IOException {
-        DeviceEnrollmentResponse response = iDeviceEnrollmentService.validation(
+        DeviceEnrollmentResponse response = iLoginServices.validation(
                 Headers.getParameter(httpServletRequest,
                         deviceId,
                         deviceName,

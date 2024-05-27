@@ -2,6 +2,7 @@ package bg.com.bo.bff.services.interfaces;
 
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
 import bg.com.bo.bff.application.dtos.request.LogoutRequest;
+import bg.com.bo.bff.application.dtos.response.DeviceEnrollmentResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.TokenDataResponse;
 import bg.com.bo.bff.models.dtos.login.LoginResult;
@@ -16,4 +17,5 @@ public interface ILoginServices {
     TokenDataResponse refreshSession(String personId, RefreshSessionRequest refreshSessionRequest);
 
     GenericResponse logout(String deviceId, String deviceIp, String deviceName, String geoPositionX, String geoPositionY, String appVersion, String personId, String userDeviceId, String personRoleId, String authorization, LogoutRequest request) throws IOException;
+    DeviceEnrollmentResponse validation(Map<String, String> parameter) throws IOException;
 }

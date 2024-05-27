@@ -9,17 +9,13 @@ import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.LoginResponse;
 import bg.com.bo.bff.application.mappings.login.LoginMapper;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.models.dtos.login.*;
 import bg.com.bo.bff.application.exceptions.UnauthorizedException;
-import bg.com.bo.bff.application.mappings.login.LoginMapper;
 import bg.com.bo.bff.models.dtos.login.LoginResult;
 import bg.com.bo.bff.models.dtos.login.TokenData;
-import bg.com.bo.bff.services.interfaces.IDeviceEnrollmentService;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +49,6 @@ class LoginControllerTest {
     @Mock
     private ILoginServices iLoginServices;
     @Mock
-    private IDeviceEnrollmentService iDeviceEnrollmentService;
     DeviceEnrollmentResponse deviceEnrollmentResponse;
     private final LoginMapper loginMapper = LoginMapper.INSTANCE;
     LoginRequest requestMock = LoginRequestFixture.withDefault();
@@ -97,7 +92,7 @@ class LoginControllerTest {
         headers.add(DeviceMW.APP_VERSION.getCode(), APP_VERSION);
         headers.add("json-data", JSON_DATA);
 
-        loginController = new LoginController(this.iLoginServices, this.iDeviceEnrollmentService, this.loginMapper, servletRequest);
+        loginController = new LoginController(this.iLoginServices, this.loginMapper, servletRequest);
         mockMvc = MockMvcBuilders.standaloneSetup(loginController).build();
     }
 
@@ -165,10 +160,10 @@ class LoginControllerTest {
     void givenDeviceWhenRequestValidateEnrolledThenSuccessfully() throws IOException {
         // Arrange
         deviceEnrollmentResponse = new DeviceEnrollmentResponse();
-        Mockito.when(iDeviceEnrollmentService.validation( any())).thenReturn(deviceEnrollmentResponse);
+        Mockito.when(iLoginServices.validation(any())).thenReturn(deviceEnrollmentResponse);
 
         // Act
-        ResponseEntity<DeviceEnrollmentResponse> response = loginController.validateEnrollment( "","","","","");
+        ResponseEntity<DeviceEnrollmentResponse> response = loginController.validateEnrollment("", "", "", "", "");
 
         // Assert
         assert response.getStatusCode().value() == HttpStatus.OK.value();
