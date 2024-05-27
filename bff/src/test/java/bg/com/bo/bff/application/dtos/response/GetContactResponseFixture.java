@@ -8,7 +8,7 @@ public class GetContactResponseFixture {
         return new ContactResponse(
                 ContactDetail.SocialNetworks.builder()
                         .facebook("facebook")
-                        .likedin("likedin")
+                        .linkedin("linkedin")
                         .youtube("youtube")
                         .build(),
                 ContactDetail.AttentionLines.builder()

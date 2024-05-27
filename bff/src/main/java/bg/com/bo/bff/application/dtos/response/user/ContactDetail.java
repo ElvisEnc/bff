@@ -18,7 +18,7 @@ public class ContactDetail {
         private String facebook;
 
         @Schema(description = "URL al perfil de LinkedIn", example = "https://www.linkedin.com/company/banco-ganadero-s-a-/")
-        private String likedin;
+        private String linkedin;
 
         @Schema(description = "URL al canal de YouTube", example = "https://www.youtube.com/user/BancoGanadero")
         private String youtube;

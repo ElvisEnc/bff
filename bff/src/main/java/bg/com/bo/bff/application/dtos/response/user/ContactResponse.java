@@ -13,7 +13,4 @@ public class ContactResponse {
     private ContactDetail.SocialNetworks socialNetworks;
     private ContactDetail.AttentionLines attentionLines;
     private ContactDetail.Contact contact;
-
-    public static class builder {
-    }
 }

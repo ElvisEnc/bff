@@ -1,27 +1,34 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
+import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.commons.validators.generics.*;
+import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
+import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
 import bg.com.bo.bff.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class UserService implements IUserService {
 
     private ILoginMiddlewareProvider loginMiddlewareProvider;
+    private IPersonalInformationNetProvider personalInformationNetProvider;
 
     @Autowired
-    public UserService(ILoginMiddlewareProvider provider) {
+    public UserService(ILoginMiddlewareProvider provider, IPersonalInformationNetProvider providerPersonal) {
         this.loginMiddlewareProvider = provider;
+        this.personalInformationNetProvider = providerPersonal;
     }
 
     @Override
@@ -39,5 +46,10 @@ public class UserService implements IUserService {
     @Override
     public ContactResponse getContactInfo() {
         return loginMiddlewareProvider.getContactInfo();
+    }
+
+    @Override
+    public PersonalResponse getPersonalInformation(String personId, Map<String, String> parameter) throws IOException {
+        return personalInformationNetProvider.getPersonalInformation(personId, parameter);
     }
 }

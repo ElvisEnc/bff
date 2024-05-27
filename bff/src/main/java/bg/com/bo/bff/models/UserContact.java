@@ -26,8 +26,8 @@ public class UserContact {
     public static class SocialNetworks {
         @JsonProperty("facebook")
         private String facebook;
-        @JsonProperty("likedin")
-        private String likedin;
+        @JsonProperty("linkedin")
+        private String linkedin;
         @JsonProperty("youtube")
         private String youtube;
     }

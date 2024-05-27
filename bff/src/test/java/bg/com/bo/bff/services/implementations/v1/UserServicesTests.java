@@ -3,11 +3,16 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.GetContactResponseFixture;
+import bg.com.bo.bff.application.dtos.response.GetPersonalInformationResponseFixture;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
+import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
+import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
+import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
 import bg.com.bo.bff.services.implementations.v1.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -27,8 +33,25 @@ public class UserServicesTests {
     @Mock
     private ILoginMiddlewareProvider provider;
 
+    @Mock
+    private IPersonalInformationNetProvider personalInformationNetProvider;
+
     @InjectMocks
     private UserService service;
+    private Map<String, String> map;
+
+    @BeforeEach
+    void setUp() {
+        this.map = Map.of(
+                DeviceMW.DEVICE_ID.getCode(), "1234",
+                DeviceMW.DEVICE_IP.getCode(), "12344",
+                DeviceMW.DEVICE_NAME.getCode(), "OS",
+                DeviceMW.GEO_POSITION_X.getCode(), "121.11",
+                DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
+                DeviceMW.APP_VERSION.getCode(), "1.0.0"
+        );
+        this.service = new UserService(provider, personalInformationNetProvider);
+    }
 
     @Test
     void givenValidDataWhenChangePasswordThenReturnOk() throws IOException {
@@ -183,6 +206,20 @@ public class UserServicesTests {
 
         // Assert
         verify(provider).getContactInfo();
+        assertEquals(expected, response);
+    }
+
+    @Test
+    void givenValidDataWhenGetPersonalInformation() throws IOException {
+        // Arrange
+        PersonalResponse expected = GetPersonalInformationResponseFixture.withDefault();
+        when(personalInformationNetProvider.getPersonalInformation("123", map)).thenReturn(expected);
+
+        // Act
+        PersonalResponse response = service.getPersonalInformation("123", map);
+
+        // Assert
+        verify(personalInformationNetProvider).getPersonalInformation("123", map);
         assertEquals(expected, response);
     }
 }
