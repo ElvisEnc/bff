@@ -30,12 +30,12 @@ import java.io.IOException;
 @Tag(name = "User Controller", description = "Controlador de usuario.")
 public class UserController {
     private IUserService userService;
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
+
     @Autowired
     public UserController(IUserService userService, HttpServletRequest httpServletRequest) {
-        this.httpServletRequest = httpServletRequest;
         this.userService = userService;
+        this.httpServletRequest = httpServletRequest;
     }
 
     @Operation(summary = "Cambio de contraseña de usuario con sesión iniciada.", description = "Cambia la contraseña del usuario solo si tiene la sesión iniciada.")
@@ -47,13 +47,22 @@ public class UserController {
     @PutMapping("/{personId}/change-password")
     public ResponseEntity<GenericResponse> changePassword(
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @Valid @RequestHeader("device-id") String deviceId,
-            @Valid @RequestHeader("role-person-id") String rolePersonId,
-            @Valid @RequestHeader("user-device-id") String userDeviceId,
-            @Valid @RequestBody ChangePasswordRequest changePasswordRequest, HttpServletRequest servletRequest
+            @Valid @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @Valid @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @Valid @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @Valid @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @Valid @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @Valid @RequestHeader("person-role-id") String personRoleId,
+            @Valid @RequestBody ChangePasswordRequest changePasswordRequest
     ) throws IOException {
-        String ip = servletRequest.getRemoteAddr();
-        return ResponseEntity.ok(userService.changePassword(personId, ip, deviceId, userDeviceId, rolePersonId, changePasswordRequest));
+        return ResponseEntity.ok(userService.changePassword(personId,  personRoleId, changePasswordRequest,
+                Headers.getParameter(httpServletRequest,
+                        deviceId,
+                        deviceName,
+                        geoPositionX,
+                        geoPositionY,
+                        appVersion
+                )));
     }
 
     @Operation(summary = "Obtener la información de datos de contacto.", description = "Obtiene la información de contacto del Banco Ganadero.")

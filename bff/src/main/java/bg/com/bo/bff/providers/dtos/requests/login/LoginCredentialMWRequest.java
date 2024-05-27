@@ -5,12 +5,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LoginMWCredentialRequest {
+public class LoginCredentialMWRequest {
     private String personId;
     private String password;
-    private LoginMWCredendialDeviceRequest deviceData;
     private String idGeneratorUuid;
     private String loginType;
     private String tokenFinger;
-    private String appVersion;
 }

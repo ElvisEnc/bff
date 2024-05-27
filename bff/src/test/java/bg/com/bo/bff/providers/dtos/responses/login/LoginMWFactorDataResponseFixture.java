@@ -1,8 +1,8 @@
 package bg.com.bo.bff.providers.dtos.responses.login;
 
 public class LoginMWFactorDataResponseFixture {
-    public static LoginMWFactorDataResponse withDefault() {
-        LoginMWFactorDataResponse loginMWFactorDataResponse = new LoginMWFactorDataResponse();
+    public static LoginFactorData withDefault() {
+        LoginFactorData loginMWFactorDataResponse = new LoginFactorData();
         loginMWFactorDataResponse.setPersonId("123");
         loginMWFactorDataResponse.setCodeImage("123");
         loginMWFactorDataResponse.setSecondFactor("123");

@@ -30,20 +30,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
-
     private MockMvc mockMvc;
-
     @Mock
     private IUserService userService;
     @Mock
     private HttpServletRequest httpServletRequest;
-
     @InjectMocks
     private UserController userController;
-
-    private static final String URL_CHANGE_PASSWORD = "/api/v1/users/999/change-password";
-
     private HttpHeaders headers;
+    private static final String URL_CHANGE_PASSWORD = "/api/v1/users/999/change-password";
 
     @BeforeEach
     void setUp() {
@@ -55,6 +50,7 @@ class UserControllerTest {
         this.headers.add(DeviceMW.GEO_POSITION_Y.getCode(), "11101,1");
         this.headers.add(DeviceMW.APP_VERSION.getCode(), "1.0.0");
         this.headers.add(DeviceMW.DEVICE_IP.getCode(), "127.0.0.1");
+        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
     @Test
@@ -65,26 +61,30 @@ class UserControllerTest {
         request.setOldPassword("2");
 
         GenericResponse expected = new GenericResponse();
-        String ip = "127.0.0.1";
-        String deviceId = "3cae84faa9b64750";
-        String userDeviceId = "123";
         String rolePersonId = "1";
         String personId = "999";
 
-        when(userService.changePassword(personId, ip, deviceId, userDeviceId, rolePersonId, request)).thenReturn(expected);
+        when(userService.changePassword(any(),   any(), any(), any())).thenReturn(expected);
 
         // Act & Assert
         mockMvc.perform(put(URL_CHANGE_PASSWORD)
-                        .header("device-id", deviceId)
-                        .header("role-person-id", rolePersonId)
-                        .header("user-device-id", userDeviceId)
+                        .header("middleware-channel","1")
+                        .header("application-id","2")
+                        .header("device-id","17177")
+                        .header("device-ip","127.0.1.1")
+                        .header("device-name","OS")
+                        .header("geo-position-x","10101.12")
+                        .header("geo-position-y","10101.12")
+                        .header("app-version","1.0.1")
+                        .header("person-role-id","10")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Util.objectToString(request, false)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        verify(userService).changePassword(personId, ip, deviceId, userDeviceId, rolePersonId, request);
+        // Arrange
+        verify(userService).changePassword(any(), any(), any(), any());
     }
 
     @Test

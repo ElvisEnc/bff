@@ -1,13 +1,10 @@
 package bg.com.bo.bff.providers.dtos.requests.login;
-
-
 import lombok.Builder;
+import lombok.Data;
 
-@lombok.Data
+@Data
 @Builder
-public class LoginMWFactorRequest {
+public class LoginFactorMWRequest {
     private String codeTypeAuthentication;
     private String factor;
-    private String geoReference;
-    private LoginMWFactorDeviceRequest deviceIdentification;
 }

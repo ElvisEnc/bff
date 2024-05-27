@@ -11,7 +11,6 @@ import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
-import bg.com.bo.bff.services.implementations.v1.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,10 +19,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -59,10 +60,6 @@ public class UserServicesTests {
         ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
         changePasswordRequest.setOldPassword("123456");
         changePasswordRequest.setNewPassword("ab1234");
-
-        String ip = "127.0.0.1";
-        String deviceId = "123";
-        String deviceUniqueId = "3cae84faa9b64750";
         String rolePersonId = "1";
         String personId = "999";
 
@@ -70,13 +67,13 @@ public class UserServicesTests {
         expectedResponse.setCode("SUCCESS");
         expectedResponse.setMessage("Satisfactorio");
 
-        when(provider.changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, changePasswordRequest)).thenReturn(expectedResponse);
+        when(provider.changePassword(any(),  any(), any(),any())).thenReturn(expectedResponse);
 
         // Act
-        GenericResponse response = service.changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, changePasswordRequest);
+        GenericResponse response = service.changePassword(personId, rolePersonId, changePasswordRequest, new HashMap<>());
 
         // Assert
-        verify(provider).changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, changePasswordRequest);
+        verify(provider).changePassword(any(), any(),  any(), any());
         assertEquals(expectedResponse, response);
     }
 
@@ -87,16 +84,13 @@ public class UserServicesTests {
         changePasswordRequest.setOldPassword("123456");
         changePasswordRequest.setNewPassword("ab12");
 
-        String ip = "127.0.0.1";
-        String deviceId = "123";
-        String deviceUniqueId = "3cae84faa9b64750";
         String rolePersonId = "1";
         String personId = "999";
 
         HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD);
 
         // Act
-        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, changePasswordRequest));
+        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId,   rolePersonId, changePasswordRequest, new HashMap<>()));
 
         // Assert
         assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
@@ -119,7 +113,7 @@ public class UserServicesTests {
         HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD);
 
         // Act
-        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, changePasswordRequest));
+        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId,  rolePersonId, changePasswordRequest, new HashMap<>()));
 
         // Assert
         assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
@@ -142,7 +136,7 @@ public class UserServicesTests {
         HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.SAME_PASSWORD);
 
         // Act
-        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, changePasswordRequest));
+        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId,  rolePersonId, changePasswordRequest, new HashMap<>()));
 
         // Assert
         assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
@@ -165,7 +159,7 @@ public class UserServicesTests {
         HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD);
 
         // Act
-        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, changePasswordRequest));
+        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId,  rolePersonId, changePasswordRequest,new HashMap<>()));
 
         // Assert
         assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
@@ -188,7 +182,7 @@ public class UserServicesTests {
         HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD);
 
         // Act
-        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, ip, deviceId, deviceUniqueId, rolePersonId, changePasswordRequest));
+        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId,   rolePersonId, changePasswordRequest, new HashMap<>()));
 
         // Assert
         assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());

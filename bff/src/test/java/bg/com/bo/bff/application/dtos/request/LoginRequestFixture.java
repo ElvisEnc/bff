@@ -2,14 +2,11 @@ package bg.com.bo.bff.application.dtos.request;
 
 public class LoginRequestFixture {
     public static LoginRequest withDefault() {
-
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setType("test");
-        loginRequest.setUser("test");
+        loginRequest.setType("2");
+        loginRequest.setUser("123456");
         loginRequest.setComplement("test");
-        loginRequest.setPassword("test");
-        loginRequest.setAppVersion("test");
-        loginRequest.setDeviceIdentification(DeviceFixture.withDefault());
+        loginRequest.setPassword("1234");
         return loginRequest;
     }
 }

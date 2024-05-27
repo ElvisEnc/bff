@@ -1,6 +1,5 @@
 package bg.com.bo.bff.models.dtos.login;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +12,9 @@ public class LoginResult {
     private StatusCode statusCode;
     private String userDeviceId;
     private String rolePersonId;
+    private String lastConnectionDate;
+    private Boolean keyChange;
+    private String keyChangeMessage;
 
     public enum StatusCode {
         SUCCESS

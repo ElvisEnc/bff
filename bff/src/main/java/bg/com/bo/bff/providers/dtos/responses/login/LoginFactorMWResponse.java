@@ -1,11 +1,12 @@
 package bg.com.bo.bff.providers.dtos.responses.login;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@lombok.Data
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginMWFactorResponse {
-    private LoginMWFactorDataResponse data;
+public class LoginFactorMWResponse {
+    private LoginFactorData data;
 }

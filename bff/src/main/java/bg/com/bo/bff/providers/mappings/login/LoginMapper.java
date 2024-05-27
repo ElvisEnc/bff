@@ -1,30 +1,35 @@
 package bg.com.bo.bff.providers.mappings.login;
 
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
-import bg.com.bo.bff.providers.dtos.requests.login.LoginMWCredendialDeviceRequest;
-import bg.com.bo.bff.providers.dtos.requests.login.LoginMWCredentialRequest;
-import bg.com.bo.bff.providers.dtos.responses.login.LoginMWFactorDataResponse;
+import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
+import bg.com.bo.bff.providers.dtos.requests.login.LoginCredentialMWRequest;
+import bg.com.bo.bff.providers.dtos.responses.login.LoginCredentialMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.login.LoginFactorData;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Component
 public class LoginMapper implements ILoginMapper {
-    public LoginMWCredentialRequest mapperRequest(LoginRequest loginRequest, String ip, LoginMWFactorDataResponse data){
-        LoginMWCredendialDeviceRequest loginMWCredendialDeviceRequest = LoginMWCredendialDeviceRequest.builder()
-                .deviceIp(ip)
-                .deviceId(loginRequest.getDeviceIdentification().getUniqueId())
-                .deviceName(loginRequest.getDeviceIdentification().getSystemName())
-                .geoPositionX(loginRequest.getDeviceIdentification().getGeoPositionX())
-                .geoPositionY(loginRequest.getDeviceIdentification().getGeoPositionY())
-                .build();
-
-        return LoginMWCredentialRequest.builder()
+    public LoginCredentialMWRequest mapperRequest(LoginRequest loginRequest, LoginFactorData data){
+        return LoginCredentialMWRequest.builder()
                 .personId(data.getPersonId())
                 .password(loginRequest.getPassword())
-                .deviceData(loginMWCredendialDeviceRequest)
                 .idGeneratorUuid(data.getIdGeneratorUuid())
                 .loginType(loginRequest.getType())
-                .tokenFinger(data.getSecondFactor())
-                .appVersion(loginRequest.getAppVersion())
+                .tokenFinger(loginRequest.getTokenBiometric())
                 .build();
+    }
+
+    public LoginValidationServiceResponse converResponse(LoginFactorData data, LoginCredentialMWResponse mwResponse){
+        LoginValidationServiceResponse response= new LoginValidationServiceResponse();
+        response.setPersonId(data.getPersonId());
+        response.setUserDeviceId(String.valueOf(mwResponse.getData().getUserDeviceId()));
+        response.setRolePersonId(String.valueOf(mwResponse.getData().getRoleList().get(0).getRolePersonId()));
+        response.setStatusCode("SUCCESS");
+        response.setLastConnectionDate(mwResponse.getData().getLastConnectionDate());
+        response.setKeyChange(Objects.equals(mwResponse.getData().getKeyChange(), "S"));
+        response.setKeyChangeMessage(mwResponse.getData().getKeyChangeMessage());
+        return response;
     }
 }

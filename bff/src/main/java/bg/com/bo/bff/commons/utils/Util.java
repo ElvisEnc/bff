@@ -1,5 +1,6 @@
 package bg.com.bo.bff.commons.utils;
 
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.Currency;
 import bg.com.bo.bff.providers.dtos.responses.DynamicAppError;
@@ -184,7 +185,7 @@ public class Util {
     }
 
     public static DynamicAppError mapNetProviderError(String jsonResponse) throws IOException {
-        ApiErrorResponse response = new ApiErrorResponse( HttpStatus.BAD_REQUEST, "Error");
+        ApiErrorResponse response = new ApiErrorResponse(HttpStatus.BAD_REQUEST, "Error");
         ApiNetErrorResponse providerResponse = Util.stringToObject(jsonResponse, ApiNetErrorResponse.class);
         return new DynamicAppError(response.getStatus(), providerResponse.getCodigoError(), providerResponse.getMensaje());
     }
@@ -194,11 +195,28 @@ public class Util {
     }
 
     public static String getStringFromEncodedBytes(byte[] decryptedData) {
+        if (decryptedData == null) {
+            LOGGER.error("decryptedData is null");
+            throw new GenericException("Decrypted data cannot be null", AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        }
         return new String(decryptedData, StandardCharsets.UTF_8);
     }
 
     public static String encodeByteArrayToBase64(byte[] data) {
         return Base64.getEncoder().encodeToString(data);
+    }
+
+    public static String decodeBase64ToString(String data) {
+        if (data == null || data.isEmpty())
+            throw new GenericException("Data cannot be null or empty", AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        byte[] decodeBytes;
+        try {
+            decodeBytes = Base64.getDecoder().decode(data);
+        } catch (Exception e) {
+            LOGGER.error("Invalid Base64 input: {}", data, e);
+            throw new GenericException("Invalid Base64", AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        }
+        return getStringFromEncodedBytes(decodeBytes);
     }
 
     public static String convertCurrency(String currencyCode) {

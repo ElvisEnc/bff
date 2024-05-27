@@ -32,7 +32,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public GenericResponse changePassword(String personId, String ip, String deviceId, String userDeviceId, String rolePersonId, ChangePasswordRequest changePasswordRequest) throws IOException {
+    public GenericResponse changePassword(String personId, String personRoleId, ChangePasswordRequest changePasswordRequest, Map<String,String> parameters) throws IOException {
         IValidator<String> validator = new NotEqualsValidator<>(changePasswordRequest.getOldPassword(), new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.SAME_PASSWORD));
         validator.setNext(new MinLengthValidator(Constants.PASSWORD_MIN_LENGTH, new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD)))
                 .setNext(new MaxLengthValidator(Constants.PASSWORD_MAX_LENGTH, new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD)))
@@ -40,7 +40,7 @@ public class UserService implements IUserService {
                 .setNext(new ContainsLetterValidator(new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD)));
         validator.validate(changePasswordRequest.getNewPassword());
 
-        return loginMiddlewareProvider.changePassword(personId, ip, deviceId, userDeviceId, rolePersonId, changePasswordRequest);
+        return loginMiddlewareProvider.changePassword( personId,    personRoleId,  changePasswordRequest,  parameters);
     }
 
     @Override

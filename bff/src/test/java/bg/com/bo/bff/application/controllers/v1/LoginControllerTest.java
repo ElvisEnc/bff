@@ -2,13 +2,18 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.Device;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
+import bg.com.bo.bff.application.dtos.request.LoginRequestFixture;
 import bg.com.bo.bff.application.dtos.request.LogoutRequest;
 import bg.com.bo.bff.application.dtos.response.DeviceEnrollmentResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.LoginResponse;
 import bg.com.bo.bff.application.mappings.login.LoginMapper;
+import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.models.dtos.login.*;
 import bg.com.bo.bff.application.exceptions.UnauthorizedException;
+import bg.com.bo.bff.application.mappings.login.LoginMapper;
+import bg.com.bo.bff.models.dtos.login.LoginResult;
+import bg.com.bo.bff.models.dtos.login.TokenData;
 import bg.com.bo.bff.services.interfaces.IDeviceEnrollmentService;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,55 +23,81 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.mockito.ArgumentMatchers.any;
-
 import java.io.IOException;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class LoginControllerTest {
+    @Spy
+    @InjectMocks
     private LoginController loginController;
     @Mock
     private ILoginServices iLoginServices;
     @Mock
     private IDeviceEnrollmentService iDeviceEnrollmentService;
-    private final LoginMapper loginMapper = LoginMapper.INSTANCE;
-    static LoginRequest loginRequest;
-    static Device device;
-    @Mock
     DeviceEnrollmentResponse deviceEnrollmentResponse;
-    static String ip;
+    private final LoginMapper loginMapper = LoginMapper.INSTANCE;
+    LoginRequest requestMock = LoginRequestFixture.withDefault();
+    String personId = "123";
+    String header = "123456";
+    static Device device;
     @Mock
     static HttpServletRequest servletRequest;
     private MockMvc mockMvc;
+    private final HttpHeaders headers = new HttpHeaders();
+    private static final String DEVICE_ID = "42ebffbd7c30307d";
+    private static final String DEVICE_IP = "127.0.0.1";
+    private static final String DEVICE_NAME = "Android";
+    private static final String GEO_POSITION_X = "12.265656";
+    private static final String GEO_POSITION_Y = "12.454545";
+    private static final String APP_VERSION = "1.0.0";
+    private static final String JSON_DATA = "{...}";
+    Enumeration<String> enumerations;
 
-    @BeforeAll
-    public static void setup() {
-        loginRequest = new LoginRequest();
-        loginRequest.setComplement("a");
-        loginRequest.setPassword("abc123");
-        ip = "123.123.123.123";
-        device = new Device();
-    }
 
     @BeforeEach
     public void init() {
-        loginController = new LoginController(this.iLoginServices, this.iDeviceEnrollmentService, this.loginMapper);
+        device = new Device();
+
+        Map<String, String> map = Map.of(
+                DeviceMW.DEVICE_ID.getCode(), DEVICE_ID,
+                DeviceMW.DEVICE_NAME.getCode(), DEVICE_NAME,
+                DeviceMW.GEO_POSITION_X.getCode(), GEO_POSITION_X,
+                DeviceMW.GEO_POSITION_Y.getCode(), GEO_POSITION_Y,
+                DeviceMW.APP_VERSION.getCode(), APP_VERSION,
+                "json-data", JSON_DATA
+        );
+
+        Vector<String> lists = new Vector<>(map.keySet().stream().toList());
+        enumerations = lists.elements();
+
+        headers.add(DeviceMW.DEVICE_ID.getCode(), DEVICE_ID);
+        headers.add(DeviceMW.DEVICE_NAME.getCode(), DEVICE_NAME);
+        headers.add(DeviceMW.GEO_POSITION_X.getCode(), GEO_POSITION_X);
+        headers.add(DeviceMW.GEO_POSITION_Y.getCode(), GEO_POSITION_Y);
+        headers.add(DeviceMW.APP_VERSION.getCode(), APP_VERSION);
+        headers.add("json-data", JSON_DATA);
+
+        loginController = new LoginController(this.iLoginServices, this.iDeviceEnrollmentService, this.loginMapper, servletRequest);
         mockMvc = MockMvcBuilders.standaloneSetup(loginController).build();
     }
 
@@ -75,23 +106,24 @@ class LoginControllerTest {
         // Arrange
         String accessToken = UUID.randomUUID().toString();
         String refreshToken = UUID.randomUUID().toString();
-        String personId = "1";
 
         TokenData tokenData = new TokenData();
         tokenData.setRefreshToken(refreshToken);
         tokenData.setAccessToken(accessToken);
 
-        LoginResult loginResponse = new LoginResult();
-        loginResponse.setPersonId(personId);
-        loginResponse.setTokenData(tokenData);
-        loginResponse.setStatusCode(LoginResult.StatusCode.SUCCESS);
+        LoginResult resultExpected = new LoginResult();
+        resultExpected.setPersonId(personId);
+        resultExpected.setTokenData(tokenData);
+        resultExpected.setStatusCode(LoginResult.StatusCode.SUCCESS);
 
-        Mockito.when(iLoginServices.login(loginRequest, ip)).thenReturn(loginResponse);
-        Mockito.when(servletRequest.getRemoteAddr()).thenReturn(ip);
+        when(servletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(servletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        Mockito.when(iLoginServices.login(any(), any())).thenReturn(resultExpected);
 
         // Act
-        ResponseEntity<LoginResponse> response = loginController.login(loginRequest, servletRequest);
-
+        ResponseEntity<LoginResponse> response = loginController.login(header, header, header, header, header, header, requestMock);
+        System.out.println(response);
         // Assert
         assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertEquals(accessToken, response.getBody().getAccessToken());
@@ -102,11 +134,13 @@ class LoginControllerTest {
     @Test
     void givenUserLoginWhenCredentialsAreInvalidThenReturnUserUnauthorized() throws Exception {
         // Arrange
-        Mockito.when(iLoginServices.login(loginRequest, ip)).thenThrow(new UnauthorizedException(HttpStatus.UNAUTHORIZED.name()));
-        Mockito.when(servletRequest.getRemoteAddr()).thenReturn(ip);
+        when(servletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(servletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        Mockito.when(iLoginServices.login(any(), any())).thenThrow(new UnauthorizedException(HttpStatus.UNAUTHORIZED.name()));
 
         // Act
-        UnauthorizedException exception = assertThrows(UnauthorizedException.class, () -> loginController.login(loginRequest, servletRequest));
+        UnauthorizedException exception = assertThrows(UnauthorizedException.class, () -> loginController.login(header, header, header, header, header, header, requestMock));
 
         // Assert
         assertEquals(HttpStatus.UNAUTHORIZED.name(), exception.getMessage());
@@ -115,11 +149,13 @@ class LoginControllerTest {
     @Test
     void givenExceptionWhenRequestLoginThenReturnsExceptionInternalServerError() throws Exception {
         // Arrange
-        Mockito.when(iLoginServices.login(loginRequest, ip)).thenThrow(new RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR.name()));
-        Mockito.when(servletRequest.getRemoteAddr()).thenReturn(ip);
+        when(servletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(servletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        Mockito.when(iLoginServices.login(any(), any())).thenThrow(new RuntimeException(HttpStatus.INTERNAL_SERVER_ERROR.name()));
 
         // Act
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> loginController.login(loginRequest, servletRequest));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> loginController.login(header, header, header, header, header, header, requestMock));
 
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.name(), exception.getMessage());
@@ -129,10 +165,10 @@ class LoginControllerTest {
     void givenDeviceWhenRequestValidateEnrolledThenSuccessfully() throws IOException {
         // Arrange
         deviceEnrollmentResponse = new DeviceEnrollmentResponse();
-        Mockito.when(iDeviceEnrollmentService.validation(device)).thenReturn(deviceEnrollmentResponse);
+        Mockito.when(iDeviceEnrollmentService.validation( any())).thenReturn(deviceEnrollmentResponse);
 
         // Act
-        ResponseEntity<DeviceEnrollmentResponse> response = loginController.validateEnrollment(device);
+        ResponseEntity<DeviceEnrollmentResponse> response = loginController.validateEnrollment( "","","","","");
 
         // Assert
         assert response.getStatusCode().value() == HttpStatus.OK.value();
@@ -159,6 +195,7 @@ class LoginControllerTest {
                         .header("app-version", generic)
                         .header("user-device-id", generic)
                         .header("person-role-id", generic)
+                        .header("json-data", generic)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(status().isOk());

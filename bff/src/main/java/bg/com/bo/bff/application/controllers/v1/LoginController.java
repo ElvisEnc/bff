@@ -1,11 +1,11 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.Device;
 import bg.com.bo.bff.application.dtos.request.LogoutRequest;
 import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
 import bg.com.bo.bff.application.dtos.request.RefreshSessionRequest;
 import bg.com.bo.bff.application.mappings.login.LoginMapper;
+import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.models.dtos.login.*;
 import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
 import bg.com.bo.bff.services.interfaces.IDeviceEnrollmentService;
@@ -33,15 +33,17 @@ import java.io.IOException;
 @Tag(name = "Login Controller", description = "Controlador del Login")
 @Validated
 public class LoginController {
-    private ILoginServices iLoginServices;
-    private IDeviceEnrollmentService iDeviceEnrollmentService;
-    private LoginMapper loginMapper;
+    private final ILoginServices iLoginServices;
+    private final IDeviceEnrollmentService iDeviceEnrollmentService;
+    private final LoginMapper loginMapper;
+    private final HttpServletRequest httpServletRequest;
 
     @Autowired
-    public LoginController(ILoginServices iLoginServices, IDeviceEnrollmentService iDeviceEnrollmentService, LoginMapper loginMapper) {
+    public LoginController(ILoginServices iLoginServices, IDeviceEnrollmentService iDeviceEnrollmentService, LoginMapper loginMapper, HttpServletRequest httpServletRequest) {
         this.iLoginServices = iLoginServices;
         this.iDeviceEnrollmentService = iDeviceEnrollmentService;
         this.loginMapper = loginMapper;
+        this.httpServletRequest = httpServletRequest;
     }
 
     @Operation(summary = "Login Request", description = "Este es el Endpoint donde el usuario ganamovil hará su petición login y se le devolverá si fue exitoso o fallido")
@@ -52,9 +54,16 @@ public class LoginController {
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest servletRequest) throws IOException {
-        String ip = servletRequest.getRemoteAddr();
-        LoginResult loginResult = iLoginServices.login(loginRequest, ip);
+    public ResponseEntity<LoginResponse> login(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @RequestHeader("json-data") @NotBlank @Parameter(description = "Json Dispositivo en Base64", example = "IntcImRhdG9zXCI6XCJ0b2Rvc2xvc2RhdG9zZGVsZGlzcG9zaXRpdm9cIn0i") String jsonData,
+            @Valid @RequestBody LoginRequest loginRequest
+    ) throws IOException {
+        LoginResult loginResult = iLoginServices.login(loginRequest, Headers.getParameter(httpServletRequest));
 
         switch (loginResult.getStatusCode()) {
             case SUCCESS:
@@ -84,9 +93,23 @@ public class LoginController {
             @ApiResponse(responseCode = "200", description = "Dispositivo enrrolado con un usuario", content = @Content(schema = @Schema(implementation = DeviceEnrollmentResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
-    @PostMapping("/validate-device")
-    public ResponseEntity<DeviceEnrollmentResponse> validateEnrollment(@Valid @RequestBody Device device) throws IOException {
-        DeviceEnrollmentResponse response = iDeviceEnrollmentService.validation(device);
+    @GetMapping("/validate-device")
+    public ResponseEntity<DeviceEnrollmentResponse> validateEnrollment(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion
+
+          ) throws IOException {
+        DeviceEnrollmentResponse response = iDeviceEnrollmentService.validation(
+                Headers.getParameter(httpServletRequest,
+                        deviceId,
+                        deviceName,
+                        geoPositionX,
+                        geoPositionY,
+                        appVersion
+                ));
         return ResponseEntity.ok(response);
     }
 
@@ -106,6 +129,7 @@ public class LoginController {
             @PathVariable("personId") @NotNull @Parameter(description = "Este es el código de persona", example = "13021") Integer personId,
             @RequestHeader("user-device-id") @NotNull @Parameter(description = "Este es el userDeviceId", example = "70") Integer userDeviceId,
             @RequestHeader("person-role-id") @NotNull @Parameter(description = "Este es el personRoleId", example = "50") Integer personRoleId,
+            @RequestHeader("json-data") @NotNull @Parameter(description = "Información genérica en formato json encodeado en base64.", example = "50") String jsonData,
             HttpServletRequest servletRequest,
             @RequestHeader("Authorization") String authorization,
             @Valid @RequestBody LogoutRequest request

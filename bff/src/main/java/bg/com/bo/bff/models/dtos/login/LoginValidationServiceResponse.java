@@ -12,4 +12,7 @@ public class LoginValidationServiceResponse {
     private String personId;
     private String userDeviceId;
     private String rolePersonId;
+    private String lastConnectionDate;
+    private Boolean keyChange;
+    private String keyChangeMessage;
 }

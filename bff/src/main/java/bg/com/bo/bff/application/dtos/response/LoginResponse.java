@@ -10,9 +10,20 @@ import lombok.NoArgsConstructor;
 public class LoginResponse {
     @Schema(description = "Access Token generado.")
     private String accessToken;
+
     @Schema(description = "Refresh Token generado.")
     private String refreshToken;
+
     private UserDataResponse userData;
+
+    @Schema(description = "Última conexión")
+    private String lastConnectionDate;
+
+    @Schema(description = "Cambio de clave")
+    private Boolean keyChange;
+
+    @Schema(description = "Mesaje del cambio de clave")
+    private String keyChangeMessage;
 
     public enum StatusCode {
         SUCCESS,

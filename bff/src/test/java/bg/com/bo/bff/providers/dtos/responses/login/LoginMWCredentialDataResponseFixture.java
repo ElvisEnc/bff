@@ -2,8 +2,8 @@ package bg.com.bo.bff.providers.dtos.responses.login;
 import java.util.Collections;
 
 public class LoginMWCredentialDataResponseFixture {
-        public static LoginMWCredentialDataResponse withDefault(){
-            LoginMWCredentialDataResponse dataResponse = new LoginMWCredentialDataResponse();
+        public static LoginCredentialData withDefault(){
+            LoginCredentialData dataResponse = new LoginCredentialData();
             dataResponse.setSecurityImage("defaultSecurityImage");
             dataResponse.setSecondFactor("defaultSecondFactor");
             dataResponse.setKeyChange("defaultKeyChange");
@@ -16,8 +16,8 @@ public class LoginMWCredentialDataResponseFixture {
             return dataResponse;
         }
 
-        public static LoginMWCredentialDataResponse.Role roleWithDefault() {
-            LoginMWCredentialDataResponse.Role role = new LoginMWCredentialDataResponse.Role();
+        public static LoginCredentialData.Role roleWithDefault() {
+            LoginCredentialData.Role role = new LoginCredentialData.Role();
             role.setRolePersonId(1);
             role.setDescription("defaultDescription");
             role.setPersonId(1);

@@ -4,7 +4,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class LoginMWCredentialDataResponse {
+public class LoginCredentialData {
     private String securityImage;
     private String secondFactor;
     private String keyChange;

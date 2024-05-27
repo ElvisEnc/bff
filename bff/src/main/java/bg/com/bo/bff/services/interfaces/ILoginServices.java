@@ -8,9 +8,10 @@ import bg.com.bo.bff.models.dtos.login.LoginResult;
 import bg.com.bo.bff.application.dtos.request.RefreshSessionRequest;
 
 import java.io.IOException;
+import java.util.Map;
 
 public interface ILoginServices {
-    LoginResult login(LoginRequest loginRequest, String ip) throws IOException;
+    LoginResult login(LoginRequest loginRequest, Map<String, String> parameters) throws IOException;
 
     TokenDataResponse refreshSession(String personId, RefreshSessionRequest refreshSessionRequest);
 
