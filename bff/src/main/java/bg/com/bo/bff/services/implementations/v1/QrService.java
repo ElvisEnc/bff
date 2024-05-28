@@ -2,7 +2,9 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
 import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
+import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.commons.constants.CacheConstants;
@@ -100,5 +102,12 @@ public class QrService implements IQrService {
     public QRCodeGenerateResponse regenerateQR(QRCodeRegenerateRequest request, Map<String, String> parameter) throws IOException {
         QRCodeRegenerateMWRequest requestMW = this.iQrMapper.convert(request);
         return this.qrProvider.regenerate(requestMW, parameter);
+    }
+
+    @Override
+    public QrDecryptResponse decryptQR(QrDecryptRequest request, Map<String, String> parameter) throws IOException {
+        QRCodeRegenerateMWRequest requestMW = this.iQrMapper.convertDecrypt(request);
+        QRCodeGenerateResponse response = this.qrProvider.decrypt(requestMW, parameter);
+        return this.iQrMapper.convertDecryptResponse(response);
     }
 }

@@ -1,15 +1,13 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
-import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequestFixture;
-import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
-import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequestFixture;
+import bg.com.bo.bff.application.dtos.request.*;
+import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequestFixture;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequestFixture;
 import bg.com.bo.bff.application.dtos.response.QRCodeGenerateResponseFixture;
-import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
-import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaidFixture;
-import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
-import bg.com.bo.bff.application.dtos.response.qr.QrListResponseFixture;
+import bg.com.bo.bff.application.dtos.response.qr.*;
+import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.providers.dtos.requests.QRCodeRegenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.dtos.responses.qr.QrGeneratedPaidMW;
 import bg.com.bo.bff.providers.dtos.responses.qr.QrListMWResponse;
@@ -46,6 +44,21 @@ class QrServiceTest {
     private  IQRProvider qrProvider;
     @Mock
     private IQrMapper iQrMapper;
+
+    private Map<String, String> map;
+
+    @BeforeEach
+    void setUp() {
+        this.map = Map.of(
+                DeviceMW.DEVICE_ID.getCode(), "1234",
+                DeviceMW.DEVICE_IP.getCode(), "12344",
+                DeviceMW.DEVICE_NAME.getCode(), "OS",
+                DeviceMW.GEO_POSITION_X.getCode(), "121.11",
+                DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
+                DeviceMW.APP_VERSION.getCode(), "1.0.0"
+        );
+        this.service = new QrService(achAccountProvider, iQrMapper, qrProvider);
+    }
 
     @Test
     void givePersonIdWhenGetQrListGeneratedAndPaidThenReturnSuccess() throws IOException {
@@ -97,5 +110,26 @@ class QrServiceTest {
         Assertions.assertNotNull(actual);
         assertEquals(expected,actual);
         verify(qrProvider).regenerate(any(),any());
+    }
+
+    @Test
+    void givenDataEncryptRequestWhenDecryptQRThenQRDecryptResponse() throws IOException {
+        // Arrange
+        QRCodeGenerateResponse expected = QRCodeGenerateResponseFixture.withDefault();
+        QrDecryptRequest request = QrDecryptRequestFixture.withDefault();
+
+        Mockito.when(iQrMapper.convertDecrypt(isA(QrDecryptRequest.class))).thenReturn(QRCodeRegenerateMWRequestFixture.withDefault());
+        Mockito.when(qrProvider.decrypt(any(), any())).thenReturn(expected);
+        Mockito.when(iQrMapper.convertDecryptResponse(isA(QRCodeGenerateResponse.class))).thenReturn(QrDecryptResponseFixture.withDefault());
+
+        when(qrProvider.decrypt(any(),any())).thenReturn(expected);
+
+        // Act
+        QrDecryptResponse actual = service.decryptQR(request, map);
+
+        // Assert
+        Assertions.assertNotNull(actual);
+        assertEquals(iQrMapper.convertDecryptResponse(expected),actual);
+        verify(qrProvider).decrypt(any(),any());
     }
 }

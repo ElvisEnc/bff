@@ -2,11 +2,12 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
 import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.commons.utils.Headers;
-import bg.com.bo.bff.models.dtos.login.LoginResult;
 import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
 import bg.com.bo.bff.services.interfaces.IQrService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -103,4 +104,24 @@ public class QrController {
         return ResponseEntity.ok(iQrService.regenerateQR(request, Headers.getParameter(httpServletRequest)));
     }
 
+    @Operation(summary = "Obtención de datos QR", description = "Este es el endpoint donde se podrá obtener los datos de un QR")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener datos QR Success, retorna los valores del QR", content = @Content(schema = @Schema(implementation = QrDecryptResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "401", description = "Obtener datos QR Failed, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "406", description = "Los parámetros proporcionados no son válidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PostMapping("/info")
+    public ResponseEntity<QrDecryptResponse> decrypt(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+
+            @RequestBody
+            final @Valid QrDecryptRequest request
+    ) throws IOException {
+        return ResponseEntity.ok(iQrService.decryptQR(request, Headers.getParameter(httpServletRequest)));
+    }
 }

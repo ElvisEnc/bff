@@ -4,9 +4,13 @@ import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
 import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequestFixture;
 import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
 import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequestFixture;
+import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequestFixture;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequestFixture;
 import bg.com.bo.bff.application.dtos.response.QRCodeGenerateResponseFixture;
+import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
+import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponseFixture;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
@@ -47,6 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class QrControllerTest {
     private static final String GENERATE_QR_URL = "/api/v1/qrs/generate";
     private static final String REGENERATE_QR_URL = "/api/v1/qrs/regenerate";
+    private static final String DECRYPT_QR_URL = "/api/v1/qrs/info";
     private MockMvc mockMvc;
 
     @Spy
@@ -173,6 +178,32 @@ class QrControllerTest {
         // Assert
         assertEquals(response, actual);
         verify(service).regenerateQR(any(), any());
+        assertNotNull(result);
+    }
+
+    @Test
+    void givenDataEncryptRequestWhenDecryptQRThenQRDecryptResponse() throws Exception {
+        // Arrange
+        QrDecryptResponse expected = QrDecryptResponseFixture.withDefault();
+        QrDecryptRequest request = QrDecryptRequestFixture.withDefault();
+
+        when(service.decryptQR(any(),any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc.perform(post(DECRYPT_QR_URL)
+                        .content(objectMapper.writeValueAsString(request))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).decryptQR(any(), any());
         assertNotNull(result);
     }
 }

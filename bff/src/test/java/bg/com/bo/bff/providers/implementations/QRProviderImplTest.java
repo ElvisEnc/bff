@@ -53,7 +53,7 @@ class QRProviderImplTest {
     private Map<String, String> map;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         this.map = Map.of(
                 DeviceMW.DEVICE_ID.getCode(), "1234",
                 DeviceMW.DEVICE_IP.getCode(), "12344",
@@ -76,29 +76,49 @@ class QRProviderImplTest {
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientToken);
         when(middlewareConfig.getUrlBase()).thenReturn("http://localhost:8080");
         when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
-        
+
         //Act
-        QRCodeGenerateResponse actual = provider.generate(request,this.map);
+        QRCodeGenerateResponse actual = provider.generate(request, this.map);
 
         //Asserts
         assertEquals(new ObjectMapper().writeValueAsString(expected), new ObjectMapper().writeValueAsString(actual));
     }
 
-@Test
-     void givenQRCodeReGenerateRequestWhenGenerateQRThenQRCodeGenerateResponse() throws IOException {
+    @Test
+    void givenQRCodeReGenerateRequestWhenGenerateQRThenQRCodeGenerateResponse() throws IOException {
         //Arrange
         ClientToken clientToken = new ClientToken();
         clientToken.setAccessToken(UUID.randomUUID().toString());
         QRCodeGenerateResponse expected = QRCodeGenerateResponseFixture.withDefault();
         String jsonResponse = new ObjectMapper().writeValueAsString(expected);
-         QRCodeRegenerateMWRequest request = QRCodeRegenerateMWRequestFixture.withDefault();
+        QRCodeRegenerateMWRequest request = QRCodeRegenerateMWRequestFixture.withDefault();
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientToken);
         when(middlewareConfig.getUrlBase()).thenReturn("http://localhost:8080");
         when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
 
         //Act
-        QRCodeGenerateResponse actual = provider.regenerate(request,this.map);
+        QRCodeGenerateResponse actual = provider.regenerate(request, this.map);
+
+        //Asserts
+        assertEquals(new ObjectMapper().writeValueAsString(expected), new ObjectMapper().writeValueAsString(actual));
+    }
+
+    @Test
+    void givenDataEncryptRequestWhenDecryptQRThenQRDecryptResponse() throws IOException {
+        //Arrange
+        ClientToken clientToken = new ClientToken();
+        clientToken.setAccessToken(UUID.randomUUID().toString());
+        QRCodeGenerateResponse expected = QRCodeGenerateResponseFixture.withDefault();
+        String jsonResponse = new ObjectMapper().writeValueAsString(expected);
+        QRCodeRegenerateMWRequest request = QRCodeRegenerateMWRequestFixture.withDefault();
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientToken);
+        when(middlewareConfig.getUrlBase()).thenReturn("http://localhost:8080");
+        when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
+
+        //Act
+        QRCodeGenerateResponse actual = provider.decrypt(request, this.map);
 
         //Asserts
         assertEquals(new ObjectMapper().writeValueAsString(expected), new ObjectMapper().writeValueAsString(actual));

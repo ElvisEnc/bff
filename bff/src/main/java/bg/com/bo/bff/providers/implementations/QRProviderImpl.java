@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.ErrorResponseConverter;
@@ -41,6 +42,7 @@ public class QRProviderImpl implements IQRProvider {
 
     private static final String GENERATE = "/bs/v1/qrcode/generate";
     private static final String REGENERATE= "/bs/v1/qrcode/encrypt";
+    private static final String DECRYPT= "/bs/v1/qrcode/decrypt";
 
     private static final Logger logger = LogManager.getLogger(QRProviderImpl.class.getName());
 
@@ -62,6 +64,12 @@ public class QRProviderImpl implements IQRProvider {
 
         final String jsonMapper = Util.objectToString(request);
         return getQrCodeGenerateResponse(parameters, jsonMapper, REGENERATE);
+    }
+
+    @Override
+    public QRCodeGenerateResponse decrypt(QRCodeRegenerateMWRequest request, Map<String, String> parameters) throws IOException {
+        final String jsonMapper = Util.objectToString(request);
+        return getQrCodeGenerateResponse(parameters, jsonMapper, DECRYPT);
     }
 
     private QRCodeGenerateResponse getQrCodeGenerateResponse(Map<String, String> parameters, String jsonMapper,String url) throws IOException {

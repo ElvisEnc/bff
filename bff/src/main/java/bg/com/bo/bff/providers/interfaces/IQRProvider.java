@@ -11,4 +11,6 @@ public interface IQRProvider {
     QRCodeGenerateResponse generate(QRCodeGenerateMWRequest request, Map<String, String> parameters) throws IOException;
 
     QRCodeGenerateResponse regenerate(QRCodeRegenerateMWRequest request, Map<String, String> parameters) throws IOException;
+
+    QRCodeGenerateResponse decrypt(QRCodeRegenerateMWRequest request, Map<String, String> parameters) throws IOException;
 }
