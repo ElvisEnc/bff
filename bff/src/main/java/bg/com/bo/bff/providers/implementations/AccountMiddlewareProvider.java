@@ -12,7 +12,7 @@ import bg.com.bo.bff.commons.converters.ErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.commons.enums.Headers;
+import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.commons.enums.HttpError;
 import bg.com.bo.bff.commons.enums.PersonRol;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
@@ -114,9 +114,9 @@ public class AccountMiddlewareProvider implements IAccountProvider {
         try (CloseableHttpClient httpClient = createHttpClient()) {
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/persons/" + personId + "/companies/" + personId + "/devices/0/roles/" + PersonRol.PERSONA.getId();
             HttpGet get = new HttpGet(path);
-            get.setHeader(Headers.AUT.getName(), "Bearer " + token);
-            get.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
-            get.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+            get.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
+            get.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            get.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
             try (CloseableHttpResponse httpResponse = httpClient.execute(get)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String response = EntityUtils.toString(httpResponse.getEntity());
@@ -169,16 +169,16 @@ public class AccountMiddlewareProvider implements IAccountProvider {
         String jsonMapper = Util.objectToString(request);
         StringEntity entity = new StringEntity(jsonMapper);
         HttpPut httpRequest = new HttpPut(path);
-        httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-        httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
-        httpRequest.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+        httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
         httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameter.get(DeviceMW.DEVICE_ID.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameter.get(DeviceMW.DEVICE_IP.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_NAME.getCode(), parameter.get(DeviceMW.DEVICE_NAME.getCode()));
         httpRequest.setHeader(DeviceMW.GEO_POSITION_X.getCode(), parameter.get(DeviceMW.GEO_POSITION_X.getCode()));
         httpRequest.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameter.get(DeviceMW.GEO_POSITION_Y.getCode()));
         httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameter.get(DeviceMW.APP_VERSION.getCode()));
-        httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+        httpRequest.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
         httpRequest.setEntity(entity);
 
         try (CloseableHttpClient httpClient = createHttpClient()) {
@@ -211,16 +211,16 @@ public class AccountMiddlewareProvider implements IAccountProvider {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.OWN_ACCOUNT_MANAGER.getName(), middlewareConfig.getClientOwnManager(), ProjectNameMW.OWN_ACCOUNT_MANAGER.getHeaderKey());
 
         HttpGet httpRequest = new HttpGet(path);
-        httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-        httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
-        httpRequest.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+        httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
         httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameter.get(DeviceMW.DEVICE_ID.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameter.get(DeviceMW.DEVICE_IP.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_NAME.getCode(), parameter.get(DeviceMW.DEVICE_NAME.getCode()));
         httpRequest.setHeader(DeviceMW.GEO_POSITION_X.getCode(), parameter.get(DeviceMW.GEO_POSITION_X.getCode()));
         httpRequest.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameter.get(DeviceMW.GEO_POSITION_Y.getCode()));
         httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameter.get(DeviceMW.APP_VERSION.getCode()));
-        httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+        httpRequest.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
 
         try (CloseableHttpClient httpClient = createHttpClient()) {
 

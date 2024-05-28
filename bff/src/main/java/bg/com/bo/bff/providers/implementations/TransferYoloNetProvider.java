@@ -11,6 +11,7 @@ import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 import bg.com.bo.bff.providers.dtos.responses.TransferYoloNetResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
 import bg.com.bo.bff.providers.mappings.transfer.IYoloMapper;
+import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -23,7 +24,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Objects;
 
 @Service
 public class TransferYoloNetProvider implements ITransferYoloNetProvider {
@@ -47,7 +47,7 @@ public class TransferYoloNetProvider implements ITransferYoloNetProvider {
             StringEntity entity = new StringEntity(jsonMapper);
 
             HttpPost httpPost = new HttpPost(path);
-            httpPost.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            httpPost.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             httpPost.setEntity(entity);
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {

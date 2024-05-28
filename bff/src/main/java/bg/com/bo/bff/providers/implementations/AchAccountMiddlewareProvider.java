@@ -25,6 +25,7 @@ import bg.com.bo.bff.providers.dtos.responses.qr.QrListMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.ach.account.AchAccountMWtMapper;
+import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -121,12 +122,12 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
             String jsonMapper = objectMapper.writeValueAsString(requestData);
             StringEntity entity = new StringEntity(jsonMapper);
             request.setEntity(entity);
-            request.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
-            request.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-            request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
-            request.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
-            request.setHeader(Headers.DEVICE_ID.getName(), deviceId);
-            request.setHeader(Headers.DEVICE_IP.getName(), deviceIp);
+            request.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
+            request.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+            request.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(HeadersMW.DEVICE_ID.getName(), deviceId);
+            request.setHeader(HeadersMW.DEVICE_IP.getName(), deviceIp);
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -189,7 +190,7 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
         httpRequest.setHeader(DeviceMW.GEO_POSITION_X.getCode(), parameters.get(DeviceMW.GEO_POSITION_X.getCode()));
         httpRequest.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode()));
         httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode()));
-        httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+        httpRequest.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
         httpRequest.setEntity(entity);
         return httpRequest;
     }
@@ -200,10 +201,10 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
         try (CloseableHttpClient httpClient = createHttpClient()) {
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.ACH_ACCOUNTS.getName() + "/bs/v1/ach/branch-offices/companies/" + code;
             HttpGet request = new HttpGet(path);
-            request.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
-            request.setHeader(Headers.AUT.getName(), "Bearer " + token);
-            request.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
-            request.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
+            request.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
+            request.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -267,9 +268,9 @@ public class AchAccountMiddlewareProvider implements IAchAccountProvider {
 
     private HttpGet httpGet(String url, String token, Map<String, String> parameters) {
         HttpGet httpRequest = new HttpGet(url);
-        httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + token);
-        httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
-        httpRequest.setHeader(Headers.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
+        httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
+        httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(HeadersMW.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
         httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_NAME.getCode(), parameters.get(DeviceMW.DEVICE_NAME.getCode()));

@@ -8,7 +8,7 @@ import bg.com.bo.bff.commons.converters.ErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.commons.enums.Headers;
+import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
@@ -85,8 +85,8 @@ public class QRProviderImpl implements IQRProvider {
             HttpPost httpPost = new HttpPost(path);
 
             httpPost.setHeaders(getHeadersMW(parameters));
-            httpPost.addHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
-            httpPost.addHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+            httpPost.addHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpPost.addHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
             httpPost.setEntity(entity);
             ObjectMapper objectMapper = new ObjectMapper();
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
@@ -118,6 +118,6 @@ public class QRProviderImpl implements IQRProvider {
                 new BasicHeader(DeviceMW.GEO_POSITION_X.getCode(), parameters.get(DeviceMW.GEO_POSITION_X.getCode())),
                 new BasicHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode())),
                 new BasicHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode())),
-                new BasicHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName())};
+                new BasicHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName())};
     }
 }

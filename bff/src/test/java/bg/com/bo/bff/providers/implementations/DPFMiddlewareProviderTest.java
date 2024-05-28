@@ -3,11 +3,13 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.responses.*;
+import bg.com.bo.bff.providers.models.enums.middleware.DPFMiddlewareError;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -74,4 +76,20 @@ class DPFMiddlewareProviderTest {
         assertEquals(response.getData(), DPFMWResponseFixture.withDefault().getData());
     }
 
+    @Test
+    void givenInvalidResponseWhenGetListDPFsThenExpectResponse() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(DPFMWErrorResponseFixture.withDefault());
+        stubFor(get(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
+
+        // Act
+        Exception exception = assertThrows(Exception.class, () ->  dpfMiddlewareProvider.getDPFsList("56412", "123", map));
+
+        // Assert
+        assertEquals(GenericException.class, exception.getClass());
+        assertEquals(DPFMiddlewareError.MDWDPF_002.getHttpCode(), ((GenericException) exception).getStatus());
+        assertEquals(DPFMiddlewareError.MDWDPF_002.getCode(), ((GenericException) exception).getCode());
+        assertEquals(DPFMiddlewareError.MDWDPF_002.getMessage(), ((GenericException) exception).getMessage());
+    }
 }

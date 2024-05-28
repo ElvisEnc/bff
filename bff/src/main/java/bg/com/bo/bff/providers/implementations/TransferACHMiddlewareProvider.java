@@ -13,6 +13,7 @@ import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferACHProvider;
 import bg.com.bo.bff.providers.mappings.transfer.TransferMWtMapper;
+import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -50,10 +51,10 @@ public class TransferACHMiddlewareProvider implements ITransferACHProvider {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String pathGetAccounts = middlewareConfig.getUrlBase() + ProjectNameMW.ACH_TRANSFER_MANAGER.getName() + "/bs/v1/ach/transfers/";
             HttpPost httpPost = new HttpPost(pathGetAccounts);
-            httpPost.setHeader(Headers.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-            httpPost.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
-            httpPost.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
-            httpPost.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            httpPost.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+            httpPost.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpPost.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpPost.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             httpPost.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
             httpPost.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));
 

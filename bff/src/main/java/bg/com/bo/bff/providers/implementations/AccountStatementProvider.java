@@ -8,7 +8,7 @@ import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.CanalMW;
-import bg.com.bo.bff.commons.enums.Headers;
+import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
@@ -79,10 +79,10 @@ public class AccountStatementProvider implements IAccountStatementProvider {
             String jsonMapper = Util.objectToString(reportBasicRequest);
 
             StringEntity entity = new StringEntity(jsonMapper);
-            httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + token);
-            httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
-            httpRequest.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
-            httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
+            httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             httpRequest.setEntity(entity);
 
             CloseableHttpResponse httpResponse = httpClient.execute(httpRequest);
@@ -133,10 +133,10 @@ public class AccountStatementProvider implements IAccountStatementProvider {
             String jsonMapper = Util.objectToString(reportBasicRequest);
 
             StringEntity entity = new StringEntity(jsonMapper);
-            httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + token);
-            httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
-            httpRequest.setHeader(Headers.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
-            httpRequest.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
+            httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             httpRequest.setEntity(entity);
 
             CloseableHttpResponse httpResponse = httpClient.execute(httpRequest);

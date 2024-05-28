@@ -1,24 +1,16 @@
 package bg.com.bo.bff.providers.implementations;
 
-import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.AppDataYoloNet;
 import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.Headers;
+import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.requests.TransferYoloNetRequest;
 import bg.com.bo.bff.providers.dtos.requests.personal.information.PersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.responses.DynamicAppError;
-import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
-import bg.com.bo.bff.providers.dtos.responses.TransferYoloNetResponse;
 import bg.com.bo.bff.providers.dtos.responses.personal.information.PersonalInformationNetResponse;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
-import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
 import bg.com.bo.bff.providers.mappings.personal.information.IPersonalInformationMapper;
-import bg.com.bo.bff.providers.mappings.transfer.IYoloMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -54,7 +46,7 @@ public class PersonalInformationNetProvider implements IPersonalInformationNetPr
             String jsonMapper = Util.objectToString(requestData);
             StringEntity entity = new StringEntity(jsonMapper);
             HttpPost httpPost = new HttpPost(path);
-            httpPost.setHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName());
+            httpPost.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             httpPost.setEntity(entity);
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {

@@ -1,14 +1,29 @@
-package bg.com.bo.bff.commons;
+package bg.com.bo.bff.providers.models.middleware;
 
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.commons.enums.Headers;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
 import java.util.Map;
 
-public class HeadersMW {
+@Getter
+@AllArgsConstructor
+public enum HeadersMW {
+    SEC("Secret"),
+    AUT("Authorization"),
+    MW_CHA("middleware-channel"),
+    TOP_CHA("topaz-channel"),
+    APP_ID("application-id"),
+    CONTENT_TYPE("Content-Type"),
+    APP_JSON("application/json"),
+    DEVICE_ID("device-id"),
+    DEVICE_IP("device-ip");
+
+    private final String name;
+
     public static Header[] getHeadersMW(Map<String, String> parameters) {
         return new Header[]{
                 new BasicHeader(DeviceMW.MIDDLEWARE_CHANNEL.getCode(), CanalMW.GANAMOVIL.getCanal()),
@@ -19,6 +34,6 @@ public class HeadersMW {
                 new BasicHeader(DeviceMW.GEO_POSITION_X.getCode(), parameters.get(DeviceMW.GEO_POSITION_X.getCode())),
                 new BasicHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode())),
                 new BasicHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode())),
-                new BasicHeader(Headers.CONTENT_TYPE.getName(), Headers.APP_JSON.getName())};
+                new BasicHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName())};
     }
 }
