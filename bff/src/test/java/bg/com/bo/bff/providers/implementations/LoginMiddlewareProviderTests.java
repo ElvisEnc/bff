@@ -264,4 +264,57 @@ class LoginMiddlewareProviderTests {
         // Assert
         assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
     }
+
+    @Test
+    void givePersonIdWhenGetBiometricsThenExpectResponse() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(BiometricStatusMWResponseFixture.withDefault());
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        BiometricStatusMWResponse response = loginMiddlewareProvider.getBiometricsMW(123, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response.getData(), BiometricStatusMWResponseFixture.withDefault().getData());
+    }
+
+    @Test
+    void giveUnexpectedErrorOccursWhenGetBiometricsThenGenericException() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
+                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
+                        .code("BAD_REQUEST")
+                        .description("BAD_REQUEST")
+                        .build()))
+                .build();
+        stubFor(get(anyUrl()).willReturn(aResponse()
+                .withStatus(400)
+                .withBody(Util.objectToString(errorMiddlewareProvider))));
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            loginMiddlewareProvider.getBiometricsMW(123, map);
+        });
+
+        // Assert
+        assertTrue(exception.getCode().contains("BAD_REQUEST"));
+    }
+
+    @Test
+    void giveErrorWhenGetBiometricsThenRuntimeException() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
+
+        // Act
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            loginMiddlewareProvider.getBiometricsMW(123, map);
+        });
+
+        // Assert
+        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+    }
 }

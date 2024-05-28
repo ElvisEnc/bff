@@ -5,7 +5,6 @@ import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
-import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.HeadersMW;
@@ -28,12 +27,9 @@ import bg.com.bo.bff.providers.dtos.requests.login.ChangePasswordMWRequest;
 import bg.com.bo.bff.providers.dtos.requests.login.LogoutMWRequest;
 import bg.com.bo.bff.providers.dtos.requests.login.MWOwnerAccountRequest;
 import bg.com.bo.bff.providers.dtos.responses.ApiDataResponse;
-import bg.com.bo.bff.providers.dtos.responses.login.DeviceEnrollmentMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.login.*;
 import bg.com.bo.bff.providers.dtos.requests.login.*;
-import bg.com.bo.bff.providers.dtos.responses.login.LoginCredentialMWResponse;
-import bg.com.bo.bff.providers.dtos.responses.login.LoginFactorData;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
-import bg.com.bo.bff.providers.dtos.responses.login.LoginFactorMWResponse;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.login.ILoginMapper;
 import bg.com.bo.bff.providers.mappings.login.LoginMWMapper;
@@ -295,5 +291,45 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             logger.error(e);
             throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
         }
+    }
+
+    @Override
+    public BiometricStatusMWResponse getBiometricsMW(Integer personId, Map<String, String> parameter) throws IOException {
+        String token = tokenLogin().getAccessToken();
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.LOGIN_MANAGER.getName() + "/bs/v1/users/biometric/" + personId;
+            HttpGet request = httpGet(path, token, parameter);
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK) {
+                    return Util.stringToObject(jsonResponse, BiometricStatusMWResponse.class);
+                } else {
+                    AppError error = Util.mapProviderError(jsonResponse);
+                    logger.error(jsonResponse);
+                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                }
+            }
+        } catch (GenericException ex) {
+            logger.error(ex);
+            throw ex;
+        } catch (Exception e) {
+            logger.error(e);
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        }
+    }
+
+    private HttpGet httpGet(String url, String token, Map<String, String> parameters) {
+        HttpGet httpRequest = new HttpGet(url);
+        httpRequest.setHeader(Headers.AUT.getName(), "Bearer " + token);
+        httpRequest.setHeader(Headers.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(Headers.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
+        httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));
+        httpRequest.setHeader(DeviceMW.DEVICE_NAME.getCode(), parameters.get(DeviceMW.DEVICE_NAME.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_X.getCode(), parameters.get(DeviceMW.GEO_POSITION_X.getCode()));
+        httpRequest.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode()));
+        httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode()));
+        return httpRequest;
     }
 }

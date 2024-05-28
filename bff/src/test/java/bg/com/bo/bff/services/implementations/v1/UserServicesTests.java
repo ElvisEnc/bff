@@ -1,14 +1,14 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.GetContactResponseFixture;
-import bg.com.bo.bff.application.dtos.response.GetPersonalInformationResponseFixture;
+import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.providers.dtos.responses.login.BiometricStatusMWResponse;
+import bg.com.bo.bff.providers.dtos.responses.login.BiometricStatusMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,14 +29,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServicesTests {
-
+class UserServicesTests {
     @Mock
     private ILoginMiddlewareProvider provider;
-
     @Mock
     private IPersonalInformationNetProvider personalInformationNetProvider;
-
     @InjectMocks
     private UserService service;
     private Map<String, String> map;
@@ -215,5 +212,19 @@ public class UserServicesTests {
         // Assert
         verify(personalInformationNetProvider).getPersonalInformation("123", map);
         assertEquals(expected, response);
+    }
+
+    @Test
+    void givenValidPersonIdWhenGetBiometricStatus() throws IOException {
+        // Arrange
+        BiometricStatusMWResponse responseExpected = BiometricStatusMWResponseFixture.withDefault();
+        when(provider.getBiometricsMW(any(), any())).thenReturn(responseExpected);
+
+        // Act
+        BiometricsResponse response = service.getBiometrics(123, new HashMap<>());
+
+        // Assert
+        verify(provider).getBiometricsMW(any(), any());
+        assertEquals(BiometricsResponseFixture.withDefault(), response);
     }
 }

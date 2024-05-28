@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,7 +31,7 @@ import java.io.IOException;
 @RequestMapping("api/v1/users")
 @Tag(name = "User Controller", description = "Controlador de usuario.")
 public class UserController {
-    private IUserService userService;
+    private final IUserService userService;
     private final HttpServletRequest httpServletRequest;
 
     @Autowired
@@ -55,7 +57,7 @@ public class UserController {
             @Valid @RequestHeader("person-role-id") String personRoleId,
             @Valid @RequestBody ChangePasswordRequest changePasswordRequest
     ) throws IOException {
-        return ResponseEntity.ok(userService.changePassword(personId,  personRoleId, changePasswordRequest,
+        return ResponseEntity.ok(userService.changePassword(personId, personRoleId, changePasswordRequest,
                 Headers.getParameter(httpServletRequest,
                         deviceId,
                         deviceName,
@@ -71,9 +73,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/contact")
-    public ResponseEntity<ContactResponse> getContactDetails(
-
-    ) throws IOException {
+    public ResponseEntity<ContactResponse> getContactDetails() throws IOException {
         return ResponseEntity.ok(userService.getContactInfo());
     }
 
@@ -99,4 +99,22 @@ public class UserController {
                 geoPositionY,
                 appVersion)));
     }
+
+    @Operation(summary = "Estado de Biometría", description = "Obtiene el estado de la biometría y el tipo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estado de biometría", content = @Content(schema = @Schema(), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("/{personId}/biometric")
+    public ResponseEntity<BiometricsResponse> getBiometricStatus(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") Integer personId
+    ) throws IOException {
+        return ResponseEntity.ok(userService.getBiometrics(personId, Headers.getParameter(httpServletRequest)));
+    }
+
 }
