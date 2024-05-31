@@ -8,7 +8,7 @@ import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.responses.*;
+import bg.com.bo.bff.providers.dtos.response.*;
 import bg.com.bo.bff.providers.models.enums.middleware.DPFMiddlewareError;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;

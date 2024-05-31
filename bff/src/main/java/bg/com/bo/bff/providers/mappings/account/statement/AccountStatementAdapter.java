@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.mappings.account.statement;
 
-import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.AccountReportBasicResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

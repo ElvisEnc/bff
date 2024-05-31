@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.dtos.request;
 
-import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.AddWalletAccountBasicRequest;
 
 public class AddWalletAccountBasicRequestFixture {
     public static AddWalletAccountBasicRequest withDefaultOK() {

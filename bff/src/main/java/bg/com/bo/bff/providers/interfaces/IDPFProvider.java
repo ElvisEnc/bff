@@ -1,7 +1,6 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.providers.dtos.responses.DPFMWResponse;
+import bg.com.bo.bff.providers.dtos.response.DPFMWResponse;
 
 import java.io.IOException;
 import java.util.Map;

@@ -8,7 +8,7 @@ import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.commons.utils.Headers;
-import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
 import bg.com.bo.bff.services.interfaces.IQrService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

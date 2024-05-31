@@ -3,12 +3,10 @@ package bg.com.bo.bff.providers.implementations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientTokenFixture;
-import bg.com.bo.bff.providers.dtos.responses.ErrorMiddlewareProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;

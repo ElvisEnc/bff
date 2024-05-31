@@ -1,7 +1,5 @@
 package bg.com.bo.bff.application.dtos.response.user;
 
-import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
-import bg.com.bo.bff.providers.dtos.responses.personal.information.PersonalInformationNetResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

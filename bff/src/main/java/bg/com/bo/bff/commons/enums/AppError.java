@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum AppError {
     // Login
-    MDWLM_009(HttpStatus.UNAUTHORIZED, "ERROR_INTERN", "MDWLM-009", "User not found"),
     MDWLM_010(HttpStatus.UNAUTHORIZED, "PERSON_NOT_FOUND", "MDWLM-010", "Device or Person not enrolled"),
     MDWLM_011(HttpStatus.UNAUTHORIZED, "DATA_INVALID", "MDWLM-011", "Invalid data"),
     MDWLM_012(HttpStatus.UNAUTHORIZED, "INVALID_DATA", "MDWLM-012", "Estimado cliente, sus datos son incorrectos"),
@@ -20,14 +19,19 @@ public enum AppError {
     MDWLM_24(HttpStatus.UNAUTHORIZED, "NOT_ENROLLED", "MDWLM-24", "Estimado cliente, está intentando iniciar sesión en un nuevo dispositivo, necesitamos validar su identidad"),
     MDWLM_25(HttpStatus.UNAUTHORIZED, "RESTRICTED_USER", "MDWLM-25", "Estimado cliente, necesitamos por favor que visite nuestras oficinas para validar su identidad"),
 
+    MDWLM_008(HttpStatus.UNAUTHORIZED, "INVALID_DATA", "MDWLM-008", "Estimado cliente, sus datos son incorrectos"), // alias, DNI
+    MDWLM_009(HttpStatus.UNAUTHORIZED, "INVALID_DATA", "MDWLM-009", "Estimado cliente, sus datos son incorrectos"), // personId
+    MDWLM_007(HttpStatus.UNAUTHORIZED, "INVALID_DATA", "MDWLM-007", "Type authentication invalid"),
+    MDWLM_12(HttpStatus.UNAUTHORIZED, "INVALID_DATA", "MDWLM-12", "Estimado cliente, sus datos son incorrectos"), // contraseña
+    MDWLM_021(HttpStatus.UNAUTHORIZED, "PASSWORD_CHANGE_LM", "MDWLM-021", "Estimado cliente, Debe cambiar la contraseña"),
     MDWRLIB_0003(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWRLIB-0003", "Error en los datos"),
 
     // Logout
-    MDWRLIB_0001(HttpStatus.BAD_REQUEST, "NOT_ENROLLED", "MDWRLIB-0001", "Error en los headers. Channel"),
-    MDWRLIB_0011(HttpStatus.BAD_REQUEST, "NOT_ENROLLED", "MDWRLIB-0011", "Error en los headers. ApplicationId"),
-    MDWPGL_404(HttpStatus.NOT_FOUND, "NOT_ENROLLED", "MDWPGL-404", "Not found"),
-    MDWPGL_405(HttpStatus.METHOD_NOT_ALLOWED, "NOT_ENROLLED", "MDWPGL-405", "Method not allowed"),
-    MDWRLIB_003(HttpStatus.NOT_ACCEPTABLE, "NOT_ENROLLED", "MDWRLIB-003", "Error en los datos"),
+    MDWRLIB_0001(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRLIB-0001", "Error en los headers. Channel"),
+    MDWRLIB_0011(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRLIB-0011", "Error en los headers. ApplicationId"),
+    MDWPGL_404(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWPGL-404", "Not found"),
+    MDWPGL_405(HttpStatus.METHOD_NOT_ALLOWED, "METHOD_NOT_ALLOWED", "MDWPGL-405", "Method not allowed"),
+    MDWRLIB_003(HttpStatus.NOT_ACCEPTABLE, "BAD_REQUEST", "MDWRLIB-003", "Error en los datos otorgados"),
     KEY_CLOAK_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "KEY_CLOAK_ERROR", "Error interno."),
 
     // Extractos
@@ -100,7 +104,6 @@ public enum AppError {
     MDWTRM_PENDING(HttpStatus.OK, "TRANSFER_PENDING", "MDWPGL-PENDING", "La transferencia está pendiente de aprobación por el titular. Por favor, espera la confirmación"),
 
     //QR
-
     MDWGQM_001(HttpStatus.BAD_REQUEST, "GENERATE_QR_IMAGE", "MDWGQM-001", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),
     MDWGQM_002(HttpStatus.BAD_REQUEST, "GENERATE_QR_IMAGE_BASE_64", "MDWGQM-002", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),
     MDWGQM_003(HttpStatus.BAD_REQUEST, "DECODE_IMAGE_BASE_64", "MDWGQM-003", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),

@@ -1,7 +1,7 @@
 package bg.com.bo.bff.commons.filters;
 
 import bg.com.bo.bff.commons.filters.interfaces.IFilter;
-import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.AccountReportBasicResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;

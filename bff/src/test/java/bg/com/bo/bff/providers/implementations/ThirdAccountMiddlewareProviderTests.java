@@ -13,13 +13,13 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.*;
 import bg.com.bo.bff.application.exceptions.RequestException;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.requests.DeleteThirdAccountMWRequest;
-import bg.com.bo.bff.providers.dtos.responses.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.request.AddThirdAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.AddWalletAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.DeleteThirdAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountListMapper;
-import bg.com.bo.bff.providers.dtos.responses.ThirdAccountListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.ThirdAccountListMWResponse;
 import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountMWtMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -52,8 +52,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @WireMockTest(proxyMode = true, httpPort = 8080)
 @ExtendWith(WireMockExtension.class)
@@ -87,9 +85,7 @@ class ThirdAccountMiddlewareProviderTests {
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(provider, "url", "http://localhost:8080");
-        ReflectionTestUtils.setField(provider, "complementToken", "/third-accounts-manager");
         ReflectionTestUtils.setField(provider, "complementThirdAccounts", "/third-accounts-manager/bs/v1");
-        ReflectionTestUtils.setField(provider, "clientSecret", "db");
     }
 
     @Test

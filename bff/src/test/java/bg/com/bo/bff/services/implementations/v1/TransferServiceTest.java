@@ -2,8 +2,8 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.responses.TransferMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
+import bg.com.bo.bff.providers.dtos.response.TransferMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
 import bg.com.bo.bff.providers.interfaces.ITransferACHProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;

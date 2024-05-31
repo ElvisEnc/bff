@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.dtos.request;
 
-import bg.com.bo.bff.providers.dtos.requests.QRCodeGenerateMWRequest;
+import bg.com.bo.bff.providers.dtos.request.QRCodeGenerateMWRequest;
 
 public class QRCodeGenerateMWRequestFixture {
     public static QRCodeGenerateMWRequest withDefault() {

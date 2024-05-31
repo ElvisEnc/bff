@@ -1,7 +1,7 @@
 package bg.com.bo.bff.application.dtos.response;
 
-import bg.com.bo.bff.providers.dtos.responses.qr.QRCDataResponse;
-import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.QRCDataResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
 
 public class QRCodeGenerateResponseFixture {
     public static QRCodeGenerateResponse withDefault(){

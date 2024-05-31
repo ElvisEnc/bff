@@ -2,8 +2,8 @@ package bg.com.bo.bff.providers.mappings.keycloak;
 
 import bg.com.bo.bff.models.dtos.TokenDataServiceResponse;
 import bg.com.bo.bff.models.jwt.JwtKey;
-import bg.com.bo.bff.providers.dtos.responses.keycloak.CreateTokenKCResponse;
-import bg.com.bo.bff.providers.dtos.responses.keycloak.KeyCloakKeyResponse;
+import bg.com.bo.bff.providers.dtos.response.keycloak.CreateTokenKCResponse;
+import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakKeyResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;

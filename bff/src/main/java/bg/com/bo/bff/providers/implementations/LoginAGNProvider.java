@@ -4,15 +4,13 @@ import bg.com.bo.bff.application.dtos.request.registry.RegistryCredentialsReques
 import bg.com.bo.bff.application.dtos.request.registry.RegistryDeviceIdentificatorRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryOldDeviceIdentificatorRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
-import bg.com.bo.bff.application.exceptions.GlobalExceptionHandler;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.enums.CredentialsType;
 import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
-import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.UserEncryptionKeys;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.requests.loginagn.*;
-import bg.com.bo.bff.providers.dtos.responses.RegistryDataResponse;
+import bg.com.bo.bff.providers.dtos.request.loginagn.*;
+import bg.com.bo.bff.providers.dtos.response.RegistryDataResponse;
 import bg.com.bo.bff.providers.interfaces.ILoginAGNProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -34,12 +32,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.Objects;
 
 @Service

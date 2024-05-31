@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.implementations;
 
-import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
+import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
 import bg.com.bo.bff.providers.interfaces.IGenerateImage;
 import bg.com.bo.bff.providers.mappings.transfer.TransferDetailsMapper;
 import org.springframework.stereotype.Service;

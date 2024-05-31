@@ -5,8 +5,8 @@ import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequestFixtu
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponse;
 import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponseFixture;
-import bg.com.bo.bff.providers.dtos.responses.TransactionLimitListMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.responses.accounts.TransactionLimitUpdateAccountResponse;
+import bg.com.bo.bff.providers.dtos.response.TransactionLimitListMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.accounts.TransactionLimitUpdateAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -7,7 +7,7 @@ import bg.com.bo.bff.application.dtos.response.TransactionLimitData;
 import bg.com.bo.bff.providers.dtos.TransactionLimitListMWResponse;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
-import bg.com.bo.bff.providers.dtos.requests.UpdateTransactionLimitMWRequest;
+import bg.com.bo.bff.providers.dtos.request.UpdateTransactionLimitMWRequest;
 import bg.com.bo.bff.providers.interfaces.IAccountProvider;
 import bg.com.bo.bff.services.interfaces.IAccountService;
 import org.springframework.stereotype.Service;

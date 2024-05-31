@@ -21,9 +21,9 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.requests.UpdateTransactionLimitMWRequest;
-import bg.com.bo.bff.providers.dtos.responses.accounts.AccountListMWResponse;
-import bg.com.bo.bff.providers.dtos.responses.accounts.TransactionLimitUpdateAccountResponse;
+import bg.com.bo.bff.providers.dtos.request.UpdateTransactionLimitMWRequest;
+import bg.com.bo.bff.providers.dtos.response.accounts.AccountListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.accounts.TransactionLimitUpdateAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.own.account.AccountListMapper;
@@ -53,9 +53,6 @@ public class AccountMiddlewareProvider implements IAccountProvider {
 
     @Value("${oauth.token}")
     private String complementToken;
-
-    @Value("${v1.account.own}")
-    private String complementAccounts;
 
     @Value("${client.secret.accounts}")
     private String clientSecret;

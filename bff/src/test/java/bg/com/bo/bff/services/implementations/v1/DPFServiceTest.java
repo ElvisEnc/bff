@@ -1,7 +1,7 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.response.*;
-import bg.com.bo.bff.providers.dtos.responses.*;
+import bg.com.bo.bff.providers.dtos.response.*;
 import bg.com.bo.bff.providers.interfaces.IDPFProvider;
 import bg.com.bo.bff.providers.mappings.dpf.IDPFMapper;
 import org.junit.jupiter.api.Assertions;

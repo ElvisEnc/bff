@@ -1,6 +1,8 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
@@ -13,16 +15,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,7 +52,7 @@ class UserControllerTest {
     private static final String GEO_POSITION_Y = "12.454545";
     private static final String APP_VERSION = "1.0.0";
     private static final String URL_CHANGE_PASSWORD = "/api/v1/users/999/change-password";
-    private static String URL_BIOMETRICS = "/api/v1/users/{personId}/biometric";
+    private static final String URL_BIOMETRICS = "/api/v1/users/{personId}/biometric";
     Enumeration<String> enumerations;
 
     @BeforeEach
@@ -86,19 +91,19 @@ class UserControllerTest {
         String rolePersonId = "1";
         String personId = "999";
 
-        when(userService.changePassword(any(),   any(), any(), any())).thenReturn(expected);
+        when(userService.changePassword(any(), any(), any(), any())).thenReturn(expected);
 
         // Act & Assert
         mockMvc.perform(put(URL_CHANGE_PASSWORD)
-                        .header("middleware-channel","1")
-                        .header("application-id","2")
-                        .header("device-id","17177")
-                        .header("device-ip","127.0.1.1")
-                        .header("device-name","OS")
-                        .header("geo-position-x","10101.12")
-                        .header("geo-position-y","10101.12")
-                        .header("app-version","1.0.1")
-                        .header("person-role-id","10")
+                        .header("middleware-channel", "1")
+                        .header("application-id", "2")
+                        .header("device-id", "17177")
+                        .header("device-ip", "127.0.1.1")
+                        .header("device-name", "OS")
+                        .header("geo-position-x", "10101.12")
+                        .header("geo-position-y", "10101.12")
+                        .header("app-version", "1.0.1")
+                        .header("person-role-id", "10")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Util.objectToString(request, false)))
@@ -158,6 +163,7 @@ class UserControllerTest {
 
         verify(userService).getPersonalInformation(any(), any());
     }
+
     @Test
     void givenValidPersonIdWhenGetBiometricStatus() throws Exception {
         // Assert
@@ -177,5 +183,31 @@ class UserControllerTest {
 
         // Arrange
         verify(userService).getBiometrics(any(), any());
+    }
+
+    @Test
+    void givenPersonIdWhenUpdateBiometricThenResponseExpected() throws Exception {
+        // Assert
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        UpdateBiometricsResponse expected = UpdateBiometricsResponseFixture.withDefault();
+        UpdateBiometricsRequest request = UpdateBiometricsRequestFixture.withDefault();
+        when(userService.updateBiometrics(any(), any(), any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc.perform(post(URL_BIOMETRICS, "123")
+                        .headers(this.headers)
+                        .content(Util.objectToString(request))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        String responseExpected = Util.objectToString(expected);
+        String response = result.getResponse().getContentAsString();
+
+        // Arrange
+        assertEquals(response, responseExpected);
+        verify(userService).updateBiometrics(any(), any(), any());
     }
 }

@@ -4,8 +4,8 @@ import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.ValidateAccountResponse;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ThirdAccountListResponse;
-import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.AddThirdAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.AddWalletAccountBasicRequest;
 
 import java.io.IOException;
 import java.util.Map;

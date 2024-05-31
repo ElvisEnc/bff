@@ -1,8 +1,8 @@
 package bg.com.bo.bff.providers.mappings.third.account;
 
 import bg.com.bo.bff.models.ThirdAccountListResponse;
-import bg.com.bo.bff.providers.dtos.requests.DeleteThirdAccountMWRequest;
-import bg.com.bo.bff.providers.dtos.responses.ThirdAccountListMWResponse;
+import bg.com.bo.bff.providers.dtos.request.DeleteThirdAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.response.ThirdAccountListMWResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

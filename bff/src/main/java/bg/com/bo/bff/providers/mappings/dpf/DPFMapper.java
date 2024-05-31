@@ -2,7 +2,7 @@ package bg.com.bo.bff.providers.mappings.dpf;
 
 import bg.com.bo.bff.application.dtos.response.DPFDataResponse;
 import bg.com.bo.bff.application.dtos.response.DPFListResponse;
-import bg.com.bo.bff.providers.dtos.responses.DPFMWResponse;
+import bg.com.bo.bff.providers.dtos.response.DPFMWResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.dtos.request;
 
-import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.AddThirdAccountBasicRequest;
 
 public class AddThirdAccountBasicRequestFixture {
     public static AddThirdAccountBasicRequest withDefaultOK() {

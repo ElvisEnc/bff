@@ -14,7 +14,7 @@ import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponseFixture;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
 import bg.com.bo.bff.services.interfaces.IQrService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,8 +33,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.io.IOException;
-import java.net.URI;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;

@@ -6,7 +6,7 @@ import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
-import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
 
 import java.io.IOException;
 import java.util.Map;

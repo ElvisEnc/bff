@@ -3,7 +3,9 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
+import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
@@ -22,12 +24,12 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.UserContact;
 import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.requests.login.ChangePasswordMWRequest;
-import bg.com.bo.bff.providers.dtos.requests.login.LogoutMWRequest;
-import bg.com.bo.bff.providers.dtos.requests.login.MWOwnerAccountRequest;
-import bg.com.bo.bff.providers.dtos.responses.ApiDataResponse;
-import bg.com.bo.bff.providers.dtos.responses.login.*;
-import bg.com.bo.bff.providers.dtos.requests.login.*;
+import bg.com.bo.bff.providers.dtos.request.login.ChangePasswordMWRequest;
+import bg.com.bo.bff.providers.dtos.request.login.LogoutMWRequest;
+import bg.com.bo.bff.providers.dtos.request.login.MWOwnerAccountRequest;
+import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
+import bg.com.bo.bff.providers.dtos.response.login.*;
+import bg.com.bo.bff.providers.dtos.request.login.*;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.login.ILoginMapper;
@@ -204,7 +206,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
     }
 
     @Override
-    public GenericResponse changePassword(String personId,  String personRoleId, ChangePasswordRequest changePasswordRequest, Map<String,String> parameters) throws IOException {
+    public GenericResponse changePassword(String personId, String personRoleId, ChangePasswordRequest changePasswordRequest, Map<String, String> parameters) throws IOException {
         MWOwnerAccountRequest owner = loginMWMapper.convert(personId, parameters.get(DeviceMW.DEVICE_ID.getCode()), personRoleId);
         ChangePasswordMWRequest changePasswordMWRequest = loginMWMapper.convert(changePasswordRequest, owner);
 
@@ -255,7 +257,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
     }
 
     @Override
-    public DeviceEnrollmentMWResponse makeValidateDevice( Map<String, String> parameter) throws IOException {
+    public DeviceEnrollmentMWResponse makeValidateDevice(Map<String, String> parameter) throws IOException {
         String token = tokenLogin().getAccessToken();
         try (CloseableHttpClient httpClient = createHttpClient()) {
 
@@ -275,8 +277,8 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             } else {
                 logger.error(jsonResponse);
                 AppError error = Util.mapProviderError(jsonResponse);
-                String notEnrolled= error.getCodeMiddleware();
-                if(Objects.equals(notEnrolled, AppError.MDWRLIB_0003.getCodeMiddleware())) {
+                String notEnrolled = error.getCodeMiddleware();
+                if (Objects.equals(notEnrolled, AppError.MDWRLIB_0003.getCodeMiddleware())) {
                     DeviceEnrollmentMWResponse notEnrolledReponse = new DeviceEnrollmentMWResponse();
                     notEnrolledReponse.setStatusCode("NOT_ENROLLED");
                     return notEnrolledReponse;
@@ -330,5 +332,38 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
         httpRequest.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode()));
         httpRequest.setHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode()));
         return httpRequest;
+    }
+
+    @Override
+    public UpdateBiometricsResponse updateBiometricsMW(Integer personId, UpdateBiometricsRequest request, Map<String, String> parameter) throws IOException {
+        String token = tokenLogin().getAccessToken();
+        UpdateBiometricsMWRequest mwRequest = mapper.mapperUpdateBiometricRequest(request);
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.LOGIN_MANAGER.getName() + "/bs/v1/users/biometric/" + personId;
+            String jsonMapper = Util.objectToString(mwRequest);
+            StringEntity entity = new StringEntity(jsonMapper);
+            HttpPost httpRequest = getHttpPost(path, token, parameter, entity);
+            httpRequest.setHeader(DeviceMW.JSON_DATA.getCode(), parameter.get(DeviceMW.JSON_DATA.getCode()));
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpRequest)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK) {
+                    UpdateBiometricMWResponse mwResponse = Util.stringToObject(jsonResponse, UpdateBiometricMWResponse.class);
+                    return UpdateBiometricsResponse.builder()
+                            .personId(mwResponse.getData().getPersonId())
+                            .build();
+                } else {
+                    logger.error(jsonResponse);
+                    AppError error = Util.mapProviderError(jsonResponse);
+                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                }
+            }
+        } catch (GenericException ex) {
+            logger.error(ex);
+            throw ex;
+        } catch (Exception e) {
+            logger.error(e);
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        }
     }
 }

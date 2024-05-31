@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.mappings.ach.account;
 
-import bg.com.bo.bff.providers.dtos.requests.DeleteAchAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.request.DeleteAchAccountMWRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

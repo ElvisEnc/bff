@@ -13,16 +13,16 @@ import bg.com.bo.bff.commons.enums.*;
 import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.providers.dtos.requests.AddThirdAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.requests.AddWalletAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.requests.DeleteThirdAccountMWRequest;
-import bg.com.bo.bff.providers.dtos.responses.ThirdAccountListMWResponse;
+import bg.com.bo.bff.providers.dtos.request.AddThirdAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.AddWalletAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.DeleteThirdAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.response.ThirdAccountListMWResponse;
 import bg.com.bo.bff.models.ThirdAccountListResponse;
 import bg.com.bo.bff.application.exceptions.BadRequestException;
 import bg.com.bo.bff.application.exceptions.NotAcceptableException;
 import bg.com.bo.bff.application.exceptions.RequestException;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
+import bg.com.bo.bff.providers.dtos.response.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.third.account.ThirdAccountListMapper;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
@@ -50,17 +50,13 @@ import java.util.Objects;
 public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     @Value("${middleware}")
     private String url;
-    @Value("${third.account.auth.token}")
-    private String complementToken;
     @Value("${v1.third.account}")
     private String complementThirdAccounts;
-    @Value("${client.secret.third-accounts}")
-    private String clientSecret;
     private final IHttpClientFactory httpClientFactory;
     private final ThirdAccountListMapper thirdAccountListMapper;
-    private ITokenMiddlewareProvider tokenMiddlewareProvider;
-    private MiddlewareConfig middlewareConfig;
-    private ThirdAccountMWtMapper mapper;
+    private final ITokenMiddlewareProvider tokenMiddlewareProvider;
+    private final MiddlewareConfig middlewareConfig;
+    private final ThirdAccountMWtMapper mapper;
     private static final Logger logger = LogManager.getLogger(ThirdAccountMiddlewareProvider.class.getName());
     private static final String AUTH = "Authorization";
     private static final String MIDDLEWARE_CHANNEL = "middleware-channel";

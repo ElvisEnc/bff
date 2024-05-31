@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.mappings.pcc01;
 
 import bg.com.bo.bff.application.dtos.response.Pcc01Response;
-import bg.com.bo.bff.providers.dtos.responses.Pcc01MWResponse;
+import bg.com.bo.bff.providers.dtos.response.Pcc01MWResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

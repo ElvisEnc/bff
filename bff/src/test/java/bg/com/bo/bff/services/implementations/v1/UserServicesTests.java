@@ -1,14 +1,17 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.responses.login.BiometricStatusMWResponse;
-import bg.com.bo.bff.providers.dtos.responses.login.BiometricStatusMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
+import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,8 +25,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,13 +66,13 @@ class UserServicesTests {
         expectedResponse.setCode("SUCCESS");
         expectedResponse.setMessage("Satisfactorio");
 
-        when(provider.changePassword(any(),  any(), any(),any())).thenReturn(expectedResponse);
+        when(provider.changePassword(any(), any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
         GenericResponse response = service.changePassword(personId, rolePersonId, changePasswordRequest, new HashMap<>());
 
         // Assert
-        verify(provider).changePassword(any(), any(),  any(), any());
+        verify(provider).changePassword(any(), any(), any(), any());
         assertEquals(expectedResponse, response);
     }
 
@@ -87,7 +89,7 @@ class UserServicesTests {
         HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD);
 
         // Act
-        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId,   rolePersonId, changePasswordRequest, new HashMap<>()));
+        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, rolePersonId, changePasswordRequest, new HashMap<>()));
 
         // Assert
         assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
@@ -110,7 +112,7 @@ class UserServicesTests {
         HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD);
 
         // Act
-        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId,  rolePersonId, changePasswordRequest, new HashMap<>()));
+        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, rolePersonId, changePasswordRequest, new HashMap<>()));
 
         // Assert
         assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
@@ -133,7 +135,7 @@ class UserServicesTests {
         HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.SAME_PASSWORD);
 
         // Act
-        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId,  rolePersonId, changePasswordRequest, new HashMap<>()));
+        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, rolePersonId, changePasswordRequest, new HashMap<>()));
 
         // Assert
         assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
@@ -156,7 +158,7 @@ class UserServicesTests {
         HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD);
 
         // Act
-        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId,  rolePersonId, changePasswordRequest,new HashMap<>()));
+        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, rolePersonId, changePasswordRequest, new HashMap<>()));
 
         // Assert
         assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
@@ -179,7 +181,7 @@ class UserServicesTests {
         HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD);
 
         // Act
-        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId,   rolePersonId, changePasswordRequest, new HashMap<>()));
+        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, rolePersonId, changePasswordRequest, new HashMap<>()));
 
         // Assert
         assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
@@ -226,5 +228,35 @@ class UserServicesTests {
         // Assert
         verify(provider).getBiometricsMW(any(), any());
         assertEquals(BiometricsResponseFixture.withDefault(), response);
+    }
+
+    @Test
+    void givenPersonIdWhenUpdateBiometricThenResponseExpected() throws IOException {
+        // Arrange
+        UpdateBiometricsResponse responseExpected = UpdateBiometricsResponseFixture.withDefault();
+        UpdateBiometricsRequest request = UpdateBiometricsRequestFixture.withDefault();
+        when(provider.updateBiometricsMW(any(), any(), any())).thenReturn(responseExpected);
+
+        // Act
+        UpdateBiometricsResponse response = service.updateBiometrics(123, request, new HashMap<>());
+
+        // Assert
+        verify(provider).updateBiometricsMW(any(), any(), any());
+        assertEquals(UpdateBiometricsResponseFixture.withDefault(), response);
+    }
+
+    @Test
+    void givenStatusNullWhenUpdateBiometricThenResponseBadRequest() throws IOException {
+        // Arrange
+        UpdateBiometricsRequest request = UpdateBiometricsRequest.builder().build();
+        Map<String, String> map = new HashMap<>();
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.updateBiometrics(123, request, map);
+        });
+
+        // Assert
+        assertTrue(exception.getCode().contains("BAD_REQUEST"));
     }
 }

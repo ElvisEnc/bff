@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.responses.*;
+import bg.com.bo.bff.providers.dtos.response.*;
 import bg.com.bo.bff.providers.mappings.pcc01.Pcc01Mapper;
 import bg.com.bo.bff.providers.mappings.transfer.TransferMWtMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -7,7 +7,7 @@ import bg.com.bo.bff.commons.filters.AmountRangeFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.commons.filters.TypeFilter;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.services.interfaces.IAccountStatementService;
 import org.springframework.stereotype.Service;

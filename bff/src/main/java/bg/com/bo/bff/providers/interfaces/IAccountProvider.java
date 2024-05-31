@@ -4,7 +4,7 @@ import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.providers.dtos.TransactionLimitListMWResponse;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
-import bg.com.bo.bff.providers.dtos.requests.UpdateTransactionLimitMWRequest;
+import bg.com.bo.bff.providers.dtos.request.UpdateTransactionLimitMWRequest;
 
 import java.io.IOException;
 import java.util.Map;

@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.AccountReportBasicResponse;
 
 import java.util.List;
 

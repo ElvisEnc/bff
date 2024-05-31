@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.providers.dtos.responses.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementCsvProvider;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;

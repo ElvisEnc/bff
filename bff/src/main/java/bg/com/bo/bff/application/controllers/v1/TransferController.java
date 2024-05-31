@@ -5,7 +5,7 @@ import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.dtos.response.Pcc01Response;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.commons.utils.Headers;
-import bg.com.bo.bff.providers.dtos.responses.TransferResponseMD;
+import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
 import bg.com.bo.bff.services.interfaces.ITransferService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;

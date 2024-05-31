@@ -5,10 +5,10 @@ import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
-import bg.com.bo.bff.providers.dtos.requests.QRCodeGenerateMWRequest;
-import bg.com.bo.bff.providers.dtos.requests.QRCodeRegenerateMWRequest;
-import bg.com.bo.bff.providers.dtos.responses.qr.QRCodeGenerateResponse;
-import bg.com.bo.bff.providers.dtos.responses.qr.QrGeneratedPaidMW;
+import bg.com.bo.bff.providers.dtos.request.QRCodeGenerateMWRequest;
+import bg.com.bo.bff.providers.dtos.request.QRCodeRegenerateMWRequest;
+import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.QrGeneratedPaidMW;
 
 public interface IQrMapper {
     QrGeneratedPaid convert(QrGeneratedPaidMW mw);

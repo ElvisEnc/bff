@@ -6,7 +6,7 @@ import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.mappings.services.LoginServiceMapper;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
-import bg.com.bo.bff.providers.dtos.requests.login.LogoutMWRequest;
+import bg.com.bo.bff.providers.dtos.request.login.LogoutMWRequest;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.implementations.LoginMiddlewareProvider;

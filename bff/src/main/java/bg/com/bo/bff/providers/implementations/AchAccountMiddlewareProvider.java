@@ -15,13 +15,13 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.dtos.BanksMWResponse;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.requests.AddAchAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.requests.DeleteAchAccountMWRequest;
-import bg.com.bo.bff.providers.dtos.requests.QrListMWRequest;
-import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponse;
-import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMWResponse;
-import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
-import bg.com.bo.bff.providers.dtos.responses.qr.QrListMWResponse;
+import bg.com.bo.bff.providers.dtos.request.AddAchAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.DeleteAchAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.request.QrListMWRequest;
+import bg.com.bo.bff.providers.dtos.response.BranchOfficeMWResponse;
+import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMWResponse;
+import bg.com.bo.bff.providers.dtos.response.accounts.AddAccountResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.mappings.ach.account.AchAccountMWtMapper;
@@ -48,13 +48,8 @@ import java.util.Objects;
 public class AchAccountMiddlewareProvider implements IAchAccountProvider {
     @Value("${middleware}")
     private String url;
-    @Value("${ach.account.auth.token}")
-    private String complementToken;
     @Value("${v1.ach.account}")
     private String complementAchAccounts;
-    @Value("${client.secret.ach-accounts}")
-    private String clientSecret;
-
     ITokenMiddlewareProvider tokenMiddlewareProvider;
     private MiddlewareConfig middlewareConfig;
     private IHttpClientFactory httpClientFactory;

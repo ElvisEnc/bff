@@ -5,8 +5,8 @@ import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.commons.enums.DestinationAccountType;
 import bg.com.bo.bff.models.ThirdAccount;
-import bg.com.bo.bff.providers.dtos.responses.BranchOfficeMWResponse;
-import bg.com.bo.bff.providers.dtos.responses.account.ach.AchAccountMW;
+import bg.com.bo.bff.providers.dtos.response.BranchOfficeMWResponse;
+import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMW;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

@@ -8,7 +8,7 @@ import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponseFixtur
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.models.Account;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
-import bg.com.bo.bff.providers.dtos.responses.accounts.AddAccountResponse;
+import bg.com.bo.bff.providers.dtos.response.accounts.AddAccountResponse;
 import bg.com.bo.bff.services.interfaces.IAccountService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

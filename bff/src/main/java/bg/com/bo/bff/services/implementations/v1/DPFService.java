@@ -2,7 +2,7 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.response.DPFDataResponse;
 import bg.com.bo.bff.application.dtos.response.DPFListResponse;
-import bg.com.bo.bff.providers.dtos.responses.DPFMWResponse;
+import bg.com.bo.bff.providers.dtos.response.DPFMWResponse;
 import bg.com.bo.bff.providers.interfaces.IDPFProvider;
 import bg.com.bo.bff.providers.mappings.dpf.IDPFMapper;
 import bg.com.bo.bff.services.interfaces.IDPFService;

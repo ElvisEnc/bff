@@ -1,15 +1,19 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
+import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.validators.generics.*;
-import bg.com.bo.bff.providers.dtos.responses.login.BiometricStatusMWResponse;
+import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
 import bg.com.bo.bff.services.interfaces.IUserService;
@@ -63,4 +67,11 @@ public class UserService implements IUserService {
                 .build();
     }
 
+    @Override
+    public UpdateBiometricsResponse updateBiometrics(Integer personId, UpdateBiometricsRequest request, Map<String, String> parameter) throws IOException {
+        if (request.getStatus() == null) {
+            throw new GenericException("status no puede estar vacío", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
+        }
+        return loginMiddlewareProvider.updateBiometricsMW(personId,request,parameter);
+    }
 }
