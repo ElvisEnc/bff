@@ -14,6 +14,8 @@ import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
@@ -34,16 +36,18 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
 
     private final Class<T> appErrorValue;
     private final ProjectNameMW project;
+    private final String clientSecret;
 
-    public MiddlewareProvider(ProjectNameMW project, Class<T> appErrorValue, ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
+    public MiddlewareProvider(ProjectNameMW project, Class<T> appErrorValue, ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory, String clientSecret) {
         this.project = project;
         this.appErrorValue = appErrorValue;
         this.tokenMiddlewareProvider = tokenMiddlewareProvider;
         this.middlewareConfig = middlewareConfig;
         this.httpClientFactory = httpClientFactory;
+        this.clientSecret = clientSecret;
     }
 
-    /**
+  /**
      * Execute a HttpGet using HttpClientFactory and a token given by TokenMiddlewareProvider.
      * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
      *
@@ -53,7 +57,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @return an object of given params type.
      */
     protected <E> E get(String url, Header[] headers, Class<E> classType) throws IOException {
-        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), middlewareConfig.getDpfManager(), ProjectNameMW.DPF_MANAGER.getHeaderKey());
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
         try (CloseableHttpClient httpClient = createHttpClient()) {
             HttpGet request = new HttpGet(url);
 
@@ -65,6 +69,38 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK)
+                    return Util.stringToObject(jsonResponse, classType);
+
+                LOGGER.error(jsonResponse);
+                IMiddlewareError error = this.mapProviderIError(jsonResponse);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            }
+        } catch (GenericException ex) {
+            LOGGER.error(ex);
+            throw ex;
+        } catch (Exception e) {
+            LOGGER.error(e);
+            throw new GenericException(DefaultMiddlewareError.DEFAULT.getMessage(), DefaultMiddlewareError.DEFAULT.getHttpCode(), DefaultMiddlewareError.DEFAULT.getCode());
+        }
+    }
+
+    protected <E, R> E post(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
+        try (CloseableHttpClient httpClient = createHttpClient()) {
+            HttpPost request = new HttpPost(url);
+
+            if (headers != null && headers.length > 0)
+                request.setHeaders(headers);
+            request.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+
+            StringEntity entity = new StringEntity(Util.objectToString(requestBody));
+            request.setEntity(entity);
+            request.setHeader("Content-Type", "application/json");
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED)
                     return Util.stringToObject(jsonResponse, classType);
 
                 LOGGER.error(jsonResponse);
@@ -106,7 +142,6 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
         for (IMiddlewareError constant : appErrorValue.getEnumConstants())
             if (constant.getCodeMiddleware().equals(code))
                 return constant;
-
         for (IMiddlewareError constant : DefaultMiddlewareError.values())
             if (constant.getCodeMiddleware().equals(code))
                 return constant;

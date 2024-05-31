@@ -20,7 +20,7 @@ import java.util.Map;
 public class DPFMiddlewareProvider extends MiddlewareProvider<DPFMiddlewareError> implements IDPFProvider {
 
     public DPFMiddlewareProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
-        super(ProjectNameMW.DPF_MANAGER, DPFMiddlewareError.class, tokenMiddlewareProvider, middlewareConfig, httpClientFactory);
+        super(ProjectNameMW.DPF_MANAGER, DPFMiddlewareError.class, tokenMiddlewareProvider, middlewareConfig, httpClientFactory, middlewareConfig.getDpfManager());
     }
 
     private static final String URL_PATH_COMPLEMENT_PDF_LIST = "/bs/v1/accounts/persons/%s/companies/%s";

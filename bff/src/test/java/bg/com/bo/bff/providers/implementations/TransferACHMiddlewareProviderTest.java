@@ -81,7 +81,7 @@ class TransferACHMiddlewareProviderTest {
                 DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
                 DeviceMW.APP_VERSION.getCode(), "1.0.0"
         );
-        this.provider = new TransferACHMiddlewareProvider(tokenMiddlewareProvider, httpClientFactory, middlewareConfig, transferMapper);
+        this.provider = new TransferACHMiddlewareProvider(tokenMiddlewareProvider, middlewareConfig, httpClientFactory, transferMapper);
     }
 
     private static ClientToken getClientToken() {
