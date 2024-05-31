@@ -13,7 +13,6 @@ public enum ProjectNameMW {
     THIRD_ACCOUNTS("/third-accounts-manager", "THIRD ACCOUNTS MANAGER", "Secret"),
     GENERATE_QR_MANAGER("/generate-qr-manager", "GENERATE QR MANAGER", "Secret"),
     ACH_ACCOUNTS("/ach-account-manager", "ACH ACCOUNTS MANAGER", "Secret"),
-    QR_TRANSACTION_MANAGER("/qr-transaction-manager", "QR TRANSACTION MANAGER", "Secret"),
     DPF_MANAGER("/dpf-manager", "DPF MANAGER", "Secret");
 
     private final String name;

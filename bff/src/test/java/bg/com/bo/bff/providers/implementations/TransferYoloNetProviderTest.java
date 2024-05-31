@@ -57,7 +57,7 @@ class TransferYoloNetProviderTest {
     void givenRequestTransferWhenTransferToYoloThenSuccess() throws IOException {
         // Arrange
         String result = "{\"CodigoError\":\"COD000\",\"Datos\":[{\"NroTransaccion\":30561315,\"Mensaje\":\"COD000\",\"TipoSolicitud\":44},[{\"NRO_TRANSFERENCIA\":900000051,\"FECHATRANSACCION\":\"13/05/2024\",\"HORATRANSACCION\":\"10:08:59\",\"TITULO\":\"TRANSFERENCIA A CUENTAS DE BILLETERA\",\"NOMBRE_CLIENTE_ORIGEN\":\"EMPLEADO BANCO\",\"NOMBRE_CLIENTE_DESTINO\":\"EMPLEADO BANCO\",\"DOCUMENTO_IDENTIDAD\":\"6303180\",\"IMPORTE_ORIGEN\":\"           1,478.00\",\"EQUIVALENTE_MONTO_ORIGEN\":\"           1,478.00\",\"IMPORTE_DESTINO\":\"           1,478.00\",\"EQUIVALENTE_MONTO_DESTINO\":\"           1,478.00\",\"CUENTA_ORIGEN\":\"CA 1310104470\",\"TIPO_CAMBIO\":\"               1.00\",\"TIPO_CAMBIO_ORIGEN\":\"               1.00\",\"MONEDA_ORIGEN\":\"Bs\",\"DESCRIPCION_ORIGEN\":\"Transferencia billetera\",\"MONEDA_CUENTA\":\"Bs\",\"CUENTA_DESTINO\":\"70292838\",\"DESCRIPCION_DESTINO\":\"Transferencia billetera\"}]],\"Mensaje\":\"\"}";
-        ProviderNetResponse expectedResponse = Util.stringToObject(result, ProviderNetResponse.class);
+        TransferYoloNetResponse expectedResponse = Util.stringToObject(result, TransferYoloNetResponse.class);
         TransferYoloNetRequest requestMapperMock=TransferYoloNetRequestFixture.withDefault();
         TransferResponseMD responseMock = TransferMWResponseFixture.withDefault();
         Mockito.when(mapper.mapperRequest(any(), any(),any(), any())).thenReturn(requestMapperMock);
@@ -75,7 +75,7 @@ class TransferYoloNetProviderTest {
     }
 
     @Test
-    void giveRequestTransferWhenTransferToYoloThenError400() throws IOException {
+    void getAccountStatementWhenServerErrorThenError400() throws IOException {
         //Arrange
         errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
                 .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
@@ -95,7 +95,7 @@ class TransferYoloNetProviderTest {
     }
 
     @Test
-    void giveUnexpectedErrorOccursWhenTransferToYoloThenRuntimeException() throws IOException {
+    void giveValidBankCodeWhenUnexpectedErrorOccursThenRuntimeException() throws IOException {
         // Arrange
         Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
 

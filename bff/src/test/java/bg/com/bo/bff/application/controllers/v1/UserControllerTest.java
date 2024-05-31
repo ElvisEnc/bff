@@ -5,8 +5,6 @@ import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
-import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
-import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponseFixture;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
@@ -17,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -197,7 +196,7 @@ class UserControllerTest {
         when(userService.updateBiometrics(any(), any(), any())).thenReturn(expected);
 
         // Act
-        MvcResult result = mockMvc.perform(put(URL_BIOMETRICS, "123")
+        MvcResult result = mockMvc.perform(post(URL_BIOMETRICS, "123")
                         .headers(this.headers)
                         .content(Util.objectToString(request))
                         .accept(MediaType.APPLICATION_JSON)
@@ -210,29 +209,5 @@ class UserControllerTest {
         // Arrange
         assertEquals(response, responseExpected);
         verify(userService).updateBiometrics(any(), any(), any());
-    }
-
-    @Test
-    void givenPersonIdWhenGetEconomicActivityThenResponseExpected() throws Exception {
-        // Assert
-        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
-        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
-
-        EconomicActivityResponse expected = EconomicActivityResponseFixture.withDefault();
-        when(userService.getEconomicActivity(any(), any())).thenReturn(expected);
-
-        // Act
-        MvcResult result = mockMvc.perform(get("/api/v1/users/{personId}/economical-activity", "123")
-                        .headers(this.headers)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-        String responseExpected = Util.objectToString(expected);
-        String response = result.getResponse().getContentAsString();
-
-        // Arrange
-        assertEquals(response, responseExpected);
-        verify(userService).getEconomicActivity(any(), any());
     }
 }

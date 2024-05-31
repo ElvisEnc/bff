@@ -2,7 +2,6 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
 import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
-import bg.com.bo.bff.application.dtos.request.qr.QRPaymentRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
@@ -13,14 +12,11 @@ import bg.com.bo.bff.commons.filters.OrderFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.providers.dtos.request.QRCodeGenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.request.QRCodeRegenerateMWRequest;
-import bg.com.bo.bff.providers.dtos.requests.qr.QRPaymentMWRequest;
 import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
-import bg.com.bo.bff.providers.dtos.response.qr.QRPaymentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.QrGeneratedPaidMW;
 import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IQRProvider;
-import bg.com.bo.bff.providers.interfaces.IQrTransactionProvider;
 import bg.com.bo.bff.providers.mappings.qr.IQrMapper;
 import bg.com.bo.bff.services.interfaces.IQrService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +39,13 @@ public class QrService implements IQrService {
     private final IAchAccountProvider iAchAccountProvider;
     private final IQrMapper iQrMapper;
     private final IQRProvider qrProvider;
-    private final IQrTransactionProvider qrTransactionProvider;
     @Autowired
     private QrService self;
 
-    public QrService(IAchAccountProvider iAchAccountProvider, IQrMapper iQrMapper, IQRProvider qrProvider, IQrTransactionProvider qrTransactionProvider) {
+    public QrService(IAchAccountProvider iAchAccountProvider, IQrMapper iQrMapper, IQRProvider qrProvider) {
         this.iAchAccountProvider = iAchAccountProvider;
         this.iQrMapper = iQrMapper;
         this.qrProvider = qrProvider;
-        this.qrTransactionProvider = qrTransactionProvider;
     }
 
     @Override
@@ -115,11 +109,5 @@ public class QrService implements IQrService {
         QRCodeRegenerateMWRequest requestMW = this.iQrMapper.convertDecrypt(request);
         QRCodeGenerateResponse response = this.qrProvider.decrypt(requestMW, parameter);
         return this.iQrMapper.convertDecryptResponse(response);
-    }
-
-    @Override
-    public QRPaymentMWResponse qrPayment(QRPaymentRequest request, String personId, String accountId, Map<String, String> parameter) throws IOException {
-        QRPaymentMWRequest requestMW = iQrMapper.convert(request, personId, accountId);
-        return this.qrTransactionProvider.qrPayment(requestMW, parameter);
     }
 }

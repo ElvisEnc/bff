@@ -2,7 +2,7 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.providers.dtos.response.TransactionLimitListMWResponse;
+import bg.com.bo.bff.providers.dtos.TransactionLimitListMWResponse;
 import bg.com.bo.bff.application.exceptions.BadRequestException;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;

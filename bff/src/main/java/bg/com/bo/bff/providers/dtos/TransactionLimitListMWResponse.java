@@ -1,4 +1,4 @@
-package bg.com.bo.bff.providers.dtos.response;
+package bg.com.bo.bff.providers.dtos;
 
 import bg.com.bo.bff.models.dtos.TransactionLimit;
 import lombok.AllArgsConstructor;

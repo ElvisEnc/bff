@@ -15,16 +15,16 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonRootName(value = "ProviderNetResponse")
+@JsonRootName(value = "TransferYoloNetResponse")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProviderNetResponse {
+public class TransferYoloNetResponse {
     @JsonProperty("CodigoError")
-    private String errorCode;
+    private String codigoError;
 
     @JsonProperty("Datos")
-    private List<Object> data;
+    private List<Object> datos;
 
     @JsonProperty("Mensaje")
-    private String message;
+    private String mensaje;
 }

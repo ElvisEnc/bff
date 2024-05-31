@@ -4,30 +4,20 @@ import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
 import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
-import bg.com.bo.bff.application.dtos.request.qr.QRPaymentRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.request.QRCodeGenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.request.QRCodeRegenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.QrGeneratedPaidMW;
-import bg.com.bo.bff.providers.dtos.requests.qr.CreditorAccount;
-import bg.com.bo.bff.providers.dtos.requests.qr.DebtorAccount;
-import bg.com.bo.bff.providers.dtos.requests.qr.InstructedAmount;
-import bg.com.bo.bff.providers.dtos.requests.qr.OwnerAccount;
-import bg.com.bo.bff.providers.dtos.requests.qr.QRPaymentMWRequest;
-import bg.com.bo.bff.providers.dtos.requests.qr.RiskMW;
-import bg.com.bo.bff.providers.dtos.requests.qr.SupplementaryMWData;
-
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
 @Component
-public class QrMapper implements IQrMapper{
-    private static final String SCHEME_NAME =  "PersonId";
-    private static final String SCHEME_NAME_ACCOUNT =  "AccountId";
-    private static final String SCHEME_NAME_ACH_ACCOUNT_NUMBER =  "AchAccountNumber";
+public class QrMapper implements IQrMapper {
+    private static final String SCHEME_NAME = "PersonId";
+
     @Override
     public QrGeneratedPaid convert(QrGeneratedPaidMW mw) {
         return QrGeneratedPaid.builder()
@@ -121,31 +111,6 @@ public class QrMapper implements IQrMapper{
                 .freeField(partsResponse[11])
                 .serialNumber(partsResponse[12])
                 .bank(partsResponse[13])
-                .build();
-    }
-
-    @Override
-    public QRPaymentMWRequest convert(QRPaymentRequest request, String personId, String accountId) {
-        return QRPaymentMWRequest.
-                builder()
-                .ownerAccount(new OwnerAccount(SCHEME_NAME, personId))
-                .instructedAmount(new InstructedAmount(request.getAmount().getCurrency(), request.getAmount().getAmount()))
-                .debtorAccount(new DebtorAccount(SCHEME_NAME_ACCOUNT, accountId))
-                .creditorAccount(new CreditorAccount(SCHEME_NAME_ACH_ACCOUNT_NUMBER,
-                        request.getTargetAccount().getId(),
-                        request.getTargetAccount().getSecondaryIdentification(),
-                        request.getTargetAccount().getName()))
-                .supplementaryData(SupplementaryMWData.builder()
-                        .idQr(request.getSupplementaryData().getIdQr())
-                        .nroDni(request.getSupplementaryData().getNroDni())
-                        .description(request.getSupplementaryData().getDescription())
-                        .dueDate(request.getSupplementaryData().getDueDate())
-                        .typeUse(request.getSupplementaryData().getTypeUse())
-                        .serviceCode(request.getSupplementaryData().getServiceCode())
-                        .fields(request.getSupplementaryData().getFields())
-                        .serialNumber(request.getSupplementaryData().getSerialNumber())
-                        .build())
-                .risk(new RiskMW(request.getRisk().getPaymentContextCode()))
                 .build();
     }
 }

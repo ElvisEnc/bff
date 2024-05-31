@@ -25,7 +25,4 @@ public class MiddlewareConfig {
     private String dpfManager;
 
     private String clientGenerateQrManager;
-
-    private String clientQrTransactionManager;
-
 }

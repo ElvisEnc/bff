@@ -4,7 +4,7 @@ import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponse;
 import bg.com.bo.bff.application.dtos.response.TransactionLimitData;
-import bg.com.bo.bff.providers.dtos.response.TransactionLimitListMWResponse;
+import bg.com.bo.bff.providers.dtos.TransactionLimitListMWResponse;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
 import bg.com.bo.bff.providers.dtos.request.UpdateTransactionLimitMWRequest;
