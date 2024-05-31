@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersonalInformationNetRequest {
+public class ApiPersonalInformationNetRequest {
     @JsonProperty("intNumeroPersona")
     private String intNumeroPersona;
 

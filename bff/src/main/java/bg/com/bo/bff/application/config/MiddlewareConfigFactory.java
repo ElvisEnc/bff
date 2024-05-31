@@ -36,6 +36,9 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.generate.qr.manager}")
     private String clientSecretGenerateQrManager;
 
+    @Value("${client.secret.qr.transaction.manager}")
+    private String clientQrTransactionManager;
+
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
@@ -49,6 +52,7 @@ public class MiddlewareConfigFactory {
                 .clientAchAccount(client_secret_ach_accounts)
                 .dpfManager(clientSecretDPFManager)
                 .clientGenerateQrManager(clientSecretGenerateQrManager)
+                .clientQrTransactionManager(clientQrTransactionManager)
                 .build();
     }
 }

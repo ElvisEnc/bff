@@ -8,7 +8,7 @@ import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.TransferYoloNetRequest;
 import bg.com.bo.bff.providers.dtos.response.DynamicAppError;
 import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
-import bg.com.bo.bff.providers.dtos.response.TransferYoloNetResponse;
+import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
 import bg.com.bo.bff.providers.mappings.transfer.IYoloMapper;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
@@ -54,8 +54,8 @@ public class TransferYoloNetProvider implements ITransferYoloNetProvider {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
-                    TransferYoloNetResponse response = Util.stringToObject(jsonResponse, TransferYoloNetResponse.class);
-                    if (response.getCodigoError().equals(AppDataYoloNet.CODIGO_EXITO.getValue())) {
+                    ProviderNetResponse response = Util.stringToObject(jsonResponse, ProviderNetResponse.class);
+                    if (response.getErrorCode().equals(AppDataYoloNet.CODIGO_EXITO.getValue())) {
                         return TransferResponseMD.toFormat(iYoloMapper.convertResponse(response));
                     } else {
                         LOGGER.error(jsonResponse);

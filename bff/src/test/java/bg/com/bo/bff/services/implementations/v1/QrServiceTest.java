@@ -1,6 +1,8 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.*;
+import bg.com.bo.bff.application.dtos.request.qr.QRPaymentRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QRPaymentRequestFixture;
 import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequestFixture;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequestFixture;
@@ -8,11 +10,13 @@ import bg.com.bo.bff.application.dtos.response.QRCodeGenerateResponseFixture;
 import bg.com.bo.bff.application.dtos.response.qr.*;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.QRPaymentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.QrGeneratedPaidMW;
 import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IQRProvider;
+import bg.com.bo.bff.providers.interfaces.IQrTransactionProvider;
 import bg.com.bo.bff.providers.mappings.qr.IQrMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +44,8 @@ class QrServiceTest {
     @Mock
     private IAchAccountProvider achAccountProvider;
     @Mock
+    private IQrTransactionProvider qrTransactionProvider;
+    @Mock
     private  IQRProvider qrProvider;
     @Mock
     private IQrMapper iQrMapper;
@@ -56,7 +62,7 @@ class QrServiceTest {
                 DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
                 DeviceMW.APP_VERSION.getCode(), "1.0.0"
         );
-        this.service = new QrService(achAccountProvider, iQrMapper, qrProvider);
+        this.service = new QrService(achAccountProvider, iQrMapper, qrProvider, qrTransactionProvider);
     }
 
     @Test
@@ -130,5 +136,24 @@ class QrServiceTest {
         Assertions.assertNotNull(actual);
         assertEquals(iQrMapper.convertDecryptResponse(expected),actual);
         verify(qrProvider).decrypt(any(),any());
+    }
+
+    @Test
+    void givenQRPaymentRequestWhenQrPaymentThenQRPaymentMWResponse() throws IOException {
+        // Arrange
+        final String personId= "12333";
+        final String accountId= "12333";
+        final QRPaymentMWResponse expected = QRPaymentMWResponseFixture.withDefault();
+        QRPaymentRequest request = QRPaymentRequestFixture.withDefault();
+        when(qrTransactionProvider.qrPayment(any(), any())).thenReturn(expected);
+
+        // Act
+        final QRPaymentMWResponse actual = service.qrPayment(request, personId, accountId, map);
+
+        //Assert
+
+        assertEquals(expected,actual);
+        verify(qrTransactionProvider).qrPayment(any(),any());
+
     }
 }
