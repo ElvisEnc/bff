@@ -5,6 +5,8 @@ import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
+import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
+import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponseFixture;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
@@ -258,5 +260,19 @@ class UserServicesTests {
 
         // Assert
         assertTrue(exception.getCode().contains("BAD_REQUEST"));
+    }
+
+    @Test
+    void givenPersonIdWhenGetEconomicActivityThenResponseExpected() throws IOException {
+        // Arrange
+        EconomicActivityResponse responseExpected = EconomicActivityResponseFixture.withDefault();
+        when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(responseExpected);
+
+        // Act
+        EconomicActivityResponse response = service.getEconomicActivity(123, new HashMap<>());
+
+        // Assert
+        verify(personalInformationNetProvider).getEconomicalActivity(any());
+        assertEquals(EconomicActivityResponseFixture.withDefault(), response);
     }
 }

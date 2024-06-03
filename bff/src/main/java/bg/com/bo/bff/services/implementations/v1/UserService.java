@@ -6,6 +6,7 @@ import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
+import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
@@ -37,7 +38,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public GenericResponse changePassword(String personId, String personRoleId, ChangePasswordRequest changePasswordRequest, Map<String,String> parameters) throws IOException {
+    public GenericResponse changePassword(String personId, String personRoleId, ChangePasswordRequest changePasswordRequest, Map<String, String> parameters) throws IOException {
         IValidator<String> validator = new NotEqualsValidator<>(changePasswordRequest.getOldPassword(), new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.SAME_PASSWORD));
         validator.setNext(new MinLengthValidator(Constants.PASSWORD_MIN_LENGTH, new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD)))
                 .setNext(new MaxLengthValidator(Constants.PASSWORD_MAX_LENGTH, new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD)))
@@ -45,17 +46,7 @@ public class UserService implements IUserService {
                 .setNext(new ContainsLetterValidator(new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD)));
         validator.validate(changePasswordRequest.getNewPassword());
 
-        return loginMiddlewareProvider.changePassword( personId,    personRoleId,  changePasswordRequest,  parameters);
-    }
-
-    @Override
-    public ContactResponse getContactInfo() {
-        return loginMiddlewareProvider.getContactInfo();
-    }
-
-    @Override
-    public PersonalResponse getPersonalInformation(String personId, Map<String, String> parameter) throws IOException {
-        return personalInformationNetProvider.getPersonalInformation(personId, parameter);
+        return loginMiddlewareProvider.changePassword(personId, personRoleId, changePasswordRequest, parameters);
     }
 
     @Override
@@ -72,6 +63,21 @@ public class UserService implements IUserService {
         if (request.getStatus() == null) {
             throw new GenericException("status no puede estar vacío", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
         }
-        return loginMiddlewareProvider.updateBiometricsMW(personId,request,parameter);
+        return loginMiddlewareProvider.updateBiometricsMW(personId, request, parameter);
+    }
+
+    @Override
+    public ContactResponse getContactInfo() {
+        return loginMiddlewareProvider.getContactInfo();
+    }
+
+    @Override
+    public PersonalResponse getPersonalInformation(String personId, Map<String, String> parameter) throws IOException {
+        return personalInformationNetProvider.getPersonalInformation(personId, parameter);
+    }
+
+    @Override
+    public EconomicActivityResponse getEconomicActivity(Integer personId, Map<String, String> parameter) {
+        return personalInformationNetProvider.getEconomicalActivity(personId);
     }
 }

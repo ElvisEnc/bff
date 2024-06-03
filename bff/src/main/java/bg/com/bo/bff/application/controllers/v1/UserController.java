@@ -7,6 +7,7 @@ import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
+import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.services.interfaces.IUserService;
@@ -69,13 +70,49 @@ public class UserController {
                 )));
     }
 
+    @Operation(summary = "Estado de Biometría", description = "Obtiene el estado de la biometría y el tipo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estado de biometría", content = @Content(schema = @Schema(implementation = BiometricsResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("/{personId}/biometric")
+    public ResponseEntity<BiometricsResponse> getBiometricStatus(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") Integer personId
+    ) throws IOException {
+        return ResponseEntity.ok(userService.getBiometrics(personId, Headers.getParameter(httpServletRequest)));
+    }
+
+    @Operation(summary = "Actualizar Biometría", description = "Actualiza la biometría y el tipo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Biometría actualizada", content = @Content(schema = @Schema(implementation = UpdateBiometricsResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PutMapping("/{personId}/biometric")
+    public ResponseEntity<UpdateBiometricsResponse> updateBiometrics(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") Integer personId,
+            @RequestBody @Valid UpdateBiometricsRequest request
+    ) throws IOException {
+        return ResponseEntity.ok(userService.updateBiometrics(personId, request, Headers.getParameter(httpServletRequest)));
+    }
+
     @Operation(summary = "Obtener la información de datos de contacto.", description = "Obtiene la información de contacto del Banco Ganadero.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Información de contacto.", content = @Content(schema = @Schema(implementation = ContactResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/contact")
-    public ResponseEntity<ContactResponse> getContactDetails() throws IOException {
+    public ResponseEntity<ContactResponse> getContactDetails() {
         return ResponseEntity.ok(userService.getContactInfo());
     }
 
@@ -102,39 +139,20 @@ public class UserController {
                 appVersion)));
     }
 
-    @Operation(summary = "Estado de Biometría", description = "Obtiene el estado de la biometría y el tipo")
+    @Operation(summary = "Actividad Economica", description = "Obtiene la información de la Actividad Economica")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Estado de biometría", content = @Content(schema = @Schema(), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Lista de las actividades economicas", content = @Content(schema = @Schema(implementation = EconomicActivityResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
-    @GetMapping("/{personId}/biometric")
-    public ResponseEntity<BiometricsResponse> getBiometricStatus(
+    @GetMapping("/{personId}/economical-activity")
+    public ResponseEntity<EconomicActivityResponse> getEconomicActivity(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") Integer personId
-    ) throws IOException {
-        return ResponseEntity.ok(userService.getBiometrics(personId, Headers.getParameter(httpServletRequest)));
-    }
-
-    @Operation(summary = "Actualizar Biometría", description = "Actualiza la biometría y el tipo")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Biometría actualizada", content = @Content(schema = @Schema(), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
-    })
-    @PostMapping("/{personId}/biometric")
-    public ResponseEntity<UpdateBiometricsResponse> updateBiometrics(
-            @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
-            @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
-            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
-            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
-            @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion,
-            @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") Integer personId,
-            @RequestBody @Valid UpdateBiometricsRequest request
-    ) throws IOException {
-        return ResponseEntity.ok(userService.updateBiometrics(personId,request, Headers.getParameter(httpServletRequest)));
+    ) {
+        return ResponseEntity.ok(userService.getEconomicActivity(personId, Headers.getParameter(httpServletRequest)));
     }
 }

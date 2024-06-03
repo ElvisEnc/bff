@@ -10,7 +10,7 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
 import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.TransactionLimitListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.TransactionLimitListMWResponse;
 import bg.com.bo.bff.providers.dtos.request.UpdateTransactionLimitMWRequest;
 import bg.com.bo.bff.providers.dtos.response.TransactionLimitListMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.accounts.AccountListMWMetadata;

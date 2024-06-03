@@ -1,7 +1,6 @@
 package bg.com.bo.bff.providers.dtos.response;
 
 import bg.com.bo.bff.models.dtos.TransactionLimit;
-import bg.com.bo.bff.providers.dtos.TransactionLimitListMWResponse;
 
 public class TransactionLimitListMWResponseFixture {
     public static TransactionLimitListMWResponse  withDefault(){
