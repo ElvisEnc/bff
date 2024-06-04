@@ -1,14 +1,20 @@
 package bg.com.bo.bff.providers.mappings.personal.information;
 
+import bg.com.bo.bff.application.dtos.response.apiface.DistrictDetail;
+import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicalActivity;
 import bg.com.bo.bff.application.dtos.response.user.PersonalDetail;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
+import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
 import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
+import bg.com.bo.bff.providers.dtos.response.apiface.DistrictNetDetail;
+import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -95,6 +101,30 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                 .incomeLevel(economicLevelList)
                 .incomeSource(economicSourceList)
                 .jobTitle(economicJobList)
+                .build();
+    }
+
+    @Override
+    public DistrictsNetRequest mapToDistrictRequest(String departmentId) {
+        return DistrictsNetRequest.builder()
+                .codDepartamento(departmentId)
+                .build();
+    }
+
+    @Override
+    public DistrictsResponse mapToDistrictsResponse(DistrictsNetResponse netResponse) {
+        List<DistrictDetail> dataList = new ArrayList<>();
+        if (netResponse != null && netResponse.getResult().getData() != null) {
+            for (DistrictNetDetail districtNetData : netResponse.getResult().getData()) {
+                DistrictDetail data = DistrictDetail.builder()
+                        .id(Integer.valueOf(districtNetData.getCodeDistrict()))
+                        .description(districtNetData.getDescription())
+                        .build();
+                dataList.add(data);
+            }
+        }
+        return DistrictsResponse.builder()
+                .data(dataList)
                 .build();
     }
 }

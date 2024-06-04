@@ -3,9 +3,12 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.AppCodeResponseNet;
 import bg.com.bo.bff.commons.enums.AppDataYoloNet;
 import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
 import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
+import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.personal.information.*;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.commons.utils.Util;
@@ -35,6 +38,7 @@ public class PersonalInformationNetProvider implements IPersonalInformationNetPr
     private final IHttpClientFactory httpClientFactory;
     private final IPersonalInformationMapper iPersonalInformationMapper;
     private static final Logger LOGGER = LogManager.getLogger(PersonalInformationNetProvider.class.getName());
+    private static final String URL_GET_DISTRICTS = "/obtenerLocalidadesSegunDepartamento";
 
     public PersonalInformationNetProvider(IHttpClientFactory httpClientFactory, IPersonalInformationMapper iPersonalInformationMapper) {
         this.httpClientFactory = httpClientFactory;
@@ -95,6 +99,42 @@ public class PersonalInformationNetProvider implements IPersonalInformationNetPr
                     ProviderNetResponse netResponse = Util.stringToObject(jsonResponse, ProviderNetResponse.class);
                     if (netResponse.getErrorCode().equals(AppDataYoloNet.CODIGO_EXITO.getValue())) {
                         return iPersonalInformationMapper.convertEconomicActivity(netResponse);
+                    } else {
+                        LOGGER.error(jsonResponse);
+                        DynamicAppError error = Util.mapNetProviderError(jsonResponse);
+                        throw new GenericException(error.getMessage(), error.getStatus(), error.getProviderCode());
+                    }
+                }
+                LOGGER.error(jsonResponse);
+                AppError error = Util.mapProviderError(jsonResponse);
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            }
+        } catch (GenericException ex) {
+            LOGGER.error(ex);
+            throw ex;
+        } catch (Exception e) {
+            LOGGER.error(e);
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        }
+    }
+
+    @Override
+    public DistrictsNetResponse getDistricts(DistrictsNetRequest request, Map<String, String> parameter) throws IOException {
+        try (CloseableHttpClient httpClient = httpClientFactory.create()) {
+            String path = urlProviderPersonalInformationNet + URL_GET_DISTRICTS;
+            String jsonMapper = Util.objectToString(request);
+            StringEntity entity = new StringEntity(jsonMapper);
+            HttpPost httpPost = new HttpPost(path);
+            httpPost.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
+            httpPost.setEntity(entity);
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK) {
+                    DistrictsNetResponse response = Util.stringToObject(jsonResponse, DistrictsNetResponse.class);
+                    if (response.getErrorCode().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
+                        return response;
                     } else {
                         LOGGER.error(jsonResponse);
                         DynamicAppError error = Util.mapNetProviderError(jsonResponse);

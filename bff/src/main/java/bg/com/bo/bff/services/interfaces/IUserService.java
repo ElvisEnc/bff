@@ -5,6 +5,7 @@ import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
@@ -29,4 +30,6 @@ public interface IUserService {
     EconomicActivityResponse getEconomicActivity(Integer personId, Map<String, String> parameter);
 
     DepartmentsResponse getDepartments(Map<String, String> parameter) throws IOException;
+
+    DistrictsResponse getDistricts(String departmentId, Map<String, String> parameter) throws IOException;
 }

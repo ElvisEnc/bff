@@ -2,6 +2,8 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.dtos.response.GetPersonalInformationResponseFixture;
+import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
+import bg.com.bo.bff.application.dtos.response.personal.information.DistrictsResponseFixture;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponseFixture;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
@@ -12,9 +14,11 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.PersonalInformationNetRequestFixture;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
+import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
 import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProviderFixture;
 import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
+import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import bg.com.bo.bff.providers.mappings.personal.information.IPersonalInformationMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -177,5 +181,24 @@ class PersonalInformationNetProviderTest {
         // Assert
         assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
         verify(mapper).mapperRequest("123");
+    }
+
+    @Test
+    void givenDepartmentIdWhenGetDistrictsThenSuccess() throws IOException {
+        // Arrange
+        DistrictsNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefaultDistricts();
+
+        String resultNet = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_localidades\":[{\"DESC_CIUDAD\":\"SUCRE\",\"COD_LOCALIDAD\":1},{\"DESC_CIUDAD\":\"INCAHUASI\",\"COD_LOCALIDAD\":19},{\"DESC_CIUDAD\":\"VILLA MACHARETI\",\"COD_LOCALIDAD\":20},{\"DESC_CIUDAD\":\"MACHARETI\",\"COD_LOCALIDAD\":21},{\"DESC_CIUDAD\":\"EL VILLAR\",\"COD_LOCALIDAD\":22},{\"DESC_CIUDAD\":\"ICLA\",\"COD_LOCALIDAD\":23},{\"DESC_CIUDAD\":\"MOJOCOYA\",\"COD_LOCALIDAD\":24},{\"DESC_CIUDAD\":\"PRESTO\",\"COD_LOCALIDAD\":25},{\"DESC_CIUDAD\":\"TARVITA\",\"COD_LOCALIDAD\":26},{\"DESC_CIUDAD\":\"ALCALA\",\"COD_LOCALIDAD\":27},{\"DESC_CIUDAD\":\"YOTALA\",\"COD_LOCALIDAD\":28}]},\"Mensaje\":\"Ejecución Correcta\"}";
+        DistrictsNetResponse expectedResponse = Util.stringToObject(resultNet, DistrictsNetResponse.class);
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl())
+                .willReturn(okJson(jsonResponse)));
+
+        // Act
+        DistrictsNetResponse response = personalInformationNetProvider.getDistricts(requestMapperMock,map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
     }
 }

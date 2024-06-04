@@ -108,7 +108,7 @@ public enum AppError {
     MDWGQM_002(HttpStatus.BAD_REQUEST, "GENERATE_QR_IMAGE_BASE_64", "MDWGQM-002", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),
     MDWGQM_003(HttpStatus.BAD_REQUEST, "DECODE_IMAGE_BASE_64", "MDWGQM-003", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),
     MDWGQM_012(HttpStatus.BAD_REQUEST, "ERROR_ENCRYPT", "MDWGQM-012", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),
-    MDWGQM_015(HttpStatus.BAD_REQUEST, "ERROR_DECRYPT", "MDWGQM-015", "Hubo un error al generar el qr, revise los datos e intente nuevamente."),
+    MDWGQM_015(HttpStatus.BAD_REQUEST, "ERROR_DECRYPT", "MDWGQM-015", "Hubo un error al desencriptar el qr, intente nuevamente más tarde."),
     MDWGQM_007(HttpStatus.BAD_REQUEST, "ERROR_DATA_ACCOUNT_ORIGIN", "MDWGQM-007", "Hubo un error al obtener los datos de la cuenta origen, revise los datos e intente nuevamente."),
     MDWGQM_009(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWGQM-009", "Internal server error."),
     MDWGQM_010(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWGQM-010", "Internal server error."),

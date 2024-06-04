@@ -5,7 +5,9 @@ import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
+import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
@@ -15,12 +17,16 @@ import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.validators.generics.*;
+import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
+import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
+import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
 import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
 import bg.com.bo.bff.providers.mappings.apiface.IApiFaceMapper;
+import bg.com.bo.bff.providers.mappings.personal.information.IPersonalInformationMapper;
 import bg.com.bo.bff.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,14 +40,16 @@ public class UserService implements IUserService {
 
     private ILoginMiddlewareProvider loginMiddlewareProvider;
     private IPersonalInformationNetProvider personalInformationNetProvider;
+    private IPersonalInformationMapper iPersonalInformationMapper;
     private IApiFaceNetProvider apiFaceNetProvider;
     private IApiFaceMapper iApiFaceMapper;
 
     @Autowired
-    public UserService(ILoginMiddlewareProvider provider, IPersonalInformationNetProvider providerPersonal, IApiFaceNetProvider apiFaceNetProvider,
+    public UserService(ILoginMiddlewareProvider provider, IPersonalInformationNetProvider providerPersonal,IPersonalInformationMapper iPersonalInformationMapper, IApiFaceNetProvider apiFaceNetProvider,
                        IApiFaceMapper iApiFaceMapper) {
         this.loginMiddlewareProvider = provider;
         this.personalInformationNetProvider = providerPersonal;
+        this.iPersonalInformationMapper = iPersonalInformationMapper;
         this.apiFaceNetProvider = apiFaceNetProvider;
         this.iApiFaceMapper = iApiFaceMapper;
     }
@@ -94,5 +102,13 @@ public class UserService implements IUserService {
     public DepartmentsResponse getDepartments(Map<String, String> parameter) throws IOException {
         DepartmentsNetResponse netResponse = apiFaceNetProvider.getDepartments(parameter);
         return iApiFaceMapper.mapToDepartmentsResponse(netResponse);
+    }
+
+    @Override
+    public DistrictsResponse getDistricts(String departmentId, Map<String, String> parameter) throws IOException {
+        DistrictsNetRequest requestData = iPersonalInformationMapper.mapToDistrictRequest(String.valueOf(departmentId));
+        DistrictsNetResponse netResponse = personalInformationNetProvider.getDistricts(requestData, parameter);
+
+        return iPersonalInformationMapper.mapToDistrictsResponse(netResponse);
     }
 }

@@ -5,6 +5,8 @@ import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
+import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
+import bg.com.bo.bff.application.dtos.response.personal.information.DistrictsResponseFixture;
 import bg.com.bo.bff.application.dtos.response.user.*;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
@@ -252,5 +254,28 @@ class UserControllerTest {
 
         // Arrange
         verify(userService).getDepartments(any());
+    }
+
+    @Test
+    void givenDepartmentIdWhenGetDistricts() throws Exception {
+        // Arrange
+        DistrictsResponse expected = DistrictsResponseFixture.withDefault();
+        when(userService.getDistricts(any(), any())).thenReturn(expected);
+
+        // Act & Assert
+        String url = "/api/v1/users/departments/123/dictricts";
+        MvcResult result = mockMvc.perform(get(url)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String responseExpected = Util.objectToString(expected);
+        String response = result.getResponse().getContentAsString();
+
+        // Arrange
+        assertEquals(response, responseExpected);
+        verify(userService).getDistricts(any(), any());
     }
 }
