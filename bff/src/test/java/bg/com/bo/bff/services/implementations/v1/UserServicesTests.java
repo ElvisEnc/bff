@@ -4,23 +4,26 @@ import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
-import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
-import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
-import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponseFixture;
-import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
+import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
+import bg.com.bo.bff.application.dtos.response.user.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
+import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
 import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponseFixture;
+import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
+import bg.com.bo.bff.providers.mappings.apiface.IApiFaceMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
@@ -38,6 +41,10 @@ class UserServicesTests {
     private ILoginMiddlewareProvider provider;
     @Mock
     private IPersonalInformationNetProvider personalInformationNetProvider;
+    @Mock
+    private IApiFaceNetProvider apiFaceNetProvider;
+    @Mock
+    private IApiFaceMapper iApiFaceMapper;
     @InjectMocks
     private UserService service;
     private Map<String, String> map;
@@ -52,7 +59,7 @@ class UserServicesTests {
                 DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
                 DeviceMW.APP_VERSION.getCode(), "1.0.0"
         );
-        this.service = new UserService(provider, personalInformationNetProvider);
+        this.service = new UserService(provider, personalInformationNetProvider, apiFaceNetProvider, iApiFaceMapper);
     }
 
     @Test
@@ -274,5 +281,22 @@ class UserServicesTests {
         // Assert
         verify(personalInformationNetProvider).getEconomicalActivity(any());
         assertEquals(EconomicActivityResponseFixture.withDefault(), response);
+    }
+
+    @Test
+    void givenValidDataWhenGetDepartments() throws IOException {
+        // Arrange
+        DepartmentsNetResponse expectedNet = DepartmentsNetResponseFixture.withDefault();
+        DepartmentsResponse expected = DepartmentsResponseFixture.withDefault();
+
+        Mockito.when(apiFaceNetProvider.getDepartments(Mockito.any())).thenReturn(expectedNet);
+        Mockito.when(iApiFaceMapper.mapToDepartmentsResponse(expectedNet)).thenReturn(expected);
+
+        // Act
+        DepartmentsResponse response = service.getDepartments(map);
+
+        // Assert
+        verify(apiFaceNetProvider).getDepartments(map);
+        assertEquals(expected, response);
     }
 }

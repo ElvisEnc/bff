@@ -7,6 +7,7 @@ import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
+import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.commons.utils.Headers;
@@ -154,5 +155,27 @@ public class UserController {
             @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") Integer personId
     ) {
         return ResponseEntity.ok(userService.getEconomicActivity(personId, Headers.getParameter(httpServletRequest)));
+    }
+
+    @Operation(summary = "Obtención del listado de departamentos", description = "Obtiene el listado de los departamentos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = DepartmentsResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("/departments")
+    public ResponseEntity<DepartmentsResponse> getDepartments(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion
+    ) throws IOException {
+        return ResponseEntity.ok(userService.getDepartments(Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion)));
     }
 }

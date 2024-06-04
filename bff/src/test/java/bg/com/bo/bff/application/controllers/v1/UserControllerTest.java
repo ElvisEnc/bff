@@ -4,10 +4,8 @@ import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
-import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
-import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
-import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponseFixture;
-import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
+import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
+import bg.com.bo.bff.application.dtos.response.user.*;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.IUserService;
@@ -234,5 +232,25 @@ class UserControllerTest {
         // Arrange
         assertEquals(response, responseExpected);
         verify(userService).getEconomicActivity(any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenGetDepartments() throws Exception {
+        // Arrange
+        DepartmentsResponse expected = DepartmentsResponseFixture.withDefault();
+        when(userService.getDepartments(any())).thenReturn(expected);
+
+        // Act & Assert
+        String url = "/api/v1/users/departments";
+        mockMvc.perform(get(url)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Arrange
+        verify(userService).getDepartments(any());
     }
 }

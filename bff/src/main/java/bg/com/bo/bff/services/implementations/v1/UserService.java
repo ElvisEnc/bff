@@ -6,6 +6,7 @@ import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
+import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
@@ -14,9 +15,12 @@ import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.validators.generics.*;
+import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
+import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
+import bg.com.bo.bff.providers.mappings.apiface.IApiFaceMapper;
 import bg.com.bo.bff.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,11 +34,16 @@ public class UserService implements IUserService {
 
     private ILoginMiddlewareProvider loginMiddlewareProvider;
     private IPersonalInformationNetProvider personalInformationNetProvider;
+    private IApiFaceNetProvider apiFaceNetProvider;
+    private IApiFaceMapper iApiFaceMapper;
 
     @Autowired
-    public UserService(ILoginMiddlewareProvider provider, IPersonalInformationNetProvider providerPersonal) {
+    public UserService(ILoginMiddlewareProvider provider, IPersonalInformationNetProvider providerPersonal, IApiFaceNetProvider apiFaceNetProvider,
+                       IApiFaceMapper iApiFaceMapper) {
         this.loginMiddlewareProvider = provider;
         this.personalInformationNetProvider = providerPersonal;
+        this.apiFaceNetProvider = apiFaceNetProvider;
+        this.iApiFaceMapper = iApiFaceMapper;
     }
 
     @Override
@@ -79,5 +88,11 @@ public class UserService implements IUserService {
     @Override
     public EconomicActivityResponse getEconomicActivity(Integer personId, Map<String, String> parameter) {
         return personalInformationNetProvider.getEconomicalActivity(personId);
+    }
+
+    @Override
+    public DepartmentsResponse getDepartments(Map<String, String> parameter) throws IOException {
+        DepartmentsNetResponse netResponse = apiFaceNetProvider.getDepartments(parameter);
+        return iApiFaceMapper.mapToDepartmentsResponse(netResponse);
     }
 }
