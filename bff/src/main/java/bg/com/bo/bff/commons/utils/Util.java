@@ -231,4 +231,8 @@ public class Util {
     public static String getTransferSchemeName(String type, String key) {
         return schemeNameMap.getOrDefault(type, new HashMap<>()).getOrDefault(key, key);
     }
+
+    public static boolean isStringNullOrEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
 }

@@ -37,9 +37,9 @@ import java.util.Objects;
 
 @Service
 public class LoginService implements ILoginServices {
-    private ILoginMiddlewareProvider loginMiddlewareService;
-    private IJwtProvider jwtService;
-    private LoginServiceMapper loginServiceMapper;
+    private final ILoginMiddlewareProvider loginMiddlewareService;
+    private final IJwtProvider jwtService;
+    private final LoginServiceMapper loginServiceMapper;
 
     @Autowired
     public LoginService(ILoginMiddlewareProvider loginMiddlewareService, IJwtProvider jwtService, LoginServiceMapper loginMapper) {
@@ -56,31 +56,24 @@ public class LoginService implements ILoginServices {
         String loginFacial = LoginSchemaName.FACIAL_BIOMETRICS.getCode();
 
         if (Objects.equals(factorId, loginFinger) || Objects.equals(factorId, loginFacial)) {
-            if (loginRequest.getTokenBiometric() == null || loginRequest.getTokenBiometric().isEmpty()) {
+            if (Util.isStringNullOrEmpty(loginRequest.getTokenBiometric())) {
                 throw new GenericException("Token Biometrico no debe estar vacío", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
             }
-        } else if (loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()) {
+        } else if (Util.isStringNullOrEmpty(loginRequest.getPassword())) {
             throw new GenericException("Password no debe estar vacío", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
         }
-
-        String jsonDataName = DeviceMW.JSON_DATA.getCode();
-        if (parameters.containsKey(jsonDataName)) {
-            String data = Util.decodeBase64ToString(parameters.get(jsonDataName));
-            parameters.put(jsonDataName, data);
-        } else
-            throw new GenericException("El header json-data es requerido", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
-
-        String encrypted = Util.encodeSha512(loginRequest.getPassword());
-        loginRequest.setPassword(encrypted);
+        decodeJsonData(parameters);
+        encryptPassword(loginRequest);
         LoginValidationServiceResponse loginValidation;
+        String user = loginRequest.getUser();
         if (Objects.equals(factorId, loginPerson) || Objects.equals(factorId, loginFinger) || Objects.equals(factorId, loginFacial)) {
-            String user = loginRequest.getUser();
-            if (!user.matches("\\d+"))
-                throw new GenericException("Se espera el Código de Persona en user", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
+            validateNumber(user);
             LoginFactorData data = new LoginFactorData();
             data.setPersonId(user);
             loginValidation = loginMiddlewareService.validateCredentials(loginRequest, data, parameters);
         } else {
+            if (Objects.equals(factorId, LoginSchemaName.DNI_LOGIN.getCode()))
+                validateNumber(user);
             LoginFactorMWResponse loginMWFactorResponse = loginMiddlewareService.validateFactorUser(loginRequest, parameters);
             loginValidation = loginMiddlewareService.validateCredentials(loginRequest, loginMWFactorResponse.getData(), parameters);
         }
@@ -94,6 +87,26 @@ public class LoginService implements ILoginServices {
                 throw new NotValidStateException(String.format("Estado no valido para Login. %s", createToken.getStatusCode()));
             default:
                 throw new NotHandledResponseException();
+        }
+    }
+
+    private void decodeJsonData(Map<String, String> parameters) {
+        String jsonDataName = DeviceMW.JSON_DATA.getCode();
+        if (!parameters.containsKey(jsonDataName)) {
+            throw new GenericException("El header json-data es requerido", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
+        }
+        String data = Util.decodeBase64ToString(parameters.get(jsonDataName));
+        parameters.put(jsonDataName, data);
+    }
+
+    private void encryptPassword(LoginRequest loginRequest) {
+        String encrypted = Util.encodeSha512(loginRequest.getPassword());
+        loginRequest.setPassword(encrypted);
+    }
+
+    private void validateNumber(String user) {
+        if (!user.matches("\\d+")) {
+            throw new GenericException("Se espera solo números en User", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
         }
     }
 
@@ -164,7 +177,7 @@ public class LoginService implements ILoginServices {
     public DeviceEnrollmentResponse validation(Map<String, String> parameter) throws IOException {
 
 
-        DeviceEnrollmentMWResponse deviceEnrollmentResponse = loginMiddlewareService.makeValidateDevice( parameter);
+        DeviceEnrollmentMWResponse deviceEnrollmentResponse = loginMiddlewareService.makeValidateDevice(parameter);
 
         String enrolled = deviceEnrollmentResponse.getStatusCode();
         DeviceEnrollmentResponse response = new DeviceEnrollmentResponse();

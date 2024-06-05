@@ -42,7 +42,9 @@ public class LoginAGNProvider implements ILoginAGNProvider {
     public static final String SERVER_COD_ERROR_SUCCESSFUL = "0";
     public static final String SERVER_STATUS_SUCCESSFUL = "A";
     public static final String VALID_REGISTRATION_VALUE = "REGISTERED";
-    private IHttpClientFactory httpClientFactory;
+    public static final String BIOMETRICS_ENABLED = "S";
+    public static final String BIOMETRICS_DISABLED = "N";
+    private final IHttpClientFactory httpClientFactory;
 
     @Value("${agm.login.server.url}")
     private String agnLoginUrlServer;
@@ -172,14 +174,14 @@ public class LoginAGNProvider implements ILoginAGNProvider {
                                         .osBuildId(deviceIdentificator.getSystemBuildId())
                                         .userAgent(deviceIdentificator.getUserAgent())
                                         .firstInstallTime(deviceIdentificator.getFirstInstallTime())
-                                        .debug(deviceIdentificator.getDebug() ? 1 : 0)
-                                        .emulator(deviceIdentificator.getEmulator() ? 1 : 0)
+                                        .debug(Boolean.TRUE.equals(deviceIdentificator.getDebug()) ? 1 : 0)
+                                        .emulator(Boolean.TRUE.equals(deviceIdentificator.getEmulator()) ? 1 : 0)
                                         .build())
                                 .credentials(CredentialsRequest.builder()
                                         .personId(credentials.getPersonId().toString())
                                         .password(credentials.getPassword())
                                         .biometricToken(credentials.getPasswordBiometric())
-                                        .biometricStatus(credentials.getType() == CredentialsType.BIOMETRIC.getValue() ? "A" : "B")
+                                        .biometricStatus(credentials.getType() == CredentialsType.BIOMETRIC.getValue() ? BIOMETRICS_ENABLED : BIOMETRICS_DISABLED)
                                         .build())
                                 .userKeys(UserKeysRequest.builder()
                                         .appPublicKey(userEncryptionKeys.getAppPublicKey())
