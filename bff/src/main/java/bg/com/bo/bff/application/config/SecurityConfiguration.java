@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,6 +33,11 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(allowedUrls).permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v*/registry/device/migration").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v*/login").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v*/login/{personId:[0-9]+}/refresh").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v*/login/validate-device").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v*/users/{personId:[0-9]+}/biometric").permitAll()
                         .anyRequest().hasAuthority(UserRole.LOGGED_USER.toString())
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
