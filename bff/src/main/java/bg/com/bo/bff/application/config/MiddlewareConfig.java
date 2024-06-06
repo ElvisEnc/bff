@@ -28,4 +28,6 @@ public class MiddlewareConfig {
 
     private String clientQrTransactionManager;
 
+    private String clientDebitCardManager;
+
 }

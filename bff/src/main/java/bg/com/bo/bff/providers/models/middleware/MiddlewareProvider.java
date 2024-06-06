@@ -12,9 +12,7 @@ import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -47,7 +45,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
         this.clientSecret = clientSecret;
     }
 
-  /**
+    /**
      * Execute a HttpGet using HttpClientFactory and a token given by TokenMiddlewareProvider.
      * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
      *
@@ -85,23 +83,33 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
     }
 
     protected <E, R> E post(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
-        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
-        try (CloseableHttpClient httpClient = createHttpClient()) {
-            HttpPost request = new HttpPost(url);
+        return executeRequest(new HttpPost(url), headers, requestBody, classType);
+    }
 
-            if (headers != null && headers.length > 0)
+    protected <E, R> E patch(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
+        return executeRequest(new HttpPatch(url), headers, requestBody, classType);
+    }
+
+    private <E, R> E executeRequest(HttpUriRequest request, Header[] headers, R requestBody, Class<E> classType) throws IOException {
+        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
+        try (CloseableHttpClient httpClient = httpClientFactory.create()) {
+            if (headers != null && headers.length > 0) {
                 request.setHeaders(headers);
+            }
             request.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
 
-            StringEntity entity = new StringEntity(Util.objectToString(requestBody));
-            request.setEntity(entity);
-            request.setHeader("Content-Type", "application/json");
+            if (request instanceof HttpEntityEnclosingRequestBase httpEntityEnclosingRequestBase) {
+                StringEntity entity = new StringEntity(Util.objectToString(requestBody));
+                httpEntityEnclosingRequestBase.setEntity(entity);
+                request.setHeader("Content-Type", "application/json");
+            }
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
-                if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED)
+                if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED || statusCode == HttpStatus.SC_NO_CONTENT) {
                     return Util.stringToObject(jsonResponse, classType);
+                }
 
                 LOGGER.error(jsonResponse);
                 IMiddlewareError error = this.mapProviderIError(jsonResponse);
@@ -118,6 +126,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
 
     /**
      * Maps the response in json format on error to an IMiddlewareError instance.
+     *
      * @param jsonResponse response in json format.
      * @return a mapped IMiddlewareError instance.
      */
@@ -135,6 +144,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
 
     /**
      * Find IMiddlewareError instance in declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
      * @param code code of error.
      * @return IMiddlewareError instance founded.
      */
