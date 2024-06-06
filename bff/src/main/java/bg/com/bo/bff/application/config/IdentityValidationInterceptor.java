@@ -20,7 +20,12 @@ public class IdentityValidationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) {
-        Map<String, String> map = new TreeMap<>((Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE));
+        Object variablesAttributes = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+
+        if (variablesAttributes == null)
+            return true;
+
+        Map<String, String> map = new TreeMap<>((Map<String, String>) variablesAttributes);
         String personId = map.get(identityValidationName);
 
         if (personId == null)
