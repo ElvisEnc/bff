@@ -38,6 +38,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST,"/api/v*/login/{personId:[0-9]+}/refresh").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v*/login/validate-device").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v*/users/{personId:[0-9]+}/biometric").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v*/users/contact").permitAll()
                         .anyRequest().hasAuthority(UserRole.LOGGED_USER.toString())
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
