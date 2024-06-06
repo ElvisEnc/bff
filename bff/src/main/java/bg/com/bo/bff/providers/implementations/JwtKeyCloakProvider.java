@@ -299,9 +299,8 @@ public class JwtKeyCloakProvider implements IJwtProvider {
         try {
             boolean issuerValidation = issuer.equals(jwtAccess.getPayload().getIssuer());
             boolean authorizedPartyValidation = authorizedParty.equals(jwtAccess.getPayload().getAuthorizedParty());
-            boolean rolesValidation = jwtAccess.getPayload().getAudience().contains(audience);
 
-            return rolesValidation && authorizedPartyValidation && issuerValidation;
+            return authorizedPartyValidation && issuerValidation;
         } catch (Exception e) {
             logger.error("Hubo un error inesperado al validar el token.");
             return false;
@@ -318,9 +317,8 @@ public class JwtKeyCloakProvider implements IJwtProvider {
         try {
             boolean issuerValidation = issuer.equals(jwtRefresh.getPayload().getIssuer());
             boolean authorizedPartyValidation = authorizedParty.equals(jwtRefresh.getPayload().getAuthorizedParty());
-            boolean subjectValidation = subject.equals(jwtRefresh.getPayload().getSubject());
 
-            return authorizedPartyValidation && subjectValidation && issuerValidation;
+            return authorizedPartyValidation && issuerValidation;
         } catch (Exception e) {
             logger.error("Hubo un error inesperado al validar el token.");
             return false;
