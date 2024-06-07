@@ -1,6 +1,8 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
+import bg.com.bo.bff.application.dtos.response.user.MaritalStatus;
+import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppCodeResponseNet;
@@ -17,6 +19,8 @@ import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInfo
 import bg.com.bo.bff.providers.dtos.response.DynamicAppError;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
 import bg.com.bo.bff.providers.mappings.personal.information.IPersonalInformationMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -29,6 +33,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -151,6 +157,21 @@ public class PersonalInformationNetProvider implements IPersonalInformationNetPr
         } catch (Exception e) {
             LOGGER.error(e);
             throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        }
+    }
+
+    @Override
+    public MaritalStatusResponse getMaritalStatuses() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        TypeReference<List<MaritalStatus>> typeReference = new TypeReference<List<MaritalStatus>>() {
+        };
+        try (InputStream inputStream = TypeReference.class.getResourceAsStream("/files/MaritalStatusResponse.json")) {
+            List<MaritalStatus> maritalStatusList = objectMapper.readValue(inputStream, typeReference);
+            return MaritalStatusResponse.builder()
+                    .data(maritalStatusList)
+                    .build();
+        } catch (IOException e) {
+            throw new GenericException();
         }
     }
 }

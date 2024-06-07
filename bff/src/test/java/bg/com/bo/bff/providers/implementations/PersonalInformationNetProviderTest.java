@@ -2,11 +2,7 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.dtos.response.GetPersonalInformationResponseFixture;
-import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
-import bg.com.bo.bff.application.dtos.response.personal.information.DistrictsResponseFixture;
-import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
-import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponseFixture;
-import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
+import bg.com.bo.bff.application.dtos.response.user.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.DeviceMW;
@@ -21,6 +17,8 @@ import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import bg.com.bo.bff.providers.mappings.personal.information.IPersonalInformationMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -34,13 +32,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @WireMockTest(proxyMode = true, httpPort = 8080)
 @ExtendWith(WireMockExtension.class)
@@ -64,7 +63,7 @@ class PersonalInformationNetProviderTest {
                 DeviceMW.APP_VERSION.getCode(), "1.0.0"
         );
         httpClientFactoryMock = Mockito.mock(HttpClientConfig.class);
-        when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
+        lenient().when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
 
         this.personalInformationNetProvider = new PersonalInformationNetProvider(httpClientFactoryMock, mapper);
         ReflectionTestUtils.setField(personalInformationNetProvider, "urlProviderPersonalInformationNet", "http://localhost:8080");
@@ -200,5 +199,21 @@ class PersonalInformationNetProviderTest {
         // Assert
         assertNotNull(response);
         assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void getMaritalStatusesSuccess() throws IOException {
+        // Arrange
+        ObjectMapper objectMapper = new ObjectMapper();
+        TypeReference<List<MaritalStatus>> typeReference = new TypeReference<>() {};
+        InputStream inputStream = TypeReference.class.getResourceAsStream("/files/MaritalStatusResponse.json");
+        List<MaritalStatus> expectedMaritalStatusList = objectMapper.readValue(inputStream, typeReference);
+
+        // Act
+        MaritalStatusResponse response = personalInformationNetProvider.getMaritalStatuses();
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(expectedMaritalStatusList, response.getData());
     }
 }

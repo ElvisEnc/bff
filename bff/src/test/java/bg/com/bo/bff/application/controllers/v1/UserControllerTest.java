@@ -89,8 +89,6 @@ class UserControllerTest {
         request.setOldPassword("2");
 
         GenericResponse expected = new GenericResponse();
-        String rolePersonId = "1";
-        String personId = "999";
 
         when(userService.changePassword(any(), any(), any(), any())).thenReturn(expected);
 
@@ -277,5 +275,29 @@ class UserControllerTest {
         // Arrange
         assertEquals(response, responseExpected);
         verify(userService).getDistricts(any(), any());
+    }
+
+    @Test
+    void whenGetMaritalStatusThenResponseExpected() throws Exception {
+        // Assert
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        MaritalStatusResponse expected = MaritalStatusResponseFixture.withDefault();
+        when(userService.getMaritalStatus(any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc.perform(get("/api/v1/users/marital-statuses")
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        String responseExpected = Util.objectToString(expected);
+        String response = result.getResponse().getContentAsString();
+
+        // Arrange
+        assertEquals(response, responseExpected);
+        verify(userService).getMaritalStatus( any());
     }
 }

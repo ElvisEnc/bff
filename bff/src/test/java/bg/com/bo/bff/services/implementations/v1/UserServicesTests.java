@@ -30,7 +30,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
@@ -121,9 +120,6 @@ class UserServicesTests {
         changePasswordRequest.setOldPassword("123456");
         changePasswordRequest.setNewPassword("123456789012345a");
 
-        String ip = "127.0.0.1";
-        String deviceId = "123";
-        String deviceUniqueId = "3cae84faa9b64750";
         String rolePersonId = "1";
         String personId = "999";
 
@@ -144,9 +140,6 @@ class UserServicesTests {
         changePasswordRequest.setOldPassword("ab1234");
         changePasswordRequest.setNewPassword("ab1234");
 
-        String ip = "127.0.0.1";
-        String deviceId = "123";
-        String deviceUniqueId = "3cae84faa9b64750";
         String rolePersonId = "1";
         String personId = "999";
 
@@ -167,9 +160,6 @@ class UserServicesTests {
         changePasswordRequest.setOldPassword("ab1234");
         changePasswordRequest.setNewPassword("123456");
 
-        String ip = "127.0.0.1";
-        String deviceId = "123";
-        String deviceUniqueId = "3cae84faa9b64750";
         String rolePersonId = "1";
         String personId = "999";
 
@@ -190,9 +180,6 @@ class UserServicesTests {
         changePasswordRequest.setOldPassword("ab1234");
         changePasswordRequest.setNewPassword("abcdef");
 
-        String ip = "127.0.0.1";
-        String deviceId = "123";
-        String deviceUniqueId = "3cae84faa9b64750";
         String rolePersonId = "1";
         String personId = "999";
 
@@ -325,5 +312,19 @@ class UserServicesTests {
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void whenGetMaritalStatusThenResponseExpected() {
+        // Arrange
+        MaritalStatusResponse responseExpected = MaritalStatusResponseFixture.withDefault();
+        when(personalInformationNetProvider.getMaritalStatuses()).thenReturn(responseExpected);
+
+        // Act
+        MaritalStatusResponse response = service.getMaritalStatus( new HashMap<>());
+
+        // Assert
+        verify(personalInformationNetProvider).getMaritalStatuses();
+        assertEquals(MaritalStatusResponseFixture.withDefault(), response);
     }
 }

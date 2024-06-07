@@ -9,6 +9,7 @@ import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
+import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import org.springframework.stereotype.Service;
 
@@ -32,4 +33,6 @@ public interface IUserService {
     DepartmentsResponse getDepartments(Map<String, String> parameter) throws IOException;
 
     DistrictsResponse getDistricts(String departmentId, Map<String, String> parameter) throws IOException;
+
+    MaritalStatusResponse getMaritalStatus(Map<String, String> parameter);
 }

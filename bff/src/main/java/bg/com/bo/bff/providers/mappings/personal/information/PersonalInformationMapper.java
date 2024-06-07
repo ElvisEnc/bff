@@ -2,10 +2,7 @@ package bg.com.bo.bff.providers.mappings.personal.information;
 
 import bg.com.bo.bff.application.dtos.response.apiface.DistrictDetail;
 import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
-import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
-import bg.com.bo.bff.application.dtos.response.user.EconomicalActivity;
-import bg.com.bo.bff.application.dtos.response.user.PersonalDetail;
-import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
+import bg.com.bo.bff.application.dtos.response.user.*;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
 import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;

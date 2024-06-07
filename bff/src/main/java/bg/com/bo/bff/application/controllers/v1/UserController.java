@@ -9,8 +9,8 @@ import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
-import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
+import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.services.interfaces.IUserService;
@@ -202,5 +202,21 @@ public class UserController {
                 geoPositionX,
                 geoPositionY,
                 appVersion)));
+    }
+
+    @Operation(summary = "Estados Civiles", description = "Obtiene el listado de los estados civiles")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de estado civil", content = @Content(schema = @Schema(implementation = MaritalStatusResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("/marital-statuses")
+    public ResponseEntity<MaritalStatusResponse> getMaritalStatus(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion
+    ) {
+        return ResponseEntity.ok(userService.getMaritalStatus(Headers.getParameter(httpServletRequest)));
     }
 }

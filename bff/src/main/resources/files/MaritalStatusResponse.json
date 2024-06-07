@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "description": "Soltero"
+  },
+  {
+    "id": 2,
+    "description": "Casado"
+  },
+  {
+    "id": 3,
+    "description": "Unión Libre"
+  },
+  {
+    "id": 4,
+    "description": "Viudo"
+  },
+  {
+    "id": 5,
+    "description": "Divorciado"
+  }
+]
