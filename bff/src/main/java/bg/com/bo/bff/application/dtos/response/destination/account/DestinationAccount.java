@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -12,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class DestinationAccount {
             private Long id;
             private Long accountId;
-            private Long accountNumber;
+            private BigInteger accountNumber;
             private String currencyCode;
             private String currencyAcronym;
             private String clientName;

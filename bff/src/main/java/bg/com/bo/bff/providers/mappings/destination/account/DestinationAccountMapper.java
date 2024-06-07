@@ -9,6 +9,7 @@ import bg.com.bo.bff.providers.dtos.response.BranchOfficeMWResponse;
 import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMW;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class DestinationAccountMapper implements IDestinationAccountMapper {
         return DestinationAccount.builder()
                 .id(Long.valueOf(account.getId()))
                 .accountId(Long.valueOf(account.getAccountId()))
-                .accountNumber(Long.valueOf(account.getAccountNumber().trim()))
+                .accountNumber(new BigInteger(account.getAccountNumber().trim()))
                 .currencyCode(account.getCurrencyCode())
                 .currencyAcronym(account.getCurrencyAcronym())
                 .clientName(account.getClientName())
@@ -49,7 +50,7 @@ public class DestinationAccountMapper implements IDestinationAccountMapper {
         return DestinationAccount.builder()
                 .id(Long.valueOf(achAccount.getIdList()))
 //                .accountId()  // null
-                .accountNumber(Long.valueOf(achAccount.getAccountNumber()))
+                .accountNumber(new BigInteger(achAccount.getAccountNumber()))
 //                .currencyCode("") // null
 //                .currencyAcronym("") // null
                 .clientName(achAccount.getHolderName())

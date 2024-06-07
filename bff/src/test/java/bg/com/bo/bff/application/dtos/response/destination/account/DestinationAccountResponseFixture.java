@@ -1,5 +1,6 @@
 package bg.com.bo.bff.application.dtos.response.destination.account;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 public class DestinationAccountResponseFixture {
@@ -9,7 +10,7 @@ public class DestinationAccountResponseFixture {
                         DestinationAccount.builder()
                                 .id(123456789L)
                                 .accountId(123456789L)
-                                .accountNumber(123456789L)
+                                .accountNumber(BigInteger.valueOf(123456789L))
                                 .currencyCode("UnitTest")
                                 .currencyAcronym("UnitTest")
                                 .clientName("UnitTest")
@@ -27,7 +28,7 @@ public class DestinationAccountResponseFixture {
         return DestinationAccount.builder()
                 .id(123456789L)
                 .accountId(123456789L)
-                .accountNumber(123456789L)
+                .accountNumber(BigInteger.valueOf(123456789L))
                 .currencyCode("UnitTest")
                 .currencyAcronym("UnitTest")
                 .clientName("UnitTest")
