@@ -1,6 +1,5 @@
 package bg.com.bo.bff.providers.mappings.destination.account;
 
-import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
 import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;

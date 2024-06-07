@@ -1,11 +1,8 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
-import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
-import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
-import bg.com.bo.bff.application.dtos.request.AddAchAccountRequestFixture;
-import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequestFixture;
-import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequestFixture;
+import bg.com.bo.bff.application.dtos.request.*;
+import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponseFixture;
@@ -98,6 +95,41 @@ class DestinationAccountServiceTest {
         assertNotNull(response);
         verify(achAccountProvider).addAchAccount(any(), any(), any());
         verify(achAccountProvider).generateAccessToken();
+    }
+
+    @Test
+    void givenValidDataWhenAddQRAccountThenReturnOk() throws IOException {
+        // Arrange
+        ClientToken clientToken = new ClientToken();
+        clientToken.setAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjdjNjlmZjNjZjdlNjE5MWU2NGUxMmZhMGVlNmM2ZWNiNTBiODkyY2E5NzIyMmJmZmMxMTc0Yzg5ZTcwNGM5NDQiLCJyb2xlIjoiMTY5YjRlM2IyNzhiYzAzYzZjNWUzNTQ4MDk5ZDUyZTk1MzRmZDRkNjhmMTM0MmEzNzM0OWFjYjQ1NWQ2ZWRjOCIsImdyb3Vwc2lkIjoiMmZhN2MxYjljNjE1ZmU5NThjYmFkODAyNDQzMGNjYjM3ZGE5YTEyMGExMjJiYWI0ZDEyMTFjMGQ3MDMyMTEwYiIsInByaW1hcnlzaWQiOiIyNGI4YjIxNTE1ZTU4ZDdkYTJiZTE1ZWFkZjBhODUyODg5NjEyNTMzODI4ZjkxNDA2YWJmNjRmYjgyYTViNjE2IiwibmJmIjoxNjk5OTIyMzg5LCJleHAiOjE2OTk5MjQxODksImlhdCI6MTY5OTkyMjM4OSwiaXNzIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIiwiYXVkIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIn0.J-Is_mRLEwwn8Z-RyAe40t0TpkLoppTE7roWe0zXFoc");
+        clientToken.setExpiresIn(1699924189);
+
+        AddQRAccountRequest request = DestinationAccountRequestFixture.withDefaultAddQRRequest();
+        when(achAccountProvider.generateAccessToken()).thenReturn(clientToken);
+        when(thirdAccountProvider.generateAccessToken()).thenReturn(clientToken);
+        when(achAccountProvider.addAchAccount(any(), any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
+        when(thirdAccountProvider.addWalletAccount(any(), any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
+        when(thirdAccountProvider.addThirdAccount(any(), any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
+
+        when(iDestinationAccountMapper.mapToAchRequest("1212", request)).thenReturn(AddAchAccountBasicRequestFixture.withDefaultOK());
+        when(iDestinationAccountMapper.mapToThirdRequest("1212", request)).thenReturn(AddThirdAccountBasicRequestFixture.withDefaultOK());
+        when(iDestinationAccountMapper.mapToWalletRequest("1212", request)).thenReturn(AddWalletAccountBasicRequestFixture.withDefaultOK());
+
+        // Act
+        GenericResponse responseACH = service.addQRAccount("1212", "ACH", request, new HashMap<>());
+        GenericResponse responseThird = service.addQRAccount("1212", "Third", request, new HashMap<>());
+        GenericResponse responseWallet = service.addQRAccount("1212", "Wallet", request, new HashMap<>());
+
+        // Assert
+        assertNotNull(responseACH);
+        assertNotNull(responseThird);
+        assertNotNull(responseWallet);
+
+        verify(achAccountProvider).generateAccessToken();
+        verify(thirdAccountProvider, times(2)).generateAccessToken();
+        verify(achAccountProvider).addAchAccount(any(), any(), any());
+        verify(thirdAccountProvider).addThirdAccount(any(), any(), any());
+        verify(thirdAccountProvider).addWalletAccount(any(), any(), any());
     }
 
     @Test
@@ -236,17 +268,17 @@ class DestinationAccountServiceTest {
     @Test
     void givenAccountNumberAndClientNameWhenGetValidateDestinationAccountThenValidateAccountResponse() throws Exception {
         // Arrange
-        String accountNumber ="1310766620";
-        String clientName ="BANCO";
+        String accountNumber = "1310766620";
+        String clientName = "BANCO";
         ValidateAccountResponse expected = ValidateAccountResponseFixture.withDefault();
-        when(thirdAccountProvider.validateAccount(any(),any(),any())).thenReturn(expected);
+        when(thirdAccountProvider.validateAccount(any(), any(), any())).thenReturn(expected);
         // Act
 
         ValidateAccountResponse acutal = service.getValidateDestinationAccounts(accountNumber, clientName, new HashMap<>());
 
         // Assert
         assertEquals(expected.getData(), acutal.getData());
-        verify(thirdAccountProvider).validateAccount(any(),any(),any());
+        verify(thirdAccountProvider).validateAccount(any(), any(), any());
     }
 
     @Test

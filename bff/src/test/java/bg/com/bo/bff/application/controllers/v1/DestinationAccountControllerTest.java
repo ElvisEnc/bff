@@ -1,11 +1,8 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
-import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
-import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
-import bg.com.bo.bff.application.dtos.request.AddAchAccountRequestFixture;
-import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequestFixture;
-import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequestFixture;
+import bg.com.bo.bff.application.dtos.request.*;
+import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
@@ -51,6 +48,7 @@ class DestinationAccountControllerTest {
     private static final String URL_THIRD = "/api/v1/destination-accounts/1234567/third-accounts";
     private static final String URL_WALLET = "/api/v1/destination-accounts/1234567/wallets";
     private static final String URL_ACH = "/api/v1/destination-accounts/1234567/ach-accounts";
+    private static final String URL_QR = "/api/v1/destination-accounts/1234567/qrs/Third";
     private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/accounts/";
     private static final String DELETE_ACH_ACCOUNT = "/api/v1/destination-accounts/56/ach-accounts/46";
     private static final String DELETE_WALLET_ACCOUNT = "/api/v1/destination-accounts/123/wallets/456/wallet-accounts/789";
@@ -126,6 +124,32 @@ class DestinationAccountControllerTest {
         // Assert
         assertEquals(response, actual);
         verify(service).addThirdAccount(any(), any(), any());
+    }
+
+    @Test
+    void givenValidaDataWhenAddQRAccountThenReturnOk() throws Exception {
+        // Arrange
+        GenericResponse expected = GenericResponse.instance(AddAccountResponse.SUCCESS);
+        AddQRAccountRequest request = AddQRAccountRequestFixture.withDefaultOK();
+
+        when(service.addQRAccount(any(), any(), any(), any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc
+                .perform(post(URL_QR)
+                        .content(objectMapper.writeValueAsString(request))
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .headers(this.headers)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).addQRAccount(any(), any(), any(), any());
     }
 
     @Test
