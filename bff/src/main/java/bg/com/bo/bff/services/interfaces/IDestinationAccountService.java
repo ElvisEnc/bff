@@ -3,6 +3,7 @@ package bg.com.bo.bff.services.interfaces;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
 import bg.com.bo.bff.application.dtos.response.BanksResponse;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
@@ -20,6 +21,7 @@ public interface IDestinationAccountService {
     GenericResponse addThirdAccount(String personId, AddThirdAccountRequest addThirdAccountRequest, Map<String, String> parameters) throws IOException;
     GenericResponse addWalletAccount(String personId, AddWalletAccountRequest addWalletAccountRequest, Map<String, String> parameter) throws IOException ;
     GenericResponse addAchAccount(String personId, AddAchAccountRequest addAchAccountRequest, Map<String, String> parameter) throws IOException;
+    GenericResponse addQRAccount(String personId, String bankType, AddQRAccountRequest addQRAccountRequest, Map<String, String> parameter) throws IOException;
     BanksResponse getBanks() throws IOException;
     BranchOfficeResponse getBranchOffice(Integer bankCode) throws IOException;
     AccountTypeListResponse accountTypes();

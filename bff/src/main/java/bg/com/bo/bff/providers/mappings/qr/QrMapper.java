@@ -121,6 +121,7 @@ public class QrMapper implements IQrMapper{
                 .freeField(partsResponse[11])
                 .serialNumber(partsResponse[12])
                 .bank(partsResponse[13])
+                .bankType(Util.getBankType(partsResponse[3], partsResponse[4]))
                 .build();
     }
 

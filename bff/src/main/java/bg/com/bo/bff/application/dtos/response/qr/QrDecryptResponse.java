@@ -52,4 +52,7 @@ public class QrDecryptResponse {
 
     @Schema(description = "Nombre del banco", example = "Banco Ejemplo")
     private String bank;
+
+    @Schema(description = "Tipo de banco", example = "Banco Ejemplo")
+    private String bankType;
 }

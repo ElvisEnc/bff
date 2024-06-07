@@ -3,6 +3,7 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.BanksResponse;
@@ -125,6 +126,31 @@ public class DestinationAccountController {
         )));
     }
 
+    @Operation(summary = "Agendar nueva cuenta desde QR.", description = "Agendar nueva cuenta al leer un QR.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PostMapping("/{personId}/qrs/{bankType}")
+    public ResponseEntity<GenericResponse> addQRAccounts(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el id de la persona", example = "12345") String personId,
+            @PathVariable("bankType") @NotBlank @Parameter(description = "Este es el tipo de banco", example = "Third") String bankType,
+            @RequestBody AddQRAccountRequest addQRAccountRequest) throws IOException {
+        return ResponseEntity.ok(service.addQRAccount(personId, bankType, addQRAccountRequest, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
+    }
+
     @Operation(summary = "Lista de entidades financieras.", description = "Lista de entidades financieras.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = BanksResponse.class), mediaType = "application/json")),
@@ -170,7 +196,7 @@ public class DestinationAccountController {
             @Valid @RequestHeader("device-id") String deviceId,
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
             @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
-            @PathVariable("accountNumber") @NotNull(message = "Invalid accountNumber") @Min(value = 1, message = "Invalid accountNumber")  @Schema(example = "1234", description = "Account ID de la cuenta.") long accountNumber,
+            @PathVariable("accountNumber") @NotNull(message = "Invalid accountNumber") @Min(value = 1, message = "Invalid accountNumber") @Schema(example = "1234", description = "Account ID de la cuenta.") long accountNumber,
             HttpServletRequest servletRequest
     ) throws IOException {
         String ip = servletRequest.getRemoteAddr();
@@ -228,7 +254,7 @@ public class DestinationAccountController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @Valid @RequestBody DestinationAccountRequest request
     ) throws IOException {
-        return ResponseEntity.ok(service.getDestinationAccounts(personId, request,  Headers.getParameter(httpServletRequest,
+        return ResponseEntity.ok(service.getDestinationAccounts(personId, request, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,
@@ -236,6 +262,7 @@ public class DestinationAccountController {
                 appVersion
         )));
     }
+
     @Operation(summary = "Validate Accounts", description = "Valida las cuentas de terceros y billetera")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Valida las cuentas de terceros y billetera,", content = @Content(schema = @Schema(implementation = ValidateAccountResponse.class), mediaType = "application/json")),
@@ -248,16 +275,14 @@ public class DestinationAccountController {
             @RequestParam(name = "accountNumber", required = true)
             @NotBlank(message = "No debe tener espacios en blanco")
             @NotNull(message = "No debe ser nulo")
-            @Size( min = 8, max = 15, message = "El campo accountNumber debe tener un minimo 8 y un maximo de 15 caracteres")
-            @Pattern(regexp = "\\d+", message = "El campo accountNumber solo debe tener números")
-            final String accountNumber,
+            @Size(min = 8, max = 15, message = "El campo accountNumber debe tener un minimo 8 y un maximo de 15 caracteres")
+            @Pattern(regexp = "\\d+", message = "El campo accountNumber solo debe tener números") final String accountNumber,
 
-            @Parameter(description = "Nombre de cliente", example = "Gutierrez",required = true)
+            @Parameter(description = "Nombre de cliente", example = "Gutierrez", required = true)
             @RequestParam(value = "clientName", required = true)
             @NotBlank(message = "No debe tener espacios en blanco")
             @NotNull(message = "No debe ser nulo")
-            @Size( min = 2, max = 100, message = "Debe tener un minimo 2 y un maximo de 100 caracteres")
-            final String clientName,
+            @Size(min = 2, max = 100, message = "Debe tener un minimo 2 y un maximo de 100 caracteres") final String clientName,
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
@@ -265,7 +290,7 @@ public class DestinationAccountController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion
     ) throws IOException {
         return ResponseEntity.ok(service.getValidateDestinationAccounts(accountNumber,
-                clientName,  Headers.getParameter(httpServletRequest,
+                clientName, Headers.getParameter(httpServletRequest,
                         deviceId,
                         deviceName,
                         geoPositionX,

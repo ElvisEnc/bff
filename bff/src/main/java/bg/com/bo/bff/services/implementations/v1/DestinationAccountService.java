@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.Bank;
 import bg.com.bo.bff.application.dtos.request.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
 import bg.com.bo.bff.application.dtos.response.AccountTypeListResponse;
 import bg.com.bo.bff.application.dtos.response.BanksResponse;
@@ -121,6 +122,37 @@ public class DestinationAccountService implements IDestinationAccountService {
     }
 
     @Override
+    public GenericResponse addQRAccount(String personId, String bankType, AddQRAccountRequest addQRAccountRequest, Map<String, String> parameters) throws IOException {
+        return switch (DestinationAccountBG.valueOf(bankType.toUpperCase())) {
+            case THIRD -> {
+                AddThirdAccountBasicRequest thirdRequest = iDestinationAccountMapper.mapToThirdRequest(personId, addQRAccountRequest);
+                yield thirdAccountProvider.addThirdAccount(
+                        thirdAccountProvider.generateAccessToken().getAccessToken(),
+                        thirdRequest,
+                        parameters
+                );
+            }
+            case WALLET -> {
+                AddWalletAccountBasicRequest walletRequest = iDestinationAccountMapper.mapToWalletRequest(personId, addQRAccountRequest);
+                yield thirdAccountProvider.addWalletAccount(
+                        thirdAccountProvider.generateAccessToken().getAccessToken(),
+                        walletRequest,
+                        parameters
+                );
+            }
+            case ACH -> {
+                AddAchAccountBasicRequest achRequest = iDestinationAccountMapper.mapToAchRequest(personId, addQRAccountRequest);
+                yield achAccountProvider.addAchAccount(
+                        achAccountProvider.generateAccessToken().getAccessToken(),
+                        achRequest,
+                        parameters
+                );
+            }
+            default -> throw new IllegalArgumentException("Invalid bank type: " + bankType);
+        };
+    }
+
+    @Override
     public BanksResponse getBanks() throws IOException {
         BanksMWResponse result = achAccountProvider.getBanks();
         return new BanksResponse(result.getData().stream().map(Bank::fromMWBank).toList());
@@ -202,8 +234,9 @@ public class DestinationAccountService implements IDestinationAccountService {
         allAccounts.sort(Comparator.comparing(DestinationAccount::getClientName, String.CASE_INSENSITIVE_ORDER));
         return allAccounts;
     }
+
     @Override
     public ValidateAccountResponse getValidateDestinationAccounts(String accountNumber, String clientName, Map<String, String> parameter) throws IOException {
-        return thirdAccountProvider.validateAccount(accountNumber,clientName,parameter);
+        return thirdAccountProvider.validateAccount(accountNumber, clientName, parameter);
     }
 }

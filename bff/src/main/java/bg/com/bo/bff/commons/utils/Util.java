@@ -3,6 +3,7 @@ package bg.com.bo.bff.commons.utils;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.Currency;
+import bg.com.bo.bff.commons.enums.DestinationAccountBG;
 import bg.com.bo.bff.providers.dtos.response.DynamicAppError;
 import bg.com.bo.bff.providers.dtos.response.ApiErrorResponse;
 import bg.com.bo.bff.providers.dtos.response.ApiNetErrorResponse;
@@ -31,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Util {
@@ -38,6 +40,7 @@ public class Util {
     private static final Logger LOGGER = LogManager.getLogger(Util.class.getName());
     private static final Map<String, Currency> currencyMap = new HashMap<>();
     private static final Map<String, Map<String, String>> schemeNameMap = new HashMap<>();
+    private static final Pattern EIF_PATTERN = Pattern.compile("^\\D*(\\d+)");
 
     static {
         currencyMap.put("068", Currency.BOB);
@@ -234,5 +237,31 @@ public class Util {
 
     public static boolean isStringNullOrEmpty(String str) {
         return str == null || str.isEmpty();
+    }
+
+    public static String getEIF(String eif) {
+        Matcher match = EIF_PATTERN.matcher(eif);
+        if (match.find()) {
+            int digits = Integer.parseInt(match.group(1));
+            return String.valueOf(digits);
+        } else {
+            return eif;
+        }
+    }
+
+    public static String getBankType(String codeSegment, String walletSegment) {
+        boolean isThirdBank = isThirdBank(codeSegment);
+        boolean isWallet = walletSegment.length() == 8;
+
+        if (!isThirdBank) {
+            return DestinationAccountBG.ACH.getName();
+        }
+        return isWallet ? DestinationAccountBG.WALLET.getName() : DestinationAccountBG.THIRD.getName();
+    }
+
+    private static boolean isThirdBank(String codeSegment) {
+        return "1919".equals(codeSegment) || "01919".equals(codeSegment)
+                || "1018".equals(codeSegment) || "01018".equals(codeSegment)
+                || "MLD1018".equals(codeSegment);
     }
 }

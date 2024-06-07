@@ -1,10 +1,15 @@
 package bg.com.bo.bff.providers.mappings.destination.account;
 
+import bg.com.bo.bff.application.dtos.request.AddWalletAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
 import bg.com.bo.bff.application.dtos.response.BranchOfficeDataResponse;
 import bg.com.bo.bff.application.dtos.response.BranchOfficeResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.commons.enums.DestinationAccountType;
 import bg.com.bo.bff.models.ThirdAccount;
+import bg.com.bo.bff.providers.dtos.request.AddAchAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.AddThirdAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.AddWalletAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.response.BranchOfficeMWResponse;
 import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMW;
 import org.springframework.stereotype.Component;
@@ -58,6 +63,45 @@ public class DestinationAccountMapper implements IDestinationAccountMapper {
                 .bankName(achAccount.getBankName())
                 .accountAliases(achAccount.getAccountNickname())
                 .destinationAccountType(DestinationAccountType.CUENTA_ACH.getCode())
+                .build();
+    }
+
+    @Override
+    public AddThirdAccountBasicRequest mapToThirdRequest(String personId, AddQRAccountRequest request) {
+        return AddThirdAccountBasicRequest.builder()
+                .personId(personId)
+                .companyPersonId(personId)
+                .toAccountNumber(request.getAccountNumber())
+                .reference(request.getReference())
+                .isFavorite("N")
+                .build();
+    }
+
+    @Override
+    public AddWalletAccountBasicRequest mapToWalletRequest(String personId, AddQRAccountRequest request) {
+        return AddWalletAccountBasicRequest.builder()
+                .personId(personId)
+                .companyPersonId(personId)
+                .toAccountNumber(request.getAccountNumber())
+                .reference(request.getReference())
+                .isFavorite("N")
+                .build();
+    }
+
+    @Override
+    public AddAchAccountBasicRequest mapToAchRequest(String personId, AddQRAccountRequest request) {
+        return AddAchAccountBasicRequest.builder()
+                .personId(personId)
+                .companyPersonId(personId)
+                .isFavorite("N")
+                .isEnabled("S")
+                .reference(request.getReference())
+                .destinationAccountNumber(request.getAccountNumber())
+                .destinationBankCode(request.getBankCode())
+                .destinationBranchOfficeCode("SCZ")
+                .destinationAccountTypeCode(request.getAccountNumber().length() == 8 ? "CMOVILD" : "CCAD")
+                .destinationHolderName(request.getHolderName())
+                .destinationIDNumber(request.getIdentificationNumber())
                 .build();
     }
 }

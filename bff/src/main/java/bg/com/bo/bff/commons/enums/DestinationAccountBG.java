@@ -7,7 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum DestinationAccountBG {
     BG( "Banco Ganadero S.A."),
-    YOLO( "YOLO Pago");
+    YOLO( "YOLO Pago"),
+    THIRD("Third"),
+    WALLET("Wallet"),
+    ACH("ACH");
 
     private final String name;
 }
