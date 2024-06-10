@@ -111,7 +111,7 @@ public enum AppError {
     MDWGQM_015(HttpStatus.BAD_REQUEST, "ERROR_DECRYPT", "MDWGQM-015", "Hubo un error al desencriptar el qr, intente nuevamente más tarde."),
     MDWGQM_007(HttpStatus.BAD_REQUEST, "ERROR_DATA_ACCOUNT_ORIGIN", "MDWGQM-007", "Hubo un error al obtener los datos de la cuenta origen, revise los datos e intente nuevamente."),
     MDWGQM_009(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWGQM-009", "Internal server error."),
-    MDWGQM_010(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWGQM-010", "Internal server error."),
+    MDWGQM_010(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWGQM-010", "Error en los parametros."),
     MDWGQM_013(HttpStatus.BAD_REQUEST, "ACCOUNT_CURRENCY_ORIGIN_DIFFERENT", "MDWGQM-013", "La moneda de la cuenta origen es distinta."),
     MDWGQM_014(HttpStatus.BAD_REQUEST, "FORMAT_IS_NOT_VALID_ENTITY", "MDWGQM-014", "El formato de la entidad bancaria no es válido o no existe."),
     MDWGQM_011(HttpStatus.BAD_REQUEST, "ERROR_DATE", "MDWGQM-011", "La fecha otogada no es correcta."),
