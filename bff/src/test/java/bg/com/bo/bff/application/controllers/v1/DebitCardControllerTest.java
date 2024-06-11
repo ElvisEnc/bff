@@ -3,6 +3,8 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponseFixture;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponseFixture;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
@@ -147,7 +149,32 @@ class DebitCardControllerTest {
     }
 
     @Test
-    void givenPersonIdAndCardIdWhengetListAuthorizationsThenDCInternetAuthorizationNWResponse() throws Exception {
+    void givenPersonIdAndCardIdWhenGetAccountListDebitCardThenSuccess() throws Exception {
+        // Arrange
+        ListAccountTDResponse responseExpected = ListAccountTDResponseFixture.withDefault();
+        when(service.getAccountsTD(any(), any(), any())).thenReturn(responseExpected);
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        // Act
+        MvcResult result = mockMvc.perform(get("/api/v1/debit-cards/persons/{personId}/cards/{cardId}/accounts", "123", "123")
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String expected = Util.objectToString(responseExpected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getAccountsTD(any(), any(), any());
+    }
+
+    @Test
+    void givenPersonIdAndCardIdWhenGetListAuthorizationsThenDCInternetAuthorizationNWResponse() throws Exception {
         // Arrange
         String personId = "169494";
         String cardId = "123456";
@@ -166,7 +193,7 @@ class DebitCardControllerTest {
         String response = objectMapper.writeValueAsString(expected);
         String actual = result.getResponse().getContentAsString();
         // Assert
-        assertEquals(response, actual );
+        assertEquals(response, actual);
         verify(service).getListAuthorizations(any(), any(), any());
     }
 

@@ -3,18 +3,14 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.debit.card.DebitCardFixture;
-import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
-import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponseFixture;
+import bg.com.bo.bff.application.dtos.response.debit.card.*;
 import bg.com.bo.bff.application.dtos.response.InternetAuthorizationResponseFixture;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponseFixture;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
-import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
 import bg.com.bo.bff.providers.mappings.debit.card.IDebitCardMapper;
@@ -29,7 +25,10 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,7 +74,7 @@ class DebitCardServiceTest {
         ListDebitCardMWResponse mwResponseMock = ListDebitCardMWResponseFixture.withDefault();
         ListDebitCardResponse expectedResponse = ListDebitCardResponseFixture.withDefault();
         when(provider.listDebitCard(any(), any())).thenReturn(mwResponseMock);
-        when(mapper.convertResponse(any())).thenReturn(DebitCardFixture.withDefault());
+        when(mapper.convertResponseListDebitCard(any())).thenReturn(List.of(DebitCardFixture.withDefault(), DebitCardFixture.withDefault()));
 
         // Act
         ListDebitCardResponse response = service.getListDebitCard(123, new HashMap<>());
@@ -84,11 +83,29 @@ class DebitCardServiceTest {
         Assertions.assertNotNull(response);
         assertEquals(expectedResponse, response);
         verify(provider).listDebitCard(123, new HashMap<>());
-        verify(mapper, times(2)).convertResponse(ListDebitCardMWResponseFixture.debitCardMWDefault());
+        verify(mapper).convertResponseListDebitCard(mwResponseMock);
     }
 
     @Test
-    void givenPersonIdAndCardIdWhengetListAuthorizationsThenDCInternetAuthorizationNWResponse() throws IOException {
+    void givenPersonCodeAndCardIdWhenGetAccountListDebitCardThenSuccess() throws IOException {
+        // Arrange
+        AccountsDebitCardMWResponse mwResponseMock = AccountsDebitCardMWResponseFixture.withDefault();
+        ListAccountTDResponse expectedResponse = ListAccountTDResponseFixture.withDefault();
+        when(provider.accountListDebitCard(any(),any(), any())).thenReturn(mwResponseMock);
+        when(mapper.convertResponseAccountListTD(any())).thenReturn(List.of(AccountTDFixture.withDefault(),AccountTDFixture.withDefault()));
+
+        // Act
+        ListAccountTDResponse response = service.getAccountsTD(123,123, new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(provider).accountListDebitCard(123,123, new HashMap<>());
+        verify(mapper).convertResponseAccountListTD(mwResponseMock);
+    }
+
+    @Test
+    void givenPersonIdAndCardIdWhenGetListAuthorizationsThenDCInternetAuthorizationNWResponse() throws IOException {
         // Arrange
         String personId = "169494";
         String cardId = "169494";

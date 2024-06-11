@@ -13,7 +13,9 @@ public enum DebitCardMiddlewareError implements IMiddlewareError {
     MDWTJD_003(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWTJD-003", "Error interno."),
     MDWTJD_004(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWTJD-004", "No se encontraron tarjetas de debito"),
     MDWTJD_900(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWTJD-900", "Error interno."),
-    MDWTJD_005(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWTJD-005", "No se encontraron autorizaciones de compras por internet.");
+    MDWTJD_005(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWTJD-005", "No se encontraron autorizaciones de compras por internet."),
+    MDWPGL_004(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWPGL-004", "Sin datos para mostrar"),
+    MDWPGL_400(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWPGL-400", "El CardId o el Código de Persona es inválido");
 
     private final HttpStatus httpCode;
     private final String code;

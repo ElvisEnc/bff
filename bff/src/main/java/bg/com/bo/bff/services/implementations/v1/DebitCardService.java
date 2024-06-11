@@ -2,11 +2,14 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.AccountTD;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
+import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
+import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
@@ -17,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class DebitCardService implements IDebitCardService {
@@ -38,13 +40,17 @@ public class DebitCardService implements IDebitCardService {
     @Override
     public ListDebitCardResponse getListDebitCard(Integer personId, Map<String, String> parameter) throws IOException {
         ListDebitCardMWResponse listDebitCardMWResponse = idcProvider.listDebitCard(personId, parameter);
-        List<DebitCard> list = Optional.ofNullable(listDebitCardMWResponse)
-                .map(ListDebitCardMWResponse::getData)
-                .orElseGet(List::of)
-                .stream()
-                .map(idcMapper::convertResponse)
-                .toList();
+        List<DebitCard> list = idcMapper.convertResponseListDebitCard(listDebitCardMWResponse);
         return ListDebitCardResponse.builder()
+                .data(list)
+                .build();
+    }
+
+    @Override
+    public ListAccountTDResponse getAccountsTD(Integer personId, Integer cardId, Map<String, String> parameter) throws IOException {
+        AccountsDebitCardMWResponse mwResponse = idcProvider.accountListDebitCard(personId, cardId, parameter);
+        List<AccountTD> list = idcMapper.convertResponseAccountListTD(mwResponse);
+        return ListAccountTDResponse.builder()
                 .data(list)
                 .build();
     }

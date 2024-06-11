@@ -7,6 +7,7 @@ import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
+import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCLimitsMWResponse;
@@ -65,6 +66,14 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
         DefaultResultByMWErrorEvaluator<ListDebitCardMWResponse> additionalEvaluator = DefaultResultByMWErrorEvaluator.instance(DebitCardMiddlewareError.MDWTJD_004);
 
         return get(path, setHeaders(parameters), ListDebitCardMWResponse.class, additionalEvaluator);
+    }
+
+    @Override
+    public AccountsDebitCardMWResponse accountListDebitCard(Integer personId, Integer cardId, Map<String, String> parameters) throws IOException {
+        String path = middlewareConfig.getUrlBase() +
+                ProjectNameMW.DEBIT_CARD_MANAGER.getName() +
+                String.format(DebitCardMiddlewareServices.ACCOUNT_LIST_DEBIT_CARD.getServiceURL(), cardId, personId);
+        return get(path, setHeaders(parameters), AccountsDebitCardMWResponse.class);
     }
 
     @Override
