@@ -2,10 +2,12 @@ package bg.com.bo.bff.providers.mappings.debit.card;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsPeriod;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
+import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
 import bg.com.bo.bff.application.dtos.response.debitcard.DCInternetAuthorization;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
+import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,6 +22,17 @@ public class DebitCardMapper implements IDebitCardMapper {
                 .expirationDate(request.getPeriod().getEnd())
                 .pciId(cardId)
                 .amount(request.getDailyAmount())
+                .build();
+    }
+
+    @Override
+    public DebitCard convertResponse(ListDebitCardMWResponse.DebitCardMW debitCardMW) {
+        return DebitCard.builder()
+                .id(debitCardMW.getIdPci())
+                .cardNumber(debitCardMW.getCardId())
+                .holderName(debitCardMW.getCardName())
+                .expiryDate(debitCardMW.getExpirationDate())
+                .status(debitCardMW.getStatusDescription())
                 .build();
     }
 

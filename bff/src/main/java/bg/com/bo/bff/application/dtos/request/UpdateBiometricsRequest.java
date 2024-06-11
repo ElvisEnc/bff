@@ -2,10 +2,7 @@ package bg.com.bo.bff.application.dtos.request;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +18,8 @@ public class UpdateBiometricsRequest {
 
     @NotBlank
     @Schema(example = "dfkjdsfg65454dgdsgs", description = "Token de la biometría")
+    @Pattern(regexp="^\\S*$" , message = "The tokenBiometric is invalid")
+    @Size(min = 1, max = 1000,  message = "Token biometric length must be between 1 and 1000 characters")
     private String tokenBiometric;
 
     @NotBlank

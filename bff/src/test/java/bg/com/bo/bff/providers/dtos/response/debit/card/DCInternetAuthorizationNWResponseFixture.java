@@ -18,7 +18,7 @@ public class DCInternetAuthorizationNWResponseFixture {
         return new DCInternetAuthorizationNWResponse(List.of(dcInternetAuthorizationNW));
     }
 
-    public static String whtiErrorMDWTJD005(){
+    public static String withErrorMDWTJD005(){
         return "{  \"code\": 406, \"errorType\": \"Technical\", \"errorDetailResponse\": " +
                 "[ { \"code\": \"MDWTJD-005\", \"description\": \"Error no found limits internet to debit card\" }]}";
     }

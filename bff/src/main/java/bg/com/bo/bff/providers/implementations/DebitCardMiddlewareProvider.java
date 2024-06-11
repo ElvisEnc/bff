@@ -9,13 +9,14 @@ import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCLimitsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareServices;
-import bg.com.bo.bff.providers.models.middleware.HeadersMW;
-import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
+import bg.com.bo.bff.providers.models.middleware.*;
+import bg.com.bo.bff.providers.models.middleware.additional.evaluator.DefaultResultByMWErrorEvaluator;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.springframework.stereotype.Service;
@@ -33,13 +34,7 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
     @Override
     public GenericResponse changeAmount(DCLimitsMWRequest request, Map<String, String> parameters) throws IOException {
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.CHANGE_AMOUNT.getServiceURL();
-        Header[] headers = {
-                new BasicHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal()),
-                new BasicHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal()),
-                new BasicHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName()),
-                new BasicHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode())),
-                new BasicHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()))
-        };
+        Header[] headers = setHeaders(parameters);
         DCLimitsMWResponse response = patch(url, headers, request, DCLimitsMWResponse.class);
         if (response.getData().getPciId() != null) {
             return GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT);
@@ -48,10 +43,33 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
         }
     }
 
+    private static Header[] setHeaders(Map<String, String> parameters) {
+        return new Header[]{
+                new BasicHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal()),
+                new BasicHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal()),
+                new BasicHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName()),
+                new BasicHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode())),
+                new BasicHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode())),
+                new BasicHeader(DeviceMW.DEVICE_NAME.getCode(), parameters.get(DeviceMW.DEVICE_NAME.getCode())),
+                new BasicHeader(DeviceMW.GEO_POSITION_X.getCode(), parameters.get(DeviceMW.GEO_POSITION_X.getCode())),
+                new BasicHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode())),
+                new BasicHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode())),
+        };
+    }
+
+    @Override
+    public ListDebitCardMWResponse listDebitCard(Integer personId, Map<String, String> parameters) throws IOException {
+        String path = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.LIST_DEBIT_CARD.getServiceURL() + personId;
+
+        DefaultResultByMWErrorEvaluator<ListDebitCardMWResponse> additionalEvaluator = DefaultResultByMWErrorEvaluator.instance(DebitCardMiddlewareError.MDWTJD_004);
+
+        return get(path, setHeaders(parameters), ListDebitCardMWResponse.class, additionalEvaluator);
+    }
+
     @Override
     public DCInternetAuthorizationNWResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameters) throws IOException {
-        String path=String.format(DebitCardMiddlewareServices.GET_lIST_INTERNET_AUTHORIZATION.getServiceURL(),cardId,personId);
-        String url = String.format("%s%s%s",middlewareConfig.getUrlBase(),ProjectNameMW.DEBIT_CARD_MANAGER.getName(),path);
+        String path = String.format(DebitCardMiddlewareServices.GET_lIST_INTERNET_AUTHORIZATION.getServiceURL(), cardId, personId);
+        String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.DEBIT_CARD_MANAGER.getName(), path);
         Header[] headers = {
                 new BasicHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal()),
                 new BasicHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal()),
@@ -59,7 +77,6 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
                 new BasicHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode())),
                 new BasicHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()))
         };
-        DCInternetAuthorizationNWResponse response = get(url, headers, DCInternetAuthorizationNWResponse.class);
-        return response;
+        return get(url, headers, DCInternetAuthorizationNWResponse.class);
     }
 }

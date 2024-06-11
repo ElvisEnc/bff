@@ -3,6 +3,8 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponseFixture;
 import bg.com.bo.bff.application.dtos.response.InternetAuthorizationResponseFixture;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
@@ -26,7 +28,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Vector;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,11 +42,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @ExtendWith(MockitoExtension.class)
 class DebitCardControllerTest {
     private MockMvc mockMvc;
-
     @Spy
     @InjectMocks
     private DebitCardController controller;
@@ -48,6 +53,13 @@ class DebitCardControllerTest {
     @Mock
     private HttpServletRequest httpServletRequest;
     HttpHeaders headers = new HttpHeaders();
+    Enumeration<String> enumerations;
+    private static final String DEVICE_ID = "42ebffbd7c30307d";
+    private static final String DEVICE_IP = "127.0.0.1";
+    private static final String DEVICE_NAME = "Android";
+    private static final String GEO_POSITION_X = "12.265656";
+    private static final String GEO_POSITION_Y = "12.454545";
+    private static final String APP_VERSION = "1.0.0";
 
     private ObjectMapper objectMapper;
 
@@ -57,6 +69,17 @@ class DebitCardControllerTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .build();
+        Map<String, String> map = Map.of(
+                DeviceMW.DEVICE_ID.getCode(), DEVICE_ID,
+                DeviceMW.DEVICE_IP.getCode(), DEVICE_IP,
+                DeviceMW.DEVICE_NAME.getCode(), DEVICE_NAME,
+                DeviceMW.GEO_POSITION_X.getCode(), GEO_POSITION_X,
+                DeviceMW.GEO_POSITION_Y.getCode(), GEO_POSITION_Y,
+                DeviceMW.APP_VERSION.getCode(), APP_VERSION
+        );
+        Vector<String> lists = new Vector<>(map.keySet().stream().toList());
+        enumerations = lists.elements();
+
         headers.add(DeviceMW.DEVICE_ID.getCode(), "121j1hjh1jh1jh");
         headers.add(DeviceMW.DEVICE_NAME.getCode(), "Android");
         headers.add(DeviceMW.GEO_POSITION_X.getCode(), "1101,1");
@@ -93,6 +116,32 @@ class DebitCardControllerTest {
 
         // Assert
         verify(service).changeAmount(any(), any(), any(), any());
+    }
+
+    @Test
+    void givenPersonCodeWhenGetListDebitCardThenSuccess() throws Exception {
+        // Arrange
+        ListDebitCardResponse responseExpected = ListDebitCardResponseFixture.withDefault();
+        when(service.getListDebitCard(any(), any())).thenReturn(responseExpected);
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        // Act
+        String GET_LIST_DEBIT_CARD = "/api/v1/debit-cards/persons/{personId}/cards";
+        MvcResult result = mockMvc.perform(get(GET_LIST_DEBIT_CARD, "123")
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String expected = Util.objectToString(responseExpected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getListDebitCard(any(), any());
     }
 
     @Test

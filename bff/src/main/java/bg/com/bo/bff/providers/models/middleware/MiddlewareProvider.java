@@ -10,6 +10,7 @@ import bg.com.bo.bff.providers.dtos.response.ApiErrorResponse;
 import bg.com.bo.bff.providers.dtos.response.ErrorDetailResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
+import bg.com.bo.bff.providers.models.middleware.additional.evaluator.AdditionalEvaluator;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.*;
@@ -55,6 +56,20 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @return an object of given params type.
      */
     protected <E> E get(String url, Header[] headers, Class<E> classType) throws IOException {
+        return get(url, headers, classType, null);
+    }
+
+    /**
+     * Execute a HttpGet using HttpClientFactory and a token given by TokenMiddlewareProvider.
+     * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
+     * @param url        url of resource.
+     * @param headers    list of headers for request.
+     * @param classType  type of response class.
+     * @param additionalEvaluator additional evaluator
+     * @return an object of given params type.
+     */
+    protected <E> E get(String url, Header[] headers, Class<E> classType, AdditionalEvaluator<E> additionalEvaluator) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
         try (CloseableHttpClient httpClient = createHttpClient()) {
             HttpGet request = new HttpGet(url);
@@ -68,6 +83,9 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK)
                     return Util.stringToObject(jsonResponse, classType);
+
+                if (additionalEvaluator != null && additionalEvaluator.getEvaluator().evaluate(jsonResponse, this::mapProviderIError))
+                    return additionalEvaluator.getResolver().resolve(jsonResponse, classType, this::mapProviderIError);
 
                 LOGGER.error(jsonResponse);
                 IMiddlewareError error = this.mapProviderIError(jsonResponse);
@@ -130,7 +148,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @param jsonResponse response in json format.
      * @return a mapped IMiddlewareError instance.
      */
-    private IMiddlewareError mapProviderIError(String jsonResponse) throws IOException {
+    protected IMiddlewareError mapProviderIError(String jsonResponse) throws IOException {
         ApiErrorResponse response = Util.stringToObject(jsonResponse, ApiErrorResponse.class);
         List<ErrorDetailResponse> listError = response.getErrorDetailResponse();
         ErrorDetailResponse errorDetail = listError.get(0);

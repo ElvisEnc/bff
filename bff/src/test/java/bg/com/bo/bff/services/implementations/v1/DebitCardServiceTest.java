@@ -3,10 +3,15 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.DebitCardFixture;
+import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponseFixture;
 import bg.com.bo.bff.application.dtos.response.InternetAuthorizationResponseFixture;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
 import bg.com.bo.bff.providers.mappings.debit.card.IDebitCardMapper;
@@ -16,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -25,7 +29,7 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DebitCardServiceTest {
@@ -48,8 +52,8 @@ class DebitCardServiceTest {
         DCLimitsMWRequest expectedRequest = DebitCardMWRequestFixture.withDefault();
         GenericResponse expected = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT);
 
-        Mockito.when(provider.changeAmount(Mockito.any(), Mockito.any())).thenReturn(GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT));
-        Mockito.when(mapper.mapToLimitsRequest(request, personId, cardId)).thenReturn(expectedRequest);
+        when(provider.changeAmount(any(), any())).thenReturn(GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT));
+        when(mapper.mapToLimitsRequest(request, personId, cardId)).thenReturn(expectedRequest);
 
         // Act
         GenericResponse response = service.changeAmount(personId, cardId, request, new HashMap<>());
@@ -62,14 +66,32 @@ class DebitCardServiceTest {
     }
 
     @Test
+    void givenPersonCodeWhenGetListDebitCardThenSuccess() throws IOException {
+        // Arrange
+        ListDebitCardMWResponse mwResponseMock = ListDebitCardMWResponseFixture.withDefault();
+        ListDebitCardResponse expectedResponse = ListDebitCardResponseFixture.withDefault();
+        when(provider.listDebitCard(any(), any())).thenReturn(mwResponseMock);
+        when(mapper.convertResponse(any())).thenReturn(DebitCardFixture.withDefault());
+
+        // Act
+        ListDebitCardResponse response = service.getListDebitCard(123, new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(provider).listDebitCard(123, new HashMap<>());
+        verify(mapper, times(2)).convertResponse(ListDebitCardMWResponseFixture.debitCardMWDefault());
+    }
+
+    @Test
     void givenPersonIdAndCardIdWhengetListAuthorizationsThenDCInternetAuthorizationNWResponse() throws IOException {
         // Arrange
         String personId = "169494";
         String cardId = "169494";
         InternetAuthorizationResponse expected = InternetAuthorizationResponseFixture.withDefault();
 
-        Mockito.when(provider.getListAuthorizations(Mockito.any(),Mockito.any(), Mockito.any())).thenReturn(DCInternetAuthorizationNWResponseFixture.whitDefault());
-        Mockito.when(mapper.mapToInternetAuthorizationResponse(any())).thenReturn(expected);
+        when(provider.getListAuthorizations(any(), any(), any())).thenReturn(DCInternetAuthorizationNWResponseFixture.whitDefault());
+        when(mapper.mapToInternetAuthorizationResponse(any())).thenReturn(expected);
 
         // Act
         InternetAuthorizationResponse response = service.getListAuthorizations(personId, cardId, new HashMap<>());
@@ -77,7 +99,6 @@ class DebitCardServiceTest {
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expected, response);
-        verify(provider).getListAuthorizations(Mockito.any(),Mockito.any(),Mockito.any());
-
+        verify(provider).getListAuthorizations(any(), any(), any());
     }
 }

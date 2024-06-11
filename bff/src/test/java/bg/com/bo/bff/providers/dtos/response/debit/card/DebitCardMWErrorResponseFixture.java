@@ -21,4 +21,18 @@ public class DebitCardMWErrorResponseFixture {
                 .errorDetailResponse(list)
                 .build();
     }
+
+    public static ApiErrorResponse withErrorMDWTJD004() {
+        List<ErrorDetailResponse> list = new ArrayList<>();
+        ErrorDetailResponse errorDetailResponse = ErrorDetailResponse.builder()
+                .code(DebitCardMiddlewareError.MDWTJD_004.getCodeMiddleware())
+                .description(DebitCardMiddlewareError.MDWTJD_004.getMessage())
+                .build();
+
+        list.add(errorDetailResponse);
+
+        return ApiErrorResponse.builder()
+                .errorDetailResponse(list)
+                .build();
+    }
 }
