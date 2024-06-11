@@ -9,7 +9,8 @@ public enum DebitCardMiddlewareError implements IMiddlewareError {
     MDWTJD_001(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWTJD-001", "No se encontraron registros."),
     MDWTJD_002(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWTJD-002", "Parámetros inválidos."),
     MDWTJD_003(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWTJD-003", "Error interno."),
-    MDWTJD_900(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWTJD-900", "Error interno.");
+    MDWTJD_900(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWTJD-900", "Error interno."),
+    MDWTJD_005(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWTJD-005", "No se encontraron autorizaciones de compras por internet.");
 
     private final HttpStatus httpCode;
     private final String code;

@@ -11,12 +11,15 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWErrorResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWResponseFixture;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -100,5 +103,45 @@ class DebitCardMiddlewareProviderTest {
         assertEquals(DebitCardMiddlewareError.MDWTJD_002.getHttpCode(), ((GenericException) exception).getStatus());
         assertEquals(DebitCardMiddlewareError.MDWTJD_002.getCode(), ((GenericException) exception).getCode());
         assertEquals(DebitCardMiddlewareError.MDWTJD_002.getMessage(), ((GenericException) exception).getMessage());
+    }
+    @Test
+    void givenPersonIdAndCardIdWhengetListAuthorizationsThenDCInternetAuthorizationNWResponse() throws IOException {
+        // Arrange
+        DCInternetAuthorizationNWResponse expected = DCInternetAuthorizationNWResponseFixture.whitDefault();
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(DCInternetAuthorizationNWResponseFixture.whitDefault());
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        String personId = "1234";
+        String  cardId = "123";
+
+        // Act
+        DCInternetAuthorizationNWResponse actual = debitCardMiddlewareProvider.getListAuthorizations(personId, cardId, map);
+
+        // Assert
+        assertNotNull(actual);
+        assertEquals(expected.getData().get(0).getInternetIdTjTD(), actual.getData().get(0).getInternetIdTjTD());
+    }
+
+    @Test
+    void givenPersonIdAndCardIdWhenGetListAuthorizationsThenErrorMDWTJD_005() throws IOException {
+        // Arrange
+
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = DCInternetAuthorizationNWResponseFixture.whtiErrorMDWTJD005();
+        stubFor(get(anyUrl()).willReturn(jsonResponse(jsonResponse, HttpStatus.SC_NOT_ACCEPTABLE)));
+        String personId = "1234";
+        String  cardId = "123";
+
+        // Act
+        try {
+            DCInternetAuthorizationNWResponse actual = debitCardMiddlewareProvider.getListAuthorizations(personId, cardId, map);
+        }catch (GenericException ex){
+            // Assert
+            assertEquals(DebitCardMiddlewareError.MDWTJD_005.getCode(), ex.getCode());
+            assertEquals(DebitCardMiddlewareError.MDWTJD_005.getHttpCode(), ex.getStatus());
+            assertEquals(DebitCardMiddlewareError.MDWTJD_005.getMessage(), ex.getMessage());
+        }
+
     }
 }

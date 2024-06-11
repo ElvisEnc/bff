@@ -3,8 +3,11 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.InternetAuthorizationResponseFixture;
+import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
 import bg.com.bo.bff.providers.mappings.debit.card.IDebitCardMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
@@ -21,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,5 +59,25 @@ class DebitCardServiceTest {
         assertEquals(expected, response);
         verify(provider).changeAmount(expectedRequest, new HashMap<>());
         verify(mapper).mapToLimitsRequest(request, personId, cardId);
+    }
+
+    @Test
+    void givenPersonIdAndCardIdWhengetListAuthorizationsThenDCInternetAuthorizationNWResponse() throws IOException {
+        // Arrange
+        String personId = "169494";
+        String cardId = "169494";
+        InternetAuthorizationResponse expected = InternetAuthorizationResponseFixture.withDefault();
+
+        Mockito.when(provider.getListAuthorizations(Mockito.any(),Mockito.any(), Mockito.any())).thenReturn(DCInternetAuthorizationNWResponseFixture.whitDefault());
+        Mockito.when(mapper.mapToInternetAuthorizationResponse(any())).thenReturn(expected);
+
+        // Act
+        InternetAuthorizationResponse response = service.getListAuthorizations(personId, cardId, new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getListAuthorizations(Mockito.any(),Mockito.any(),Mockito.any());
+
     }
 }

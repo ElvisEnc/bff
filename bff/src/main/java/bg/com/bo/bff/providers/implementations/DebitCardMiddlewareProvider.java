@@ -7,6 +7,7 @@ import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
+import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCLimitsMWResponse;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
@@ -45,5 +46,20 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
         } else {
             return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_CHANGE_AMOUNT);
         }
+    }
+
+    @Override
+    public DCInternetAuthorizationNWResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameters) throws IOException {
+        String path=String.format(DebitCardMiddlewareServices.GET_lIST_INTERNET_AUTHORIZATION.getServiceURL(),cardId,personId);
+        String url = String.format("%s%s%s",middlewareConfig.getUrlBase(),ProjectNameMW.DEBIT_CARD_MANAGER.getName(),path);
+        Header[] headers = {
+                new BasicHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal()),
+                new BasicHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal()),
+                new BasicHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName()),
+                new BasicHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode())),
+                new BasicHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()))
+        };
+        DCInternetAuthorizationNWResponse response = get(url, headers, DCInternetAuthorizationNWResponse.class);
+        return response;
     }
 }
