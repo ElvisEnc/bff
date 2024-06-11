@@ -8,11 +8,14 @@ import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponseFixture;
 import bg.com.bo.bff.application.dtos.response.InternetAuthorizationResponseFixture;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponseFixture;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
 import bg.com.bo.bff.providers.mappings.debit.card.IDebitCardMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
@@ -21,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -100,5 +104,25 @@ class DebitCardServiceTest {
         Assertions.assertNotNull(response);
         assertEquals(expected, response);
         verify(provider).getListAuthorizations(any(), any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenDetailThenReturnDCDetailResponse() throws IOException {
+        // Arrange
+        String personId = "169494";
+        String cardId = "169494";
+        DCDetailResponse expected = DCDetailResponseFixture.withDefault();
+
+        Mockito.when(provider.detail(Mockito.any(),Mockito.any(), Mockito.any())).thenReturn(DebitCardMWResponseFixture.withDefaultDetail());
+        Mockito.when(mapper.mapToDetailResponse(DebitCardMWResponseFixture.withDefaultDetail())).thenReturn(expected);
+
+        // Act
+        DCDetailResponse response = service.detail(personId, cardId,  new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).detail(personId, cardId, new HashMap<>());
+        verify(mapper).mapToDetailResponse(DebitCardMWResponseFixture.withDefaultDetail());
     }
 }

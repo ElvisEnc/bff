@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,4 +18,6 @@ public interface IDebitCardService {
     ListDebitCardResponse getListDebitCard(Integer personId, Map<String, String> parameter) throws IOException;
 
     InternetAuthorizationResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameter) throws IOException;
+
+    DCDetailResponse detail(String personId, String cardId, Map<String, String> parameter) throws IOException ;
 }

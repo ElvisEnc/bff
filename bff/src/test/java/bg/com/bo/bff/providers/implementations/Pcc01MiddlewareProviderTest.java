@@ -30,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,7 +76,7 @@ class Pcc01MiddlewareProviderTest {
         pcc01MiddlewareProvider = new TransferMiddlewareProvider(tokenMiddlewareProviderMock, httpClientFactoryMock, Pcc01Mapper.INSTANCE, middlewareConfigMock, TransferMWtMapper.INSTANCE);
         pcc01Request = new Pcc01Request();
         pcc01Request.setCurrency("840");
-        pcc01Request.setAmount(10.00);
+        pcc01Request.setAmount(BigDecimal.valueOf(25.0));
         clientToken = new ClientToken();
         clientToken.setAccessToken("fglkjhdfg9d87fgd98f09gd");
         clientToken.setExpiresIn(1234);

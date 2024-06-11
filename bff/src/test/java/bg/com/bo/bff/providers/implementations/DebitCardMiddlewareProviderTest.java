@@ -13,6 +13,7 @@ import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWErrorResponseFixture;
@@ -92,7 +93,7 @@ class DebitCardMiddlewareProviderTest {
     }
 
     @Test
-    void givenInvalidResponseWhenChangeAmountThenException() throws IOException {
+     void givenInvalidResponseWhenChangeAmountThenException() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = Util.objectToString(DebitCardMWErrorResponseFixture.withDefault());
@@ -110,7 +111,7 @@ class DebitCardMiddlewareProviderTest {
         assertEquals(DebitCardMiddlewareError.MDWTJD_002.getMessage(), ((GenericException) exception).getMessage());
     }
 
-    @Test
+     @Test
     @DisplayName("Get debit card list for user with given PersonCode")
     void givenPersonCodeWhenGetLisDebitCardThenExpectResponse() throws IOException {
         // Arrange
@@ -222,5 +223,20 @@ class DebitCardMiddlewareProviderTest {
             assertEquals(DebitCardMiddlewareError.MDWTJD_005.getMessage(), ex.getMessage());
         }
 
+    }
+
+    @Test
+    void givenValidDataWhenDetailThenExpectResponse() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.withDefaultDetail());
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        DCDetailMWResponse response = debitCardMiddlewareProvider.detail("123", "123", map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, DebitCardMWResponseFixture.withDefaultDetail());
     }
 }

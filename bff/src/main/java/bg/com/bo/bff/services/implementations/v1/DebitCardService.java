@@ -5,6 +5,7 @@ import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
@@ -52,5 +53,10 @@ public class DebitCardService implements IDebitCardService {
     public InternetAuthorizationResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameter) throws IOException {
         DCInternetAuthorizationNWResponse result = idcProvider.getListAuthorizations(personId, cardId, parameter);
         return idcMapper.mapToInternetAuthorizationResponse(result);
+    }
+
+    @Override
+    public DCDetailResponse detail(String personId, String cardId, Map<String, String> parameters) throws IOException  {
+        return idcMapper.mapToDetailResponse(idcProvider.detail(personId, cardId, parameters));
     }
 }

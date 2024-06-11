@@ -3,6 +3,8 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponseFixture;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponseFixture;
 import bg.com.bo.bff.application.dtos.response.InternetAuthorizationResponseFixture;
@@ -118,7 +120,7 @@ class DebitCardControllerTest {
         verify(service).changeAmount(any(), any(), any(), any());
     }
 
-    @Test
+@Test
     void givenPersonCodeWhenGetListDebitCardThenSuccess() throws Exception {
         // Arrange
         ListDebitCardResponse responseExpected = ListDebitCardResponseFixture.withDefault();
@@ -166,5 +168,27 @@ class DebitCardControllerTest {
         // Assert
         assertEquals(response, actual );
         verify(service).getListAuthorizations(any(), any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenDetailtThenThenDCDetailResponseSuccess() throws Exception {
+        // Arrange
+        String personId = "169494";
+        String cardId = "123456";
+        DCDetailResponse mockResponse = DCDetailResponseFixture.withDefault();
+        when(service.detail(any(), any(), any())).thenReturn(mockResponse);
+
+        // Act
+        String URL_PATCH_CHANGE_AMOUNT = "/api/v1/debit-cards/persons/{personId}/cards/{cardId}";
+        mockMvc.perform(get(URL_PATCH_CHANGE_AMOUNT, personId, cardId)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        verify(service).detail(any(), any(), any());
     }
 }

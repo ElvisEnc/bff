@@ -6,11 +6,15 @@ import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
 import bg.com.bo.bff.application.dtos.response.debitcard.DCInternetAuthorization;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import java.util.Objects;
 
 @Component
 public class DebitCardMapper implements IDebitCardMapper {
@@ -47,6 +51,17 @@ public class DebitCardMapper implements IDebitCardMapper {
         ).toList();
         return InternetAuthorizationResponse.builder()
                 .data(result)
+                .build();
+    }
+
+    @Override
+    public DCDetailResponse mapToDetailResponse(DCDetailMWResponse response) {
+        return DCDetailResponse.builder()
+                .cardNumber(response.getData().getCardNumber())
+                .holderName(response.getData().getCardName())
+                .expirationDate(response.getData().getExpirationDate())
+                .status(response.getData().getStatus())
+                .assured(Objects.equals(response.getData().getProtectionInsurance(), "S"))
                 .build();
     }
 }
