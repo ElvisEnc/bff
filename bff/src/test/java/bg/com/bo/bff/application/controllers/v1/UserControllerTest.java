@@ -1,8 +1,11 @@
 package bg.com.bo.bff.application.controllers.v1;
 
+import bg.com.bo.bff.application.dtos.UpdateDataUserResponseFixture;
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
+import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequest;
+import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
@@ -54,6 +57,7 @@ class UserControllerTest {
     private static final String APP_VERSION = "1.0.0";
     private static final String URL_CHANGE_PASSWORD = "/api/v1/users/999/change-password";
     private static final String URL_BIOMETRICS = "/api/v1/users/{personId}/biometric";
+    private static final String URL_UPDATE_DATA_USER = "/api/v1/users/{personId}/info";
     Enumeration<String> enumerations;
 
     @BeforeEach
@@ -299,5 +303,31 @@ class UserControllerTest {
         // Arrange
         assertEquals(response, responseExpected);
         verify(userService).getMaritalStatus( any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestWhenUpdateDataUserThenUpdateDataUserResponse() throws Exception {
+
+        // Assert
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        UpdateDataUserResponse expected = UpdateDataUserResponseFixture.withDefault();
+        UpdateDataUserRequest request = UpdateDataUserRequestFixture.withDefault();
+        when(userService.updateDataUser(any(),any(), any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc.perform(post(URL_UPDATE_DATA_USER, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .headers(this.headers)
+                        .content(Util.objectToString(request)))
+                .andExpect(status().isOk())
+                .andReturn();
+        String responseExpected = Util.objectToString(expected);
+        String response = result.getResponse().getContentAsString();
+
+        // Arrange
+        assertEquals(response, responseExpected);
+        verify(userService).updateDataUser(any(), any(),any());
     }
 }

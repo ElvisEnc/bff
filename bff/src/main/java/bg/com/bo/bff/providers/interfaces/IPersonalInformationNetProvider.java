@@ -5,6 +5,8 @@ import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
+import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalInformationNetRequest;
+import bg.com.bo.bff.providers.dtos.response.personal.update.PersonalUpdateNetResponse;
 
 import java.io.IOException;
 import java.util.Map;
@@ -17,4 +19,6 @@ public interface IPersonalInformationNetProvider {
     DistrictsNetResponse getDistricts(DistrictsNetRequest request, Map<String, String> parameter) throws IOException;
 
     MaritalStatusResponse getMaritalStatuses();
+
+    PersonalUpdateNetResponse updatePersonalInformation(UpdatePersonalInformationNetRequest request, Map<String, String> parameter) throws IOException;
 }

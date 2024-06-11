@@ -2,11 +2,13 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequest;
 import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateDataUserResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
@@ -218,5 +220,29 @@ public class UserController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion
     ) {
         return ResponseEntity.ok(userService.getMaritalStatus(Headers.getParameter(httpServletRequest)));
+    }
+
+    @Operation(summary = "Modificacions de datos Personales ", description = "Modificacions de datos personales")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Modificaciones de datos", content = @Content(schema = @Schema(), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PostMapping("/{personId}/info")
+    public ResponseEntity<UpdateDataUserResponse> updateInfo(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") String personId,
+            @RequestBody @Valid UpdateDataUserRequest request
+    ) throws IOException {
+        return ResponseEntity.ok(userService.updateDataUser(personId,request,Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion)));
     }
 }

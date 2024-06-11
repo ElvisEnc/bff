@@ -1,8 +1,11 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.UpdateDataUserResponseFixture;
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
+import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequest;
+import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequestFixture;
 import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
@@ -15,6 +18,7 @@ import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
+import bg.com.bo.bff.providers.dtos.response.PersonalUpdateNetResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
 import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.personal.information.DistrictsNetResponseFixture;
@@ -326,5 +330,23 @@ class UserServicesTests {
         // Assert
         verify(personalInformationNetProvider).getMaritalStatuses();
         assertEquals(MaritalStatusResponseFixture.withDefault(), response);
+    }
+
+    @Test
+    void givenUpdateDataUserRequestWhenUpdateDataUserThenUpdateDataUserResponse() throws IOException {
+        // Assert
+
+        UpdateDataUserResponse expected = UpdateDataUserResponseFixture.withDefault();
+        UpdateDataUserRequest request = UpdateDataUserRequestFixture.withDefault();
+        final String personId = "1234";
+        when(personalInformationNetProvider.updatePersonalInformation(any(), any())).thenReturn(PersonalUpdateNetResponseFixture.withDefault());
+
+        // Act
+
+        UpdateDataUserResponse actual = service.updateDataUser(personId, request, map);
+
+        //Assert
+
+        assertEquals(expected,actual);
     }
 }

@@ -8,17 +8,19 @@ import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppCodeResponseNet;
 import bg.com.bo.bff.commons.enums.AppDataYoloNet;
 import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
-import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
-import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
-import bg.com.bo.bff.providers.dtos.response.personal.information.*;
-import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
+import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
+import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.response.DynamicAppError;
+import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
+import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
+import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
+import bg.com.bo.bff.providers.dtos.response.personal.update.PersonalUpdateNetResponse;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
 import bg.com.bo.bff.providers.mappings.personal.information.IPersonalInformationMapper;
+import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
@@ -39,12 +41,15 @@ import java.util.Map;
 
 @Service
 public class PersonalInformationNetProvider implements IPersonalInformationNetProvider {
+
     @Value("${url.personal.information.net}")
     private String urlProviderPersonalInformationNet;
     private final IHttpClientFactory httpClientFactory;
     private final IPersonalInformationMapper iPersonalInformationMapper;
     private static final Logger LOGGER = LogManager.getLogger(PersonalInformationNetProvider.class.getName());
     private static final String URL_GET_DISTRICTS = "/obtenerLocalidadesSegunDepartamento";
+    private static final String UPDATE_PERSONAL_INFORMATION = "/actualizarDatosClienteGanaSueldo";
+    private static final String UPDATE_SUCCESS = "1";
 
     public PersonalInformationNetProvider(IHttpClientFactory httpClientFactory, IPersonalInformationMapper iPersonalInformationMapper) {
         this.httpClientFactory = httpClientFactory;
@@ -172,6 +177,42 @@ public class PersonalInformationNetProvider implements IPersonalInformationNetPr
                     .build();
         } catch (IOException e) {
             throw new GenericException();
+        }
+    }
+
+    @Override
+    public PersonalUpdateNetResponse updatePersonalInformation(UpdatePersonalInformationNetRequest request, Map<String, String> parameter) throws IOException {
+        try (CloseableHttpClient httpClient = httpClientFactory.create()) {
+            String path = urlProviderPersonalInformationNet + UPDATE_PERSONAL_INFORMATION;
+            String jsonMapper = Util.objectToString(request);
+            StringEntity entity = new StringEntity(jsonMapper);
+            HttpPost httpPost = new HttpPost(path);
+            httpPost.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
+            httpPost.setEntity(entity);
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.SC_OK) {
+                    PersonalUpdateNetResponse response = Util.stringToObject(jsonResponse, PersonalUpdateNetResponse.class);
+                    if (response.getUpdateResponse().equals(UPDATE_SUCCESS)) {
+                        return response;
+                    } else {
+                        LOGGER.error(jsonResponse);
+                        AppError error = AppError.BAD_REQUEST;
+                        throw new GenericException(error.getMessage(), error.getHttpCode(), error.getMessage());
+                    }
+                }
+                LOGGER.error(jsonResponse);
+                AppError error = AppError.DEFAULT;
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            }
+        } catch (GenericException ex) {
+            LOGGER.error(ex);
+            throw ex;
+        } catch (Exception e) {
+            LOGGER.error(e);
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
         }
     }
 }

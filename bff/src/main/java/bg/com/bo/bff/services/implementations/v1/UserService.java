@@ -2,10 +2,12 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequest;
 import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateDataUserResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
@@ -20,8 +22,10 @@ import bg.com.bo.bff.commons.validators.generics.*;
 import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
+import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
 import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
+import bg.com.bo.bff.providers.dtos.response.personal.update.PersonalUpdateNetResponse;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
 import bg.com.bo.bff.providers.mappings.apiface.IApiFaceMapper;
@@ -114,5 +118,18 @@ public class UserService implements IUserService {
     @Override
     public MaritalStatusResponse getMaritalStatus(Map<String, String> parameter) {
         return personalInformationNetProvider.getMaritalStatuses();
+    }
+
+    @Override
+    public UpdateDataUserResponse updateDataUser(String personId, UpdateDataUserRequest request, Map<String, String> parameter) throws IOException {
+
+        PersonalResponse personalInformation = personalInformationNetProvider.getPersonalInformation(personId, parameter);
+
+        UpdatePersonalInformationNetRequest updatePersonalInformationNetRequest = iPersonalInformationMapper.convertResponse(personId, request, personalInformation);
+
+        PersonalUpdateNetResponse response = personalInformationNetProvider.updatePersonalInformation(updatePersonalInformationNetRequest, parameter);
+
+
+        return   UpdateDataUserResponse.SUCCESS;
     }
 }

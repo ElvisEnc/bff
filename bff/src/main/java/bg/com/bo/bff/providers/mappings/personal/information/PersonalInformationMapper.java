@@ -1,29 +1,42 @@
 package bg.com.bo.bff.providers.mappings.personal.information;
 
+import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequest;
 import bg.com.bo.bff.application.dtos.response.apiface.DistrictDetail;
 import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
-import bg.com.bo.bff.application.dtos.response.user.*;
+import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
+import bg.com.bo.bff.application.dtos.response.user.EconomicalActivity;
+import bg.com.bo.bff.application.dtos.response.user.PersonalDetail;
+import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
+import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
+import bg.com.bo.bff.providers.dtos.request.personal.information.PersonalReferences;
+import bg.com.bo.bff.providers.dtos.request.personal.information.UpdateDataPerson;
+import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictNetDetail;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Component
 public class PersonalInformationMapper implements IPersonalInformationMapper {
 
+    private static String NUMBER_SESSION = "10052024151318af42ae6fe0fd0f72";
+
     @Override
     public ApiPersonalInformationNetRequest mapperRequest(String personId) {
         return ApiPersonalInformationNetRequest.builder()
                 .intNumeroPersona(personId)
-                .pStrNroSesion("10052024151318af42ae6fe0fd0f72")
+                .pStrNroSesion(NUMBER_SESSION)
                 .build();
     }
 
@@ -123,5 +136,71 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
         return DistrictsResponse.builder()
                 .data(dataList)
                 .build();
+    }
+
+    @Override
+    public UpdatePersonalInformationNetRequest convertResponse(String personId, UpdateDataUserRequest request, PersonalResponse personalInformation) {
+        LocalDate fechaActual = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", new Locale("es", "ES"));
+
+        UpdateDataPerson oldData = UpdateDataPerson.builder()
+                .coordinates(personalInformation.getPersonalData().getGPS())
+                .zone(personalInformation.getPersonalData().getAddress())
+                .department(personalInformation.getPersonalData().getDepartment())
+                .email(personalInformation.getPersonalData().getEmail())
+                .neighborhood(personalInformation.getPersonalData().getDictrict())
+                .city(personalInformation.getPersonalData().getDictrict())
+                .spouseName(personalInformation.getMaritalStatus().getSpouseName())
+                .husbandLastName(personalInformation.getMaritalStatus().getSpouseLastName())
+                .economicActivity(personalInformation.getEconomicalActivity().getType())
+                .company(personalInformation.getEconomicalActivity().getCompany())
+                .position(personalInformation.getEconomicalActivity().getPosition())
+                .build();
+
+
+        UpdateDataPerson newData = UpdateDataPerson.builder()
+                .coordinates(request.getPersonalData().getGPS())
+                .zone(request.getPersonalData().getZone())
+                .departmentCode(request.getPersonalData().getDepartment())
+                .email(request.getPersonalData().getEmail())
+                .neighborhood(request.getPersonalData().getZone())
+                .updateDate(fechaActual.format(formatter))
+                .department(request.getPersonalData().getDepartment())
+                .departmentCode(request.getPersonalData().getDepartmentCode())
+                .city(request.getPersonalData().getDepartment())
+                .cityCode(request.getPersonalData().getCityCode())
+                .spouseName(request.getMaritalStatus().getSpouseName())
+                .usesSpouseLastName(request.getMaritalStatus().getUsesSpouseLastName())
+                .husbandLastName(request.getMaritalStatus().getSpouseLastName())
+                .maritalStatus(request.getMaritalStatus().getStatus())
+                .economicActivity(request.getEconomicalActivity().getEconomicActivityCategory())
+                .company(request.getEconomicalActivity().getCompany())
+                .position(request.getEconomicalActivity().getPosition())
+                .incomeLevel(request.getEconomicalActivity().getIncomeLevel())
+                .build();
+
+
+        List<PersonalReferences> personalReferences = request.getReferences().stream().map(x ->
+                PersonalReferences.builder()
+                        .phones(x.getPhones())
+                        .referenceType(x.getReferenceType())
+                        .ordinal(x.getOrdinal())
+                        .persontype(x.getPersonType())
+                        .name(x.getName())
+                        .relationship(x.getRelationship())
+                        .build()
+
+        ).toList();
+
+        return UpdatePersonalInformationNetRequest.builder()
+                .sessionNumber(NUMBER_SESSION)
+                .channel(CanalMW.GANAMOVIL.getCanal())
+                .personId(personId)
+                .newData(newData)
+                .oldData(List.of(oldData))
+                .personalReferences(personalReferences)
+                .build();
+
+
     }
 }

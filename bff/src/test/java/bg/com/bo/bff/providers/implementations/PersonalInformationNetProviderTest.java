@@ -15,7 +15,11 @@ import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProviderFixture;
 import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
+import bg.com.bo.bff.providers.dtos.request.UpdatePersonalInformationNetRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalInformationNetRequest;
+import bg.com.bo.bff.providers.dtos.response.PersonalUpdateNetResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
+import bg.com.bo.bff.providers.dtos.response.personal.update.PersonalUpdateNetResponse;
 import bg.com.bo.bff.providers.mappings.personal.information.IPersonalInformationMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -215,5 +219,22 @@ class PersonalInformationNetProviderTest {
         // Assert
         assertNotNull(response);
         assertEquals(expectedMaritalStatusList, response.getData());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestWhenUpdateDataUserThenUpdateDataUserResponse() throws IOException {
+        //Arrange
+        UpdatePersonalInformationNetRequest request = UpdatePersonalInformationNetRequestFixture.withDefault();
+        PersonalUpdateNetResponse expectedResponse = PersonalUpdateNetResponseFixture.withDefault();
+        String jsonResponse = Util.objectToString(expectedResponse);
+
+        stubFor(post(anyUrl())
+                .willReturn(okJson(jsonResponse)));
+        //Act
+        PersonalUpdateNetResponse response = personalInformationNetProvider.updatePersonalInformation(request, map);
+
+        assertNotNull(response);
+        assertEquals(expectedResponse.getMessage(), response.getMessage());
+        assertEquals(expectedResponse.getErrorCode(), response.getErrorCode());
     }
 }
