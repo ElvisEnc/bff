@@ -23,6 +23,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
@@ -78,7 +79,7 @@ public class QRProviderImpl implements IQRProvider {
                         middlewareConfig.getClientGenerateQrManager(),
                         ProjectNameMW.GENERATE_QR_MANAGER.getHeaderKey()
                 );
-        final StringEntity entity = new StringEntity(jsonMapper);
+        final StringEntity entity = new StringEntity(jsonMapper, ContentType.APPLICATION_JSON);
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
 
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.GENERATE_QR_MANAGER.getName() + url;
