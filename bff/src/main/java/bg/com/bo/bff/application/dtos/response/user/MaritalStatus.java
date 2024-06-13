@@ -11,8 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MaritalStatus {
-    @Schema(description = "Id de lista")
+    @Schema(description = "Id del item")
     private String id;
+
+    @Schema(description = "Key del item")
+    private String key;
 
     @Schema(description = "Descripción del item")
     private String description;
