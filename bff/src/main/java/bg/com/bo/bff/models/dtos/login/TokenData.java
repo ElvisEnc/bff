@@ -4,4 +4,6 @@ package bg.com.bo.bff.models.dtos.login;
 public class TokenData {
     private String accessToken;
     private String refreshToken;
+    private Integer expiresIn;
+    private Integer refreshExpiresIn;
 }

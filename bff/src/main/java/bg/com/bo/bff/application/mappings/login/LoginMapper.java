@@ -12,6 +12,8 @@ public interface LoginMapper {
 
     @Mapping(source = "tokenData.refreshToken", target = "refreshToken")
     @Mapping(source = "tokenData.accessToken", target = "accessToken")
+    @Mapping(source = "tokenData.expiresIn", target = "expiresIn")
+    @Mapping(source = "tokenData.refreshExpiresIn", target = "refreshExpiresIn")
     @Mapping(source = "personId", target = "userData.personId")
     @Mapping(source = "userDeviceId", target = "userData.userDeviceId")
     @Mapping(source = "rolePersonId", target = "userData.rolePersonId")

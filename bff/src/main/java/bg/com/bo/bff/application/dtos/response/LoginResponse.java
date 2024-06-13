@@ -14,6 +14,13 @@ public class LoginResponse {
     @Schema(description = "Refresh Token generado.")
     private String refreshToken;
 
+    @Schema(description = "Tiempo de expiración del token.")
+    private Integer expiresIn;
+
+    
+    @Schema(description = "Tiempo de expiración del refresh token.")
+    private Integer refreshExpiresIn;
+
     private UserDataResponse userData;
 
     @Schema(description = "Última conexión")

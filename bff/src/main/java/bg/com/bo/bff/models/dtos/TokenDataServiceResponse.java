@@ -4,4 +4,6 @@ package bg.com.bo.bff.models.dtos;
 public class TokenDataServiceResponse {
     private String accessToken;
     private String refreshToken;
+    private Integer expiresIn;
+    private Integer refreshExpiresIn;
 }

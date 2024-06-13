@@ -7,6 +7,8 @@ import bg.com.bo.bff.application.exceptions.NotValidValueForFactoryException;
 public class RefreshSessionResult {
     private String accessToken;
     private String refreshToken;
+    private Integer expiresIn;
+    private Integer refreshExpiresIn;
     private StatusCode statusCode;
 
     public enum StatusCode {
