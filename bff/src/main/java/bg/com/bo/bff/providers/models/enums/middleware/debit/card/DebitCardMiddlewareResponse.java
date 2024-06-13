@@ -8,8 +8,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum DebitCardMiddlewareResponse implements IGenericControllerResponse {
     SUCCESS_CHANGE_AMOUNT("SUCCESS","Se modifico correctamente el límite de su tarjeta."),
-    ERROR_CHANGE_AMOUNT("ERROR","No se pudo realizar la modificación, intente más tarde.");
-
+    ERROR_CHANGE_AMOUNT("ERROR","No se pudo realizar la modificación, intente más tarde."),
+    SUCCESS_UPDATE_STATUS_LOCK("SUCCESS","Se modifico correctamente el estado de su tarjeta."),
+    ERROR_UPDATE_STATUS_LOCK("ERROR","No se pudo realizar la modificación, intente más tarde.");
     private final String code;
     private final String message;
 }

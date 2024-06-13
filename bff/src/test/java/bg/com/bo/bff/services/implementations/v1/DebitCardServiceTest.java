@@ -2,6 +2,8 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.*;
 import bg.com.bo.bff.application.dtos.response.InternetAuthorizationResponseFixture;
@@ -9,6 +11,7 @@ import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationRe
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponseFixture;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWResponseFixture;
@@ -130,16 +133,39 @@ class DebitCardServiceTest {
         String cardId = "169494";
         DCDetailResponse expected = DCDetailResponseFixture.withDefault();
 
-        Mockito.when(provider.detail(Mockito.any(),Mockito.any(), Mockito.any())).thenReturn(DebitCardMWResponseFixture.withDefaultDetail());
+        Mockito.when(provider.detail(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DebitCardMWResponseFixture.withDefaultDetail());
         Mockito.when(mapper.mapToDetailResponse(DebitCardMWResponseFixture.withDefaultDetail())).thenReturn(expected);
 
         // Act
-        DCDetailResponse response = service.detail(personId, cardId,  new HashMap<>());
+        DCDetailResponse response = service.detail(personId, cardId, new HashMap<>());
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expected, response);
         verify(provider).detail(personId, cardId, new HashMap<>());
         verify(mapper).mapToDetailResponse(DebitCardMWResponseFixture.withDefaultDetail());
+    }
+
+    @Test
+    void givenValidDataWhenLockStatusThenReturnGenericResponse() throws IOException {
+        // Arrange
+        String personId = "169494";
+        String cardId = "169494";
+        DCLockStatusRequest request = DCLockStatusRequestFixture.withDefault();
+        DCLockStatusMWRequest expectedRequest = DebitCardMWRequestFixture.withDefaultLockStatus();
+
+        GenericResponse expected = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_UPDATE_STATUS_LOCK);
+
+        when(provider.lockStatus(Mockito.any(), Mockito.any())).thenReturn(expected);
+        when(mapper.mapToLockStatusRequest(personId, cardId, request)).thenReturn(expectedRequest);
+
+        // Act
+        GenericResponse response = service.lockStatus(personId, cardId, request, new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).lockStatus(expectedRequest, new HashMap<>());
+        verify(mapper).mapToLockStatusRequest(personId, cardId, request);
     }
 }

@@ -12,4 +12,13 @@ public class DebitCardMWRequestFixture {
                 .personId("1")
                 .build();
     }
+
+    public static DCLockStatusMWRequest withDefaultLockStatus() {
+        return DCLockStatusMWRequest.builder()
+                .pciId("1")
+                .personId("1")
+                .lockStatus("LOCKED")
+                .comment("comment")
+                .build();
+    }
 }

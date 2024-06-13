@@ -2,10 +2,13 @@ package bg.com.bo.bff.providers.mappings.debit.card;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsPeriod;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
 import bg.com.bo.bff.application.dtos.response.debit.card.AccountTD;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
 import bg.com.bo.bff.application.dtos.response.debitcard.DCInternetAuthorization;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
+import bg.com.bo.bff.commons.enums.debit.card.StatusType;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
@@ -29,6 +32,16 @@ public class DebitCardMapper implements IDebitCardMapper {
                 .expirationDate(request.getPeriod().getEnd())
                 .pciId(cardId)
                 .amount(request.getDailyAmount())
+                .build();
+    }
+
+    @Override
+    public DCLockStatusMWRequest mapToLockStatusRequest(String personId, String cardId, DCLockStatusRequest request) {
+        return DCLockStatusMWRequest.builder()
+                .pciId(cardId)
+                .personId(personId)
+                .lockStatus(String.valueOf(request.getType()))
+                .comment(StatusType.getDescriptionByCode(String.valueOf(request.getType())))
                 .build();
     }
 

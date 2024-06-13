@@ -3,6 +3,7 @@ package bg.com.bo.bff.providers.interfaces;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
@@ -20,4 +21,6 @@ public interface IDebitCardProvider {
     DCInternetAuthorizationNWResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameters) throws IOException;
 
     DCDetailMWResponse detail(String personId, String cardId, Map<String, String> parameters) throws IOException;
+
+    GenericResponse lockStatus(DCLockStatusMWRequest requestMW, Map<String, String> parameters) throws IOException;
 }

@@ -1,6 +1,7 @@
 package bg.com.bo.bff.services.interfaces;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
@@ -23,4 +24,6 @@ public interface IDebitCardService {
     InternetAuthorizationResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameter) throws IOException;
 
     DCDetailResponse detail(String personId, String cardId, Map<String, String> parameter) throws IOException ;
+
+    GenericResponse lockStatus(String personId, String cardId, DCLockStatusRequest request, Map<String, String> parameters) throws IOException ;
 }

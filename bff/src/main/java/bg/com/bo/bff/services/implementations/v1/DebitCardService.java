@@ -1,6 +1,7 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.AccountTD;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
@@ -10,6 +11,7 @@ import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationRe
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
@@ -62,7 +64,13 @@ public class DebitCardService implements IDebitCardService {
     }
 
     @Override
-    public DCDetailResponse detail(String personId, String cardId, Map<String, String> parameters) throws IOException  {
+    public DCDetailResponse detail(String personId, String cardId, Map<String, String> parameters) throws IOException {
         return idcMapper.mapToDetailResponse(idcProvider.detail(personId, cardId, parameters));
+    }
+
+    @Override
+    public GenericResponse lockStatus(String personId, String cardId, DCLockStatusRequest request, Map<String, String> parameters) throws IOException {
+        DCLockStatusMWRequest requestMW = idcMapper.mapToLockStatusRequest(personId, cardId, request);
+        return idcProvider.lockStatus(requestMW, parameters);
     }
 }

@@ -1,5 +1,7 @@
 package bg.com.bo.bff.providers.dtos.response.debit.card;
 
+import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
+
 public class DebitCardMWResponseFixture {
     public static DCLimitsMWResponse withDefault() {
         return DCLimitsMWResponse.builder()
@@ -31,4 +33,5 @@ public class DebitCardMWResponseFixture {
                 )
                 .build();
     }
+
 }

@@ -88,7 +88,7 @@ class DebitCardMiddlewareProviderTest {
     }
 
     @Test
-     void givenInvalidResponseWhenChangeAmountThenException() throws IOException {
+    void givenInvalidResponseWhenChangeAmountThenException() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = Util.objectToString(DebitCardMWErrorResponseFixture.withDefault());
@@ -106,7 +106,7 @@ class DebitCardMiddlewareProviderTest {
         assertEquals(DebitCardMiddlewareError.MDWTJD_002.getMessage(), ((GenericException) exception).getMessage());
     }
 
-     @Test
+    @Test
     @DisplayName("Get debit card list for user with given PersonCode")
     void givenPersonCodeWhenGetLisDebitCardThenExpectResponse() throws IOException {
         // Arrange
@@ -292,5 +292,62 @@ class DebitCardMiddlewareProviderTest {
         // Assert
         assertNotNull(response);
         assertEquals(response, DebitCardMWResponseFixture.withDefaultDetail());
+    }
+
+    @Test
+    void givenValidDataWhenLockStatusThenExpectResponse() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = "{ \"data\": { \"code\": \"COD000\", \"message\": \"Operación concluida con éxito.\" } }";
+        stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = debitCardMiddlewareProvider.lockStatus(
+                DebitCardMWRequestFixture.withDefaultLockStatus(), map
+        );
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_UPDATE_STATUS_LOCK));
+    }
+
+    @Test
+    void givenInternalErrorWhenLockStatusThenRuntimeException() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
+
+        // Act
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            debitCardMiddlewareProvider.lockStatus(DebitCardMWRequestFixture.withDefaultLockStatus(), map);
+        });
+
+        // Assert
+        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void givenErrorMiddlewareWhenLockStatusThenGenericException() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
+                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
+                        .code("BAD_REQUEST")
+                        .description("BAD_REQUEST")
+                        .build()))
+                .build();
+        stubFor(patch(anyUrl()).willReturn(aResponse()
+                .withStatus(406)
+                .withBody(Util.objectToString(errorMiddlewareProvider))));
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            debitCardMiddlewareProvider.lockStatus(DebitCardMWRequestFixture.withDefaultLockStatus(), map);
+        });
+
+        // Assert
+        assertEquals("BAD_REQUEST", exception.getCode());
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
 }

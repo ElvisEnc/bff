@@ -2,6 +2,8 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequestFixture;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponseFixture;
@@ -122,7 +124,7 @@ class DebitCardControllerTest {
         verify(service).changeAmount(any(), any(), any(), any());
     }
 
-@Test
+    @Test
     void givenPersonCodeWhenGetListDebitCardThenSuccess() throws Exception {
         // Arrange
         ListDebitCardResponse responseExpected = ListDebitCardResponseFixture.withDefault();
@@ -217,5 +219,33 @@ class DebitCardControllerTest {
 
         // Assert
         verify(service).detail(any(), any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenLockStatusThenGenericResponseSuccess() throws Exception {
+        // Arrange
+        String personId = "169494";
+        String cardId = "123456";
+        DCLockStatusRequest request = DCLockStatusRequestFixture.withDefault();
+        GenericResponse mockResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_UPDATE_STATUS_LOCK);
+        when(service.lockStatus(any(), any(), any(), any())).thenReturn(mockResponse);
+
+        // Act
+        String URL_PATCH_UPDATE_LOCK_STATUS = "/api/v1/debit-cards/persons/{personId}/cards/{cardId}/lock-status";
+        MvcResult result = mockMvc.perform(patch(URL_PATCH_UPDATE_LOCK_STATUS, personId, cardId)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request, false)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(mockResponse);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).lockStatus(any(), any(), any(), any());
     }
 }
