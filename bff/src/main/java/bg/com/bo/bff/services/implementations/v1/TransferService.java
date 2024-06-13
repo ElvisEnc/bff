@@ -25,7 +25,6 @@ public class TransferService implements ITransferService {
         this.transferYoloNetProvider = transferYoloNetProvider;
     }
 
-
     @Override
     public TransferResponseMD transferOwnAccount(String personId, String accountId, TransferRequest transferRequest, Map<String, String> parameter) throws IOException {
         return transferProvider.transferOwnAccount(personId, accountId, transferRequest, parameter);

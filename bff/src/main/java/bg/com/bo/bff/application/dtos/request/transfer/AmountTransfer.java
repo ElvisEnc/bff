@@ -26,7 +26,7 @@ public class AmountTransfer {
 
     @NotNull(message = "El monto es obligatorio")
     @DecimalMin(value = "0", inclusive = false, message = "El monto debe ser mayor que cero")
-    @Digits(integer = 13, fraction = 2, message = "El monto debe tener hasta 13 dígitos enteros y 2 decimales")
+    @Digits(integer = 12, fraction = 2, message = "El monto debe tener hasta 12 dígitos enteros y 2 decimales")
     @Schema(description = "Monto de la transferencia", example = "100.00")
     private BigDecimal amount;
 }

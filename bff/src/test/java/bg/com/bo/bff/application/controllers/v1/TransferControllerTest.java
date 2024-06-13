@@ -137,12 +137,11 @@ class TransferControllerTest {
     @Test
     void givenRequestWhenPcc01ControlThenResponseValidate() throws IOException {
         // Arrange
-        Pcc01Request pcc01Request = new Pcc01Request();
         Pcc01Response pcc01Response = new Pcc01Response();
-        Mockito.when(transferService.makeControl(pcc01Request)).thenReturn(pcc01Response);
+        Mockito.when(transferService.makeControl(any())).thenReturn(pcc01Response);
 
         // Act
-        ResponseEntity<Pcc01Response> response = controller.control(pcc01Request);
+        ResponseEntity<Pcc01Response> response = controller.control(any());
 
         // Assert
         assert response.getStatusCode().value() == HttpStatus.OK.value();

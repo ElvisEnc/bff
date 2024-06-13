@@ -9,7 +9,7 @@ import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
 import bg.com.bo.bff.services.interfaces.ITransferService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,15 +26,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
-@RestController
 @Validated
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("api/v1/transfers")
 @Tag(name = "Transfer Controller", description = "Controlador de transferencia")
 public class TransferController {
-    @Autowired
-    private HttpServletRequest httpServletRequest;
-    @Autowired
-    private ITransferService service;
+    private final HttpServletRequest httpServletRequest;
+    private final ITransferService service;
 
     @Operation(summary = "Transfer Own Accounts Request", description = "Transferencias")
     @ApiResponses(value = {
@@ -52,7 +51,6 @@ public class TransferController {
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
             @PathVariable("accountId") @NotBlank @Parameter(description = "Este es el accountId", example = "12345") String accountId,
             @Valid @RequestBody TransferRequest body
-
     ) throws IOException {
         return ResponseEntity.ok(service.transferOwnAccount(personId, accountId, body, Headers.getParameter(httpServletRequest,
                 deviceId,
@@ -129,7 +127,7 @@ public class TransferController {
         return ResponseEntity.ok(service.transferAchAccount(personId, accountId, request, Headers.getParameter(httpServletRequest, deviceId, deviceName, geoPositionX, geoPositionY, appVersion)));
     }
 
-    @Operation(summary = "Validación del lavado de dinero", description = "Se realiza el control del lavado de dinero.")
+    @Operation(summary = "Validación PCC01", description = "Se realiza el control de lavado de dinero.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Devuelve si requiere o no el control de lavado de dinero.", content = @Content(schema = @Schema(implementation = Pcc01Response.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Existe un error en los datos otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),

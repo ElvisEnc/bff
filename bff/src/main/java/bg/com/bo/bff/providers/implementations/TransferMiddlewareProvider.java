@@ -35,8 +35,8 @@ import java.util.Objects;
 @Service
 public class TransferMiddlewareProvider implements ITransferProvider {
     ITokenMiddlewareProvider tokenMiddlewareProvider;
-    private IHttpClientFactory httpClientFactory;
-    private Pcc01Mapper pcc01Mapper;
+    private final IHttpClientFactory httpClientFactory;
+    private final Pcc01Mapper pcc01Mapper;
     private final MiddlewareConfig middlewareConfig;
     private final TransferMWtMapper transferMapper;
 
@@ -129,7 +129,7 @@ public class TransferMiddlewareProvider implements ITransferProvider {
             throw ex;
         } catch (Exception e) {
             LOGGER.error(e);
-            throw new RuntimeException("Hubo un error no controlado al realizar la transferencia");
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
         }
     }
 
@@ -173,7 +173,7 @@ public class TransferMiddlewareProvider implements ITransferProvider {
             throw ex;
         } catch (Exception e) {
             LOGGER.error(e);
-            throw new RuntimeException("Hubo un error no controlado al realizar la transferencia");
+            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
         }
     }
 }
