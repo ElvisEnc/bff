@@ -16,6 +16,8 @@ import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalI
 import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictNetDetail;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
+import bg.com.bo.bff.providers.dtos.response.personal.information.ClientData;
+import bg.com.bo.bff.providers.dtos.response.personal.information.EconomyActivity;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import org.springframework.stereotype.Component;
 
@@ -42,36 +44,49 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
 
     @Override
     public PersonalResponse convertResponse(PersonalInformationNetResponse response) {
-        return PersonalResponse.builder()
-                .maritalStatus(PersonalDetail.MaritalStatus.builder()
-                        .status(response.getDataContent().getClientDataList().get(0).getMaritalStatus())
-                        .spouseLastName(response.getDataContent().getClientDataList().get(0).getSpouseLastName())
-                        .spouseName(response.getDataContent().getClientDataList().get(0).getSpouseName())
-                        .build())
-                .economicalActivity(PersonalDetail.EconomicalActivity.builder()
-                        .type(response.getDataContent().getEconomicActivities().get(0).getIncomeSource())
-                        .company(response.getDataContent().getEconomicActivities().get(0).getCompany())
-                        .position(response.getDataContent().getEconomicActivities().get(0).getPosition())
-                        .build())
-                .personalData(PersonalDetail.PersonalData.builder()
-                        .completeName(response.getDataContent().getClientDataList().get(0).getFullName())
-                        .telephoneNumber(response.getDataContent().getClientDataList().get(0).getPhones())
-                        .email(response.getDataContent().getClientDataList().get(0).getEmail())
-                        .section(response.getDataContent().getClientDataList().get(0).getCityCode())
-                        .dictrict(response.getDataContent().getClientDataList().get(0).getCity())
-                        .zone(response.getDataContent().getClientDataList().get(0).getZone())
-                        .address(response.getDataContent().getClientDataList().get(0).getNeighborhood())
-                        .department(response.getDataContent().getClientDataList().get(0).getDepartment())
-                        .floor(response.getDataContent().getClientDataList().get(0).getFloor())
-                        .GPS(response.getDataContent().getClientDataList().get(0).getCoordinates())
-                        .build())
-                .references(response.getDataContent().getReferences().stream()
-                        .map(reference -> PersonalDetail.Reference.builder()
-                                .name(reference.getName())
-                                .telephone(reference.getPhone())
-                                .build())
-                        .toList())
-                .build();
+        PersonalResponse.PersonalResponseBuilder builder = PersonalResponse.builder();
+        if (!response.getDataContent().getClientDataList().isEmpty()) {
+            ClientData clientData = response.getDataContent().getClientDataList().get(0);
+
+            builder.maritalStatus(PersonalDetail.MaritalStatus.builder()
+                            .status(clientData.getMaritalStatus())
+                            .spouseLastName(clientData.getSpouseLastName())
+                            .spouseName(clientData.getSpouseName())
+                            .build())
+                    .personalData(PersonalDetail.PersonalData.builder()
+                            .completeName(clientData.getFullName())
+                            .telephoneNumber(clientData.getPhones())
+                            .email(clientData.getEmail())
+                            .section(clientData.getCityCode())
+                            .dictrict(clientData.getCity())
+                            .zone(clientData.getZone())
+                            .address(clientData.getNeighborhood())
+                            .department(clientData.getDepartment())
+                            .floor(clientData.getFloor())
+                            .GPS(clientData.getCoordinates())
+                            .build());
+        }
+        if (!response.getDataContent().getEconomicActivities().isEmpty()) {
+            EconomyActivity economicActivity = response.getDataContent().getEconomicActivities().get(0);
+
+            builder.economicalActivity(PersonalDetail.EconomicalActivity.builder()
+                    .type(economicActivity.getIncomeSource())
+                    .company(economicActivity.getCompany())
+                    .position(economicActivity.getPosition())
+                    .build());
+        }
+
+        if (!response.getDataContent().getReferences().isEmpty()) {
+            List<PersonalDetail.Reference> references = response.getDataContent().getReferences().stream()
+                    .map(reference -> PersonalDetail.Reference.builder()
+                            .name(reference.getName())
+                            .telephone(reference.getPhone())
+                            .build())
+                    .toList();
+
+            builder.references(references);
+        }
+        return builder.build();
     }
 
     @Override

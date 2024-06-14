@@ -24,10 +24,11 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 @Component
-public class QrMapper implements IQrMapper{
-    private static final String SCHEME_NAME =  "PersonId";
-    private static final String SCHEME_NAME_ACCOUNT =  "AccountId";
-    private static final String SCHEME_NAME_ACH_ACCOUNT_NUMBER =  "AchAccountNumber";
+public class QrMapper implements IQrMapper {
+    private static final String SCHEME_NAME = "PersonId";
+    private static final String SCHEME_NAME_ACCOUNT = "AccountId";
+    private static final String SCHEME_NAME_ACH_ACCOUNT_NUMBER = "AchAccountNumber";
+
     @Override
     public QrGeneratedPaid convert(QrGeneratedPaidMW mw) {
         return QrGeneratedPaid.builder()
@@ -113,7 +114,7 @@ public class QrMapper implements IQrMapper{
                 .eif(partsResponse[3])
                 .accountNumber(partsResponse[4])
                 .currency(partsResponse[5])
-                .amount(Double.parseDouble(partsResponse[6]))
+                .amount(Util.convertToDecimal(partsResponse[6], 2))
                 .reference(partsResponse[7])
                 .expirationDate(partsResponse[8])
                 .singleUse(partsResponse[9])

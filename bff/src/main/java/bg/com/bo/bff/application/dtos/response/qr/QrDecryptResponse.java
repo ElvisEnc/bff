@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -30,7 +32,7 @@ public class QrDecryptResponse {
     private String currency;
 
     @Schema(description = "Monto de la transacción", example = "150.75")
-    private double amount;
+    private BigDecimal amount;
 
     @Schema(description = "Referencia de la transacción", example = "Ref123456")
     private String reference;

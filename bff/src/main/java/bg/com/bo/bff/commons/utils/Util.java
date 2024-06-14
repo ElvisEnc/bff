@@ -24,9 +24,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -263,5 +266,17 @@ public class Util {
         return "1919".equals(codeSegment) || "01919".equals(codeSegment)
                 || "1018".equals(codeSegment) || "01018".equals(codeSegment)
                 || "MLD1018".equals(codeSegment);
+    }
+    /**
+     * Convert a string number without explicit decimals to a big decimal number with n decimals.
+     * Example: "100" -> 1.00
+     * @param number    string number to convert.
+     *                  The number is divided by 100 with n decimals.
+     *                  The number is rounded up.
+     * @param decimals  number of decimals.
+     * @return decimal  number.
+     */
+    public static BigDecimal convertToDecimal(String number, int decimals) {
+        return new BigDecimal(number).divide(new BigDecimal(100), decimals, RoundingMode.HALF_UP);
     }
 }

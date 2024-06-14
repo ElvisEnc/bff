@@ -8,9 +8,11 @@ import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.filters.OrderFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
+import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.QRCodeGenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.request.QRCodeRegenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.requests.qr.QRPaymentMWRequest;
@@ -22,6 +24,7 @@ import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IQRProvider;
 import bg.com.bo.bff.providers.interfaces.IQrTransactionProvider;
 import bg.com.bo.bff.providers.mappings.qr.IQrMapper;
+import bg.com.bo.bff.providers.models.enums.middleware.qr.QRMiddlewareError;
 import bg.com.bo.bff.services.interfaces.IQrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
@@ -114,7 +117,11 @@ public class QrService implements IQrService {
     public QrDecryptResponse decryptQR(QrDecryptRequest request, Map<String, String> parameter) throws IOException {
         QRCodeRegenerateMWRequest requestMW = this.iQrMapper.convertDecrypt(request);
         QRCodeGenerateResponse response = this.qrProvider.decrypt(requestMW, parameter);
-        return this.iQrMapper.convertDecryptResponse(response);
+        QrDecryptResponse result = iQrMapper.convertDecryptResponse(response);
+        if(UtilDate.isDateOutOfDate(result.getExpirationDate())){
+            throw new GenericException(QRMiddlewareError.QR_EXPIRED.getMessage(), QRMiddlewareError.QR_EXPIRED.getHttpCode(), QRMiddlewareError.QR_EXPIRED.getCode());
+        }
+        return result;
     }
 
     @Override
