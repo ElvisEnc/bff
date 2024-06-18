@@ -117,6 +117,7 @@ public enum AppError {
     MDWGQM_011(HttpStatus.BAD_REQUEST, "ERROR_DATE", "MDWGQM-011", "La fecha otogada no es correcta."),
     MDWGQM_004(HttpStatus.BAD_REQUEST, "CONVERTING_DATE_FORMAT", "MDWGQM-004", "El formato de la fecha no es correcta."),
     MDWGQM_008(HttpStatus.BAD_REQUEST, "SOURCE_ACCOUNT_KO", "MDWGQM-008", "La cuenta de origen no se encuentra operativa"),
+    MDWGQM_017(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWGQM-017", "La cuenta o el código de persona no pertenece"),
 
     //QR-TRANSACTION MANAGER
     MDWQTM_001(HttpStatus.BAD_REQUEST, "TRANSFER_USD_NOT_ALLOWED","MDWQTM-001","Transacción no permitida para la moneda"),

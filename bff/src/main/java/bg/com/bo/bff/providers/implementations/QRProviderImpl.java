@@ -1,7 +1,6 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.ErrorResponseConverter;
@@ -94,8 +93,7 @@ public class QRProviderImpl implements IQRProvider {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
-                    QRCodeGenerateResponse result = objectMapper.readValue(jsonResponse, QRCodeGenerateResponse.class);
-                    return result;
+                    return objectMapper.readValue(jsonResponse, QRCodeGenerateResponse.class);
                 }
                 logger.error(jsonResponse);
                 AppError error = Util.mapProviderError(jsonResponse);
