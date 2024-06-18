@@ -1,16 +1,28 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.UpdateDataUserResponseFixture;
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
 import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequestFixture;
-import bg.com.bo.bff.application.dtos.response.*;
+import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.BiometricsResponseFixture;
+import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.GetContactResponseFixture;
+import bg.com.bo.bff.application.dtos.response.GetPersonalInformationResponseFixture;
+import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponseFixture;
 import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
 import bg.com.bo.bff.application.dtos.response.personal.information.DistrictsResponseFixture;
-import bg.com.bo.bff.application.dtos.response.user.*;
+import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
+import bg.com.bo.bff.application.dtos.response.user.DepartmentsResponseFixture;
+import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
+import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponseFixture;
+import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
+import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponseFixture;
+import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateDataUserResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.IUserService;
@@ -35,7 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -311,18 +325,20 @@ class UserControllerTest {
         // Assert
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
 
-        UpdateDataUserResponse expected = UpdateDataUserResponseFixture.withDefault();
+        GenericResponse expected = GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
         UpdateDataUserRequest request = UpdateDataUserRequestFixture.withDefault();
         when(userService.updateDataUser(any(),any(), any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(post(URL_UPDATE_DATA_USER, "123")
-                        .accept(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .headers(this.headers)
                         .content(Util.objectToString(request)))
+
                 .andExpect(status().isOk())
                 .andReturn();
+
         String responseExpected = Util.objectToString(expected);
         String response = result.getResponse().getContentAsString();
 

@@ -1,6 +1,5 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.UpdateDataUserResponseFixture;
 import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
@@ -14,14 +13,19 @@ import bg.com.bo.bff.application.dtos.response.user.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
+import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.request.PersonalInformationNetRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
-import bg.com.bo.bff.providers.dtos.response.PersonalUpdateNetResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalUpdateNetResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
 import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.personal.information.DistrictsNetResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
@@ -214,14 +218,21 @@ class UserServicesTests {
     @Test
     void givenValidDataWhenGetPersonalInformation() throws IOException {
         // Arrange
+        String result = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"M\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":null,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+        PersonalInformationNetResponse expectedResponse = Util.stringToObject(result, PersonalInformationNetResponse.class);
         PersonalResponse expected = GetPersonalInformationResponseFixture.withDefault();
-        when(personalInformationNetProvider.getPersonalInformation("123", map)).thenReturn(expected);
+        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefault();
+
+        when(iPersonalInformationMapper.mapperRequest(any())).thenReturn(requestMapperMock);
+        when(personalInformationNetProvider.getPersonalInformation(requestMapperMock, map)).thenReturn(expectedResponse);
+        when(iPersonalInformationMapper.convertRequest(expectedResponse)).thenReturn(expected);
 
         // Act
         PersonalResponse response = service.getPersonalInformation("123", map);
 
         // Assert
-        verify(personalInformationNetProvider).getPersonalInformation("123", map);
+        verify(personalInformationNetProvider).getPersonalInformation(requestMapperMock, map);
+        assertNotNull(response);
         assertEquals(expected, response);
     }
 
@@ -335,18 +346,45 @@ class UserServicesTests {
     @Test
     void givenUpdateDataUserRequestWhenUpdateDataUserThenUpdateDataUserResponse() throws IOException {
         // Assert
-
-        UpdateDataUserResponse expected = UpdateDataUserResponseFixture.withDefault();
+        GenericResponse expected = GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
         UpdateDataUserRequest request = UpdateDataUserRequestFixture.withDefault();
-        final String personId = "1234";
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"M\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":null,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+
+        String personId = "1234";
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
         when(personalInformationNetProvider.updatePersonalInformation(any(), any())).thenReturn(PersonalUpdateNetResponseFixture.withDefault());
 
         // Act
-
-        UpdateDataUserResponse actual = service.updateDataUser(personId, request, map);
+        GenericResponse actual = service.updateDataUser(personId, request, map);
 
         //Assert
-
         assertEquals(expected,actual);
+        verify(personalInformationNetProvider).getPersonalInformation(any(),any());
+        verify(personalInformationNetProvider).updatePersonalInformation(any(),any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestWhenUpdateDataUserThenNotAcceptable() throws IOException {
+        // Assert
+        GenericResponse expected = GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
+        UpdateDataUserRequest request = UpdateDataUserRequestFixture.withDefault();
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+
+        String personId = "1234";
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+
+
+        // Act
+        try {
+            GenericResponse actual = service.updateDataUser(personId, request, map);
+        } catch (GenericException e) {
+
+            //Assert
+            assertEquals(e.getMessage(), AppError.NOT_ACCEPTABLE_UPDATE_PERSONAL_INFORMATION.getMessage());
+            assertEquals(e.getCode(), AppError.NOT_ACCEPTABLE_UPDATE_PERSONAL_INFORMATION.getCode());
+            assertEquals(e.getStatus(), AppError.NOT_ACCEPTABLE_UPDATE_PERSONAL_INFORMATION.getHttpCode());
+            verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+        }
+
     }
 }

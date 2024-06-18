@@ -229,7 +229,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/{personId}/info")
-    public ResponseEntity<UpdateDataUserResponse> updateInfo(
+    public ResponseEntity<GenericResponse> updateInfo(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,

@@ -1,4 +1,4 @@
-package bg.com.bo.bff.providers.dtos.response;
+package bg.com.bo.bff.providers.dtos.response.personal.information;
 
 import bg.com.bo.bff.providers.dtos.response.personal.update.PersonalUpdateNetResponse;
 

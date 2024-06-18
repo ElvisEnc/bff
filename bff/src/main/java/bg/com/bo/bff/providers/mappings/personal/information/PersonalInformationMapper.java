@@ -21,12 +21,9 @@ import bg.com.bo.bff.providers.dtos.response.personal.information.EconomyActivit
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 @Component
@@ -43,19 +40,33 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
     }
 
     @Override
-    public PersonalResponse convertResponse(PersonalInformationNetResponse response) {
+    public PersonalResponse convertRequest(PersonalInformationNetResponse response) {
         PersonalResponse.PersonalResponseBuilder builder = PersonalResponse.builder();
+        EconomyActivity economicActivity = null;
+        ClientData clientData = null;
         if (!response.getDataContent().getClientDataList().isEmpty()) {
-            ClientData clientData = response.getDataContent().getClientDataList().get(0);
-
+            clientData = response.getDataContent().getClientDataList().get(0);
             builder.maritalStatus(PersonalDetail.MaritalStatus.builder()
                             .status(clientData.getMaritalStatus())
-                            .spouseLastName(clientData.getSpouseLastName())
+                            .husbandLastName(clientData.getHusbandLastName())
                             .spouseName(clientData.getSpouseName())
+                            .hasHusbandLastName(clientData.getUsesSpouseLastName())
                             .build())
                     .personalData(PersonalDetail.PersonalData.builder()
                             .completeName(clientData.getFullName())
-                            .telephoneNumber(clientData.getPhones())
+                            .cellPhoneNumber(String.valueOf(clientData.getPersonNumber()))
+                            .lastUpdate(clientData.getLastUpdateDate())
+                            .gender(clientData.getGender())
+                            .street(clientData.getStreet())
+                            .doorNumber(clientData.getDoorNumber())
+                            .departmentCode(clientData.getDepartmentCode())
+                            .neighborhoodCode(clientData.getNeighborhoodCode())
+                            .streetCode(clientData.getStreetCode())
+                            .cityCode(clientData.getCityCode())
+                            .homeReference(clientData.getHomeReference())
+                            .apartmentDescription(clientData.getApartment())
+                            .phones(clientData.getPhones())
+                            .bankEmployee(clientData.getBankEmployee())
                             .email(clientData.getEmail())
                             .section(clientData.getCityCode())
                             .dictrict(clientData.getCity())
@@ -67,12 +78,14 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                             .build());
         }
         if (!response.getDataContent().getEconomicActivities().isEmpty()) {
-            EconomyActivity economicActivity = response.getDataContent().getEconomicActivities().get(0);
-
+            economicActivity = response.getDataContent().getEconomicActivities().get(0);
+            assert clientData != null;
             builder.economicalActivity(PersonalDetail.EconomicalActivity.builder()
                     .type(economicActivity.getIncomeSource())
                     .company(economicActivity.getCompany())
                     .position(economicActivity.getPosition())
+                    .incomeLevel(clientData.getIncomeLevel())
+                    .economicActivity(clientData.getEconomicActivity())
                     .build());
         }
 
@@ -81,9 +94,12 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                     .map(reference -> PersonalDetail.Reference.builder()
                             .name(reference.getName())
                             .telephone(reference.getPhone())
+                            .relationship(reference.getRelation())
+                            .referenceType(reference.getReferenceType())
+                            .personType(reference.getPersonType())
+                            .ordinal(reference.getOrdinal())
                             .build())
                     .toList();
-
             builder.references(references);
         }
         return builder.build();
@@ -154,44 +170,42 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
     }
 
     @Override
-    public UpdatePersonalInformationNetRequest convertResponse(String personId, UpdateDataUserRequest request, PersonalResponse personalInformation) {
-        LocalDate fechaActual = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", new Locale("es", "ES"));
+    public UpdatePersonalInformationNetRequest convertRequest(String personId, UpdateDataUserRequest request, PersonalInformationNetResponse personalInformation) {
 
-        UpdateDataPerson oldData = UpdateDataPerson.builder()
-                .coordinates(personalInformation.getPersonalData().getGPS())
-                .zone(personalInformation.getPersonalData().getAddress())
-                .department(personalInformation.getPersonalData().getDepartment())
-                .email(personalInformation.getPersonalData().getEmail())
-                .neighborhood(personalInformation.getPersonalData().getDictrict())
-                .city(personalInformation.getPersonalData().getDictrict())
-                .spouseName(personalInformation.getMaritalStatus().getSpouseName())
-                .husbandLastName(personalInformation.getMaritalStatus().getSpouseLastName())
-                .economicActivity(personalInformation.getEconomicalActivity().getType())
-                .company(personalInformation.getEconomicalActivity().getCompany())
-                .position(personalInformation.getEconomicalActivity().getPosition())
-                .build();
 
+        List<ClientData> oldData = personalInformation.getDataContent().getClientDataList();
 
         UpdateDataPerson newData = UpdateDataPerson.builder()
-                .coordinates(request.getPersonalData().getGPS())
+                .coordinates(request.getPersonalData().getGps())
                 .zone(request.getPersonalData().getZone())
-                .departmentCode(request.getPersonalData().getDepartment())
-                .email(request.getPersonalData().getEmail())
-                .neighborhood(request.getPersonalData().getZone())
-                .updateDate(fechaActual.format(formatter))
-                .department(request.getPersonalData().getDepartment())
+                .cityCode(request.getPersonalData().getSection())
                 .departmentCode(request.getPersonalData().getDepartmentCode())
-                .city(request.getPersonalData().getDepartment())
-                .cityCode(request.getPersonalData().getCityCode())
-                .spouseName(request.getMaritalStatus().getSpouseName())
+                .email(request.getPersonalData().getEmail())
                 .usesSpouseLastName(request.getMaritalStatus().getUsesSpouseLastName())
                 .husbandLastName(request.getMaritalStatus().getSpouseLastName())
+                .neighborhood(request.getPersonalData().getZone())
+                .city(request.getPersonalData().getDictrict())
+                .spouseName(request.getMaritalStatus().getSpouseName()!= null ? request.getMaritalStatus().getSpouseName():"") //TODO por confirmar con Kevin
+                .bankEmployee(request.getPersonalData().getBankEmployee())
+                .neighborhoodCode(request.getPersonalData().getNeighborhoodCode() == null? request.getPersonalData().getNeighborhoodCode():"0")
+                .apartment(request.getPersonalData().getApartment())
+                .homeReference(request.getPersonalData().getHomeReference())
+                .phones(request.getPersonalData().getTelephoneNumber())
+                .cellphone(request.getPersonalData().getCellphone())
+                .usesSpouseLastName(request.getMaritalStatus().getUsesSpouseLastName())
+                .street(request.getPersonalData().getAddress())
+                .doorNumber(request.getPersonalData().getDoorNumber())
+                .economicActivity(request.getEconomicalActivity().getEconomicActivity())
                 .maritalStatus(request.getMaritalStatus().getStatus())
-                .economicActivity(request.getEconomicalActivity().getEconomicActivityCategory())
+                .floor(request.getPersonalData().getFloor())
                 .company(request.getEconomicalActivity().getCompany())
                 .position(request.getEconomicalActivity().getPosition())
                 .incomeLevel(request.getEconomicalActivity().getIncomeLevel())
+                .incomeSource("D")
+                .referenceName(personalInformation.getDataContent().getReferences().get(0).getName())
+                .referencePhone(personalInformation.getDataContent().getReferences().get(0).getPhone())
+                .ordinal(personalInformation.getDataContent().getReferences().get(0).getOrdinal())
+                .relationship(personalInformation.getDataContent().getReferences().get(0).getRelation())
                 .build();
 
 
@@ -212,10 +226,9 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                 .channel(CanalMW.GANAMOVIL.getCanal())
                 .personId(personId)
                 .newData(newData)
-                .oldData(List.of(oldData))
+                .oldData(oldData)
                 .personalReferences(personalReferences)
                 .build();
-
 
     }
 }

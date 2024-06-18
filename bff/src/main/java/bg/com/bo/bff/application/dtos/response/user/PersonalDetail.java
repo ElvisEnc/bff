@@ -18,10 +18,13 @@ public class PersonalDetail {
         private String status;
 
         @Schema(description = "Apellido del cónyuge", example = "Pérez")
-        private String spouseLastName;
+        private String husbandLastName;
 
         @Schema(description = "Nombre del cónyuge", example = "Juan")
         private String spouseName;
+
+        @Schema(description="Usa el apellido del esposo")
+        private String hasHusbandLastName;
     }
 
     @Data
@@ -37,6 +40,12 @@ public class PersonalDetail {
 
         @Schema(description = "Cargo en la empresa", example = "Gerente")
         private String position;
+
+        @Schema(description = "Nivel de ingresos", example = "1000")
+        private String incomeLevel;
+
+        @Schema(description = "Actividad económica", example = "12345")
+        private Integer economicActivity;
     }
 
     @Data
@@ -47,8 +56,44 @@ public class PersonalDetail {
         @Schema(description = "Nombre completo", example = "Juan Perez")
         private String completeName;
 
-        @Schema(description = "Número de teléfono", example = "123456789")
-        private String telephoneNumber;
+        @Schema(description = "Número de celular", example = "987654321")
+        private String cellPhoneNumber;
+
+        @Schema(description = "Ultima actualización", example = "2021-01-01")
+        private String lastUpdate;
+
+        @Schema(description = "Género", example = "M")
+        private String gender;
+
+        @Schema(description= "Calle", example = "Calle Falsa")
+        private String street;
+
+        @Schema(description = "Número de puerta", example = "123")
+        private String doorNumber;
+
+        @Schema(description="Código de departamento", example = "1")
+        private Integer departmentCode;
+
+        @Schema(description="Código de barrio", example = "2")
+        private Integer neighborhoodCode;
+
+        @Schema(description="Código de calle", example = "3")
+        private Integer streetCode;
+
+        @Schema(description="Código de ciudad", example = "4")
+        private Integer cityCode;
+
+        @Schema(description="Referencia del domicilio", example = "Casa de Juan")
+        private String homeReference;
+
+        @Schema(description="Descripción del apartamento", example = "Apartamento 1")
+        private String apartmentDescription;
+
+        @Schema(description="Teléfonos", example = "123456789")
+        private String phones;
+
+        @Schema(description="Empleado del banco", example = "3")
+        private String bankEmployee;
 
         @Schema(description = "Correo electrónico", example = "ejemplo@dominio.com")
         private String email;
@@ -85,5 +130,17 @@ public class PersonalDetail {
 
         @Schema(description = "Teléfono de la referencia", example = "987654321")
         private String telephone;
+
+        @Schema(description = "Parentesco", example = "3")
+        private Integer relationship;
+
+        @Schema(description = "Tipo de referencia", example = "P")
+        private String referenceType;
+
+        @Schema(description = "Tipo de persona", example = "F")
+        private String personType;
+
+        @Schema(description = "Ordinal", example = "1")
+        private Integer ordinal;
     }
 }

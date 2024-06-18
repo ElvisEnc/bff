@@ -64,7 +64,7 @@ public class ClientData {
     private int cityCode;
 
     @JsonProperty("APELLIDOESPOSO")
-    private String spouseLastName;
+    private String husbandLastName;
 
     @JsonProperty("USA_APELLIDOESPOSO")
     private String usesSpouseLastName;

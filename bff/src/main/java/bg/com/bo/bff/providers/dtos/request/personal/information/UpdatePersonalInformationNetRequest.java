@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.dtos.request.personal.information;
 
 
+import bg.com.bo.bff.providers.dtos.response.personal.information.ClientData;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +23,7 @@ public class UpdatePersonalInformationNetRequest {
     @JsonProperty("datosNuevos")
     private UpdateDataPerson newData;
     @JsonProperty("datosAntiguos")
-    private List<UpdateDataPerson> oldData;
+    private List<ClientData> oldData;
     @JsonProperty("referencias")
     private List<PersonalReferences> personalReferences;
     @JsonProperty("canal")

@@ -14,7 +14,7 @@ import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInform
 public interface IPersonalInformationMapper {
     ApiPersonalInformationNetRequest mapperRequest(String personId);
 
-    PersonalResponse convertResponse(PersonalInformationNetResponse response);
+    PersonalResponse convertRequest(PersonalInformationNetResponse response);
 
     EconomicActivityResponse convertEconomicActivity(ProviderNetResponse netResponse);
 
@@ -22,5 +22,5 @@ public interface IPersonalInformationMapper {
 
     DistrictsResponse mapToDistrictsResponse(DistrictsNetResponse netResponse);
 
-    UpdatePersonalInformationNetRequest convertResponse(String personId, UpdateDataUserRequest response, PersonalResponse personalInformation);
+    UpdatePersonalInformationNetRequest convertRequest(String personId, UpdateDataUserRequest response, PersonalInformationNetResponse personalInformation);
 }

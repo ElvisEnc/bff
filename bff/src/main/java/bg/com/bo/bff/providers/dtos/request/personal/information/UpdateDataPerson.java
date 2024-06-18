@@ -83,9 +83,6 @@ public class UpdateDataPerson {
     @JsonProperty("ACTIVIDAD_ECONOMICA")
     private String economicActivity;
 
-    @JsonProperty("SEXO")
-    private String gender;
-
     @JsonProperty("ESTADOCIVIL")
     private String maritalStatus;
 
@@ -108,7 +105,7 @@ public class UpdateDataPerson {
     private String position;
 
     @JsonProperty("RELACION")
-    private String relationship;
+    private int relationship;
 
     @JsonProperty("NOMBREREFERENCIA")
     private String referenceName;
@@ -117,7 +114,7 @@ public class UpdateDataPerson {
     private String referencePhone;
 
     @JsonProperty("ORDINAL")
-    private String ordinal;
+    private int ordinal;
 
 }
 

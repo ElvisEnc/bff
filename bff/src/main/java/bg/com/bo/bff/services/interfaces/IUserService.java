@@ -36,5 +36,5 @@ public interface IUserService {
 
     MaritalStatusResponse getMaritalStatus(Map<String, String> parameter);
 
-    UpdateDataUserResponse updateDataUser(String personId, UpdateDataUserRequest request, Map<String, String> parameter) throws IOException;
+    GenericResponse updateDataUser(String personId, UpdateDataUserRequest request, Map<String, String> parameter) throws IOException;
 }

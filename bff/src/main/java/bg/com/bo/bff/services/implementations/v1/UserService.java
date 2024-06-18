@@ -19,11 +19,13 @@ import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.validators.generics.*;
+import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
 import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
+import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
 import bg.com.bo.bff.providers.dtos.response.personal.update.PersonalUpdateNetResponse;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
@@ -92,8 +94,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public PersonalResponse getPersonalInformation(String personId, Map<String, String> parameter) throws IOException {
-        return personalInformationNetProvider.getPersonalInformation(personId, parameter);
+    public PersonalResponse getPersonalInformation(String personId, Map<String, String> parameters) throws IOException {
+        ApiPersonalInformationNetRequest requestData = iPersonalInformationMapper.mapperRequest(personId);
+        PersonalInformationNetResponse response = personalInformationNetProvider.getPersonalInformation(requestData, parameters);
+        return iPersonalInformationMapper.convertRequest(response);
     }
 
     @Override
@@ -121,15 +125,21 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UpdateDataUserResponse updateDataUser(String personId, UpdateDataUserRequest request, Map<String, String> parameter) throws IOException {
+    public GenericResponse updateDataUser(String personId, UpdateDataUserRequest request, Map<String, String> parameter) throws IOException {
 
-        PersonalResponse personalInformation = personalInformationNetProvider.getPersonalInformation(personId, parameter);
+        ApiPersonalInformationNetRequest requestData = iPersonalInformationMapper.mapperRequest(personId);
 
-        UpdatePersonalInformationNetRequest updatePersonalInformationNetRequest = iPersonalInformationMapper.convertResponse(personId, request, personalInformation);
+        PersonalInformationNetResponse personalInformation = personalInformationNetProvider.getPersonalInformation(requestData, parameter);
 
-        PersonalUpdateNetResponse response = personalInformationNetProvider.updatePersonalInformation(updatePersonalInformationNetRequest, parameter);
+        UpdatePersonalInformationNetRequest updatePersonalInformationNetRequest = iPersonalInformationMapper.convertRequest(personId, request, personalInformation);
+        if (personalInformation.getDataContent().getClientDataList().isEmpty()) {
+            AppError error = AppError.NOT_ACCEPTABLE_UPDATE_PERSONAL_INFORMATION;
+            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+        }
 
 
-        return   UpdateDataUserResponse.SUCCESS;
+        personalInformationNetProvider.updatePersonalInformation(updatePersonalInformationNetRequest, parameter);
+
+        return GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
     }
 }

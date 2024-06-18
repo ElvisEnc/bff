@@ -57,11 +57,10 @@ public class PersonalInformationNetProvider implements IPersonalInformationNetPr
     }
 
     @Override
-    public PersonalResponse getPersonalInformation(String personId, Map<String, String> parameters) throws IOException {
-        ApiPersonalInformationNetRequest requestData = iPersonalInformationMapper.mapperRequest(personId);
+    public PersonalInformationNetResponse getPersonalInformation(ApiPersonalInformationNetRequest request, Map<String, String> parameters) throws IOException {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String path = urlProviderPersonalInformationNet + "/obtenerDatosClienteGanaSueldo";
-            String jsonMapper = Util.objectToString(requestData);
+            String jsonMapper = Util.objectToString(request);
             StringEntity entity = new StringEntity(jsonMapper);
             HttpPost httpPost = new HttpPost(path);
             httpPost.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
@@ -73,7 +72,7 @@ public class PersonalInformationNetProvider implements IPersonalInformationNetPr
                 if (statusCode == HttpStatus.SC_OK) {
                     PersonalInformationNetResponse response = Util.stringToObject(jsonResponse, PersonalInformationNetResponse.class);
                     if (response.getErrorCode().equals(AppDataYoloNet.CODIGO_EXITO.getValue())) {
-                        return iPersonalInformationMapper.convertResponse(response);
+                        return response;
                     } else {
                         LOGGER.error(jsonResponse);
                         DynamicAppError error = Util.mapNetProviderError(jsonResponse);
@@ -195,13 +194,17 @@ public class PersonalInformationNetProvider implements IPersonalInformationNetPr
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
                     PersonalUpdateNetResponse response = Util.stringToObject(jsonResponse, PersonalUpdateNetResponse.class);
-                    if (response.getUpdateResponse().equals(UPDATE_SUCCESS)) {
-                        return response;
-                    } else {
+                    if(!response.getErrorCode().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())){
                         LOGGER.error(jsonResponse);
                         AppError error = AppError.BAD_REQUEST;
-                        throw new GenericException(error.getMessage(), error.getHttpCode(), error.getMessage());
+                        throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
                     }
+                    if (!response.getUpdateResponse().equals(UPDATE_SUCCESS)) {
+                        LOGGER.error(jsonResponse);
+                        AppError error = AppError.NOT_ACCEPTABLE_UPDATE_PERSONAL_INFORMATION;
+                        throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                    }
+                    return response;
                 }
                 LOGGER.error(jsonResponse);
                 AppError error = AppError.DEFAULT;

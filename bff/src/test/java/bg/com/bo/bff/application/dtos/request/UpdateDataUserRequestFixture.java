@@ -8,33 +8,36 @@ public class UpdateDataUserRequestFixture {
     public static UpdateDataUserRequest withDefault(){
 
         UpdatePersonalDetail.EconomicalActivity economicalActivity = UpdatePersonalDetail.EconomicalActivity.builder()
-                .economicActivityCategory("65191")
+                .economicActivity("65191")
                 .company("eMPRESA DE PAPE")
                 .position("GERENTE")
-                .incomeLevel(" 0 1000")
-                .category("INDEPENDITEE")
+                .incomeLevel("1000")
+                .category("D")
                 .build();
 
         UpdatePersonalDetail.MaritalStatus maritalStatus=  UpdatePersonalDetail.MaritalStatus.builder()
                 .status("S")
                 .spouseLastName("LOPEZ")
                 .spouseName("JUAN")
-                .usesSpouseLastName("S")
+                .usesSpouseLastName("N")
                 .build();
 
         UpdatePersonalDetail.PersonalData personalData = UpdatePersonalDetail.PersonalData.builder()
                 .telephoneNumber("121212")
                 .email("reynaldo@gmail.com")
                 .section("3")
-                .zone("Las Lomas")
-                .dictrict("Distrito Central")
+                .zone("7")
+                .dictrict("La PAz")
                 .address("Calle moxos")
                 .department("La Paz")
                 .departmentCode("1")
-                .city("La PAz")
-                .cityCode("1")
                 .floor("1")
-                .GPS("-17.743265190031195 ; -63.19027550518513")
+                .gps("-17.743265190031195 ; -63.19027550518513")
+                .cellphone("79404040")
+                .homeReference("Frente al hospital")
+                .doorNumber("1")
+                .bankEmployee("1")
+                .neighborhoodCode("0")
                 .build();
 
         List<UpdatePersonalDetail.Reference> references = List.of(
