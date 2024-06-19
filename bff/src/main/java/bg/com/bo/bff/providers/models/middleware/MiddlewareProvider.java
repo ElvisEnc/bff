@@ -2,6 +2,7 @@ package bg.com.bo.bff.providers.models.middleware;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.HttpDeleteWithBody;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
@@ -61,13 +62,16 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
 
     /**
      * Execute a HttpGet using HttpClientFactory and a token given by TokenMiddlewareProvider.
-     * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     * In case of a response other than 200, it evaluates the response using the provided AdditionalEvaluator.
+     * If the evaluation is successful, it resolves the response using the resolver from the AdditionalEvaluator.
+     * Otherwise, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
      *
-     * @param url        url of resource.
-     * @param headers    list of headers for request.
-     * @param classType  type of response class.
-     * @param additionalEvaluator additional evaluator
-     * @return an object of given params type.
+     * @param url                 url of the resource.
+     * @param headers             list of headers for the request.
+     * @param classType           type of the response class.
+     * @param additionalEvaluator evaluator and resolver for handling specific response scenarios.
+     * @return an object of the given class type.
+     * @throws IOException if an I/O exception occurs.
      */
     protected <E> E get(String url, Header[] headers, Class<E> classType, AdditionalEvaluator<E> additionalEvaluator) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
@@ -106,6 +110,19 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
 
     protected <E, R> E patch(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
         return executeRequest(new HttpPatch(url), headers, requestBody, classType);
+    }
+
+    /**
+     * Execute a HttpDeleteWithBody using HttpClientFactory and a token given by TokenMiddlewareProvider.
+     * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
+     * @param url       url of resource.
+     * @param headers   list of headers for request.
+     * @param classType type of response class.
+     * @return an object of given params type.
+     */
+    protected <E, R> E deleteWithBody(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
+        return executeRequest(new HttpDeleteWithBody(url), headers, requestBody, classType);
     }
 
     protected <E, R> E put(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {

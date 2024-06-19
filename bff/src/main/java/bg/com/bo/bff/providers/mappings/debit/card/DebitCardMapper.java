@@ -10,6 +10,7 @@ import bg.com.bo.bff.application.dtos.response.debitcard.DCInternetAuthorization
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.commons.enums.debit.card.StatusType;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
@@ -71,7 +72,7 @@ public class DebitCardMapper implements IDebitCardMapper {
     public List<AccountTD> convertResponseAccountListTD(AccountsDebitCardMWResponse mwResponse) {
         return mwResponse.getData().stream()
                 .map(accountDebitCard -> AccountTD.builder()
-                        .id(String.valueOf(accountDebitCard.getJtsOid()))
+                        .accountId(String.valueOf(accountDebitCard.getJtsOid()))
                         .accountNumber(String.valueOf(accountDebitCard.getAccountNumber()))
                         .description(accountDebitCard.getProductType())
                         .build())
@@ -80,7 +81,6 @@ public class DebitCardMapper implements IDebitCardMapper {
 
     @Override
     public InternetAuthorizationResponse mapToInternetAuthorizationResponse(DCInternetAuthorizationNWResponse response) {
-
         List<DCInternetAuthorization> result = response.getData().stream().map(x -> DCInternetAuthorization.builder()
                 .id(x.getInternetIdTjTD())
                 .amount(x.getAmount())
@@ -89,6 +89,16 @@ public class DebitCardMapper implements IDebitCardMapper {
         ).toList();
         return InternetAuthorizationResponse.builder()
                 .data(result)
+                .build();
+    }
+
+    @Override
+    public DeleteAuthPurchaseMWRequest mapDeleteAuthRequest(Integer personId, Integer cardId, Integer authId) {
+        return DeleteAuthPurchaseMWRequest.builder()
+                .identifierTD(String.valueOf(authId))
+                .personId(String.valueOf(personId))
+                .action("B")
+                .idPci(String.valueOf(cardId))
                 .build();
     }
 

@@ -13,6 +13,7 @@ import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.*;
@@ -45,6 +46,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
+
 import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequestFixture;
 
 @WireMockTest(proxyMode = true, httpPort = 8080)
@@ -187,7 +189,6 @@ class DebitCardMiddlewareProviderTest {
         assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
     }
 
-
     @Test
     @DisplayName("Get accounts list for debit card with given PersonCode and CardId")
     void givenPersonCodeAndCardIdWhenGetAccountLisDebitCardThenExpectResponse() throws IOException {
@@ -268,7 +269,6 @@ class DebitCardMiddlewareProviderTest {
     @Test
     void givenPersonIdAndCardIdWhenGetListAuthorizationsThenErrorMDWTJD_005() throws IOException {
         // Arrange
-
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = DCInternetAuthorizationNWResponseFixture.withErrorMDWTJD005();
         stubFor(get(anyUrl()).willReturn(jsonResponse(jsonResponse, HttpStatus.SC_NOT_ACCEPTABLE)));
@@ -284,7 +284,44 @@ class DebitCardMiddlewareProviderTest {
             assertEquals(DebitCardMiddlewareError.MDWTJD_005.getHttpCode(), ex.getStatus());
             assertEquals(DebitCardMiddlewareError.MDWTJD_005.getMessage(), ex.getMessage());
         }
+    }
 
+    @Test
+    @DisplayName("Delete Internet Purchase Authorization")
+    void givenPersonCodeAndCardIdAndAuthIdWhenDeleteAuthThenExpectResponse() throws IOException {
+        // Arrange
+        GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_DELETE_AUTH_PURCHASE);
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(DeleteAuthPurchaseMWResponseFixture.withDefault());
+        stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = debitCardMiddlewareProvider.deleteAuth(DeleteAuthPurchaseMWRequestFixture.withDefault(), map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, expectedResponse);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Delete Internet Purchase Authorization - Expect Failure Response")
+    void givenPersonCodeAndCardIdAndAuthIdWhenDeleteAuthThenErrorDeleteAuth() throws IOException {
+        // Arrange
+        GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_DELETE_AUTH_PURCHASE);
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(DeleteAuthPurchaseMWResponseFixture.errorDefault());
+        stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = debitCardMiddlewareProvider.deleteAuth(DeleteAuthPurchaseMWRequestFixture.withDefault(), map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, expectedResponse);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
 
     @Test
@@ -367,9 +404,8 @@ class DebitCardMiddlewareProviderTest {
         String jsonResponse = Util.objectToString(CreateAuthorizationOnlinePurchaseMWResponseFixture.withDefault());
         stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
 
-
         // Act
-        CreateAuthorizationOnlinePurchaseMWResponse actual = debitCardMiddlewareProvider.createAuthorizationOnlinePurchase(request,map);
+        CreateAuthorizationOnlinePurchaseMWResponse actual = debitCardMiddlewareProvider.createAuthorizationOnlinePurchase(request, map);
 
         // Assert
         assertNotNull(actual);

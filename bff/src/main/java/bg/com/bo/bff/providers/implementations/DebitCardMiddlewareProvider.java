@@ -1,7 +1,6 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.commons.enums.AppCodeResponseNet;
 import bg.com.bo.bff.commons.enums.CanalMW;
@@ -11,7 +10,8 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
-import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
+import bg.com.bo.bff.providers.dtos.response.debit.card.*;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
@@ -32,10 +32,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMiddlewareError> implements IDebitCardProvider {
-
     public DebitCardMiddlewareProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
         super(ProjectNameMW.DEBIT_CARD_MANAGER, DebitCardMiddlewareError.class, tokenMiddlewareProvider, middlewareConfig, httpClientFactory, middlewareConfig.getClientDebitCardManager());
     }
@@ -69,9 +69,7 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
     @Override
     public ListDebitCardMWResponse listDebitCard(Integer personId, Map<String, String> parameters) throws IOException {
         String path = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.LIST_DEBIT_CARD.getServiceURL() + personId;
-
         DefaultResultByMWErrorEvaluator<ListDebitCardMWResponse> additionalEvaluator = DefaultResultByMWErrorEvaluator.instance(DebitCardMiddlewareError.MDWTJD_004);
-
         return get(path, setHeaders(parameters), ListDebitCardMWResponse.class, additionalEvaluator);
     }
 
@@ -85,7 +83,7 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
 
     @Override
     public DCInternetAuthorizationNWResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameters) throws IOException {
-        String path = String.format(DebitCardMiddlewareServices.GET_lIST_INTERNET_AUTHORIZATION.getServiceURL(), cardId, personId);
+        String path = String.format(DebitCardMiddlewareServices.GET_LIST_INTERNET_AUTHORIZATION.getServiceURL(), cardId, personId);
         String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.DEBIT_CARD_MANAGER.getName(), path);
         Header[] headers = {
                 new BasicHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal()),
@@ -95,6 +93,15 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
                 new BasicHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()))
         };
         return get(url, headers, DCInternetAuthorizationNWResponse.class);
+    }
+
+    @Override
+    public GenericResponse deleteAuth(DeleteAuthPurchaseMWRequest mwRequest, Map<String, String> parameters) throws IOException {
+        String url = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.DELETE_LIMIT_INTERNET.getServiceURL();
+        DeleteAuthPurchaseMWResponse mwResponse = deleteWithBody(url, setHeaders(parameters), mwRequest, DeleteAuthPurchaseMWResponse.class);
+        if (Objects.equals(mwResponse.getData().getIdPci(), mwRequest.getIdPci()))
+            return GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_DELETE_AUTH_PURCHASE);
+        else return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_DELETE_AUTH_PURCHASE);
     }
 
     @Override

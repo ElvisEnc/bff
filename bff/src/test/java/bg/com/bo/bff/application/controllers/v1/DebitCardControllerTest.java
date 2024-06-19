@@ -2,10 +2,7 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequestFixture;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequestFixture;
+import bg.com.bo.bff.application.dtos.request.debit.card.*;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponseFixture;
@@ -47,8 +44,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -71,11 +67,9 @@ class DebitCardControllerTest {
     private static final String GEO_POSITION_X = "12.265656";
     private static final String GEO_POSITION_Y = "12.454545";
     private static final String APP_VERSION = "1.0.0";
-
     private ObjectMapper objectMapper;
-
-    private static String GET_LIST_AUTHORIZATIONS = "/api/v1/debit-cards/persons/{personId}/cards/{cardId}/authorizations";
-    private static String CREATE_AUTHORIZATION_ONLINE_PURCHASE = "/api/v1/debit-cards/persons/{personId}/cards/{cardId}/authorizations";
+    private static final String GET_LIST_AUTHORIZATIONS = "/api/v1/debit-cards/persons/{personId}/cards/{cardId}/authorizations";
+    private static final String CREATE_AUTHORIZATION_ONLINE_PURCHASE = "/api/v1/debit-cards/persons/{personId}/cards/{cardId}/authorizations";
 
     @BeforeEach
     void setUp() {
@@ -200,6 +194,7 @@ class DebitCardControllerTest {
 
         String response = objectMapper.writeValueAsString(expected);
         String actual = result.getResponse().getContentAsString();
+
         // Assert
         assertEquals(response, actual);
         verify(service).getListAuthorizations(any(), any(), any());
@@ -219,7 +214,7 @@ class DebitCardControllerTest {
                         .headers(this.headers)
                         .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(Util.objectToString(request, false)))
+                        .content(Util.objectToString(request, false)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andReturn();
@@ -227,12 +222,38 @@ class DebitCardControllerTest {
         String response = objectMapper.writeValueAsString(expected);
         String actual = result.getResponse().getContentAsString();
         // Assert
-        assertEquals(response, actual );
-        verify(service).createAuthorizationOnlinePurchase(any(), any(), any(),any());
+        assertEquals(response, actual);
+        verify(service).createAuthorizationOnlinePurchase(any(), any(), any(), any());
     }
 
     @Test
-    void givenValidDataWhenDetailtThenThenDCDetailResponseSuccess() throws Exception {
+    void givenPersonIdAndCardIdAndAuthIdWhenDeleteAuthThenSuccess() throws Exception {
+        // Arrange
+        GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_DELETE_AUTH_PURCHASE);
+        when(service.deleteAuthOnlinePurchases(any(), any(), any(), any())).thenReturn(expectedResponse);
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        // Act
+        String url = "/api/v1/debit-cards/persons/{personId}/cards/{carId}/authorizations/{authId}";
+        MvcResult result = mockMvc.perform(delete(url, 123, 123, 123)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String response = objectMapper.writeValueAsString(expectedResponse);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).deleteAuthOnlinePurchases(any(), any(), any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenDetailThenThenDCDetailResponseSuccess() throws Exception {
         // Arrange
         String personId = "169494";
         String cardId = "123456";

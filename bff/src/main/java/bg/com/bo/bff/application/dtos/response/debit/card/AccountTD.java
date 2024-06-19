@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AccountTD {
     @Schema(description = "id de la cuenta")
-    private String id;
+    private String accountId;
 
     @Schema(description = "número de la cuenta")
     private String accountNumber;

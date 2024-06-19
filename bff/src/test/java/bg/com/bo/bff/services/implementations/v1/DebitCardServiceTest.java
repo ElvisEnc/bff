@@ -2,10 +2,7 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequestFixture;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequestFixture;
+import bg.com.bo.bff.application.dtos.request.debit.card.*;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.*;
 import bg.com.bo.bff.application.dtos.response.InternetAuthorizationResponseFixture;
@@ -17,6 +14,7 @@ import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnline
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponseFixture;
@@ -36,8 +34,6 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -102,16 +98,16 @@ class DebitCardServiceTest {
         // Arrange
         AccountsDebitCardMWResponse mwResponseMock = AccountsDebitCardMWResponseFixture.withDefault();
         ListAccountTDResponse expectedResponse = ListAccountTDResponseFixture.withDefault();
-        when(provider.accountListDebitCard(any(),any(), any())).thenReturn(mwResponseMock);
-        when(mapper.convertResponseAccountListTD(any())).thenReturn(List.of(AccountTDFixture.withDefault(),AccountTDFixture.withDefault()));
+        when(provider.accountListDebitCard(any(), any(), any())).thenReturn(mwResponseMock);
+        when(mapper.convertResponseAccountListTD(any())).thenReturn(List.of(AccountTDFixture.withDefault(), AccountTDFixture.withDefault()));
 
         // Act
-        ListAccountTDResponse response = service.getAccountsTD(123,123, new HashMap<>());
+        ListAccountTDResponse response = service.getAccountsTD(123, 123, new HashMap<>());
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expectedResponse, response);
-        verify(provider).accountListDebitCard(123,123, new HashMap<>());
+        verify(provider).accountListDebitCard(123, 123, new HashMap<>());
         verify(mapper).convertResponseAccountListTD(mwResponseMock);
     }
 
@@ -132,6 +128,23 @@ class DebitCardServiceTest {
         Assertions.assertNotNull(response);
         assertEquals(expected, response);
         verify(provider).getListAuthorizations(any(), any(), any());
+    }
+
+    @Test
+    void givenPersonCodeAndCardIdAndAuthIdWhenDeleteAuthThenSuccess() throws IOException {
+        // Arrange
+        GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_DELETE_AUTH_PURCHASE);
+        when(provider.deleteAuth(any(), any())).thenReturn(expectedResponse);
+        when(mapper.mapDeleteAuthRequest(any(), any(), any())).thenReturn(DeleteAuthPurchaseMWRequestFixture.withDefault());
+
+        // Act
+        GenericResponse response = service.deleteAuthOnlinePurchases(123, 123, 123, new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(provider).deleteAuth(DeleteAuthPurchaseMWRequestFixture.withDefault(), new HashMap<>());
+        verify(mapper).mapDeleteAuthRequest(123, 123, 123);
     }
 
     @Test
@@ -214,7 +227,6 @@ class DebitCardServiceTest {
             assertEquals(ex.getStatus(), DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getHttpCode());
 
         }
-
     }
 
     @Test
@@ -236,6 +248,4 @@ class DebitCardServiceTest {
         Mockito.verify(provider).createAuthorizationOnlinePurchase(Mockito.any(), Mockito.any());
         Mockito.verify(mapper).mapToCreateAuthorizationOnlinePurchaseMWRequest(any(),any(),any(),any(),any());
     }
-
-
 }

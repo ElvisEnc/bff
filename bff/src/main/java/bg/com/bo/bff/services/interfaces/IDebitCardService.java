@@ -22,11 +22,13 @@ public interface IDebitCardService {
 
     ListAccountTDResponse getAccountsTD(Integer personId, Integer cardId, Map<String, String> parameter) throws IOException;
 
+    GenericResponse deleteAuthOnlinePurchases(Integer personId, Integer cardId, Integer authId, Map<String, String> parameters) throws IOException;
+
     InternetAuthorizationResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameter) throws IOException;
 
     GenericResponse createAuthorizationOnlinePurchase(String personId, String cardId, CreateAuthorizationOnlinePurchaseRequest request, Map<String, String> parameter) throws IOException;
 
-    DCDetailResponse detail(String personId, String cardId, Map<String, String> parameter) throws IOException ;
+    DCDetailResponse detail(String personId, String cardId, Map<String, String> parameter) throws IOException;
 
-    GenericResponse lockStatus(String personId, String cardId, DCLockStatusRequest request, Map<String, String> parameters) throws IOException ;
+    GenericResponse lockStatus(String personId, String cardId, DCLockStatusRequest request, Map<String, String> parameters) throws IOException;
 }

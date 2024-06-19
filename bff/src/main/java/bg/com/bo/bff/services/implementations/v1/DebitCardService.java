@@ -13,6 +13,7 @@ import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
@@ -34,8 +35,7 @@ import java.util.Map;
 public class DebitCardService implements IDebitCardService {
     private final IDebitCardProvider idcProvider;
     private final IDebitCardMapper idcMapper;
-
-    private static String ACTION_CREATE_AUTHORIZATION_ONLINE_PURCHASE = "A";
+    private static final String ACTION_CREATE_AUTHORIZATION_ONLINE_PURCHASE = "A";
 
     public DebitCardService(IDebitCardProvider idcProvider, IDebitCardMapper idcMapper) {
         this.idcProvider = idcProvider;
@@ -73,6 +73,12 @@ public class DebitCardService implements IDebitCardService {
     }
 
     @Override
+    public GenericResponse deleteAuthOnlinePurchases(Integer personId, Integer cardId, Integer authId, Map<String, String> parameters) throws IOException {
+        DeleteAuthPurchaseMWRequest mwRequest = idcMapper.mapDeleteAuthRequest(personId, cardId, authId);
+        return idcProvider.deleteAuth(mwRequest, parameters);
+    }
+
+    @Override
     public GenericResponse createAuthorizationOnlinePurchase(String personId,
                                                              String cardId,
                                                              CreateAuthorizationOnlinePurchaseRequest request,
@@ -85,7 +91,6 @@ public class DebitCardService implements IDebitCardService {
                     DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getHttpCode(),
                     DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getCode());
         }
-
         CreateAuthorizationOnlinePurchaseMWRequest requestMW = idcMapper.mapToCreateAuthorizationOnlinePurchaseMWRequest(request,cardId,
                 startPeriod.getDayOfMonth(),
                 endPeriod.getDayOfMonth(),
