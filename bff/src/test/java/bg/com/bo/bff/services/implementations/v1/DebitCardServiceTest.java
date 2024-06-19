@@ -1,5 +1,7 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequestFixture;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
@@ -10,13 +12,19 @@ import bg.com.bo.bff.application.dtos.response.InternetAuthorizationResponseFixt
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponseFixture;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
 import bg.com.bo.bff.providers.mappings.debit.card.IDebitCardMapper;
+import bg.com.bo.bff.providers.models.enums.middleware.debit.card.CreateAuthorizationOnlinePurchaseResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -114,7 +122,7 @@ class DebitCardServiceTest {
         String cardId = "169494";
         InternetAuthorizationResponse expected = InternetAuthorizationResponseFixture.withDefault();
 
-        when(provider.getListAuthorizations(any(), any(), any())).thenReturn(DCInternetAuthorizationNWResponseFixture.whitDefault());
+        when(provider.getListAuthorizations(any(), any(), any())).thenReturn(DCInternetAuthorizationNWResponseFixture.withDefault());
         when(mapper.mapToInternetAuthorizationResponse(any())).thenReturn(expected);
 
         // Act
@@ -168,4 +176,66 @@ class DebitCardServiceTest {
         verify(provider).lockStatus(expectedRequest, new HashMap<>());
         verify(mapper).mapToLockStatusRequest(personId, cardId, request);
     }
+
+    @Test
+    void givenCreateAuthorizationOnlinePurchaseMWRequestWhenCreateAuthorizationOnlinePurchaseThenCreateAuthorizationOnlinePurchaseResponse() throws IOException {
+        // Arrange
+        String personId = "169494";
+        String cardId = "169494";
+        GenericResponse expected = GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.SUCCESS_CREATE);
+        CreateAuthorizationOnlinePurchaseRequest request = CreateAuthorizationOnlinePurchaseRequestFixture.withDefault();
+
+        Mockito.when(provider.createAuthorizationOnlinePurchase(Mockito.any(), Mockito.any())).thenReturn(CreateAuthorizationOnlinePurchaseMWResponseFixture.withDefault());
+        Mockito.when(mapper.mapToCreateAuthorizationOnlinePurchaseMWRequest(any(), any(),any(),any(),any())).thenReturn(CreateAuthorizationOnlinePurchaseMWRequestFixture.withDefault());
+
+        // Act
+        GenericResponse actual = service.createAuthorizationOnlinePurchase(personId, cardId, request, new HashMap<>());
+
+        //Assert
+        assertEquals(expected, actual);
+        Mockito.verify(provider).createAuthorizationOnlinePurchase(Mockito.any(), Mockito.any());
+        Mockito.verify(mapper).mapToCreateAuthorizationOnlinePurchaseMWRequest(any(),any(),any(),any(),any());
+    }
+
+    @Test
+    void givenCreateAuthorizationOnlinePurchaseMWRequestWhenCreateAuthorizationOnlinePurchaseThenErrorCreate() throws IOException {
+        // Arrange
+        String personId = "169494";
+        String cardId = "169494";
+        CreateAuthorizationOnlinePurchaseRequest request = CreateAuthorizationOnlinePurchaseRequestFixture.errorCreate();
+
+        // Act
+        try {
+            GenericResponse actual = service.createAuthorizationOnlinePurchase(personId, cardId, request, new HashMap<>());
+        } catch (GenericException ex) {
+            //Assert
+            assertEquals(ex.getCode(), DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getCode());
+            assertEquals(ex.getMessage(), DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getMessage());
+            assertEquals(ex.getStatus(), DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getHttpCode());
+
+        }
+
+    }
+
+    @Test
+    void givenCreateAuthorizationOnlinePurchaseMWRequestWhenCreateAuthorizationOnlinePurchaseThenErrorMW() throws IOException {
+        // Arrange
+        String personId = "169494";
+        String cardId = "169494";
+        GenericResponse expected = GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.ERROR_CREATE);
+        CreateAuthorizationOnlinePurchaseRequest request = CreateAuthorizationOnlinePurchaseRequestFixture.withDefault();
+
+        Mockito.when(provider.createAuthorizationOnlinePurchase(Mockito.any(), Mockito.any())).thenReturn(CreateAuthorizationOnlinePurchaseMWResponseFixture.errorMW());
+        Mockito.when(mapper.mapToCreateAuthorizationOnlinePurchaseMWRequest(any(),any(),any(),any(),any())).thenReturn(CreateAuthorizationOnlinePurchaseMWRequestFixture.withDefault());
+
+        // Act
+        GenericResponse actual = service.createAuthorizationOnlinePurchase(personId, cardId, request, new HashMap<>());
+
+        //Assert
+        assertEquals(expected, actual);
+        Mockito.verify(provider).createAuthorizationOnlinePurchase(Mockito.any(), Mockito.any());
+        Mockito.verify(mapper).mapToCreateAuthorizationOnlinePurchaseMWRequest(any(),any(),any(),any(),any());
+    }
+
+
 }

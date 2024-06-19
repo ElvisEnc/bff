@@ -1,10 +1,12 @@
 package bg.com.bo.bff.providers.mappings.debit.card;
 
+import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
 import bg.com.bo.bff.application.dtos.response.debit.card.AccountTD;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
+import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
@@ -25,6 +27,8 @@ public interface IDebitCardMapper {
     List<AccountTD> convertResponseAccountListTD(AccountsDebitCardMWResponse mwResponse);
 
     InternetAuthorizationResponse mapToInternetAuthorizationResponse(DCInternetAuthorizationNWResponse response);
+
+    CreateAuthorizationOnlinePurchaseMWRequest mapToCreateAuthorizationOnlinePurchaseMWRequest(CreateAuthorizationOnlinePurchaseRequest request, String cardId, Integer intInitial, Integer intFinal, String action);
 
     DCDetailResponse mapToDetailResponse(DCDetailMWResponse response);
 }

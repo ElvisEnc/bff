@@ -1,5 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
+import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequestFixture;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequestFixture;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
@@ -15,6 +17,7 @@ import bg.com.bo.bff.application.dtos.response.InternetAuthorizationResponseFixt
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.models.enums.middleware.debit.card.CreateAuthorizationOnlinePurchaseResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
 import bg.com.bo.bff.services.interfaces.IDebitCardService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -43,8 +46,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,6 +75,7 @@ class DebitCardControllerTest {
     private ObjectMapper objectMapper;
 
     private static String GET_LIST_AUTHORIZATIONS = "/api/v1/debit-cards/persons/{personId}/cards/{cardId}/authorizations";
+    private static String CREATE_AUTHORIZATION_ONLINE_PURCHASE = "/api/v1/debit-cards/persons/{personId}/cards/{cardId}/authorizations";
 
     @BeforeEach
     void setUp() {
@@ -197,6 +203,32 @@ class DebitCardControllerTest {
         // Assert
         assertEquals(response, actual);
         verify(service).getListAuthorizations(any(), any(), any());
+    }
+
+    @Test
+    void givenCreateAuthorizationOnlinePurchaseMWRequestWhenCreateAuthorizationOnlinePurchaseThenErrorCreate() throws Exception {
+        // Arrange
+        String personId = "169494";
+        String cardId = "123456";
+        GenericResponse expected = GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.SUCCESS_CREATE);
+        CreateAuthorizationOnlinePurchaseRequest request = CreateAuthorizationOnlinePurchaseRequestFixture.withDefault();
+        when(service.createAuthorizationOnlinePurchase(any(), any(), any(), any())).thenReturn(GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.SUCCESS_CREATE));
+
+        // Act
+        MvcResult result = mockMvc.perform(put(CREATE_AUTHORIZATION_ONLINE_PURCHASE, personId, cardId)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(Util.objectToString(request, false)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andReturn();
+
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+        // Assert
+        assertEquals(response, actual );
+        verify(service).createAuthorizationOnlinePurchase(any(), any(), any(),any());
     }
 
     @Test

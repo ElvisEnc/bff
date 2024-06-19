@@ -1,5 +1,6 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
@@ -9,17 +10,23 @@ import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
 import bg.com.bo.bff.providers.mappings.debit.card.IDebitCardMapper;
+import bg.com.bo.bff.providers.models.enums.middleware.debit.card.CreateAuthorizationOnlinePurchaseResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
 import bg.com.bo.bff.services.interfaces.IDebitCardService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +34,8 @@ import java.util.Map;
 public class DebitCardService implements IDebitCardService {
     private final IDebitCardProvider idcProvider;
     private final IDebitCardMapper idcMapper;
+
+    private static String ACTION_CREATE_AUTHORIZATION_ONLINE_PURCHASE = "A";
 
     public DebitCardService(IDebitCardProvider idcProvider, IDebitCardMapper idcMapper) {
         this.idcProvider = idcProvider;
@@ -61,6 +70,32 @@ public class DebitCardService implements IDebitCardService {
     public InternetAuthorizationResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameter) throws IOException {
         DCInternetAuthorizationNWResponse result = idcProvider.getListAuthorizations(personId, cardId, parameter);
         return idcMapper.mapToInternetAuthorizationResponse(result);
+    }
+
+    @Override
+    public GenericResponse createAuthorizationOnlinePurchase(String personId,
+                                                             String cardId,
+                                                             CreateAuthorizationOnlinePurchaseRequest request,
+                                                             Map<String, String> parameter) throws IOException {
+        LocalDate startPeriod =  LocalDate.parse(request.getPeriod().getStart());
+        LocalDate endPeriod =  LocalDate.parse(request.getPeriod().getEnd());
+
+        if(endPeriod.isBefore(startPeriod)){
+            throw new GenericException(DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getMessage(),
+                    DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getHttpCode(),
+                    DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getCode());
+        }
+
+        CreateAuthorizationOnlinePurchaseMWRequest requestMW = idcMapper.mapToCreateAuthorizationOnlinePurchaseMWRequest(request,cardId,
+                startPeriod.getDayOfMonth(),
+                endPeriod.getDayOfMonth(),
+                ACTION_CREATE_AUTHORIZATION_ONLINE_PURCHASE);
+
+        CreateAuthorizationOnlinePurchaseMWResponse result = idcProvider.createAuthorizationOnlinePurchase(requestMW, parameter);
+         if(result.getData().getIdPci() != null){
+             return GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.SUCCESS_CREATE);
+         }
+        return GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.ERROR_CREATE);
     }
 
     @Override

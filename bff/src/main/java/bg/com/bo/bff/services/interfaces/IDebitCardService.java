@@ -1,5 +1,6 @@
 package bg.com.bo.bff.services.interfaces;
 
+import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
@@ -22,6 +23,8 @@ public interface IDebitCardService {
     ListAccountTDResponse getAccountsTD(Integer personId, Integer cardId, Map<String, String> parameter) throws IOException;
 
     InternetAuthorizationResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameter) throws IOException;
+
+    GenericResponse createAuthorizationOnlinePurchase(String personId, String cardId, CreateAuthorizationOnlinePurchaseRequest request, Map<String, String> parameter) throws IOException;
 
     DCDetailResponse detail(String personId, String cardId, Map<String, String> parameter) throws IOException ;
 

@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.commons.enums.AppCodeResponseNet;
 import bg.com.bo.bff.commons.enums.CanalMW;
@@ -8,11 +9,13 @@ import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCLimitsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
@@ -118,5 +121,18 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
         } else {
             return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_UPDATE_STATUS_LOCK);
         }
+    }
+    @Override
+    public CreateAuthorizationOnlinePurchaseMWResponse createAuthorizationOnlinePurchase(CreateAuthorizationOnlinePurchaseMWRequest request, Map<String, String> parameter) throws IOException  {
+        String url = String.format("%s%s%s",middlewareConfig.getUrlBase(),ProjectNameMW.DEBIT_CARD_MANAGER.getName(),DebitCardMiddlewareServices.CREATE_AUTHORIZATION_ONLINE_PURCHASE.getServiceURL());
+
+        Header[] headers = {
+                new BasicHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal()),
+                new BasicHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal()),
+                new BasicHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName()),
+                new BasicHeader(DeviceMW.DEVICE_ID.getCode(), parameter.get(DeviceMW.DEVICE_ID.getCode())),
+                new BasicHeader(DeviceMW.DEVICE_IP.getCode(), parameter.get(DeviceMW.DEVICE_IP.getCode()))
+        };
+        return patch(url, headers, request, CreateAuthorizationOnlinePurchaseMWResponse.class);
     }
 }

@@ -3,7 +3,7 @@ package bg.com.bo.bff.providers.dtos.response.debit.card;
 import java.util.List;
 
 public class DCInternetAuthorizationNWResponseFixture {
-    public static DCInternetAuthorizationNWResponse whitDefault(){
+    public static DCInternetAuthorizationNWResponse withDefault(){
         DCInternetAuthorizationNW dcInternetAuthorizationNW = DCInternetAuthorizationNW.builder()
                 .status("VIGENTE")
                 .type("TEMPORAL")

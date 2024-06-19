@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.mappings.debit.card;
 
+import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsPeriod;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
@@ -9,6 +10,7 @@ import bg.com.bo.bff.application.dtos.response.debitcard.DCInternetAuthorization
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.commons.enums.debit.card.StatusType;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
@@ -88,6 +90,24 @@ public class DebitCardMapper implements IDebitCardMapper {
         return InternetAuthorizationResponse.builder()
                 .data(result)
                 .build();
+    }
+
+    @Override
+    public CreateAuthorizationOnlinePurchaseMWRequest mapToCreateAuthorizationOnlinePurchaseMWRequest(CreateAuthorizationOnlinePurchaseRequest request,
+                                                                                                      String cardId,
+                                                                                                      Integer intInitial,
+                                                                                                      Integer intFinal,
+                                                                                                      String action) {
+        return CreateAuthorizationOnlinePurchaseMWRequest.builder()
+                .idPci(cardId)
+                .action(action)
+                .initialDate(request.getPeriod().getStart())
+                .finalDate(request.getPeriod().getEnd())
+                .amount(request.getAmount())
+                .intInitial(intInitial)
+                .intFinal(intFinal)
+                .build();
+
     }
 
     @Override

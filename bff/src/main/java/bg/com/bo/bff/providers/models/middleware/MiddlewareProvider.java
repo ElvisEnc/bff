@@ -108,6 +108,10 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
         return executeRequest(new HttpPatch(url), headers, requestBody, classType);
     }
 
+    protected <E, R> E put(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
+        return executeRequest(new HttpPut(url), headers, requestBody, classType);
+    }
+
     private <E, R> E executeRequest(HttpUriRequest request, Header[] headers, R requestBody, Class<E> classType) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
