@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Builder
 public class UpdateDataPerson {
@@ -15,16 +13,13 @@ public class UpdateDataPerson {
     private String coordinates;
 
     @JsonProperty("ZONA")
-    private String zone;
+    private int zone;
 
-    @JsonProperty("NOMBRECOMPLETO")
-    private String fullName;
-
-    @JsonProperty("OFICINA")
-    private String office;
+    @JsonProperty("TELEFONOS")
+    private String phones;
 
     @JsonProperty("COD_DEPARTAMENTO")
-    private String departmentCode;
+    private int departmentCode;
 
     @JsonProperty("EMAIL")
     private String email;
@@ -35,9 +30,6 @@ public class UpdateDataPerson {
     @JsonProperty("BARRIOZONA")
     private String neighborhood;
 
-    @JsonProperty("FECHAACTUALIZACION")
-    private String updateDate;
-
     @JsonProperty("DEPARTAMENTO")
     private String department;
 
@@ -45,7 +37,7 @@ public class UpdateDataPerson {
     private String city;
 
     @JsonProperty("COD_CIUDAD")
-    private String cityCode;
+    private int cityCode;
 
     @JsonProperty("NOMBRE_CONYUGUE")
     private String spouseName;
@@ -54,7 +46,7 @@ public class UpdateDataPerson {
     private String bankEmployee;
 
     @JsonProperty("COD_BARRIO")
-    private String neighborhoodCode;
+    private int neighborhoodCode;
 
     @JsonProperty("APARTAMENTO")
     private String apartment;
@@ -62,14 +54,8 @@ public class UpdateDataPerson {
     @JsonProperty("REFERENCIADOMICILIO")
     private String homeReference;
 
-    @JsonProperty("TELEFONOS")
-    private String phones;
-
-    @JsonProperty("FECHAULTACTUALIZACION")
-    private String lastUpdateDate;
-
     @JsonProperty("CELULAR")
-    private String cellphone;
+    private String mobile;
 
     @JsonProperty("USA_APELLIDOESPOSO")
     private String usesSpouseLastName;
@@ -81,7 +67,7 @@ public class UpdateDataPerson {
     private String doorNumber;
 
     @JsonProperty("ACTIVIDAD_ECONOMICA")
-    private String economicActivity;
+    private int economicActivity;
 
     @JsonProperty("ESTADOCIVIL")
     private String maritalStatus;
@@ -90,10 +76,10 @@ public class UpdateDataPerson {
     private String floor;
 
     @JsonProperty("COD_CALLE")
-    private String streetCode;
+    private int streetCode;
 
     @JsonProperty("NIVEL_INGRESOS")
-    private String incomeLevel;
+    private int incomeLevel;
 
     @JsonProperty("FUENTE_INGRESO")
     private String incomeSource;

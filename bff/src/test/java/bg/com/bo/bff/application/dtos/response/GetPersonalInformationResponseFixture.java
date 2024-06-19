@@ -43,7 +43,7 @@ public class GetPersonalInformationResponseFixture {
                         .dictrict("dictrict")
                         .department("department")
                         .floor(2)
-                        .GPS("GPS")
+                        .gps("GPS")
                         .build())
                 .references(Collections.singletonList(PersonalDetail.Reference.builder()
                         .name("name")

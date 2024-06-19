@@ -12,17 +12,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PersonalReferences {
-    @JsonProperty("TELEFONOS")
-    private String phones;
-    @JsonProperty("TIPOREFERENCIA")
-    private String referenceType;
-    @JsonProperty("ORDINAL")
-    private String ordinal;
-    @JsonProperty("TIPO_PERSONA")
-    private String persontype;
+
     @JsonProperty("NOMBRE")
     private String name;
+
+    @JsonProperty("TELEFONOS")
+    private String phone;
+
     @JsonProperty("RELACION")
-    private String relationship;
+    private int relation;
+
+    @JsonProperty("TIPOREFERENCIA")
+    private String referenceType;
+
+    @JsonProperty("TIPO_PERSONA")
+    private String personType;
+
+    @JsonProperty("ORDINAL")
+    private int ordinal;
 
 }

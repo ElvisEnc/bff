@@ -77,6 +77,9 @@ public class PersonalDetail {
         @Schema(description="Código de barrio", example = "2")
         private Integer neighborhoodCode;
 
+        @Schema(description="Barrio Zona", example = "Calacoto")
+        private String neighborhood;
+
         @Schema(description="Código de calle", example = "3")
         private Integer streetCode;
 
@@ -117,7 +120,7 @@ public class PersonalDetail {
         private Integer floor;
 
         @Schema(description = "Coordenadas GPS", example = "40.7128,-74.0060")
-        private String GPS;
+        private String gps;
     }
 
     @Data

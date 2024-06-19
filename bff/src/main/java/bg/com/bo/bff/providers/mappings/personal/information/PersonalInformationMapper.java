@@ -74,7 +74,8 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                             .address(clientData.getNeighborhood())
                             .department(clientData.getDepartment())
                             .floor(clientData.getFloor())
-                            .GPS(clientData.getCoordinates())
+                            .gps(clientData.getCoordinates())
+                            .neighborhood(clientData.getNeighborhood())
                             .build());
         }
         if (!response.getDataContent().getEconomicActivities().isEmpty()) {
@@ -176,23 +177,22 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
         List<ClientData> oldData = personalInformation.getDataContent().getClientDataList();
 
         UpdateDataPerson newData = UpdateDataPerson.builder()
-                .coordinates(request.getPersonalData().getGps())
+                .coordinates(request.getPersonalData().getGPS())
                 .zone(request.getPersonalData().getZone())
-                .cityCode(request.getPersonalData().getSection())
+                .cityCode(request.getPersonalData().getCityCode())
                 .departmentCode(request.getPersonalData().getDepartmentCode())
                 .email(request.getPersonalData().getEmail())
-                .usesSpouseLastName(request.getMaritalStatus().getUsesSpouseLastName())
-                .husbandLastName(request.getMaritalStatus().getSpouseLastName())
-                .neighborhood(request.getPersonalData().getZone())
+                .usesSpouseLastName(request.getMaritalStatus().getHasHusbandLastName())
+                .husbandLastName(request.getMaritalStatus().getHusbandLastName())
+                .neighborhood(request.getPersonalData().getNeighborhood())
                 .city(request.getPersonalData().getDictrict())
                 .spouseName(request.getMaritalStatus().getSpouseName()!= null ? request.getMaritalStatus().getSpouseName():"") //TODO por confirmar con Kevin
                 .bankEmployee(request.getPersonalData().getBankEmployee())
-                .neighborhoodCode(request.getPersonalData().getNeighborhoodCode() == null? request.getPersonalData().getNeighborhoodCode():"0")
-                .apartment(request.getPersonalData().getApartment())
+                .neighborhoodCode(request.getPersonalData().getNeighborhoodCode())
+                .apartment(request.getPersonalData().getApartmentDescription())
                 .homeReference(request.getPersonalData().getHomeReference())
-                .phones(request.getPersonalData().getTelephoneNumber())
-                .cellphone(request.getPersonalData().getCellphone())
-                .usesSpouseLastName(request.getMaritalStatus().getUsesSpouseLastName())
+                .phones(request.getPersonalData().getPhones())
+                .mobile(request.getPersonalData().getCellPhoneNumber())
                 .street(request.getPersonalData().getAddress())
                 .doorNumber(request.getPersonalData().getDoorNumber())
                 .economicActivity(request.getEconomicalActivity().getEconomicActivity())
@@ -201,7 +201,7 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                 .company(request.getEconomicalActivity().getCompany())
                 .position(request.getEconomicalActivity().getPosition())
                 .incomeLevel(request.getEconomicalActivity().getIncomeLevel())
-                .incomeSource("D")
+                .incomeSource(request.getEconomicalActivity().getType())
                 .referenceName(personalInformation.getDataContent().getReferences().get(0).getName())
                 .referencePhone(personalInformation.getDataContent().getReferences().get(0).getPhone())
                 .ordinal(personalInformation.getDataContent().getReferences().get(0).getOrdinal())
@@ -211,12 +211,12 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
 
         List<PersonalReferences> personalReferences = request.getReferences().stream().map(x ->
                 PersonalReferences.builder()
-                        .phones(x.getPhones())
+                        .phone(x.getTelephone())
                         .referenceType(x.getReferenceType())
                         .ordinal(x.getOrdinal())
-                        .persontype(x.getPersonType())
+                        .personType(x.getPersonType())
                         .name(x.getName())
-                        .relationship(x.getRelationship())
+                        .relation(x.getRelationship())
                         .build()
 
         ).toList();
