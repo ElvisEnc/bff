@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,6 +33,7 @@ public class UpdatePersonalDetail {
 
         @Schema(description = "Usa el nombre del esposo", example = "S o N", requiredMode = Schema.RequiredMode.REQUIRED)
         @Pattern(regexp = "^[SN]$", message = "El campo usa apellido del esposo solo puede tener los valores S or N,")
+        @NotBlank(message = "El campo usa apellido del esposo no puede estar vacion")
         private String hasHusbandLastName;
 
 
@@ -43,6 +45,8 @@ public class UpdatePersonalDetail {
     @NoArgsConstructor
     public static class EconomicalActivity {
         @Schema(description = "Tipo de actividad económica", example = "P")
+        @NotBlank(message ="Tipo de actividad económica no puede estar vacio" )
+        @Size(min = 1, max = 100, message = "El Tipo de actividad solo debe tener un caracter")
         private String type;
 
         @Schema(description = "Nombre de la empresa", example = "Empresa S.A.")
@@ -109,7 +113,7 @@ public class UpdatePersonalDetail {
 
 
         @Schema(description = "Coordenadas GPS", example = "40.7128,-74.0060")
-        private String GPS;
+        private String gps;
 
         @Schema(description = "Referencia de domicilio", example = "A una cuadra del teleferico")
         private String homeReference;
@@ -154,18 +158,12 @@ public class UpdatePersonalDetail {
         @Schema(description = "Teléfono de la referencia", example = "987654321")
         private String telephone;
 
-        @Schema(description = "Tipo de referencia", example = "P")
-        private String referenceType;
-
         @Schema(description = "Ordinal de referencia", example = "1")
         @Min(value = 0, message = "Ordinal de referencia debe sera mayor a 0")
         private int ordinal;
 
-        @Schema(description = "Tipo de persona", example = "F")
-        private String personType;
-
         @Schema(description = "Relacion personal", example = "2")
-        @Min(value = 0, message = "La Relación personal debe sera mayor a 0")
+        @Min(value = 0, message = "La Relación personal debe sera mayor o igual a 0")
         private int relationship;
     }
 }

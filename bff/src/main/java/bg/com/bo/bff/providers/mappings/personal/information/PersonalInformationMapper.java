@@ -10,7 +10,6 @@ import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
-import bg.com.bo.bff.providers.dtos.request.personal.information.PersonalReferences;
 import bg.com.bo.bff.providers.dtos.request.personal.information.UpdateDataPerson;
 import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
@@ -175,7 +174,7 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
         List<ClientData> oldData = personalInformation.getDataContent().getClientDataList();
 
         UpdateDataPerson newData = UpdateDataPerson.builder()
-                .coordinates(request.getPersonalData().getGPS())
+                .coordinates(request.getPersonalData().getGps())
                 .zone(request.getPersonalData().getZone())
                 .cityCode(request.getPersonalData().getCityCode())
                 .departmentCode(request.getPersonalData().getDepartmentCode())
@@ -200,24 +199,19 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                 .position(request.getEconomicalActivity().getPosition())
                 .incomeLevel(request.getEconomicalActivity().getIncomeLevel())
                 .incomeSource(request.getEconomicalActivity().getType())
-                .referenceName(personalInformation.getDataContent().getReferences().get(0).getName())
-                .referencePhone(personalInformation.getDataContent().getReferences().get(0).getPhone())
-                .ordinal(personalInformation.getDataContent().getReferences().get(0).getOrdinal())
-                .relationship(personalInformation.getDataContent().getReferences().get(0).getRelation())
                 .build();
 
-
-        List<PersonalReferences> personalReferences = request.getReferences().stream().map(x ->
-                PersonalReferences.builder()
-                        .phone(x.getTelephone())
-                        .referenceType(x.getReferenceType())
-                        .ordinal(x.getOrdinal())
-                        .personType(x.getPersonType())
-                        .name(x.getName())
-                        .relation(x.getRelationship())
-                        .build()
-
-        ).toList();
+        if (request.getReference() == null) {
+            newData.setReferenceName(personalInformation.getDataContent().getReferences().get(0).getName());
+            newData.setReferencePhone(personalInformation.getDataContent().getReferences().get(0).getPhone());
+            newData.setOrdinal(personalInformation.getDataContent().getReferences().get(0).getOrdinal());
+            newData.setRelationship(personalInformation.getDataContent().getReferences().get(0).getRelation());
+        }else {
+            newData.setReferenceName(request.getReference().getName());
+            newData.setReferencePhone(request.getReference().getTelephone());
+            newData.setOrdinal(request.getReference().getOrdinal());
+            newData.setRelationship(request.getReference().getRelationship());
+        }
 
         return UpdatePersonalInformationNetRequest.builder()
                 .sessionNumber(NUMBER_SESSION)
@@ -225,8 +219,6 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                 .personId(personId)
                 .newData(newData)
                 .oldData(oldData)
-                .personalReferences(personalReferences)
                 .build();
-
     }
 }

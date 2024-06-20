@@ -123,8 +123,14 @@ public enum AppError {
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "Error en los parametros"),
     MDWACM_012(HttpStatus.BAD_REQUEST, "DATA_INVALID", "MDWACM-012", "Datos Invalidos"),
     MDWACM_027(HttpStatus.BAD_REQUEST, "DATA_INVALID", "MDWACM-027", "Error cantidad de limites maximo"),
+
+    DEFAULT(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "DEFAULT", "Error interno"),
+
+    //Usuarios
     NOT_ACCEPTABLE_UPDATE_PERSONAL_INFORMATION(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "NOT_ACCEPTABLE", "Los datos solo se pueden actulizar unsa sola vez por día"),
-    DEFAULT(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "DEFAULT", "Error interno");
+    VALIDATE_MARRIED_PERSON(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "EL nombre del conyuge no puede estar vacio"),
+    VALIDATE_MARRIED_AND_USE_HUSBAND_LAST_NAME_PERSON(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "El apellido del conyuge no puede estar vacio"),
+    REFERENCE_INVALID(HttpStatus.BAD_REQUEST, "BAD_REQUEST","BAD_REQUEST" , "Los datos de la referencia estan incompletos");
 
     private final HttpStatus httpCode;
     private final String code;
