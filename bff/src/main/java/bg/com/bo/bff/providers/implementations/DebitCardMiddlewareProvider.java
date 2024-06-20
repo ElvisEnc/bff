@@ -9,6 +9,7 @@ import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DCAccountsOrderMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.*;
@@ -141,5 +142,17 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
                 new BasicHeader(DeviceMW.DEVICE_IP.getCode(), parameter.get(DeviceMW.DEVICE_IP.getCode()))
         };
         return patch(url, headers, request, CreateAuthorizationOnlinePurchaseMWResponse.class);
+    }
+
+    @Override
+    public GenericResponse modifyAccountsOrder(DCAccountsOrderMWRequest requestMW, Map<String, String> parameters) throws IOException {
+        String url = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.MODIFY_ACCOUNTS_ORDER.getServiceURL();
+        Header[] headers = setHeaders(parameters);
+        DCAccountsOrderMWResponse response = patch(url, headers, requestMW, DCAccountsOrderMWResponse.class);
+        if (response.getData().getPciId() != null) {
+            return GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_MODIFY_ACCOUNTS_ORDER);
+        } else {
+            return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_MODIFY_ACCOUNTS_ORDER);
+        }
     }
 }

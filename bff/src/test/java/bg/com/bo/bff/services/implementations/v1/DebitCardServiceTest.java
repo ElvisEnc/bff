@@ -10,11 +10,7 @@ import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationRe
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponseFixture;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequestFixture;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponseFixture;
@@ -247,5 +243,28 @@ class DebitCardServiceTest {
         assertEquals(expected, actual);
         Mockito.verify(provider).createAuthorizationOnlinePurchase(Mockito.any(), Mockito.any());
         Mockito.verify(mapper).mapToCreateAuthorizationOnlinePurchaseMWRequest(any(),any(),any(),any(),any());
+    }
+
+    @Test
+    void givenValidDataWhenModifyAccountsOrderThenReturnGenericResponse() throws IOException {
+        // Arrange
+        String personId = "169494";
+        String cardId = "169494";
+        DCAccountsOrderRequest request = DCAccountsOrderRequestFixture.withDefault();
+        DCAccountsOrderMWRequest expectedRequest = DebitCardMWRequestFixture.withDefaultAccountsOrder();
+
+        GenericResponse expected = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_MODIFY_ACCOUNTS_ORDER);
+
+        when(provider.modifyAccountsOrder(Mockito.any(), Mockito.any())).thenReturn(expected);
+        when(mapper.mapToAccountsOrderRequest(personId, cardId, request)).thenReturn(expectedRequest);
+
+        // Act
+        GenericResponse response = service.modifyAccountsOrder(personId, cardId, request, new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).modifyAccountsOrder(expectedRequest, new HashMap<>());
+        verify(mapper).mapToAccountsOrderRequest(personId, cardId, request);
     }
 }

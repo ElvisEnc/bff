@@ -25,6 +25,7 @@ import bg.com.bo.bff.providers.interfaces.IQRProvider;
 import bg.com.bo.bff.providers.interfaces.IQrTransactionProvider;
 import bg.com.bo.bff.providers.mappings.qr.IQrMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.qr.QRMiddlewareError;
+import bg.com.bo.bff.providers.models.enums.middleware.qr.QRTransactionMiddlewareError;
 import bg.com.bo.bff.services.interfaces.IQrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -127,6 +129,12 @@ public class QrService implements IQrService {
     @Override
     public QRPaymentMWResponse qrPayment(QRPaymentRequest request, String personId, String accountId, Map<String, String> parameter) throws IOException {
         QRPaymentMWRequest requestMW = iQrMapper.convert(request, personId, accountId);
-        return this.qrTransactionProvider.qrPayment(requestMW, parameter);
+        QRPaymentMWResponse result = this.qrTransactionProvider.qrPayment(requestMW, parameter);
+        if (!Objects.equals(result.getData().getStatus(), "PENDING")) {
+            return result;
+        } else {
+            QRTransactionMiddlewareError error = QRTransactionMiddlewareError.MDWGQM_PENDING;
+            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+        }
     }
 }

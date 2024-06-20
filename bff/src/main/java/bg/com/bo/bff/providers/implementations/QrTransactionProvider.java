@@ -27,13 +27,10 @@ public class QrTransactionProvider extends MiddlewareProvider<QRTransactionMiddl
         super(ProjectNameMW.QR_TRANSACTION_MANAGER, QRTransactionMiddlewareError.class, tokenMiddlewareProvider, middlewareConfig, httpClientFactory, middlewareConfig.getClientQrTransactionManager());
     }
 
-
-
     @Override
     public QRPaymentMWResponse qrPayment(QRPaymentMWRequest requestMW, Map<String, String> parameters) throws IOException {
         String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.QR_TRANSACTION_MANAGER.getName(), QRTransactionMiddlewareServices.QR_PAYMENT.getServiceURL());
         Header[] headers =setHeaders(parameters);
-
         return post(url, headers,requestMW, QRPaymentMWResponse.class);
     }
 

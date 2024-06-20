@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCAccountsOrderRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
@@ -211,6 +212,31 @@ public class DebitCardController {
             @Valid @RequestBody CreateAuthorizationOnlinePurchaseRequest request
     ) throws IOException {
         return ResponseEntity.ok(service.createAuthorizationOnlinePurchase(personId, cardId, request, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion)));
+    }
+
+    @Operation(summary = "Modificar Orden de cuentas", description = "Modifica el orden de cuentas asociadas a una tarjeta de débito.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PatchMapping("/persons/{personId}/cards/{cardId}/accounts")
+    public ResponseEntity<GenericResponse> modifyAccountsOrder(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("cardId") @NotBlank @Parameter(description = "Este es el pciId de la tarjeta", example = "12345") String cardId,
+            @Valid @RequestBody DCAccountsOrderRequest body
+    ) throws IOException {
+        return ResponseEntity.ok(service.modifyAccountsOrder(personId, cardId, body, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,

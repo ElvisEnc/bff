@@ -410,4 +410,61 @@ class DebitCardMiddlewareProviderTest {
         // Assert
         assertNotNull(actual);
     }
+
+    @Test
+    void givenValidDataWhenModifyAccountsOrderThenExpectResponse() throws IOException {
+        // Arrange
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.withDefaultAccountsOrder());
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = debitCardMiddlewareProvider.modifyAccountsOrder(
+                DebitCardMWRequestFixture.withDefaultAccountsOrder(), map
+        );
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_MODIFY_ACCOUNTS_ORDER));
+    }
+
+    @Test
+    void givenInternalErrorWhenModifyAccountsOrderThenRuntimeException() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
+
+        // Act
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            debitCardMiddlewareProvider.modifyAccountsOrder(DebitCardMWRequestFixture.withDefaultAccountsOrder(), map);
+        });
+
+        // Assert
+        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void givenErrorMiddlewareWhenModifyAccountsOrderThenGenericException() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
+                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
+                        .code("BAD_REQUEST")
+                        .description("BAD_REQUEST")
+                        .build()))
+                .build();
+        stubFor(patch(anyUrl()).willReturn(aResponse()
+                .withStatus(406)
+                .withBody(Util.objectToString(errorMiddlewareProvider))));
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            debitCardMiddlewareProvider.modifyAccountsOrder(DebitCardMWRequestFixture.withDefaultAccountsOrder(), map);
+        });
+
+        // Assert
+        assertEquals("BAD_REQUEST", exception.getCode());
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
 }

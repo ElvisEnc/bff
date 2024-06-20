@@ -46,7 +46,8 @@ public enum QRTransactionMiddlewareError implements IMiddlewareError {
     MDWQTM_034(HttpStatus.BAD_REQUEST, "ERROR_ACCOUNTS_PERSON","MDWQTM-034","No se puede procesar la transacción para la cuenta de origen"),
     MDWQTM_035(HttpStatus.BAD_REQUEST, "ERROR_POWER_OLD","MDWQTM-035","La transacción no puede ser procesada, para verificar en poderes"),
     MDWQTM_036(HttpStatus.BAD_REQUEST, "NOT_URL_INVALID","MDWQTM-036","URL inválida"),
-    MDWQTM_037(HttpStatus.BAD_REQUEST, "ERROR_DUE_DATE","MDWQTM-037","No se puede procesar la transacción para la fecha de vencimiento");
+    MDWQTM_037(HttpStatus.BAD_REQUEST, "ERROR_DUE_DATE","MDWQTM-037","No se puede procesar la transacción para la fecha de vencimiento"),
+    MDWGQM_PENDING(HttpStatus.OK, "TRANSFER_PENDING", "MDWPGL-PENDING", "La transferencia está pendiente de aprobación por el titular. Por favor, espera la confirmación");
 
     private final HttpStatus httpCode;
     private final String code;

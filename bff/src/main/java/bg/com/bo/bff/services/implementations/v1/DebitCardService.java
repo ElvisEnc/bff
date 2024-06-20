@@ -1,6 +1,7 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCAccountsOrderRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
@@ -12,6 +13,7 @@ import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationRe
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DCAccountsOrderMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
@@ -112,5 +114,11 @@ public class DebitCardService implements IDebitCardService {
     public GenericResponse lockStatus(String personId, String cardId, DCLockStatusRequest request, Map<String, String> parameters) throws IOException {
         DCLockStatusMWRequest requestMW = idcMapper.mapToLockStatusRequest(personId, cardId, request);
         return idcProvider.lockStatus(requestMW, parameters);
+    }
+
+    @Override
+    public GenericResponse modifyAccountsOrder(String personId, String cardId, DCAccountsOrderRequest body, Map<String, String> parameters) throws IOException {
+        DCAccountsOrderMWRequest requestMW = idcMapper.mapToAccountsOrderRequest(personId, cardId, body);
+        return idcProvider.modifyAccountsOrder(requestMW, parameters);
     }
 }

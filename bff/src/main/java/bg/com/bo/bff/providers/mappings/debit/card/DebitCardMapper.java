@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.mappings.debit.card;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCAccountsOrderRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsPeriod;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
@@ -9,6 +10,7 @@ import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
 import bg.com.bo.bff.application.dtos.response.debitcard.DCInternetAuthorization;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.commons.enums.debit.card.StatusType;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DCAccountsOrderMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
@@ -45,6 +47,29 @@ public class DebitCardMapper implements IDebitCardMapper {
                 .personId(personId)
                 .lockStatus(String.valueOf(request.getType()))
                 .comment(StatusType.getDescriptionByCode(String.valueOf(request.getType())))
+                .build();
+    }
+
+    @Override
+    public DCAccountsOrderMWRequest mapToAccountsOrderRequest(String personId, String cardId, DCAccountsOrderRequest request) {
+        List<DCAccountsOrderRequest.Account> accounts = request.getData();
+        String[] accountIds = new String[4];
+
+        for (int i = 0; i < accountIds.length; i++) {
+            if (i < accounts.size()) {
+                accountIds[i] = String.valueOf(accounts.get(i).getAccountNumber());
+            } else {
+                accountIds[i] = "0";
+            }
+        }
+
+        return DCAccountsOrderMWRequest.builder()
+                .accountId1(accountIds[0])
+                .accountId2(accountIds[1])
+                .accountId3(accountIds[2])
+                .accountId4(accountIds[3])
+                .pciId(cardId)
+                .personId(personId)
                 .build();
     }
 

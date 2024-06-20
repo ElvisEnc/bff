@@ -2,6 +2,7 @@ package bg.com.bo.bff.providers.interfaces;
 
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DCAccountsOrderMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.*;
@@ -30,4 +31,6 @@ public interface IDebitCardProvider {
     DCDetailMWResponse detail(String personId, String cardId, Map<String, String> parameters) throws IOException;
 
     GenericResponse lockStatus(DCLockStatusMWRequest requestMW, Map<String, String> parameters) throws IOException;
+
+    GenericResponse modifyAccountsOrder(DCAccountsOrderMWRequest requestMW, Map<String, String> parameters) throws IOException;
 }

@@ -1,12 +1,14 @@
 package bg.com.bo.bff.providers.mappings.debit.card;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCAccountsOrderRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
 import bg.com.bo.bff.application.dtos.response.debit.card.AccountTD;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.DCAccountsOrderMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
@@ -22,6 +24,8 @@ public interface IDebitCardMapper {
     DCLimitsMWRequest mapToLimitsRequest(DCLimitsRequest request, String personId, String cardId);
 
     DCLockStatusMWRequest mapToLockStatusRequest(String personId, String cardId, DCLockStatusRequest request);
+
+    DCAccountsOrderMWRequest mapToAccountsOrderRequest(String personId, String cardId, DCAccountsOrderRequest request);
 
     List<DebitCard> convertResponseListDebitCard(ListDebitCardMWResponse listDebitCardMWResponse);
 

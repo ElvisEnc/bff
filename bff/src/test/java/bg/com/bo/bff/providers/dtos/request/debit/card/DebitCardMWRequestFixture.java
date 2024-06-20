@@ -21,4 +21,16 @@ public class DebitCardMWRequestFixture {
                 .comment("comment")
                 .build();
     }
+
+    public static DCAccountsOrderMWRequest withDefaultAccountsOrder() {
+        return DCAccountsOrderMWRequest.builder()
+                .pciId("1")
+                .personId("1")
+                .accountId1("1234567890")
+                .accountId2("1234567890")
+                .accountId3("1234567890")
+                .accountId4("1234567890")
+                .build();
+    }
+
 }

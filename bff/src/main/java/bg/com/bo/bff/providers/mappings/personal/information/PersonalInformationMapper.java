@@ -42,7 +42,6 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
     @Override
     public PersonalResponse convertRequest(PersonalInformationNetResponse response) {
         PersonalResponse.PersonalResponseBuilder builder = PersonalResponse.builder();
-        EconomyActivity economicActivity = null;
         ClientData clientData = null;
         if (!response.getDataContent().getClientDataList().isEmpty()) {
             clientData = response.getDataContent().getClientDataList().get(0);
@@ -79,14 +78,13 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                             .build());
         }
         if (!response.getDataContent().getEconomicActivities().isEmpty()) {
-            economicActivity = response.getDataContent().getEconomicActivities().get(0);
-            assert clientData != null;
+            EconomyActivity economicActivity = response.getDataContent().getEconomicActivities().get(0);
             builder.economicalActivity(PersonalDetail.EconomicalActivity.builder()
                     .type(economicActivity.getIncomeSource())
                     .company(economicActivity.getCompany())
                     .position(economicActivity.getPosition())
-                    .incomeLevel(clientData.getIncomeLevel())
-                    .economicActivity(clientData.getEconomicActivity())
+                    .incomeLevel(clientData != null ? clientData.getIncomeLevel() : "")
+                    .economicActivity(clientData != null ? clientData.getEconomicActivity() : 0)
                     .build());
         }
 
@@ -186,7 +184,7 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                 .husbandLastName(request.getMaritalStatus().getHusbandLastName())
                 .neighborhood(request.getPersonalData().getNeighborhood())
                 .city(request.getPersonalData().getDictrict())
-                .spouseName(request.getMaritalStatus().getSpouseName()!= null ? request.getMaritalStatus().getSpouseName():"") //TODO por confirmar con Kevin
+                .spouseName(request.getMaritalStatus().getSpouseName() != null ? request.getMaritalStatus().getSpouseName() : "") //TODO por confirmar con Kevin
                 .bankEmployee(request.getPersonalData().getBankEmployee())
                 .neighborhoodCode(request.getPersonalData().getNeighborhoodCode())
                 .apartment(request.getPersonalData().getApartmentDescription())

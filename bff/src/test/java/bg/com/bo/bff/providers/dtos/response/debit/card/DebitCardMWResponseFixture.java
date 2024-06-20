@@ -34,4 +34,12 @@ public class DebitCardMWResponseFixture {
                 .build();
     }
 
+    public static DCAccountsOrderMWResponse withDefaultAccountsOrder() {
+        return DCAccountsOrderMWResponse.builder()
+                .data(DCAccountsOrderMWResponse.AccountsData.builder()
+                        .pciId(1)
+                        .build()
+                )
+                .build();
+    }
 }
