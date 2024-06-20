@@ -195,9 +195,9 @@ public class DebitCardController {
                 appVersion)));
     }
 
-    @Operation(summary = "Actualizar Seguro", description = "Activa o Desactiva el seguro de la tarjeta de débito")
+    @Operation(summary = "Activar Seguro", description = "Activa el seguro de la tarjeta de débito")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Actualización del seguro", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Activación del seguro", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "406", description = "Errores de negocio", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
