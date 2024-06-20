@@ -49,7 +49,7 @@ public class DebitCardMapper implements IDebitCardMapper {
 
         for (int i = 0; i < accountIds.length; i++) {
             if (i < accounts.size()) {
-                accountIds[i] = String.valueOf(accounts.get(i).getAccountNumber());
+                accountIds[i] = String.valueOf(accounts.get(i).getAccountId());
             } else {
                 accountIds[i] = "0";
             }

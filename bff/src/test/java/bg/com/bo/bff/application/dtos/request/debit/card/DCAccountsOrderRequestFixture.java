@@ -6,7 +6,7 @@ public class DCAccountsOrderRequestFixture {
     public static DCAccountsOrderRequest withDefault() {
         return DCAccountsOrderRequest.builder()
                 .data(List.of(DCAccountsOrderRequest.Account.builder()
-                        .accountNumber("1234567890")
+                        .accountId("1234567890")
                         .build()))
                 .build();
     }

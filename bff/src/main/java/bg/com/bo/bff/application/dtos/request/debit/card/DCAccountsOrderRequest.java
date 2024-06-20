@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +13,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-
 
 @Data
 @Builder
@@ -36,6 +36,7 @@ public class DCAccountsOrderRequest {
 
         @Schema(example = "1234567890", description = "Numeró de la cuenta asociada")
         @NotNull(message = "El número de la cuenta es obligatorio")
-        private String accountNumber;
+        @Pattern(regexp = "^[1-9]\\d*$", message = "El número de la cuenta debe ser un número positivo")
+        private String accountId;
     }
 }
