@@ -11,9 +11,7 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DebitCardMWRequestFixture;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.*;
@@ -46,8 +44,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
-
-import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequestFixture;
 
 @WireMockTest(proxyMode = true, httpPort = 8080)
 @ExtendWith(WireMockExtension.class)
@@ -464,6 +460,42 @@ class DebitCardMiddlewareProviderTest {
 
         // Assert
         assertEquals("BAD_REQUEST", exception.getCode());
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    void givenPersonCodeAndCardIdWhenActiveDebitCardSecureThenExpectResponse() throws IOException {
+        // Arrange
+        GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVE_ASSURANCE);
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(DCLimitsMWResponseFixture.withDefault());
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = debitCardMiddlewareProvider.activeDebitCardSecure(UpdateDebitCardSecureMWRequestFixture.withDefault(), map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, expectedResponse);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    void givenPersonCodeAndCardIdWhenActiveDebitCardSecureThenErrorDeleteAuth() throws IOException {
+        // Arrange
+        GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_ACTIVE_ASSURANCE);
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(new DCLimitsMWResponse(new DCLimitsMWResponse.LimitsData()));
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = debitCardMiddlewareProvider.activeDebitCardSecure(UpdateDebitCardSecureMWRequestFixture.withDefault(), map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, expectedResponse);
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }

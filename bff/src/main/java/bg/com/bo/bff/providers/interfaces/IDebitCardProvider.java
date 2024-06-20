@@ -1,12 +1,8 @@
 package bg.com.bo.bff.providers.interfaces;
 
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCAccountsOrderMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.*;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
@@ -27,6 +23,8 @@ public interface IDebitCardProvider {
     AccountsDebitCardMWResponse accountListDebitCard(Integer personId, Integer cardId, Map<String, String> parameters) throws IOException;
 
     GenericResponse deleteAuth(DeleteAuthPurchaseMWRequest mwRequest, Map<String, String> parameters) throws IOException;
+
+    GenericResponse activeDebitCardSecure(UpdateDebitCardSecureMWRequest request, Map<String, String> parameters) throws IOException;
 
     DCDetailMWResponse detail(String personId, String cardId, Map<String, String> parameters) throws IOException;
 

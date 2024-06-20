@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnli
 import bg.com.bo.bff.application.dtos.request.debit.card.DCAccountsOrderRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.UpdateDebitCardAssuranceRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
@@ -26,6 +27,8 @@ public interface IDebitCardService {
     GenericResponse deleteAuthOnlinePurchases(Integer personId, Integer cardId, Integer authId, Map<String, String> parameters) throws IOException;
 
     InternetAuthorizationResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameter) throws IOException;
+
+    GenericResponse activeDebitCardAssurance(Integer personId, Integer cardId, UpdateDebitCardAssuranceRequest request, Map<String, String> parameters) throws IOException;
 
     GenericResponse createAuthorizationOnlinePurchase(String personId, String cardId, CreateAuthorizationOnlinePurchaseRequest request, Map<String, String> parameter) throws IOException;
 

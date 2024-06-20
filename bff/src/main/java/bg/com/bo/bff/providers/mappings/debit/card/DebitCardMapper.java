@@ -1,22 +1,14 @@
 package bg.com.bo.bff.providers.mappings.debit.card;
 
-import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCAccountsOrderRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsPeriod;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.*;
 import bg.com.bo.bff.application.dtos.response.debit.card.AccountTD;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
 import bg.com.bo.bff.application.dtos.response.debitcard.DCInternetAuthorization;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.commons.enums.debit.card.StatusType;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCAccountsOrderMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
@@ -124,6 +116,18 @@ public class DebitCardMapper implements IDebitCardMapper {
                 .personId(String.valueOf(personId))
                 .action("B")
                 .idPci(String.valueOf(cardId))
+                .build();
+    }
+
+    @Override
+    public UpdateDebitCardSecureMWRequest mapActiveAssuranceRequest(Integer personId, Integer cardId, UpdateDebitCardAssuranceRequest request) {
+        return UpdateDebitCardSecureMWRequest.builder()
+                .personId(String.valueOf(personId))
+                .debitCardNew(request.getOpeningRequestFlow() ? "S" : "N")
+                .pciId(String.valueOf(cardId))
+                .acceptInsurance("S")
+                .email(request.getEmail())
+                .requestNumberOld(request.getOpeningRequestNumber())
                 .build();
     }
 

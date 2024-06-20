@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnli
 import bg.com.bo.bff.application.dtos.request.debit.card.DCAccountsOrderRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.UpdateDebitCardAssuranceRequest;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.AccountTD;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
@@ -12,12 +13,8 @@ import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
 import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCAccountsOrderMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
@@ -81,27 +78,33 @@ public class DebitCardService implements IDebitCardService {
     }
 
     @Override
+    public GenericResponse activeDebitCardAssurance(Integer personId, Integer cardId, UpdateDebitCardAssuranceRequest request, Map<String, String> parameters) throws IOException {
+        UpdateDebitCardSecureMWRequest mwRequest = idcMapper.mapActiveAssuranceRequest(personId, cardId, request);
+        return idcProvider.activeDebitCardSecure(mwRequest, parameters);
+    }
+
+    @Override
     public GenericResponse createAuthorizationOnlinePurchase(String personId,
                                                              String cardId,
                                                              CreateAuthorizationOnlinePurchaseRequest request,
                                                              Map<String, String> parameter) throws IOException {
-        LocalDate startPeriod =  LocalDate.parse(request.getPeriod().getStart());
-        LocalDate endPeriod =  LocalDate.parse(request.getPeriod().getEnd());
+        LocalDate startPeriod = LocalDate.parse(request.getPeriod().getStart());
+        LocalDate endPeriod = LocalDate.parse(request.getPeriod().getEnd());
 
-        if(endPeriod.isBefore(startPeriod)){
+        if (endPeriod.isBefore(startPeriod)) {
             throw new GenericException(DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getMessage(),
                     DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getHttpCode(),
                     DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getCode());
         }
-        CreateAuthorizationOnlinePurchaseMWRequest requestMW = idcMapper.mapToCreateAuthorizationOnlinePurchaseMWRequest(request,cardId,
+        CreateAuthorizationOnlinePurchaseMWRequest requestMW = idcMapper.mapToCreateAuthorizationOnlinePurchaseMWRequest(request, cardId,
                 startPeriod.getDayOfMonth(),
                 endPeriod.getDayOfMonth(),
                 ACTION_CREATE_AUTHORIZATION_ONLINE_PURCHASE);
 
         CreateAuthorizationOnlinePurchaseMWResponse result = idcProvider.createAuthorizationOnlinePurchase(requestMW, parameter);
-         if(result.getData().getIdPci() != null){
-             return GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.SUCCESS_CREATE);
-         }
+        if (result.getData().getIdPci() != null) {
+            return GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.SUCCESS_CREATE);
+        }
         return GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.ERROR_CREATE);
     }
 

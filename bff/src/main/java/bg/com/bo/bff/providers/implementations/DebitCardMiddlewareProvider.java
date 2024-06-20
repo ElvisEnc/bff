@@ -8,12 +8,8 @@ import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCAccountsOrderMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCLimitsMWRequest;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DeleteAuthPurchaseMWRequest;
+import bg.com.bo.bff.providers.dtos.request.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.*;
-import bg.com.bo.bff.providers.dtos.request.debit.card.DCLockStatusMWRequest;
 import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponse;
@@ -106,6 +102,15 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
     }
 
     @Override
+    public GenericResponse activeDebitCardSecure(UpdateDebitCardSecureMWRequest request, Map<String, String> parameters) throws IOException {
+        String url = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.ACTIVE_SECURE.getServiceURL();
+        DCLimitsMWResponse mwResponse = post(url, setHeaders(parameters), request, DCLimitsMWResponse.class);
+        if (mwResponse.getData().getPciId() != null)
+            return GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVE_ASSURANCE);
+        else return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_ACTIVE_ASSURANCE);
+    }
+
+    @Override
     public DCDetailMWResponse detail(String personId, String cardId, Map<String, String> parameters) throws IOException {
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + String.format(DebitCardMiddlewareServices.DETAIL.getServiceURL(), personId, cardId);
         Header[] headers = {
@@ -130,9 +135,10 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
             return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_UPDATE_STATUS_LOCK);
         }
     }
+
     @Override
-    public CreateAuthorizationOnlinePurchaseMWResponse createAuthorizationOnlinePurchase(CreateAuthorizationOnlinePurchaseMWRequest request, Map<String, String> parameter) throws IOException  {
-        String url = String.format("%s%s%s",middlewareConfig.getUrlBase(),ProjectNameMW.DEBIT_CARD_MANAGER.getName(),DebitCardMiddlewareServices.CREATE_AUTHORIZATION_ONLINE_PURCHASE.getServiceURL());
+    public CreateAuthorizationOnlinePurchaseMWResponse createAuthorizationOnlinePurchase(CreateAuthorizationOnlinePurchaseMWRequest request, Map<String, String> parameter) throws IOException {
+        String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.DEBIT_CARD_MANAGER.getName(), DebitCardMiddlewareServices.CREATE_AUTHORIZATION_ONLINE_PURCHASE.getServiceURL());
 
         Header[] headers = {
                 new BasicHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal()),

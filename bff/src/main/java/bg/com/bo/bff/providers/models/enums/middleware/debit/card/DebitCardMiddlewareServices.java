@@ -14,6 +14,7 @@ public enum DebitCardMiddlewareServices {
     UPDATE_LOCK_STATUS("/bs/v1/debit-card/update-lock-status"),
     MODIFY_ACCOUNTS_ORDER("/bs/v1/debit-card/modify-related-accounts-order"),
     DELETE_LIMIT_INTERNET("/bs/v1/debit-card/delete-limit-internet"),
-    CREATE_AUTHORIZATION_ONLINE_PURCHASE("/bs/v1/debit-card/register-limit-internet");
+    CREATE_AUTHORIZATION_ONLINE_PURCHASE("/bs/v1/debit-card/register-limit-internet"),
+    ACTIVE_SECURE("/bs/v1/debit-card/activate-secure");
     private final String serviceURL;
 }
