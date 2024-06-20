@@ -20,9 +20,21 @@ public class DCDetailResponse {
     @Schema(description = "Fecha de expiración", example = "2024-08-04")
     private String expirationDate;
 
-    @Schema(description = "Estado de la tarjeta", example = "A")
+    @Schema(description = "Estado de la tarjeta", example = "A | C | B")
     private String status;
+
+    @Schema(description = "Estado de la tarjeta", example = "Activa | Cancelada | Bloqueada")
+    private String statusDescription;
 
     @Schema(description = "Cuenta con seguro", example = "1")
     private Boolean assured;
+
+    @Schema(description = "Fecha de expiración del limite de la tarjeta de débito")
+    private String limitExpirationDate;
+
+    @Schema(description = "Monto limite de la tarjeta de débito")
+    private String limitAmount;
+
+    @Schema(description = "Cantidad limite de la tarjeta de débito")
+    private String limitNumber;
 }

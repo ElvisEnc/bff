@@ -152,7 +152,11 @@ public class DebitCardMapper implements IDebitCardMapper {
                 .holderName(response.getData().getCardName())
                 .expirationDate(response.getData().getExpirationDate())
                 .status(response.getData().getStatus())
+                .statusDescription(response.getData().getStatusDescription())
                 .assured(Objects.equals(response.getData().getProtectionInsurance(), "S"))
+                .limitExpirationDate(response.getData().getLimitExpirationDate())
+                .limitAmount(response.getData().getLimitAmountME())
+                .limitNumber(response.getData().getLimitExtractions())
                 .build();
     }
 }
