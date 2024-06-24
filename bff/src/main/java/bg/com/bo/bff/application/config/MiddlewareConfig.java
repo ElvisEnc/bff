@@ -30,4 +30,6 @@ public class MiddlewareConfig {
 
     private String clientDebitCardManager;
 
+    private String clientPaymentServicesManager;
+
 }

@@ -41,6 +41,8 @@ public class MiddlewareConfigFactory {
 
     @Value("${client.secret.debit.card.manager}")
     private String clientDebitCardManager;
+    @Value("${client.secret.payment.services.manager}")
+    private String clientPaymentServicesManager;
 
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
@@ -57,6 +59,7 @@ public class MiddlewareConfigFactory {
                 .clientGenerateQrManager(clientSecretGenerateQrManager)
                 .clientQrTransactionManager(clientQrTransactionManager)
                 .clientDebitCardManager(clientDebitCardManager)
+                .clientPaymentServicesManager(clientPaymentServicesManager)
                 .build();
     }
 }

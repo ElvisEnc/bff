@@ -15,7 +15,8 @@ public enum ProjectNameMW {
     ACH_ACCOUNTS("/ach-account-manager", "ACH ACCOUNTS MANAGER", "Secret"),
     QR_TRANSACTION_MANAGER("/qr-transaction-manager", "QR TRANSACTION MANAGER", "Secret"),
     DPF_MANAGER("/dpf-manager", "DPF MANAGER", "Secret"),
-    DEBIT_CARD_MANAGER("/debitcard-manager-db", "DEBIT CARD MANAGER", "Secret");
+    DEBIT_CARD_MANAGER("/debitcard-manager-db", "DEBIT CARD MANAGER", "Secret"),
+    PAYMENT_SERVICES("/payment-services-manager", "PAYMENT SERVICES MANAGER", "Secret");
 
     private final String name;
     private final String description;
