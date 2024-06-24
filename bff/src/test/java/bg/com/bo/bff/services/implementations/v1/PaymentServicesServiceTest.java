@@ -1,7 +1,10 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.response.SubcategoriesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.services.SubCategoryCitiesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.services.SubCategoryCitiesResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.services.SubcategoriesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.services.SubcategoriesResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.services.SubCategoryCitiesMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.payment.services.SubcategoriesMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.providers.mappings.payment.services.IPaymentServicesMapper;
@@ -17,6 +20,7 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,5 +48,21 @@ class PaymentServicesServiceTest {
         //Assert
         assertEquals(expected.getData().size(), actual.getData().size());
 
+    }
+
+    @Test
+    void givenSubCategoryIdWhenGetSubcategoryCitiesThenSubCategoryCitiesResponse() throws IOException{
+        //Arrange
+        SubCategoryCitiesResponse expected = SubCategoryCitiesResponseFixture.withDefault();
+        when(provider.getSubcategoryCities(any(),any())).thenReturn(SubCategoryCitiesMWResponseFixture.withDefault());
+        when(mapper.convertResponse(SubCategoryCitiesMWResponseFixture.withDefault())).thenReturn(expected);
+
+        //Act
+        SubCategoryCitiesResponse actual = service.getSubcategoryCities(1, new HashMap<>());
+
+        //Assert
+        assertEquals(expected.getData().size(), actual.getData().size());
+        verify(provider).getSubcategoryCities(any(),any());
+        verify(mapper).convertResponse(SubCategoryCitiesMWResponseFixture.withDefault());
     }
 }

@@ -1,6 +1,8 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.response.SubcategoriesResponse;
+import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
+import bg.com.bo.bff.application.dtos.response.payment.services.SubCategoryCitiesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.services.SubcategoriesResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.services.SubcategoriesMWResponse;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.providers.mappings.payment.services.IPaymentServicesMapper;
@@ -24,6 +26,12 @@ public class PaymentServicesService implements IPaymentServicesService {
     @Override
     public SubcategoriesResponse getSubcategories(Integer categoryId, Map<String, String> parameter) throws IOException {
         final SubcategoriesMWResponse result = provider.getSubcategories(categoryId, parameter);
+        return mapper.convertResponse(result);
+    }
+
+    @Override
+    public SubCategoryCitiesResponse getSubcategoryCities(Integer subCategoryId, Map<String, String> parameters) throws IOException {
+        final SubCategoryCitiesMWResponse result = provider.getSubcategoryCities(subCategoryId, parameters);
         return mapper.convertResponse(result);
     }
 }

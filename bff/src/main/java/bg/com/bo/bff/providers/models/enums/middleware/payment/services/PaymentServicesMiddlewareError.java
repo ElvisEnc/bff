@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum PaymentServicesMiddlewareError implements IMiddlewareError {
-    MDWPSM_003(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWPSM-003", "No se encontraron registros.");
+    MDWPSM_003(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWPSM-003", "No se encontraron registros."),
+    MDWPSM_004(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWPSM-004", "No se encontraron registros.");
 
     private final HttpStatus httpCode;
     private final String code;

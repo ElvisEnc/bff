@@ -1,7 +1,5 @@
 package bg.com.bo.bff.application.dtos.response.payment.services;
 
-import bg.com.bo.bff.application.dtos.response.SubcategoriesResponse;
-
 import java.util.List;
 
 public class SubcategoriesResponseFixture {

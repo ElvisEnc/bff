@@ -1,7 +1,9 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 
-import bg.com.bo.bff.application.dtos.response.SubcategoriesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.services.SubCategoryCitiesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.services.SubCategoryCitiesResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.services.SubcategoriesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.services.SubcategoriesResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.services.interfaces.IPaymentServicesService;
@@ -34,6 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PaymentServicesControllerTest {
 
     private static final String GET_SUB_CATEGORIES = "/api/v1/payment-services/categories/{categoryId}/subcategories";
+    private static final String GET_SUBCATEGORY_CITIES = "/api/v1/payment-services//subcategory/{subCategoryId}/cities";
+
     private MockMvc mockMvc;
     @InjectMocks
     private PaymentServicesController controller;
@@ -91,6 +95,31 @@ class PaymentServicesControllerTest {
         // Assert
         assertEquals(response, actual);
         verify(service).getSubcategories( any(), any());
+        assertNotNull(result);
+
+    }
+
+    @Test
+    void givenSubCategoryIdWhenGetSubcategoryCitiesThenSubCategoryCitiesResponse() throws Exception {
+
+        //Arrange
+        SubCategoryCitiesResponse expected = SubCategoryCitiesResponseFixture.withDefault();
+        when(service.getSubcategoryCities(any(),any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc.perform(get(GET_SUBCATEGORY_CITIES, "1")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).getSubcategoryCities( any(), any());
         assertNotNull(result);
 
     }

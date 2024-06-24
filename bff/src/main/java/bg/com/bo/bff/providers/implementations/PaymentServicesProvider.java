@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
@@ -31,6 +32,16 @@ public class PaymentServicesProvider  extends MiddlewareProvider<PaymentServices
         final String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.PAYMENT_SERVICES.getName(), pathSubcategories);
         final Header[] headers = setHeaders(parameters);
         return get(url,headers,SubcategoriesMWResponse.class);
+    }
+
+    @Override
+    public SubCategoryCitiesMWResponse getSubcategoryCities(Integer subCategoryId, Map<String, String> parameters) throws IOException {
+
+        final String pathSubcategories = String.format(PaymentServicesMiddlewareServices.GET_SUBCATEGORY_CITIES.getServiceURL(),subCategoryId);
+        final String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.PAYMENT_SERVICES.getName(), pathSubcategories);
+        final Header[] headers = setHeaders(parameters);
+        return get(url,headers,SubCategoryCitiesMWResponse.class);
+
     }
 
     private static Header[] setHeaders(Map<String, String> parameters) {

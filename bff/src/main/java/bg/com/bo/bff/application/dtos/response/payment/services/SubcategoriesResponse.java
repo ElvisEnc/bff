@@ -1,4 +1,4 @@
-package bg.com.bo.bff.application.dtos.response;
+package bg.com.bo.bff.application.dtos.response.payment.services;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

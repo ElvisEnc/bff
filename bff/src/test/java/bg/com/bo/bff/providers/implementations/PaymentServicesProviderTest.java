@@ -4,6 +4,7 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
+import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
@@ -11,13 +12,9 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.services.SubCategoryCitiesMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.payment.services.SubcategoriesMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.services.SubcategoriesMWResponseFixture;
-import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -94,9 +91,8 @@ class PaymentServicesProviderTest {
     }
 
     @Test
-    void givenCategoryIdWhenGetSubcategoriesThenErrorNotAccetable() throws IOException{
+    void givenCategoryIdWhenGetSubcategoriesThenErrorNotAcceptable() throws IOException{
         // Arrange
-
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = SubcategoriesMWResponseFixture.errorMDWPSM_003();
         stubFor(get(anyUrl()).willReturn(jsonResponse(jsonResponse, HttpStatus.SC_NOT_ACCEPTABLE)));
@@ -109,6 +105,43 @@ class PaymentServicesProviderTest {
             assertEquals(PaymentServicesMiddlewareError.MDWPSM_003.getCode(), ex.getCode());
             assertEquals(PaymentServicesMiddlewareError.MDWPSM_003.getHttpCode(), ex.getStatus());
             assertEquals(PaymentServicesMiddlewareError.MDWPSM_003.getMessage(), ex.getMessage());
+        }
+    }
+    
+    @Test 
+    void givenSubCategoryIdWhenGetSubcategoryCitiesThenSubCategoryCitiesMWResponse() throws IOException {
+        // Arrange
+
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String expected = Util.objectToString(SubCategoryCitiesMWResponseFixture.withDefault());
+        stubFor(get(anyUrl()).willReturn(okJson(expected)));
+
+        // Act
+        SubCategoryCitiesMWResponse actual = provider.getSubcategoryCities(2, map);
+
+        // Assert
+        assertNotNull(actual);
+        assertEquals( expected, Util.objectToString(actual));
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+
+    }
+
+    @Test
+    void givenSubCategoryIdWhenGetSubcategoryCitiesThenErrorNotAcceptable() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = SubCategoryCitiesMWResponseFixture.errorMDWPSM004();
+        stubFor(get(anyUrl()).willReturn(jsonResponse(jsonResponse, HttpStatus.SC_NOT_ACCEPTABLE)));
+
+        // Act
+        try {
+            provider.getSubcategoryCities(500, map);
+        } catch (GenericException ex) {
+            // Assert
+            assertEquals(PaymentServicesMiddlewareError.MDWPSM_004.getCode(), ex.getCode());
+            assertEquals(PaymentServicesMiddlewareError.MDWPSM_004.getHttpCode(), ex.getStatus());
+            assertEquals(PaymentServicesMiddlewareError.MDWPSM_004.getMessage(), ex.getMessage());
         }
     }
 }
