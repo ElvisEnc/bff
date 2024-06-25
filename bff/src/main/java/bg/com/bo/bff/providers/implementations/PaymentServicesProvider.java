@@ -6,6 +6,7 @@ import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
@@ -14,6 +15,7 @@ import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentS
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareServices;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
+import bg.com.bo.bff.providers.models.middleware.additional.evaluator.DefaultResultByMWErrorEvaluator;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,12 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
     }
 
     @Override
+    public CategoryMWResponse getCategories(Map<String, String> parameters) throws IOException {
+        String url = middlewareConfig.getUrlBase() + ProjectNameMW.PAYMENT_SERVICES.getName() + PaymentServicesMiddlewareServices.GET_CATEGORIES.getServiceURL();
+        return get(url, setHeaders(parameters), CategoryMWResponse.class);
+    }
+
+    @Override
     public SubcategoriesMWResponse getSubcategories(Integer categoryId, Map<String, String> parameters) throws IOException {
         final String pathSubcategories = String.format(PaymentServicesMiddlewareServices.GET_SUBCATEGORIES.getServiceURL(), categoryId);
         final String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.PAYMENT_SERVICES.getName(), pathSubcategories);
@@ -36,17 +44,18 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
     }
 
     @Override
-    public CategoryMWResponse getCategories(Map<String, String> parameters) throws IOException {
-        String url = middlewareConfig.getUrlBase() + ProjectNameMW.PAYMENT_SERVICES.getName() + PaymentServicesMiddlewareServices.GET_CATEGORIES.getServiceURL();
-        return get(url, setHeaders(parameters), CategoryMWResponse.class);
-    }
-
-    @Override
     public SubCategoryCitiesMWResponse getSubcategoryCities(Integer subCategoryId, Map<String, String> parameters) throws IOException {
         final String pathSubcategories = String.format(PaymentServicesMiddlewareServices.GET_SUBCATEGORY_CITIES.getServiceURL(), subCategoryId);
         final String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.PAYMENT_SERVICES.getName(), pathSubcategories);
         final Header[] headers = setHeaders(parameters);
         return get(url, headers, SubCategoryCitiesMWResponse.class);
+    }
+
+    @Override
+    public AffiliatedServiceMWResponse getAffiliationsServices(Integer personId, Map<String, String> parameters) throws IOException {
+        String url = middlewareConfig.getUrlBase() + ProjectNameMW.PAYMENT_SERVICES.getName() + String.format(PaymentServicesMiddlewareServices.GET_AFFILIATIONS_SERVICES.getServiceURL(), personId);
+        DefaultResultByMWErrorEvaluator<AffiliatedServiceMWResponse> additionalEvaluator = DefaultResultByMWErrorEvaluator.instance(PaymentServicesMiddlewareError.MDWPSM_005);
+        return get(url, setHeaders(parameters), AffiliatedServiceMWResponse.class, additionalEvaluator);
     }
 
     private static Header[] setHeaders(Map<String, String> parameters) {

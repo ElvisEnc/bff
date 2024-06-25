@@ -1,15 +1,9 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponseFixture;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.application.dtos.response.payment.services.SubCategoryCitiesResponseFixture;
 import bg.com.bo.bff.application.dtos.response.payment.services.SubcategoriesResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.providers.mappings.payment.services.IPaymentServicesMapper;
 import org.junit.jupiter.api.Test;
@@ -86,5 +80,23 @@ class PaymentServicesServiceTest {
         assertEquals(expected.getData().size(), actual.getData().size());
         verify(provider).getSubcategoryCities(any(), any());
         verify(mapper).convertResponse(SubCategoryCitiesMWResponseFixture.withDefault());
+    }
+
+    @Test
+    void givenPersonIdWhenGetAffiliateServicesThenListAffiliations() throws IOException {
+        //Arrange
+        List<AffiliateServiceResponse> expected = AffiliateServiceResponseFixture.withDataDefault().getData();
+        AffiliatedServiceMWResponse mwResponse = AffiliatedServiceMWResponseFixture.withDefault();
+        when(provider.getAffiliationsServices(any(), any())).thenReturn(mwResponse);
+        when(mapper.convertResponse(mwResponse)).thenReturn(expected);
+
+        //Act
+        List<AffiliateServiceResponse> response = service.getAffiliateServices(123, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getAffiliationsServices(123, new HashMap<>());
+        verify(mapper).convertResponse(mwResponse);
     }
 }

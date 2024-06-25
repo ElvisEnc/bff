@@ -7,8 +7,8 @@ import java.util.List;
 public class CategoryResponseFixture {
     public static CategoryResponse withDefault() {
         return CategoryResponse.builder()
-                .idCategory("1")
-                .name("category")
+                .categoryId("1")
+                .categoryName("category")
                 .build();
     }
 

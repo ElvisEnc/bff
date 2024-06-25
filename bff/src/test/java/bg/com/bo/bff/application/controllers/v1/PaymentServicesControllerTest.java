@@ -1,9 +1,6 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponseFixture;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.application.dtos.response.payment.services.SubCategoryCitiesResponseFixture;
 import bg.com.bo.bff.application.dtos.response.payment.services.SubcategoriesResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
@@ -156,5 +153,31 @@ class PaymentServicesControllerTest {
         assertEquals(response, actual);
         verify(service).getSubcategoryCities(any(), any());
         assertNotNull(result);
+    }
+
+    @Test
+    void givenPersonIdWhenGetAffiliateServiceThenResponseListAffiliations() throws Exception {
+        //Arrange
+        ApiDataResponse<List<AffiliateServiceResponse>> expectedResponse = AffiliateServiceResponseFixture.withDataDefault();
+        when(service.getAffiliateServices(any(), any())).thenReturn(expectedResponse.getData());
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        // Act
+        String path = "/api/v1/payment-services/persons/{personId}/affiliate-services";
+        MvcResult result = mockMvc.perform(get(path, 123)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expectedResponse);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).getAffiliateServices(any(), any());
     }
 }

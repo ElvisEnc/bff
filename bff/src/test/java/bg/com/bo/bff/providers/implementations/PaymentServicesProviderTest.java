@@ -5,6 +5,7 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
 import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
@@ -18,12 +19,14 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +46,7 @@ class PaymentServicesProviderTest {
     MiddlewareConfig middlewareConfig;
     IHttpClientFactory httpClientFactoryMock;
     private final ClientToken clientTokenMock = ClientTokenFixture.withDefault();
-    private ErrorMiddlewareProvider errorMiddlewareProvider;
+    ErrorMiddlewareProvider errorMiddlewareProvider;
     private Map<String, String> map;
 
     @BeforeEach
@@ -153,5 +156,78 @@ class PaymentServicesProviderTest {
             assertEquals(PaymentServicesMiddlewareError.MDWPSM_004.getHttpCode(), ex.getStatus());
             assertEquals(PaymentServicesMiddlewareError.MDWPSM_004.getMessage(), ex.getMessage());
         }
+    }
+
+    @Test
+    @DisplayName("Get service affiliations for a user given PersonId")
+    void givenPersonIdWhenGetAffiliationsServicesThenExpectResponse() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(AffiliatedServiceMWResponseFixture.withDefault());
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        AffiliatedServiceMWResponse response = provider.getAffiliationsServices(123, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, AffiliatedServiceMWResponseFixture.withDefault());
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Return empty list when no service affiliations for a PersonId")
+    void givenPersonIdWithNoAffiliationsWhenGetAffiliationsServicesThenEmptyList() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(AffiliatedServiceMWResponseFixture.withErrorMDWPSM005());
+        stubFor(get(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
+
+        // Act
+        AffiliatedServiceMWResponse response = provider.getAffiliationsServices(123, map);
+
+        //Assert
+        assertNull(response.getData());
+    }
+
+    @Test
+    void giveErrorMiddlewareWhenGetListDebitCardThenGenericException() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
+                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
+                        .code("BAD_REQUEST")
+                        .description("BAD_REQUEST")
+                        .build()))
+                .build();
+        stubFor(get(anyUrl()).willReturn(aResponse()
+                .withStatus(406)
+                .withBody(Util.objectToString(errorMiddlewareProvider))));
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            provider.getAffiliationsServices(123, map);
+        });
+
+        // Assert
+        assertEquals("BAD_REQUEST", exception.getCode());
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    void giveInternalErrorWhenGetListDebitCardThenRuntimeException() throws IOException {
+        // Arrange
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
+
+        // Act
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            provider.getAffiliationsServices(123, map);
+        });
+
+        // Assert
+        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
     }
 }

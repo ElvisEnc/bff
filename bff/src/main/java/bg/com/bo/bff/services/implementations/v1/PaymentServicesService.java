@@ -1,9 +1,11 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
@@ -26,20 +28,26 @@ public class PaymentServicesService implements IPaymentServicesService {
     }
 
     @Override
-    public SubcategoriesResponse getSubcategories(Integer categoryId, Map<String, String> parameter) throws IOException {
-        final SubcategoriesMWResponse result = provider.getSubcategories(categoryId, parameter);
-        return mapper.convertResponse(result);
-    }
-
-    @Override
     public List<CategoryResponse> getCategories(Map<String, String> parameter) throws IOException {
         CategoryMWResponse mwResponse = provider.getCategories(parameter);
         return mapper.convertResponse(mwResponse);
     }
 
     @Override
+    public SubcategoriesResponse getSubcategories(Integer categoryId, Map<String, String> parameter) throws IOException {
+        final SubcategoriesMWResponse result = provider.getSubcategories(categoryId, parameter);
+        return mapper.convertResponse(result);
+    }
+
+    @Override
     public SubCategoryCitiesResponse getSubcategoryCities(Integer subCategoryId, Map<String, String> parameters) throws IOException {
         final SubCategoryCitiesMWResponse result = provider.getSubcategoryCities(subCategoryId, parameters);
         return mapper.convertResponse(result);
+    }
+
+    @Override
+    public List<AffiliateServiceResponse> getAffiliateServices(Integer personId, Map<String, String> parameter) throws IOException {
+        AffiliatedServiceMWResponse mwResponse = provider.getAffiliationsServices(personId, parameter);
+        return mapper.convertResponse(mwResponse);
     }
 }
