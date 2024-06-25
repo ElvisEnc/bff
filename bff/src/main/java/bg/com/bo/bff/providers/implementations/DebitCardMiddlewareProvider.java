@@ -2,15 +2,12 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.commons.enums.AppCodeResponseNet;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
-import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.debit.card.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.*;
-import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
@@ -128,12 +125,10 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
     public GenericResponse lockStatus(DCLockStatusMWRequest requestMW, Map<String, String> parameters) throws IOException {
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.UPDATE_LOCK_STATUS.getServiceURL();
         Header[] headers = setHeaders(parameters);
-        GenericResponse result = Util.stringToObject(Util.objectToString(patch(url, headers, requestMW, ApiDataResponse.class).getData()), GenericResponse.class);
-        if (result.getCode().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
+        DCLockStatusMWResponse mwResponse = patch(url, headers, requestMW, DCLockStatusMWResponse.class);
+        if (mwResponse.getData().getPciId() != null)
             return GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_UPDATE_STATUS_LOCK);
-        } else {
-            return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_UPDATE_STATUS_LOCK);
-        }
+        else return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_UPDATE_STATUS_LOCK);
     }
 
     @Override

@@ -339,7 +339,7 @@ class DebitCardMiddlewareProviderTest {
     void givenValidDataWhenLockStatusThenExpectResponse() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = "{ \"data\": { \"code\": \"COD000\", \"message\": \"Operación concluida con éxito.\" } }";
+        String jsonResponse = "{ \"data\": { \"idPci\": \"1435360\" } }";
         stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
