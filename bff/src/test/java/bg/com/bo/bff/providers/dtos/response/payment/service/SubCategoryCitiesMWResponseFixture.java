@@ -1,4 +1,4 @@
-package bg.com.bo.bff.providers.dtos.response.payment.services;
+package bg.com.bo.bff.providers.dtos.response.payment.service;
 
 import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
 

@@ -1,5 +1,7 @@
 package bg.com.bo.bff.application.dtos.response.payment.services;
 
+import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
+
 import java.util.List;
 
 public class SubCategoryCitiesResponseFixture {

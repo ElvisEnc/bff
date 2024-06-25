@@ -1,10 +1,12 @@
 package bg.com.bo.bff.application.dtos.response.payment.services;
 
+import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
+
 import java.util.List;
 
 public class SubcategoriesResponseFixture {
 
-    public static SubcategoriesResponse withDefault(){
+    public static SubcategoriesResponse withDefault() {
         return new SubcategoriesResponse(
                 List.of(
                         SubcategoriesResponse.Subcategory.builder()

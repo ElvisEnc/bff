@@ -1,9 +1,11 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
-import bg.com.bo.bff.application.dtos.response.payment.services.SubCategoryCitiesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.services.SubcategoriesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
 import bg.com.bo.bff.commons.utils.Headers;
+import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IPaymentServicesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,13 +26,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @Validated
 @RequestMapping("api/v1/payment-services")
-@Tag(name = "Payment Services Controller", description = "Controlador del módulo de Payment Services")
+@Tag(name = "Payment Services Controller", description = "Controlador del módulo de Pago de Servicios")
 public class PaymentServicesController {
-
     private final IPaymentServicesService service;
     private final HttpServletRequest httpServletRequest;
 
@@ -50,12 +52,29 @@ public class PaymentServicesController {
             @Min(value = 1, message = " El categoryId debe ser mayour a 0")
             @PathVariable("categoryId") final Integer categoryId
     ) throws IOException {
-        return  ResponseEntity.ok(service.getSubcategories(categoryId, Headers.getParameter(httpServletRequest,
+        return ResponseEntity.ok(service.getSubcategories(categoryId, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,
                 geoPositionY,
                 appVersion)));
+    }
+
+    @Operation(summary = "Lista categorias", description = "Obtiene las categorias para pago de servicios")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtiene las categorias de pago de servicios"),
+            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("/categories")
+    public ResponseEntity<ApiDataResponse<List<CategoryResponse>>> getCategories(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion
+    ) throws IOException {
+        List<CategoryResponse> categories = service.getCategories(Headers.getParameter(httpServletRequest));
+        return ResponseEntity.ok(ApiDataResponse.of(categories));
     }
 
     @Operation(summary = "This operation lists the payment cities by subcategory", description = "Lista las cidudades de pago por subcategorias")
@@ -76,12 +95,11 @@ public class PaymentServicesController {
             @Min(value = 1, message = " El categoryId debe ser mayour a 0")
             @PathVariable("subCategoryId") final Integer subCategoryId
     ) throws IOException {
-        return  ResponseEntity.ok(service.getSubcategoryCities(subCategoryId, Headers.getParameter(httpServletRequest,
+        return ResponseEntity.ok(service.getSubcategoryCities(subCategoryId, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,
                 geoPositionY,
                 appVersion)));
     }
-
 }

@@ -1,4 +1,4 @@
-package bg.com.bo.bff.application.dtos.response.payment.services;
+package bg.com.bo.bff.application.dtos.response.payment.service;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;

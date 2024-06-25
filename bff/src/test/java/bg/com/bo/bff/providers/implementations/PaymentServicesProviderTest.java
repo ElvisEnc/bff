@@ -1,6 +1,5 @@
 package bg.com.bo.bff.providers.implementations;
 
-
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
@@ -12,9 +11,7 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
-import bg.com.bo.bff.providers.dtos.response.payment.services.SubCategoryCitiesMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.services.SubcategoriesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.services.SubcategoriesMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -27,15 +24,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.jsonResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,9 +38,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 @ExtendWith(WireMockExtension.class)
 @ExtendWith(MockitoExtension.class)
 class PaymentServicesProviderTest {
-
     private PaymentServicesProvider provider;
-
     private TokenMiddlewareProvider tokenMiddlewareProviderMock;
     MiddlewareConfig middlewareConfig;
     IHttpClientFactory httpClientFactoryMock;
@@ -73,6 +64,25 @@ class PaymentServicesProviderTest {
 
         setField(provider, "middlewareConfig", MiddlewareConfigFixture.withDefault(), MiddlewareConfig.class);
     }
+
+    @Test
+    void whenGetCategoriesPaymentServicesProviderThenExpectResponse() throws IOException {
+        // Arrange
+        CategoryMWResponse expectedResponse = CategoryMWResponseFixture.withDefault();
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        CategoryMWResponse response = provider.getCategories(new HashMap<>());
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, expectedResponse);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
     @Test
     void givenCategoryIdWhenGetSubcategoriesThenSubcategoriesMWResponse() throws IOException {
         // Arrange
@@ -85,13 +95,13 @@ class PaymentServicesProviderTest {
 
         // Assert
         assertNotNull(actual);
-        assertEquals( expected, Util.objectToString(actual));
+        assertEquals(expected, Util.objectToString(actual));
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
 
     @Test
-    void givenCategoryIdWhenGetSubcategoriesThenErrorNotAcceptable() throws IOException{
+    void givenCategoryIdWhenGetSubcategoriesThenErrorNotAcceptable() throws IOException {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = SubcategoriesMWResponseFixture.errorMDWPSM_003();
@@ -107,8 +117,8 @@ class PaymentServicesProviderTest {
             assertEquals(PaymentServicesMiddlewareError.MDWPSM_003.getMessage(), ex.getMessage());
         }
     }
-    
-    @Test 
+
+    @Test
     void givenSubCategoryIdWhenGetSubcategoryCitiesThenSubCategoryCitiesMWResponse() throws IOException {
         // Arrange
 
@@ -121,7 +131,7 @@ class PaymentServicesProviderTest {
 
         // Assert
         assertNotNull(actual);
-        assertEquals( expected, Util.objectToString(actual));
+        assertEquals(expected, Util.objectToString(actual));
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
 

@@ -1,4 +1,4 @@
-package bg.com.bo.bff.application.dtos.response.payment.services;
+package bg.com.bo.bff.application.dtos.response.payment.service;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class SubcategoriesResponse {
-
     private List<Subcategory> data;
 
     @AllArgsConstructor
@@ -20,13 +19,11 @@ public class SubcategoriesResponse {
     @Data
     @Builder
     public static class Subcategory {
-
         @Schema(example = "1", description = " ID de la subcategoria.")
         private Integer id;
         @Schema(example = "1", description = "ID de categoria.")
         private Integer categoryId;
         @Schema(example = "Colegio", description = "descripcion de subcategoria.")
         private String description;
-
     }
 }
