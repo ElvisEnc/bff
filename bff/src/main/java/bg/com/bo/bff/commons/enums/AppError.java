@@ -130,7 +130,9 @@ public enum AppError {
     NOT_ACCEPTABLE_UPDATE_PERSONAL_INFORMATION(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "NOT_ACCEPTABLE", "Los datos solo se pueden actulizar unsa sola vez por día"),
     VALIDATE_MARRIED_PERSON(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "EL nombre del conyuge no puede estar vacio"),
     VALIDATE_MARRIED_AND_USE_HUSBAND_LAST_NAME_PERSON(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "El apellido del conyuge no puede estar vacio"),
-    REFERENCE_INVALID(HttpStatus.BAD_REQUEST, "BAD_REQUEST","BAD_REQUEST" , "Los datos de la referencia estan incompletos");
+    VALIDATE_USE_HUSBAND_LAST_NAME_PERSON(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "El campo usa apellido del conyuge no puede estar vacio"),
+    REFERENCE_INVALID(HttpStatus.BAD_REQUEST, "BAD_REQUEST","BAD_REQUEST" , "Los datos de la referencia estan incompletos"),
+    VALIDATE_CITY_CODE(HttpStatus.BAD_REQUEST, "BAD_REQUEST" , "BAD_REQUEST","El codigo de ciudad no existe" );
 
     private final HttpStatus httpCode;
     private final String code;

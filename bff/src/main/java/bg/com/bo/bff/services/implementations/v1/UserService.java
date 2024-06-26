@@ -13,11 +13,13 @@ import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdatePersonalDetail;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.Gender;
 import bg.com.bo.bff.commons.enums.MaritalStatus;
 import bg.com.bo.bff.commons.validators.generics.*;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
@@ -37,13 +39,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
 
-    private static final String HAS_HUSBAND_LAST_NAME = "S";
+    private static final String HAS_HUSBAND_LAST_NAME_YES = "S";
+    private static final String HAS_HUSBAND_LAST_NAME_NO = "N";
+    private static final String MARRIED_AND_COMMON_LAW_UNION = "CU";
     private final ILoginMiddlewareProvider loginMiddlewareProvider;
     private final IPersonalInformationNetProvider personalInformationNetProvider;
     private final IPersonalInformationMapper iPersonalInformationMapper;
@@ -132,52 +138,95 @@ public class UserService implements IUserService {
 
         PersonalInformationNetResponse personalInformation = personalInformationNetProvider.getPersonalInformation(requestData, parameter);
 
-        UpdatePersonalInformationNetRequest updatePersonalInformationNetRequest = iPersonalInformationMapper.convertRequest(personId, request, personalInformation);
-
         if (personalInformation.getDataContent().getClientDataList().isEmpty()) {
             AppError error = AppError.NOT_ACCEPTABLE_UPDATE_PERSONAL_INFORMATION;
             throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
         }
 
-        if(request.getReference() != null ){
-            if (request.getReference().getName() == null || request.getReference().getTelephone() == null) {
-                throw new GenericException( AppError.REFERENCE_INVALID.getMessage(),  AppError.REFERENCE_INVALID.getHttpCode(),  AppError.REFERENCE_INVALID.getCode());
+        request.setReference(validateReference(request.getReference(), personalInformation));
 
-            }
-            if(request.getReference().getName().isBlank()){
-                throw new GenericException( AppError.REFERENCE_INVALID.getMessage(),  AppError.REFERENCE_INVALID.getHttpCode(),  AppError.REFERENCE_INVALID.getCode());
+        request.setMaritalStatus(validateMaritalStatus(request.getMaritalStatus(),
+                personalInformation.getDataContent().getClientDataList().get(0).getGender()));
 
-            }
+        validateCityCode(request.getPersonalData().getDepartmentCode(),
+                request.getPersonalData().getCityCode(), parameter);
 
-            if(request.getReference().getTelephone().isBlank()){
-                throw new GenericException( AppError.REFERENCE_INVALID.getMessage(),  AppError.REFERENCE_INVALID.getHttpCode(),  AppError.REFERENCE_INVALID.getCode());
-
-            }
-        }
-
-        if(request.getMaritalStatus().getStatus().equals(MaritalStatus.MARRIED.getCode())){
-            if( request.getMaritalStatus().getSpouseName() == null){
-                AppError error = AppError.VALIDATE_MARRIED_PERSON;
-                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
-            }
-            if( request.getMaritalStatus().getSpouseName().trim().isEmpty()){
-                AppError error = AppError.VALIDATE_MARRIED_PERSON;
-                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
-            }
-            if(request.getMaritalStatus().getHasHusbandLastName().equals(HAS_HUSBAND_LAST_NAME)){
-                if(request.getMaritalStatus().getHusbandLastName() == null){
-                    AppError error = AppError.VALIDATE_MARRIED_AND_USE_HUSBAND_LAST_NAME_PERSON;
-                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
-                }
-                if(request.getMaritalStatus().getHusbandLastName().trim().isEmpty()){
-                    AppError error = AppError.VALIDATE_MARRIED_AND_USE_HUSBAND_LAST_NAME_PERSON;
-                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
-                }
-            }
-        }
-
+        UpdatePersonalInformationNetRequest updatePersonalInformationNetRequest = iPersonalInformationMapper.convertRequest(personId, request, personalInformation);
         personalInformationNetProvider.updatePersonalInformation(updatePersonalInformationNetRequest, parameter);
 
         return GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
+    }
+
+    private UpdatePersonalDetail.Reference validateReference(UpdatePersonalDetail.Reference reference, PersonalInformationNetResponse personalInformation) {
+        if (reference == null) {
+            return UpdatePersonalDetail.Reference.builder()
+                    .name(personalInformation.getDataContent().getReferences().get(0).getName())
+                    .telephone(personalInformation.getDataContent().getReferences().get(0).getPhone())
+                    .ordinal(personalInformation.getDataContent().getReferences().get(0).getOrdinal())
+                    .relationship(personalInformation.getDataContent().getReferences().get(0).getRelation())
+                    .build();
+        }
+        if (reference.getName() == null || reference.getTelephone() == null) {
+            throw new GenericException(AppError.REFERENCE_INVALID.getMessage(), AppError.REFERENCE_INVALID.getHttpCode(), AppError.REFERENCE_INVALID.getCode());
+
+        }
+        if (reference.getName().isBlank()) {
+            throw new GenericException(AppError.REFERENCE_INVALID.getMessage(), AppError.REFERENCE_INVALID.getHttpCode(), AppError.REFERENCE_INVALID.getCode());
+
+        }
+
+        if (reference.getTelephone().isBlank()) {
+            throw new GenericException(AppError.REFERENCE_INVALID.getMessage(), AppError.REFERENCE_INVALID.getHttpCode(), AppError.REFERENCE_INVALID.getCode());
+        }
+        return reference;
+
+    }
+
+    private void validateCityCode(int departmentId, Integer cityCode, Map<String, String> parameter) throws IOException {
+
+
+        DistrictsNetRequest requestData = iPersonalInformationMapper.mapToDistrictRequest(String.valueOf(departmentId));
+        DistrictsNetResponse netResponse = personalInformationNetProvider.getDistricts(requestData, parameter);
+
+        if (netResponse.getResult().getData().stream().map(x->Integer.valueOf(x.getCodeDistrict())).anyMatch(data -> data.equals(cityCode))) {
+            return;
+        }
+
+        AppError error = AppError.VALIDATE_CITY_CODE;
+        throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+    }
+
+    private UpdatePersonalDetail.MaritalStatus validateMaritalStatus(UpdatePersonalDetail.MaritalStatus maritalStatus, String gender) {
+
+        if (maritalStatus.getHasHusbandLastName() == null) {
+            maritalStatus.setHasHusbandLastName(HAS_HUSBAND_LAST_NAME_NO);
+        }
+        if (!MARRIED_AND_COMMON_LAW_UNION.contains(maritalStatus.getStatus())) {
+           return maritalStatus;
+        }
+
+        if (Optional.ofNullable(maritalStatus.getSpouseName()).isEmpty()) {
+            AppError error = AppError.VALIDATE_MARRIED_PERSON;
+            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+        }
+
+        if(maritalStatus.getStatus().equals(MaritalStatus.COMMON_LAW_UNION.getCode())){
+            maritalStatus.setStatus(HAS_HUSBAND_LAST_NAME_NO);
+            return maritalStatus;
+        }
+
+        if (!gender.equals(Gender.FEMALE.getCode())) {
+            return maritalStatus;
+        }
+
+        if (maritalStatus.getHasHusbandLastName().equals(HAS_HUSBAND_LAST_NAME_NO)) {
+            return maritalStatus;
+        }
+
+        if (Optional.ofNullable(maritalStatus.getHusbandLastName()).orElse("").isBlank()) {
+            AppError error = AppError.VALIDATE_MARRIED_AND_USE_HUSBAND_LAST_NAME_PERSON;
+            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+        }
+        return maritalStatus;
     }
 }

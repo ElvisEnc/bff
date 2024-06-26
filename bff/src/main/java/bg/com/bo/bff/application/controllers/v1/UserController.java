@@ -7,10 +7,9 @@ import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
-import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
-import bg.com.bo.bff.application.dtos.response.user.UpdateDataUserResponse;
-import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
+import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
+import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
@@ -30,7 +29,14 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 

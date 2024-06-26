@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.dtos.response.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,17 +26,19 @@ public class UpdatePersonalDetail {
         @Pattern(regexp = "^[SCUVD]$", message = "El campo estado civil solo puede tener los valores S,C,U,V,D")
         private String status;
 
-        @Schema(description = "Apellido del cónyuge", example = "Pérez")
+        @Schema(description = "Apellido del cónyugue", example = "Pérez")
+        @Size(min = 3, max = 30, message = "El campo apellido del cónyugue debe tener como mínimo 3 y como máximo 30 caracteres.")
+        @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+$", message = "El campo apellido del cónyugue no puede contener números ni caracteres especiales.")
         private String husbandLastName;
 
-        @Schema(description = "Nombre del cónyuge", example = "Juan")
+        @Schema(description = "Nombre del cónyugue", example = "Juan")
+        @Size(min = 3, max = 30, message = "El campo nombre del cónyugue debe tener como mínimo 3 y como máximo 30 caracteres.")
+        @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+$", message = "El campo nombre del cónyugue no puede contener números ni caracteres especiales.")
         private String spouseName;
 
         @Schema(description = "Usa el nombre del esposo", example = "S o N", requiredMode = Schema.RequiredMode.REQUIRED)
         @Pattern(regexp = "^[SN]$", message = "El campo usa apellido del esposo solo puede tener los valores S or N,")
-        @NotBlank(message = "El campo usa apellido del esposo no puede estar vacion")
         private String hasHusbandLastName;
-
 
     }
 
@@ -46,7 +49,7 @@ public class UpdatePersonalDetail {
     public static class EconomicalActivity {
         @Schema(description = "Tipo de actividad económica", example = "P")
         @NotBlank(message ="Tipo de actividad económica no puede estar vacio" )
-        @Size(min = 1, max = 100, message = "El Tipo de actividad solo debe tener un caracter")
+        @Size(min = 1, max = 1, message = "El Tipo de actividad solo debe tener un caracter")
         private String type;
 
         @Schema(description = "Nombre de la empresa", example = "Empresa S.A.")
@@ -56,8 +59,10 @@ public class UpdatePersonalDetail {
         private String position;
 
         @Schema(description = "Nivel de ingresos", example = "1000")
-        @Min(value = 0, message = "El nivel de ingresos debe sera mayor a 0")
-        private int incomeLevel;
+        @Min(value = 1, message = "El nivel de ingresos debe estar en el rango entre 1 y 5")
+        @Max(value = 5, message = "El nivel de ingresos debe estar en el rango entre 1 y 5")
+        @NotNull(message = "El nivel de ingresos no puede ser nulo")
+        private Integer incomeLevel;
 
         @Schema(description = "Actividad económica", example = "12345")
         private int economicActivity;
@@ -76,6 +81,8 @@ public class UpdatePersonalDetail {
 
         @Schema(description = "Número de celular", example = "70003030")
         @NotBlank(message = "El número celular de  no puede estar vacio")
+        @Size(min = 8, max = 8, message = "El número de telefono celular debe tener 8 digitos.")
+        @Pattern(regexp = "^[1-9][0-9]{0,100}$", message = "Error en el formato número de telefono celular")
         private String cellPhoneNumber;
 
         @Schema(description= "Calle", example = "Calle Falsa")
@@ -84,6 +91,7 @@ public class UpdatePersonalDetail {
         @Schema(description = "Correo electrónico", example = "ejemplo@dominio.com")
         @NotBlank(message = "El correo electronico  no puede estar vacio")
         @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Formato de correo incorrecto")
+
         private String email;
 
         @NotNull(message = "El codigo de zona no puede estar vacio")
@@ -102,7 +110,8 @@ public class UpdatePersonalDetail {
 
         @Schema(description = "Codigo Departamento", example = "Central")
         @NotNull(message = "El codigo de departamento no puede estar vacio")
-        @Min(value = 0, message = "El codigo de departamento debe sera mayor a 0")
+        @Min(value = 1, message = "El codigo de departamento debe sera mayor a 0")
+        @Max(value = 9, message = "El codigo de departamento debe sera menor a 10")
         private int departmentCode;
 
         @Schema(description = "Piso", example = "5")
@@ -122,7 +131,7 @@ public class UpdatePersonalDetail {
         private String doorNumber;
 
         @Schema(description = "Es empleado Banco", example = "0")
-        @Min(value = 0, message = "El bankEmployee debe sera mayor a 0")
+        @Min(value = 1, message = "El bankEmployee debe sera mayor a 0")
         private String bankEmployee;
 
 
@@ -139,7 +148,7 @@ public class UpdatePersonalDetail {
         private Integer streetCode;
 
         @Schema(description="Código de ciudad", example = "4")
-        @Min(value = 0, message = "El codigo de ciudad debe sera mayor a 0")
+        @Min(value = 1, message = "El codigo de ciudad debe sera mayor a 0")
         private Integer cityCode;
 
 

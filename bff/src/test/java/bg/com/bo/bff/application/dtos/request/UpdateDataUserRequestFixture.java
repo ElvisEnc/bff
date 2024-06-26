@@ -21,7 +21,7 @@ public class UpdateDataUserRequestFixture {
                 .build();
 
         UpdatePersonalDetail.PersonalData personalData = UpdatePersonalDetail.PersonalData.builder()
-                .cellPhoneNumber("121212")
+                .cellPhoneNumber("79409415")
                 .email("reynaldo@gmail.com")
                 .zone(7)
                 .dictrict("La PAz")
@@ -69,7 +69,6 @@ public class UpdateDataUserRequestFixture {
         UpdatePersonalDetail.MaritalStatus maritalStatus=  UpdatePersonalDetail.MaritalStatus.builder()
                 .status("C")
                 .husbandLastName("LOPEZ")
-                .spouseName(" ")
                 .hasHusbandLastName("N")
                 .build();
 
@@ -174,7 +173,7 @@ public class UpdateDataUserRequestFixture {
 
         UpdatePersonalDetail.MaritalStatus maritalStatus=  UpdatePersonalDetail.MaritalStatus.builder()
                 .status("C")
-                .husbandLastName("LOPEZ")
+
                 .spouseName("JUAN MORALES")
                 .hasHusbandLastName("S")
                 .build();

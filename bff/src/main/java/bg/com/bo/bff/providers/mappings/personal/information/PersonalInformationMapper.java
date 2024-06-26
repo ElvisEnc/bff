@@ -199,19 +199,11 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                 .position(request.getEconomicalActivity().getPosition())
                 .incomeLevel(request.getEconomicalActivity().getIncomeLevel())
                 .incomeSource(request.getEconomicalActivity().getType())
+                .referenceName(request.getReference().getName())
+                .referencePhone(request.getReference().getTelephone())
+                .ordinal(request.getReference().getOrdinal())
+                .relationship(request.getReference().getRelationship())
                 .build();
-
-        if (request.getReference() == null) {
-            newData.setReferenceName(personalInformation.getDataContent().getReferences().get(0).getName());
-            newData.setReferencePhone(personalInformation.getDataContent().getReferences().get(0).getPhone());
-            newData.setOrdinal(personalInformation.getDataContent().getReferences().get(0).getOrdinal());
-            newData.setRelationship(personalInformation.getDataContent().getReferences().get(0).getRelation());
-        }else {
-            newData.setReferenceName(request.getReference().getName());
-            newData.setReferencePhone(request.getReference().getTelephone());
-            newData.setOrdinal(request.getReference().getOrdinal());
-            newData.setRelationship(request.getReference().getRelationship());
-        }
 
         return UpdatePersonalInformationNetRequest.builder()
                 .sessionNumber(NUMBER_SESSION)
