@@ -473,7 +473,7 @@ class DebitCardMiddlewareProviderTest {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVE_ASSURANCE);
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(DCLimitsMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(UpdateSecureMWResponseFixture.withDefault());
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act

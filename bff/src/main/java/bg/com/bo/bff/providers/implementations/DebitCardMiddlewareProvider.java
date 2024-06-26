@@ -101,8 +101,8 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
     @Override
     public GenericResponse activeDebitCardSecure(UpdateDebitCardSecureMWRequest request, Map<String, String> parameters) throws IOException {
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.ACTIVE_SECURE.getServiceURL();
-        DCLimitsMWResponse mwResponse = post(url, setHeaders(parameters), request, DCLimitsMWResponse.class);
-        if (mwResponse.getData().getPciId() != null)
+        UpdateSecureMWResponse mwResponse = post(url, setHeaders(parameters), request, UpdateSecureMWResponse.class);
+        if (mwResponse.getData().getIdPci() != null)
             return GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVE_ASSURANCE);
         else return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_ACTIVE_ASSURANCE);
     }

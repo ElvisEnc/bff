@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum QRTransactionMiddlewareError implements IMiddlewareError {
 
     //QR-TRANSACTION MANAGER
-    MDWQTM_001(HttpStatus.BAD_REQUEST, "TRANSFER_USD_NOT_ALLOWED","MDWQTM-001","Transacción no permitida para la moneda"),
+    MDWQTM_001(HttpStatus.BAD_REQUEST, "TRANSFER_USD_NOT_ALLOWED","MDWQTM-001","Esta transacción se encuentra deshabilitada temporalmente"),
     MDWQTM_002(HttpStatus.BAD_REQUEST, "TRANSFER_DUPLICATE","MDWQTM-002","Transacción duplicada"),
     MDWQTM_003(HttpStatus.BAD_REQUEST, "ERROR_REDIS_TRANSFER_DUPLICATE","MDWQTM-003","Error al Verificar Transacción Duplicada"),
     MDWQTM_004(HttpStatus.BAD_REQUEST, "ERROR_REDIS_REGISTER_TRANSFER_DUPLICATE","MDWQTM-004","Error al Registrar Transacciones Duplicadas"),
