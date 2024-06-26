@@ -4,4 +4,5 @@ package bg.com.bo.bff.models;
 @lombok.NoArgsConstructor
 public class UserData {
     private String personId;
+    private String sid;
 }

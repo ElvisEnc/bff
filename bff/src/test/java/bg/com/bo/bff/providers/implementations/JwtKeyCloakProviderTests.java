@@ -3,7 +3,7 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.dtos.request.LogoutRequest;
 import bg.com.bo.bff.providers.mappings.GenericsMapper;
-import bg.com.bo.bff.mappings.services.keycloak.KeyCloakJsonMapper;
+import bg.com.bo.bff.mappings.implementations.keycloak.KeyCloakJsonMapper;
 import bg.com.bo.bff.providers.mappings.keycloak.KeyCloakObjectMapper;
 import bg.com.bo.bff.providers.mappings.keycloak.KeyCloakMapper;
 import bg.com.bo.bff.providers.dtos.response.keycloak.ErrorKCResponse;
@@ -92,6 +92,7 @@ class JwtKeyCloakProviderTests {
         UserRole userRole = UserRole.LOGGED_USER;
         String accessToken = UUID.randomUUID().toString();
         String refreshToken = UUID.randomUUID().toString();
+        String sid = UUID.randomUUID().toString();
 
         CreateTokenKCResponse createTokenKCResponse = new CreateTokenKCResponse();
         createTokenKCResponse.setAccessToken(accessToken);
@@ -102,7 +103,7 @@ class JwtKeyCloakProviderTests {
         stubFor(post(urlTokenComplement).willReturn(okJson(jsonResponse)));
 
         //Act
-        CreateTokenServiceResponse tokenData = jwtKeyCloakProvider.generateToken(personId, userRole);
+        CreateTokenServiceResponse tokenData = jwtKeyCloakProvider.generateToken(personId, sid, userRole);
 
         //Assert
         assertNotNull(tokenData);

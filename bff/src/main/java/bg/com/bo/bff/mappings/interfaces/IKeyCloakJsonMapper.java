@@ -1,4 +1,4 @@
-package bg.com.bo.bff.mappings.services.keycloak.interfaces;
+package bg.com.bo.bff.mappings.interfaces;
 
 import bg.com.bo.bff.models.jwt.JwtHeader;
 import bg.com.bo.bff.models.jwt.JwtPayload;

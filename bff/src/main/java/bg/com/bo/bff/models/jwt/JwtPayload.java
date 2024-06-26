@@ -34,4 +34,6 @@ public class JwtPayload {
     private List<String> roles;
     @JsonIgnore
     private String personId;
+    @JsonIgnore
+    private String sid;
 }

@@ -100,8 +100,12 @@ public class JwtKeyCloakProvider implements IJwtProvider {
      * @see <a href="https://acelerabga.atlassian.net/wiki/spaces/NGM/pages/2025685033">Integración de KeyCloak con BFF</a>
      */
     @Override
-    public CreateTokenServiceResponse generateToken(String personId, UserRole userRole) {
-        CustomClaimsData customClaimsData = CustomClaimsData.builder().personId(personId).role(userRole).build();
+    public CreateTokenServiceResponse generateToken(String personId, String sid, UserRole userRole) {
+        CustomClaimsData customClaimsData = CustomClaimsData.builder()
+                .personId(personId)
+                .sid(sid)
+                .role(userRole)
+                .build();
 
         ObjectMapper mapper = new ObjectMapper();
         String customClaimsJson;

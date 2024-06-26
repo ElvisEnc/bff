@@ -5,7 +5,7 @@ import bg.com.bo.bff.integrations.embeddedRedis.EmbeddedRedisConfiguration;
 import bg.com.bo.bff.integrations.embeddedRedis.TestCacheConfig;
 import bg.com.bo.bff.integrations.embeddedRedis.TestHttpClientConfig;
 import bg.com.bo.bff.providers.mappings.GenericsMapper;
-import bg.com.bo.bff.mappings.services.keycloak.KeyCloakJsonMapper;
+import bg.com.bo.bff.mappings.implementations.keycloak.KeyCloakJsonMapper;
 import bg.com.bo.bff.providers.mappings.keycloak.KeyCloakObjectMapper;
 import bg.com.bo.bff.providers.mappings.keycloak.KeyCloakMapper;
 import bg.com.bo.bff.models.jwt.JwtKey;

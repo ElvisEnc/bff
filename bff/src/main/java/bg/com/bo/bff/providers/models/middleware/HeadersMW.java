@@ -20,7 +20,8 @@ public enum HeadersMW {
     CONTENT_TYPE("Content-Type"),
     APP_JSON("application/json"),
     DEVICE_ID("device-id"),
-    DEVICE_IP("device-ip");
+    DEVICE_IP("device-ip"),
+    REQUEST_ID("X-Request-ID");
 
     private final String name;
 

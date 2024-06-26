@@ -3,6 +3,7 @@ package bg.com.bo.bff.application.config;
 import bg.com.bo.bff.models.UserData;
 import bg.com.bo.bff.models.jwt.JwtAccess;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
+import bg.com.bo.bff.mappings.interfaces.IAuthMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,10 +26,12 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final IJwtProvider jwtService;
+    private IAuthMapper authMapper;
 
     @Autowired
-    public JwtAuthenticationFilter(IJwtProvider jwtService) {
+    public JwtAuthenticationFilter(IJwtProvider jwtService, IAuthMapper authMapper) {
         this.jwtService = jwtService;
+        this.authMapper = authMapper;
     }
 
     @Override
@@ -43,12 +46,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String token = header.split(" ")[1].trim();
 
-            JwtAccess accessJwt = jwtService.parseJwtAccess(token);
+            JwtAccess accessJwt = this.jwtService.parseJwtAccess(token);
 
-            String personId = accessJwt.getPayload().getPersonId();
-
-            UserData userData = new UserData();
-            userData.setPersonId(personId);
+            UserData userData = this.authMapper.convert(accessJwt);
 
             List<GrantedAuthority> authorities = new ArrayList<>();
             for (String role : accessJwt.getPayload().getRoles())

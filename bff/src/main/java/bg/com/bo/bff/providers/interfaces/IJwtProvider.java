@@ -10,7 +10,7 @@ import bg.com.bo.bff.models.jwt.JwtRefresh;
 import java.util.Map;
 
 public interface IJwtProvider {
-    CreateTokenServiceResponse generateToken(String personId, UserRole userStatus);
+    CreateTokenServiceResponse generateToken(String personId, String sid, UserRole userRole);
 
     CreateTokenServiceResponse refreshToken(String refreshToken);
 

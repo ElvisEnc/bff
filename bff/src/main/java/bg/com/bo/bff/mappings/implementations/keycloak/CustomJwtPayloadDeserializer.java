@@ -1,4 +1,4 @@
-package bg.com.bo.bff.mappings.services.keycloak;
+package bg.com.bo.bff.mappings.implementations.keycloak;
 
 import bg.com.bo.bff.models.jwt.JwtPayload;
 import com.fasterxml.jackson.core.JsonParser;
@@ -43,6 +43,9 @@ class CustomJwtPayloadDeserializer extends StdDeserializer<JwtPayload> {
 
             JsonNode personIds = claims.get("personId");
             payload.setPersonId(personIds.get(0).asText());
+
+            JsonNode sids = claims.get("sid");
+            payload.setSid(sids.get(0).asText());
 
             JsonNode rolesAsNodes = claims.get("roles");
             ArrayList<String> roles = new ArrayList<>();

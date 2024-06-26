@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class LoginService implements ILoginServices {
@@ -50,6 +51,8 @@ public class LoginService implements ILoginServices {
 
     @Override
     public LoginResult login(LoginRequest loginRequest, Map<String, String> parameters) throws IOException {
+        String sid = UUID.randomUUID().toString();
+
         String factorId = loginRequest.getType();
         String loginPerson = LoginSchemaName.PERSON_ID_LOGIN.getCode();
         String loginFinger = LoginSchemaName.FINGERPRINT_BIOMETRICS.getCode();
@@ -78,7 +81,7 @@ public class LoginService implements ILoginServices {
             loginValidation = loginMiddlewareService.validateCredentials(loginRequest, loginMWFactorResponse.getData(), parameters);
         }
 
-        CreateTokenServiceResponse createToken = jwtService.generateToken(loginValidation.getPersonId(), UserRole.LOGGED_USER);
+        CreateTokenServiceResponse createToken = jwtService.generateToken(loginValidation.getPersonId(), sid, UserRole.LOGGED_USER);
 
         switch (createToken.getStatusCode()) {
             case SUCCESS:

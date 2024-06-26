@@ -44,13 +44,12 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
-	implementation("org.apache.logging.log4j:log4j-spring-boot:2.20.0")
+	implementation("org.springframework.boot:spring-boot-starter-log4j2:3.3.1")
 	implementation("org.apache.httpcomponents:httpclient:4.5.13")
 	implementation("org.mapstruct:mapstruct:1.5.5.Final")
 	implementation("io.jsonwebtoken:jjwt-api:0.12.3")
 	implementation("org.apache.commons:commons-csv:1.10.0")
 	implementation("com.github.librepdf:openpdf:2.0.1")
-
 	implementation("org.springframework.cloud:spring-cloud-context:3.1.6")
 
 	compileOnly("org.projectlombok:lombok")

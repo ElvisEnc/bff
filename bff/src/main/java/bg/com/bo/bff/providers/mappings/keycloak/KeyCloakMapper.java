@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.mappings.keycloak;
 
-import bg.com.bo.bff.mappings.services.keycloak.KeyCloakJsonMapper;
+import bg.com.bo.bff.mappings.implementations.keycloak.KeyCloakJsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
