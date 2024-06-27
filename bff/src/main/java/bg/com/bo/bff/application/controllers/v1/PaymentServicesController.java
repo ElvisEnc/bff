@@ -88,13 +88,13 @@ public class PaymentServicesController {
                 appVersion)));
     }
 
-    @Operation(summary = "Cuidades por Subcategoria", description = "Lista las cidudades de pago por subcategorias")
+    @Operation(summary = "Ciudades por Subcategoria", description = "Lista las cidudades de pago por subcategorias")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Obtiene las las ciudades", content = @Content(schema = @Schema(implementation = SubCategoryCitiesResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
-    @GetMapping("/subcategory/{subCategoryId}/cities")
+    @GetMapping("/subcategories/{subCategoryId}/cities")
     public ResponseEntity<SubCategoryCitiesResponse> getSubcategoryCities(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
@@ -151,7 +151,7 @@ public class PaymentServicesController {
             @Min(value = 1, message = "La subCategoryId debe ser mayor a 0")
             @PathVariable("subCategoryId") final Integer subCategoryId,
             @Parameter(description = "Código de la ciudad", example = "7")
-            @Min(value = 1, message = "La cityId debe ser mayor a 0")
+            @Min(value = 0, message = "La cityId debe ser mayor a 0")
             @PathVariable("cityId") final Integer cityId
     ) throws IOException {
         return  ResponseEntity.ok(service.getServicesByCategoryAndCity(subCategoryId, cityId, Headers.getParameter(httpServletRequest,

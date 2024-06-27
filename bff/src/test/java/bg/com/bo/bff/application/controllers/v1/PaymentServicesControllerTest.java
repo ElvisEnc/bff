@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class PaymentServicesControllerTest {
     private static final String GET_SUB_CATEGORIES = "/api/v1/payment-services/categories/{categoryId}/subcategories";
-    private static final String GET_SUBCATEGORY_CITIES = "/api/v1/payment-services//subcategory/{subCategoryId}/cities";
+    private static final String GET_SUBCATEGORY_CITIES = "/api/v1/payment-services/subcategories/{subCategoryId}/cities";
     private MockMvc mockMvc;
     @InjectMocks
     private PaymentServicesController controller;

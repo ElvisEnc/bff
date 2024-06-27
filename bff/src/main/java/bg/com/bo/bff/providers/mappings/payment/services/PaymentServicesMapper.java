@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class PaymentServicesMapper implements IPaymentServicesMapper {
@@ -22,7 +23,7 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
         return new SubcategoriesResponse(
                 response.getData()
                         .stream()
-                        .map(x -> new SubcategoriesResponse.Subcategory(x.getSubCategoryCod(), x.getCategoryCod(), x.getDescription()))
+                        .map(x -> new SubcategoriesResponse.Subcategory(x.getSubCategoryCod(), x.getCategoryCod(), x.getDescription(), Objects.equals(x.getHasCity(), "S")))
                         .toList());
     }
 

@@ -104,6 +104,7 @@ public class Util {
         try {
             return objectMapper.readValue(json, clazz);
         } catch (JsonProcessingException var3) {
+            LOGGER.error(String.format("%s=%s", "stringToObject", json));
             throw new IOException("Error String to Object");
         }
     }

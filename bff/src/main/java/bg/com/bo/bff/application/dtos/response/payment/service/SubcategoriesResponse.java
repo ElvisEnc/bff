@@ -23,7 +23,9 @@ public class SubcategoriesResponse {
         private Integer id;
         @Schema(example = "1", description = "ID de categoria.")
         private Integer categoryId;
-        @Schema(example = "Colegio", description = "descripcion de subcategoria.")
+        @Schema(example = "Colegio", description = "Descripción de subcategoria.")
         private String description;
+        @Schema(example = "true", description = "Indica si el servicio esta agrupado por ciudad.")
+        private boolean hasCity;
     }
 }
