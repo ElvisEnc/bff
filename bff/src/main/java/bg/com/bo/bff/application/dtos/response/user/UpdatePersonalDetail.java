@@ -28,12 +28,12 @@ public class UpdatePersonalDetail {
 
         @Schema(description = "Apellido del cónyugue", example = "Pérez")
         @Size(min = 3, max = 30, message = "El campo apellido del cónyugue debe tener como mínimo 3 y como máximo 30 caracteres.")
-        @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+$", message = "El campo apellido del cónyugue no puede contener números ni caracteres especiales.")
+        @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s]+$", message = "El campo apellido del cónyugue no puede contener números ni caracteres especiales.")
         private String husbandLastName;
 
         @Schema(description = "Nombre del cónyugue", example = "Juan")
         @Size(min = 3, max = 30, message = "El campo nombre del cónyugue debe tener como mínimo 3 y como máximo 30 caracteres.")
-        @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+$", message = "El campo nombre del cónyugue no puede contener números ni caracteres especiales.")
+        @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s]+$", message = "El campo nombre del cónyugue no puede contener números ni caracteres especiales.")
         private String spouseName;
 
         @Schema(description = "Usa el nombre del esposo", example = "S o N", requiredMode = Schema.RequiredMode.REQUIRED)
