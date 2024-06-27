@@ -6,6 +6,7 @@ import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
@@ -56,6 +57,15 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.PAYMENT_SERVICES.getName() + String.format(PaymentServicesMiddlewareServices.GET_AFFILIATIONS_SERVICES.getServiceURL(), personId);
         DefaultResultByMWErrorEvaluator<AffiliatedServiceMWResponse> additionalEvaluator = DefaultResultByMWErrorEvaluator.instance(PaymentServicesMiddlewareError.MDWPSM_005);
         return get(url, setHeaders(parameters), AffiliatedServiceMWResponse.class, additionalEvaluator);
+    }
+
+    @Override
+    public ListServicesMWResponse getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException {
+        final String pathServices = String.format(PaymentServicesMiddlewareServices.GET_SERVICES.getServiceURL(), subCategoryId, cityId);
+        final String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.PAYMENT_SERVICES.getName(), pathServices);
+        DefaultResultByMWErrorEvaluator<ListServicesMWResponse> additionalEvaluator = DefaultResultByMWErrorEvaluator.instance(PaymentServicesMiddlewareError.MDWPSM_005);
+        final Header[] headers = setHeaders(parameters);
+        return get(url, headers, ListServicesMWResponse.class, additionalEvaluator);
     }
 
     private static Header[] setHeaders(Map<String, String> parameters) {

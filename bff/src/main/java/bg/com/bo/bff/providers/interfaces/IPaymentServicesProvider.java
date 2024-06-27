@@ -3,6 +3,7 @@ package bg.com.bo.bff.providers.interfaces;
 import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
 import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
 
 import java.io.IOException;
@@ -17,4 +18,6 @@ public interface IPaymentServicesProvider {
     SubCategoryCitiesMWResponse getSubcategoryCities(Integer subCategoryId, Map<String, String> parameters) throws IOException;
 
     AffiliatedServiceMWResponse getAffiliationsServices(Integer personId, Map<String, String> parameters) throws IOException;
+
+    ListServicesMWResponse getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException;
 }

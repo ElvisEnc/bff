@@ -230,4 +230,37 @@ class PaymentServicesProviderTest {
         // Assert
         assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
     }
+
+    @Test
+    @DisplayName("Obtener servicios por subcategoria y ciudad")
+    void givenValidDataWhenGetListServicesThenExpectResponse() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(ListServicesMWResponseFixture.withDefault());
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        ListServicesMWResponse response = provider.getServicesByCategoryAndCity(1, 2, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, ListServicesMWResponseFixture.withDefault());
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Retorna una lista vacía cuando no hay servicios disponibles")
+    void givenValidDataWhenGetListServicesThenEmptyList() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(ListServicesMWResponseFixture.withErrorMDWPSM005());
+        stubFor(get(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
+
+        // Act
+        ListServicesMWResponse response = provider.getServicesByCategoryAndCity(1, 2, map);
+
+        //Assert
+        assertNull(response.getData());
+    }
 }

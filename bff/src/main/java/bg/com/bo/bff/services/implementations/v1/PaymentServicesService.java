@@ -1,10 +1,12 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
@@ -49,5 +51,11 @@ public class PaymentServicesService implements IPaymentServicesService {
     public List<AffiliateServiceResponse> getAffiliateServices(Integer personId, Map<String, String> parameter) throws IOException {
         AffiliatedServiceMWResponse mwResponse = provider.getAffiliationsServices(personId, parameter);
         return mapper.convertResponse(mwResponse);
+    }
+
+    @Override
+    public ListServicesResponse getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException {
+        final ListServicesMWResponse result = provider.getServicesByCategoryAndCity(subCategoryId, cityId, parameters);
+        return mapper.convertResponse(result);
     }
 }

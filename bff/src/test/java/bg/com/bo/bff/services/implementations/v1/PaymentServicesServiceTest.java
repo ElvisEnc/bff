@@ -1,8 +1,8 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
-import bg.com.bo.bff.application.dtos.response.payment.services.SubCategoryCitiesResponseFixture;
-import bg.com.bo.bff.application.dtos.response.payment.services.SubcategoriesResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.providers.mappings.payment.services.IPaymentServicesMapper;
@@ -97,6 +97,24 @@ class PaymentServicesServiceTest {
         assertNotNull(response);
         assertEquals(expected, response);
         verify(provider).getAffiliationsServices(123, new HashMap<>());
+        verify(mapper).convertResponse(mwResponse);
+    }
+
+    @Test
+    void givenValidDataWhenGetListServicesThenListServices() throws IOException {
+        //Arrange
+        ListServicesResponse expected = ListServicesResponseFixture.withDefault();
+        ListServicesMWResponse mwResponse = ListServicesMWResponseFixture.withDefault();
+        when(provider.getServicesByCategoryAndCity(any(), any(), any())).thenReturn(mwResponse);
+        when(mapper.convertResponse(mwResponse)).thenReturn(expected);
+
+        //Act
+        ListServicesResponse response = service.getServicesByCategoryAndCity(3, 2, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getServicesByCategoryAndCity(3, 2, new HashMap<>());
         verify(mapper).convertResponse(mwResponse);
     }
 }

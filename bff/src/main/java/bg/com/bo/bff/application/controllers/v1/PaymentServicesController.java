@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
@@ -130,5 +131,34 @@ public class PaymentServicesController {
     ) throws IOException {
         List<AffiliateServiceResponse> affiliateServices = service.getAffiliateServices(personId,Headers.getParameter(httpServletRequest));
         return ResponseEntity.ok(ApiDataResponse.of(affiliateServices));
+    }
+
+    @Operation(summary = "Obtener la lista de servicios por subcategoria y ciudad", description = "Lista los servicios por subcategorias y ciudades")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios", content = @Content(schema = @Schema(implementation = ListServicesResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Error si la categoria no tiene subcategorias", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("/subcategories/{subCategoryId}/cities/{cityId}")
+    public ResponseEntity<ListServicesResponse> getServices(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @Parameter(description = "Código de la subcategoria", example = "4")
+            @Min(value = 1, message = "La subCategoryId debe ser mayor a 0")
+            @PathVariable("subCategoryId") final Integer subCategoryId,
+            @Parameter(description = "Código de la ciudad", example = "7")
+            @Min(value = 1, message = "La cityId debe ser mayor a 0")
+            @PathVariable("cityId") final Integer cityId
+    ) throws IOException {
+        return  ResponseEntity.ok(service.getServicesByCategoryAndCity(subCategoryId, cityId, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion)));
     }
 }

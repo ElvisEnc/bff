@@ -1,5 +1,6 @@
 package bg.com.bo.bff.services.interfaces;
 
+import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
@@ -18,4 +19,6 @@ public interface IPaymentServicesService {
     SubCategoryCitiesResponse getSubcategoryCities(Integer subCategoryId, Map<String, String> parameters) throws IOException;
 
     List<AffiliateServiceResponse> getAffiliateServices(Integer personId, Map<String, String> parameter) throws IOException;
+
+    ListServicesResponse getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException;
 }

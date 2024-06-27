@@ -1,8 +1,8 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
-import bg.com.bo.bff.application.dtos.response.payment.services.SubCategoryCitiesResponseFixture;
-import bg.com.bo.bff.application.dtos.response.payment.services.SubcategoriesResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IPaymentServicesService;
@@ -179,5 +179,29 @@ class PaymentServicesControllerTest {
         assertNotNull(result);
         assertEquals(response, actual);
         verify(service).getAffiliateServices(any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenGetListServicesByCityThenResponse() throws Exception {
+        //Arrange
+        ListServicesResponse expectedResponse = ListServicesResponseFixture.withDefault();
+        when(service.getServicesByCategoryAndCity(any(), any(), any())).thenReturn(expectedResponse);
+
+        // Act
+        String path = "/api/v1/payment-services/subcategories/{subCategoryId}/cities/{cityId}";
+        MvcResult result = mockMvc.perform(get(path, 1, 2)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expectedResponse);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).getServicesByCategoryAndCity(any(), any(), any());
     }
 }

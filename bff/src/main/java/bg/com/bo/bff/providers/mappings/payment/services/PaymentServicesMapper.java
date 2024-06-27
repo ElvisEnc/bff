@@ -1,10 +1,12 @@
 package bg.com.bo.bff.providers.mappings.payment.services;
 
 import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
@@ -55,5 +57,19 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                         .nameHolder(mw.getNameHolder())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public ListServicesResponse convertResponse(ListServicesMWResponse mwResponse) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return new ListServicesResponse(Collections.emptyList());
+        List<ListServicesResponse.Service> data =
+                mwResponse.getData().stream()
+                        .map(mw -> ListServicesResponse.Service.builder()
+                                .serviceId(mw.getServiceCode())
+                                .description(mw.getServiceName())
+                                .build())
+                        .toList();
+        return new ListServicesResponse(data);
     }
 }

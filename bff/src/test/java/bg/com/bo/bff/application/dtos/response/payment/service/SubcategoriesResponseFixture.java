@@ -1,6 +1,4 @@
-package bg.com.bo.bff.application.dtos.response.payment.services;
-
-import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
+package bg.com.bo.bff.application.dtos.response.payment.service;
 
 import java.util.List;
 
