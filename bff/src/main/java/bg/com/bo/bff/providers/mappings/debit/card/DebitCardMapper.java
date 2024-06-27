@@ -132,6 +132,14 @@ public class DebitCardMapper implements IDebitCardMapper {
     }
 
     @Override
+    public ActivateDebitCardMWRequest mapActivateDebitCardRequest(Integer personId, Integer cardId) {
+        return ActivateDebitCardMWRequest.builder()
+                .idPci(String.valueOf(cardId))
+                .personId(String.valueOf(personId))
+                .build();
+    }
+
+    @Override
     public CreateAuthorizationOnlinePurchaseMWRequest mapToCreateAuthorizationOnlinePurchaseMWRequest(CreateAuthorizationOnlinePurchaseRequest request,
                                                                                                       String cardId,
                                                                                                       Integer intInitial,

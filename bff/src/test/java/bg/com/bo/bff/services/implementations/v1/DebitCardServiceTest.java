@@ -161,6 +161,23 @@ class DebitCardServiceTest {
     }
 
     @Test
+    void givenPersonCodeAndCardIdWhenActivateDebitCardThenSuccess() throws IOException {
+        // Arrange
+        GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVATE_DEBIT_CARD);
+        when(provider.activateDebitCard(any(), any())).thenReturn(expectedResponse);
+        when(mapper.mapActivateDebitCardRequest(any(), any())).thenReturn(ActivateDebitCardMWRequestFixture.withDefault());
+
+        // Act
+        GenericResponse response = service.activateDebitCard(123, 123, ActivateDebitCardRequestFixture.withDefault(), new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(provider).activateDebitCard(ActivateDebitCardMWRequestFixture.withDefault(), new HashMap<>());
+        verify(mapper).mapActivateDebitCardRequest(123, 123);
+    }
+
+    @Test
     void givenValidDataWhenDetailThenReturnDCDetailResponse() throws IOException {
         // Arrange
         String personId = "169494";

@@ -108,6 +108,15 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
     }
 
     @Override
+    public GenericResponse activateDebitCard(ActivateDebitCardMWRequest request, Map<String, String> parameters) throws IOException {
+        String url = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.ACTIVE_DEBIT_CARD.getServiceURL();
+        UpdateSecureMWResponse mwResponse = patch(url, setHeaders(parameters), request, UpdateSecureMWResponse.class);
+        if (mwResponse.getData().getIdPci() != null)
+            return GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVATE_DEBIT_CARD);
+        else return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_ACTIVATE_DEBIT_CARD);
+    }
+
+    @Override
     public DCDetailMWResponse detail(String personId, String cardId, Map<String, String> parameters) throws IOException {
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + String.format(DebitCardMiddlewareServices.DETAIL.getServiceURL(), personId, cardId);
         Header[] headers = {

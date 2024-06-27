@@ -18,6 +18,7 @@ public enum DebitCardMiddlewareError implements IMiddlewareError {
     MDWPGL_004(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWPGL-004", "Sin datos para mostrar"),
     MDWPGL_400(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWPGL-400", "El CardId o el Código de Persona es inválido"),
     MDWTJD_007(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWTJD-007", "Ya existe una autorizaciones de compras por internet con los mismos parametros."),
+    MDWTJD_009(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWTJD-009", "Ocurrio un error al intentar activar la Nueva Tarjeta de Debito"),
     MDWTJD_010(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWTJD-010", "Ocurrio un error al activar el seguro de la tarjeta de debito"),
     END_DATE_MUST_BE_GREATER_THAN_START_DATE(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "la fecha fin debe ser mayor o igual a la fecha inicio");
 

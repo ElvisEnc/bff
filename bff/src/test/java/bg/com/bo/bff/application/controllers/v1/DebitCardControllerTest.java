@@ -281,6 +281,34 @@ class DebitCardControllerTest {
     }
 
     @Test
+    void givenPersonIdAndCardIdWhenActivateDebitCardThenSuccess() throws Exception {
+        // Arrange
+        GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVATE_DEBIT_CARD);
+        ActivateDebitCardRequest request = ActivateDebitCardRequestFixture.withDefault();
+        when(service.activateDebitCard(any(), any(), any(), any())).thenReturn(expectedResponse);
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        // Act
+        String url = "/api/v1/debit-cards/persons/{personId}/cards/{cardId}/activate";
+        MvcResult result = mockMvc.perform(post(url, 123, 123)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String response = objectMapper.writeValueAsString(expectedResponse);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).activateDebitCard(any(), any(), any(), any());
+    }
+
+    @Test
     void givenValidDataWhenDetailThenThenDCDetailResponseSuccess() throws Exception {
         // Arrange
         String personId = "169494";

@@ -469,6 +469,50 @@ class DebitCardMiddlewareProviderTest {
     }
 
     @Test
+    void givenPersonCodeAndCardIdWhenActivateDebitCardThenExpectResponse() throws IOException {
+        // Arrange
+        GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVATE_DEBIT_CARD);
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(UpdateSecureMWResponseFixture.withDefault());
+        stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = debitCardMiddlewareProvider.activateDebitCard(ActivateDebitCardMWRequestFixture.withDefault(), map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, expectedResponse);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    void giveErrorMiddlewareWhenActivateDebitCardThenGenericException() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
+                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
+                        .code("MDWTJD-009")
+                        .description("MDWTJD-009")
+                        .build()))
+                .build();
+        stubFor(patch(anyUrl()).willReturn(aResponse()
+                .withStatus(406)
+                .withBody(Util.objectToString(errorMiddlewareProvider))));
+        ActivateDebitCardMWRequest request = ActivateDebitCardMWRequestFixture.withDefault();
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            debitCardMiddlewareProvider.activateDebitCard(request, map);
+        });
+
+        // Assert
+        assertEquals("NOT_ACCEPTABLE", exception.getCode());
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
     void givenPersonCodeAndCardIdWhenActiveDebitCardSecureThenExpectResponse() throws IOException {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVE_ASSURANCE);

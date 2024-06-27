@@ -1,10 +1,6 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCAccountsOrderRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.UpdateDebitCardAssuranceRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.*;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.AccountTD;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
@@ -81,6 +77,12 @@ public class DebitCardService implements IDebitCardService {
     public GenericResponse activeDebitCardAssurance(Integer personId, Integer cardId, UpdateDebitCardAssuranceRequest request, Map<String, String> parameters) throws IOException {
         UpdateDebitCardSecureMWRequest mwRequest = idcMapper.mapActiveAssuranceRequest(personId, cardId, request);
         return idcProvider.activeDebitCardSecure(mwRequest, parameters);
+    }
+
+    @Override
+    public GenericResponse activateDebitCard(Integer personId, Integer cardId, ActivateDebitCardRequest request, Map<String, String> parameters) throws IOException {
+        ActivateDebitCardMWRequest mwRequest = idcMapper.mapActivateDebitCardRequest(personId, cardId);
+        return idcProvider.activateDebitCard(mwRequest, parameters);
     }
 
     @Override

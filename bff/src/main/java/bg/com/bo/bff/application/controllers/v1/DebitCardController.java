@@ -1,10 +1,6 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCAccountsOrderRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.UpdateDebitCardAssuranceRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.*;
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
@@ -214,6 +210,27 @@ public class DebitCardController {
             @Valid @RequestBody UpdateDebitCardAssuranceRequest request
     ) throws IOException {
         return ResponseEntity.ok(service.activeDebitCardAssurance(personId, cardId, request, Headers.getParameter(httpServletRequest)));
+    }
+
+    @Operation(summary = "Activar Tarjeta de Debito", description = "Activa la tarjeta de débito")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Activación de la tarjeta de débito", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "406", description = "Errores de negocio", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PostMapping("/persons/{personId}/cards/{cardId}/activate")
+    public ResponseEntity<GenericResponse> activationDebitCard(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") Integer personId,
+            @PathVariable("cardId") @NotNull @Parameter(description = "Este es el pciId de la tarjeta", example = "12345") Integer cardId,
+            @Valid @RequestBody ActivateDebitCardRequest request
+    ) throws IOException {
+        return ResponseEntity.ok(service.activateDebitCard(personId, cardId, request, Headers.getParameter(httpServletRequest)));
     }
 
     @Operation(summary = "Crear autorización", description = "Crear una autorización para compras por internet")

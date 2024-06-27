@@ -20,6 +20,7 @@ public class UpdateDebitCardAssuranceRequest {
     @NotNull(message = "openingRequestFlow no puede estar en blanco")
     @Schema(description = "booleano si viene del flujo de apertura", example = "false")
     private Boolean openingRequestFlow;
+
     @NotNull
     @NotBlank
     @Pattern(regexp = "\\d+", message = "openingRequestNumber debe contener solo números")

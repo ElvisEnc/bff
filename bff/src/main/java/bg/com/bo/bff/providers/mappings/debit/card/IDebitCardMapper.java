@@ -34,6 +34,8 @@ public interface IDebitCardMapper {
 
     UpdateDebitCardSecureMWRequest mapActiveAssuranceRequest(Integer personId, Integer cardId, UpdateDebitCardAssuranceRequest request);
 
+    ActivateDebitCardMWRequest mapActivateDebitCardRequest(Integer personId, Integer cardId);
+
     CreateAuthorizationOnlinePurchaseMWRequest mapToCreateAuthorizationOnlinePurchaseMWRequest(CreateAuthorizationOnlinePurchaseRequest request, String cardId, Integer intInitial, Integer intFinal, String action);
 
     DCDetailResponse mapToDetailResponse(DCDetailMWResponse response);

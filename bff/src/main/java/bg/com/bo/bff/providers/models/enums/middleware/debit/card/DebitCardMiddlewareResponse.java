@@ -16,7 +16,9 @@ public enum DebitCardMiddlewareResponse implements IGenericControllerResponse {
     SUCCESS_DELETE_AUTH_PURCHASE("SUCCESS","Se elimino la compra por internet."),
     ERROR_DELETE_AUTH_PURCHASE("ERROR","No se pudo realizar la eliminación."),
     SUCCESS_ACTIVE_ASSURANCE("SUCCESS","Se activo el seguro de la tarjeta de debito"),
-    ERROR_ACTIVE_ASSURANCE("ERROR","No se pudo activar el seguro de la tarjeta de debito");
+    ERROR_ACTIVE_ASSURANCE("ERROR","No se pudo activar el seguro de la tarjeta de debito"),
+    SUCCESS_ACTIVATE_DEBIT_CARD("SUCCESS","Su tarjeta de debito ha sido activada exitosamente!"),
+    ERROR_ACTIVATE_DEBIT_CARD("ERROR","Ocurrio algo inesperado, no se pudo activar la tarjeta de debito");
 
     private final String code;
     private final String message;

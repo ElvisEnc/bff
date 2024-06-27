@@ -26,6 +26,8 @@ public interface IDebitCardProvider {
 
     GenericResponse activeDebitCardSecure(UpdateDebitCardSecureMWRequest request, Map<String, String> parameters) throws IOException;
 
+    GenericResponse activateDebitCard(ActivateDebitCardMWRequest request, Map<String, String> parameters) throws IOException;
+
     DCDetailMWResponse detail(String personId, String cardId, Map<String, String> parameters) throws IOException;
 
     GenericResponse lockStatus(DCLockStatusMWRequest requestMW, Map<String, String> parameters) throws IOException;
