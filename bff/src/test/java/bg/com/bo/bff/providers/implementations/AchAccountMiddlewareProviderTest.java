@@ -17,7 +17,7 @@ import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMWResponse;
 import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponseFixture;
-import bg.com.bo.bff.providers.mappings.ach.account.AchAccountMWtMapper;
+import bg.com.bo.bff.mappings.providers.account.AchAccountMWtMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.http.impl.client.HttpClientBuilder;

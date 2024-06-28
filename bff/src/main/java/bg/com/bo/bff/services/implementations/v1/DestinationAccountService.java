@@ -31,7 +31,7 @@ import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMW;
 import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
-import bg.com.bo.bff.providers.mappings.destination.account.IDestinationAccountMapper;
+import bg.com.bo.bff.mappings.providers.account.IDestinationAccountMapper;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;

@@ -9,7 +9,7 @@ import bg.com.bo.bff.providers.dtos.response.TransferResponseACHMD;
 import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferACHProvider;
-import bg.com.bo.bff.providers.mappings.transfer.TransferMWtMapper;
+import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.ACHMiddlewareError;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;

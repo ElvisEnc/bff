@@ -10,7 +10,7 @@ import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.TransferYoloNetRequest;
 import bg.com.bo.bff.providers.dtos.request.TransferYoloNetRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.*;
-import bg.com.bo.bff.providers.mappings.transfer.IYoloMapper;
+import bg.com.bo.bff.mappings.providers.transfer.IYoloMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;

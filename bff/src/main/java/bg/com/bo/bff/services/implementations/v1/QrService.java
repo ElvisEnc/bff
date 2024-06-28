@@ -23,7 +23,7 @@ import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IQRProvider;
 import bg.com.bo.bff.providers.interfaces.IQrTransactionProvider;
-import bg.com.bo.bff.providers.mappings.qr.IQrMapper;
+import bg.com.bo.bff.mappings.providers.qr.IQrMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.qr.QRMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.qr.QRTransactionMiddlewareError;
 import bg.com.bo.bff.services.interfaces.IQrService;

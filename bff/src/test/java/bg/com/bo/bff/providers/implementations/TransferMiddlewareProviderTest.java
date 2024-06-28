@@ -8,8 +8,8 @@ import static org.mockito.Mockito.when;
 
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.providers.dtos.response.*;
-import bg.com.bo.bff.providers.mappings.pcc01.Pcc01Mapper;
-import bg.com.bo.bff.providers.mappings.transfer.TransferMWtMapper;
+import bg.com.bo.bff.mappings.providers.pcc01.Pcc01Mapper;
+import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpEntity;

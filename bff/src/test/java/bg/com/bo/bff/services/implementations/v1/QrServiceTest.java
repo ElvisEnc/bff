@@ -17,7 +17,7 @@ import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IQRProvider;
 import bg.com.bo.bff.providers.interfaces.IQrTransactionProvider;
-import bg.com.bo.bff.providers.mappings.qr.IQrMapper;
+import bg.com.bo.bff.mappings.providers.qr.IQrMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

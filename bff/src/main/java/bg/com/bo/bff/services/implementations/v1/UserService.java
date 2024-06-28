@@ -33,8 +33,8 @@ import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInform
 import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
-import bg.com.bo.bff.providers.mappings.apiface.IApiFaceMapper;
-import bg.com.bo.bff.providers.mappings.personal.information.IPersonalInformationMapper;
+import bg.com.bo.bff.mappings.providers.apiface.IApiFaceMapper;
+import bg.com.bo.bff.mappings.providers.information.IPersonalInformationMapper;
 import bg.com.bo.bff.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,7 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
 import bg.com.bo.bff.providers.interfaces.IGenerateImage;
-import bg.com.bo.bff.providers.mappings.transfer.TransferDetailsMapper;
+import bg.com.bo.bff.mappings.providers.transfer.TransferDetailsMapper;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;

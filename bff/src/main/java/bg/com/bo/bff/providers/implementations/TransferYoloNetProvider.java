@@ -10,7 +10,7 @@ import bg.com.bo.bff.providers.dtos.response.DynamicAppError;
 import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
 import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
-import bg.com.bo.bff.providers.mappings.transfer.IYoloMapper;
+import bg.com.bo.bff.mappings.providers.transfer.IYoloMapper;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;

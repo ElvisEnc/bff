@@ -22,7 +22,7 @@ import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWRespo
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
-import bg.com.bo.bff.providers.mappings.payment.services.IPaymentServicesMapper;
+import bg.com.bo.bff.mappings.providers.services.IPaymentServicesMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -24,7 +24,7 @@ import bg.com.bo.bff.providers.dtos.response.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
-import bg.com.bo.bff.providers.mappings.ach.account.AchAccountMWtMapper;
+import bg.com.bo.bff.mappings.providers.account.AchAccountMWtMapper;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;

@@ -1,7 +1,7 @@
 package bg.com.bo.bff.application.config.request.tracing;
 
 import bg.com.bo.bff.commons.utils.Headers;
-import bg.com.bo.bff.mappings.interfaces.IRequestTraceMapper;
+import bg.com.bo.bff.mappings.services.request.trace.IRequestTraceMapper;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

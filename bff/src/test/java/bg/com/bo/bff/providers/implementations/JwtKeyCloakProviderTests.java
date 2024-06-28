@@ -2,10 +2,10 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.dtos.request.LogoutRequest;
-import bg.com.bo.bff.providers.mappings.GenericsMapper;
-import bg.com.bo.bff.mappings.implementations.keycloak.KeyCloakJsonMapper;
-import bg.com.bo.bff.providers.mappings.keycloak.KeyCloakObjectMapper;
-import bg.com.bo.bff.providers.mappings.keycloak.KeyCloakMapper;
+import bg.com.bo.bff.mappings.providers.GenericsMapper;
+import bg.com.bo.bff.mappings.services.keycloak.KeyCloakJsonMapper;
+import bg.com.bo.bff.mappings.providers.keycloak.KeyCloakObjectMapper;
+import bg.com.bo.bff.mappings.providers.keycloak.KeyCloakMapper;
 import bg.com.bo.bff.providers.dtos.response.keycloak.ErrorKCResponse;
 import bg.com.bo.bff.models.dtos.login.CreateTokenServiceResponse;
 import bg.com.bo.bff.application.exceptions.CreateTokenServiceException;

@@ -11,7 +11,7 @@ import bg.com.bo.bff.providers.dtos.response.ErrorDetailResponse;
 import bg.com.bo.bff.providers.dtos.response.TransferMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
-import bg.com.bo.bff.providers.mappings.transfer.TransferMWtMapper;
+import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;

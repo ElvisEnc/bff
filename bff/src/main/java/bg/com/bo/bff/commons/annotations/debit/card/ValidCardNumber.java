@@ -1,5 +1,6 @@
 package bg.com.bo.bff.commons.annotations.debit.card;
 
+import bg.com.bo.bff.commons.validators.debit.card.CardNumberValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

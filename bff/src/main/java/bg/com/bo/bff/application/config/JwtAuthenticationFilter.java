@@ -3,7 +3,7 @@ package bg.com.bo.bff.application.config;
 import bg.com.bo.bff.models.UserData;
 import bg.com.bo.bff.models.jwt.JwtAccess;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
-import bg.com.bo.bff.mappings.interfaces.IAuthMapper;
+import bg.com.bo.bff.mappings.services.auth.IAuthMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

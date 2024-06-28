@@ -7,7 +7,7 @@ import bg.com.bo.bff.application.dtos.request.LogoutRequest;
 import bg.com.bo.bff.application.dtos.response.DeviceEnrollmentResponse;
 import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.LoginResponse;
-import bg.com.bo.bff.application.mappings.login.LoginMapper;
+import bg.com.bo.bff.mappings.application.LoginMapper;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.application.exceptions.UnauthorizedException;
 import bg.com.bo.bff.models.dtos.login.LoginResult;

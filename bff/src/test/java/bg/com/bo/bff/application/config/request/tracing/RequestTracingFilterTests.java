@@ -1,7 +1,7 @@
 package bg.com.bo.bff.application.config.request.tracing;
 
-import bg.com.bo.bff.mappings.implementations.RequestTraceMapper;
-import bg.com.bo.bff.mappings.interfaces.IRequestTraceMapper;
+import bg.com.bo.bff.mappings.services.request.trace.RequestTraceMapper;
+import bg.com.bo.bff.mappings.services.request.trace.IRequestTraceMapper;
 import jakarta.servlet.ServletException;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Test;

@@ -4,7 +4,7 @@ import bg.com.bo.bff.application.dtos.request.LogoutRequest;
 import bg.com.bo.bff.application.dtos.response.*;
 import bg.com.bo.bff.application.dtos.request.LoginRequest;
 import bg.com.bo.bff.application.dtos.request.RefreshSessionRequest;
-import bg.com.bo.bff.application.mappings.login.LoginMapper;
+import bg.com.bo.bff.mappings.application.LoginMapper;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.models.dtos.login.*;
 import bg.com.bo.bff.application.exceptions.NotHandledResponseException;

@@ -11,7 +11,7 @@ import bg.com.bo.bff.providers.dtos.response.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementCsvProvider;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementPdfProvider;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
-import bg.com.bo.bff.providers.mappings.account.statement.AccountStatementAdapter;
+import bg.com.bo.bff.mappings.providers.statement.AccountStatementAdapter;
 import bg.com.bo.bff.services.interfaces.IExportService;
 import org.springframework.stereotype.Service;
 

@@ -16,7 +16,7 @@ import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWResponseFixtu
 import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
-import bg.com.bo.bff.providers.mappings.debit.card.IDebitCardMapper;
+import bg.com.bo.bff.mappings.providers.card.IDebitCardMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.CreateAuthorizationOnlinePurchaseResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;

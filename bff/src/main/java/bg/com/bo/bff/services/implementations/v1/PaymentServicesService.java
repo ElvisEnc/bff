@@ -14,7 +14,7 @@ import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWRespo
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
-import bg.com.bo.bff.providers.mappings.payment.services.IPaymentServicesMapper;
+import bg.com.bo.bff.mappings.providers.services.IPaymentServicesMapper;
 import bg.com.bo.bff.services.interfaces.IPaymentServicesService;
 import org.springframework.stereotype.Service;
 

@@ -20,7 +20,7 @@ import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMWResponseFix
 import bg.com.bo.bff.providers.dtos.response.accounts.AddAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
-import bg.com.bo.bff.providers.mappings.destination.account.IDestinationAccountMapper;
+import bg.com.bo.bff.mappings.providers.account.IDestinationAccountMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

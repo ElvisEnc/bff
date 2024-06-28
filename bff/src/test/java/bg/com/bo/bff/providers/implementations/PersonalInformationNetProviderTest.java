@@ -19,7 +19,7 @@ import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalI
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalUpdateNetResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import bg.com.bo.bff.providers.dtos.response.personal.update.PersonalUpdateNetResponse;
-import bg.com.bo.bff.providers.mappings.personal.information.IPersonalInformationMapper;
+import bg.com.bo.bff.mappings.providers.information.IPersonalInformationMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
