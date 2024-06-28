@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({MissingRequestHeaderException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class, ConstraintViolationException.class, UnexpectedTypeException.class})
     public ResponseEntity<ErrorResponse> handleValidationException(Exception exception) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), exception.getMessage());
-        logger.error(exception);
+        logger.debug(exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
@@ -43,21 +43,19 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.toList());
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), String.join(", ", errors));
-        logger.error("Validation error: ", ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException exception) {
         ErrorResponse errorResponse = new ErrorResponse(HttpError.ERROR_401.getName(), exception.getMessage());
-        logger.error(exception);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException exception) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), HttpStatus.BAD_REQUEST.name());
-        logger.error(exception);
+        logger.debug(exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
@@ -85,14 +83,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(GenericException.class)
     public ResponseEntity<ErrorResponse> genericException(GenericException exception) {
         ErrorResponse errorResponse = new ErrorResponse(String.valueOf(exception.getCode()), exception.getMessage());
-        logger.error(exception);
         return ResponseEntity.status(exception.getStatus()).body(errorResponse);
     }
 
     @ExceptionHandler(HandledException.class)
     public ResponseEntity<ErrorResponse> handledException(HandledException exception) {
         ErrorResponse errorResponse = new ErrorResponse(String.valueOf(exception.getCode()), exception.getMessage());
-        logger.error(exception);
         return ResponseEntity.status(exception.getStatus()).body(errorResponse);
     }
 }

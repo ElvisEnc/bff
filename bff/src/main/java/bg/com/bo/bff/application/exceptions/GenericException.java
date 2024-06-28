@@ -1,6 +1,8 @@
 package bg.com.bo.bff.application.exceptions;
 
 import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -36,6 +38,12 @@ public class GenericException extends RuntimeException {
         fillTrace();
     }
 
+    public GenericException(IMiddlewareError error) {
+        super(error.getMessage());
+        this.status = error.getHttpCode();
+        this.code = error.getCode();
+        fillTrace();
+    }
 
     private void fillTrace() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();

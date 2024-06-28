@@ -4,6 +4,7 @@ import bg.com.bo.bff.models.UserData;
 import bg.com.bo.bff.models.jwt.JwtAccess;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
 import bg.com.bo.bff.mappings.interfaces.IAuthMapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,6 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (ExpiredJwtException ignored) {
         } catch (Exception e) {
             logger.error("Hubo un error al obtener los datos del Access Token.");
             logger.error(e);

@@ -1,18 +1,21 @@
 package bg.com.bo.bff.application.config.encryption.payload;
 
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
-import bg.com.bo.bff.application.exceptions.NotEncodedInfoException;
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.utils.CipherUtils;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.EncryptInfo;
 import bg.com.bo.bff.models.EncryptionPayload;
 import bg.com.bo.bff.models.PayloadKey;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;
 import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -30,6 +33,8 @@ public class DecryptRequestWrapper extends HttpServletRequestWrapper {
     private SecretKey payloadSecretKey;
     private IvParameterSpec iv;
     private EncryptionPayload encryptionPayloadDecrypted;
+
+    private static final Logger logger = LogManager.getLogger(DecryptRequestWrapper.class.getName());
 
     public DecryptRequestWrapper(HttpServletRequest request, IEncryptionService encryptionService) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeySpecException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
         super(request);
@@ -76,10 +81,10 @@ public class DecryptRequestWrapper extends HttpServletRequestWrapper {
         String sessionEncryptedKeyHeader = request.getHeader(Constants.SESSION_ENCRYPTED_KEY_HEADER);
 
         if (encodeInfoHeader == null || encodeInfoHeader.isEmpty())
-            throw new NotEncodedInfoException();
+            throw new GenericException(DefaultMiddlewareError.NO_ENCODE_INFO);
 
         if (sessionEncryptedKeyHeader == null || sessionEncryptedKeyHeader.isEmpty())
-            throw new NotEncodedInfoException();
+            throw new GenericException(DefaultMiddlewareError.NO_ENCODE_INFO);
 
         parseEncryptInfo(encodeInfoHeader);
 
@@ -162,6 +167,16 @@ public class DecryptRequestWrapper extends HttpServletRequestWrapper {
     private void parseEncryptInfo(String encodeInfoHeader) throws IOException {
         byte[] encodeInfoBytes = Base64.getDecoder().decode(Util.getEncodedBytes(encodeInfoHeader));
         String userEncodeInfo = new String(encodeInfoBytes);
-        encodeInfo = Util.stringToObject(userEncodeInfo, EncryptInfo.class);
+        try {
+            encodeInfo = Util.stringToObject(userEncodeInfo, EncryptInfo.class);
+
+            if (encodeInfo.getPersonId() == null || encodeInfo.getUniqueId() == null)
+                throw new GenericException(DefaultMiddlewareError.INVALID_ENCODE_INFO);
+        } catch (GenericException e) {
+            throw (e);
+        } catch (Exception e) {
+            logger.error(e);
+            throw new GenericException(DefaultMiddlewareError.INVALID_ENCODE_INFO);
+        }
     }
 }

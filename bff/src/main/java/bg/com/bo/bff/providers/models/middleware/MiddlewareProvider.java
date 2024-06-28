@@ -91,12 +91,13 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
                 if (additionalEvaluator != null && additionalEvaluator.getEvaluator().evaluate(jsonResponse, this::mapProviderIError))
                     return additionalEvaluator.getResolver().resolve(jsonResponse, classType, this::mapProviderIError);
 
-                LOGGER.error(jsonResponse);
                 IMiddlewareError error = this.mapProviderIError(jsonResponse);
+                if (error.equals(DefaultMiddlewareError.DEFAULT))
+                    LOGGER.error(String.format("Not Mapped Error:%s", jsonResponse));
+
                 throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }
         } catch (GenericException ex) {
-            LOGGER.error(ex);
             throw ex;
         } catch (Exception e) {
             LOGGER.error(e);
@@ -146,16 +147,16 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
-                if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED || statusCode == HttpStatus.SC_NO_CONTENT) {
+                if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED || statusCode == HttpStatus.SC_NO_CONTENT)
                     return Util.stringToObject(jsonResponse, classType);
-                }
 
-                LOGGER.error(jsonResponse);
                 IMiddlewareError error = this.mapProviderIError(jsonResponse);
+                if (error.equals(DefaultMiddlewareError.DEFAULT))
+                    LOGGER.error(String.format("Not Mapped Error:%s", jsonResponse));
+
                 throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
             }
         } catch (GenericException ex) {
-            LOGGER.error(ex);
             throw ex;
         } catch (Exception e) {
             LOGGER.error(e);

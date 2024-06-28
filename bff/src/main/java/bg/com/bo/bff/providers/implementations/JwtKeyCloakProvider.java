@@ -339,6 +339,8 @@ public class JwtKeyCloakProvider implements IJwtProvider {
         try {
             Map<String, JwtKey> keyList = self.certs();
             return keyCloakMapper.getJsonMapper().convertToJwtAccess(token, keyList);
+        } catch (ExpiredJwtException e) {
+            throw (e);
         } catch (Exception e) {
             logger.error("Hubo un error al obtener el Access JWT.");
             logger.error(e);

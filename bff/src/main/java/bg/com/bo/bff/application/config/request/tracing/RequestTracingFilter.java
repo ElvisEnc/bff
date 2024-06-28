@@ -38,23 +38,31 @@ public class RequestTracingFilter extends OncePerRequestFilter {
 
         Date in = new Date();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String traceId = UUID.randomUUID().toString();
 
-        resolveTraceId(requestWrapper);
+        resolveRequestTraceId(requestWrapper, traceId);
 
         filterChain.doFilter(requestWrapper, responseWrapper);
 
         RequestTrace requestTrace = requestTraceMapper.convert(requestWrapper, responseWrapper, in,  authentication);
 
+        resolverResponseTraceId(responseWrapper, traceId);
         responseWrapper.copyBodyToResponse();
 
         logger.trace(requestTrace);
     }
 
-    private static void resolveTraceId(CustomHeadersRequestWrapper requestWrapper) {
+    private static void resolveRequestTraceId(CustomHeadersRequestWrapper requestWrapper, String traceId) {
         Map<String, String> requestHeaders = Headers.getHeaders(requestWrapper);
-        if (!requestHeaders.containsKey(HeadersMW.REQUEST_ID.getName())) {
-            String traceId = UUID.randomUUID().toString();
+        if (!requestHeaders.containsKey(HeadersMW.REQUEST_ID.getName()))
             requestWrapper.addHeader(HeadersMW.REQUEST_ID.getName(), traceId);
-        }
+    }
+
+    private static void resolverResponseTraceId(ContentCachingResponseWrapper responseWrapper, String traceId) {
+        Map<String, String> requestHeaders = Headers.getHeaders(responseWrapper);
+        if (!requestHeaders.containsKey(HeadersMW.REQUEST_ID.getName()))
+            responseWrapper.addHeader(HeadersMW.REQUEST_ID.getName(), traceId);
+        else
+            responseWrapper.setHeader(HeadersMW.REQUEST_ID.getName(), traceId);
     }
 }

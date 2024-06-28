@@ -1,7 +1,9 @@
 package bg.com.bo.bff.application.config;
 
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.UnauthorizedException;
 import bg.com.bo.bff.models.UserData;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -35,9 +37,9 @@ public class IdentityValidationInterceptor implements HandlerInterceptor {
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             UserData currentUserName = (UserData) authentication.getPrincipal();
             if (!currentUserName.getPersonId().equals(personId))
-                throw new UnauthorizedException("Usuario autenticado no válido.");
+                throw new GenericException(DefaultMiddlewareError.NOT_AUTHENTICATED_VALID_USER);
         } else
-            throw new UnauthorizedException("Usuario no autenticado.");
+            throw new GenericException(DefaultMiddlewareError.NOT_AUTHENTICATED_USER);
 
         return true;
     }

@@ -1,9 +1,11 @@
 package bg.com.bo.bff.application.config.encryption.payload;
 
 import bg.com.bo.bff.application.dtos.response.ErrorResponse;
-import bg.com.bo.bff.application.exceptions.NotEncodedInfoException;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,26 +49,33 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
             filterChain.doFilter(decryptRequestWrapper, responseWrapper);
 
             response.getWriter().write(responseWrapper.getContent());
-        } catch (NotEncodedInfoException e) {
-            logger.error("Encryption parameters not valid.");
-
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .code(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                    .message(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-                    .build();
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.getWriter().write(Util.objectToString(errorResponse));
+        } catch (GenericException e) {
+            sendResponse(response, e);
         } catch (Exception e) {
             logger.error("Error to process the request/response.");
             logger.error(e);
-
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .code(HttpStatus.INTERNAL_SERVER_ERROR.name())
-                    .message(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-                    .build();
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.getWriter().write(Util.objectToString(errorResponse));
+            sendResponse(response, DefaultMiddlewareError.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private static void sendResponse(HttpServletResponse response, IMiddlewareError error) throws IOException {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(error.getCode())
+                .message(error.getMessage())
+                .build();
+        response.setStatus(error.getHttpCode().value());
+        response.setContentType("application/json");
+        response.getWriter().write(Util.objectToString(errorResponse));
+    }
+
+    private static void sendResponse(HttpServletResponse response, GenericException e) throws IOException {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(e.getCode())
+                .message(e.getMessage())
+                .build();
+        response.setStatus(e.getStatus().value());
+        response.setContentType("application/json");
+        response.getWriter().write(Util.objectToString(errorResponse));
     }
 
     @Override
