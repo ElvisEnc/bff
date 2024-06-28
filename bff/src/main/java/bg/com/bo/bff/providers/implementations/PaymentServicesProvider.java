@@ -1,14 +1,16 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
+import bg.com.bo.bff.providers.dtos.request.payment.services.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.DeleteAffiliateServiceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
@@ -66,6 +68,14 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
         DefaultResultByMWErrorEvaluator<ListServicesMWResponse> additionalEvaluator = DefaultResultByMWErrorEvaluator.instance(PaymentServicesMiddlewareError.MDWPSM_005);
         final Header[] headers = setHeaders(parameters);
         return get(url, headers, ListServicesMWResponse.class, additionalEvaluator);
+    }
+
+    @Override
+    public DeleteAffiliateServiceMWResponse deleteAffiliationService(DeleteAffiliateServiceMWRequest request, Map<String, String> parameter) throws IOException {
+
+        final String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.PAYMENT_SERVICES.getName(), PaymentServicesMiddlewareServices.DELETE_AFFILIATE_SERVICE.getServiceURL());
+        final Header[] headers = setHeaders(parameter);
+        return post(url,headers,request,DeleteAffiliateServiceMWResponse.class);
     }
 
     private static Header[] setHeaders(Map<String, String> parameters) {

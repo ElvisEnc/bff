@@ -10,7 +10,8 @@ public enum PaymentServicesMiddlewareServices {
     GET_CATEGORIES("/bs/v1/categories"),
     GET_SUBCATEGORY_CITIES("/bs/v1/sub-categories/%s/cities"),
     GET_AFFILIATIONS_SERVICES("/bs/v1/affiliations-services/persons/%d"),
-    GET_SERVICES("/bs/v1/sub-categories/%s/cities/%s");
+    GET_SERVICES("/bs/v1/sub-categories/%s/cities/%s"),
+    DELETE_AFFILIATE_SERVICE("/bs/v1/affiliations/delete");
     private final String serviceURL;
 }
 

@@ -1,8 +1,9 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
+import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
 
@@ -21,4 +22,6 @@ public interface IPaymentServicesService {
     List<AffiliateServiceResponse> getAffiliateServices(Integer personId, Map<String, String> parameter) throws IOException;
 
     ListServicesResponse getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException;
+
+    GenericResponse deleteAffiliationService(String personId, String affiliateServiceId, Map<String, String> parameter) throws IOException;
 }

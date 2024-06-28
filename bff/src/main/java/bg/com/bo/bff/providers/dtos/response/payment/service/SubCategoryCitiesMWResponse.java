@@ -1,4 +1,4 @@
-package bg.com.bo.bff.application.dtos;
+package bg.com.bo.bff.providers.dtos.response.payment.service;
 
 
 import lombok.AllArgsConstructor;

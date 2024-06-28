@@ -1,9 +1,26 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.response.payment.service.*;
+import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.service.*;
+import bg.com.bo.bff.application.dtos.response.payment.services.DeleteAffiliateServiceResponse;
+import bg.com.bo.bff.providers.dtos.request.payment.services.DeleteAffiliateServiceMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.providers.mappings.payment.services.IPaymentServicesMapper;
 import org.junit.jupiter.api.Test;
@@ -20,6 +37,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -116,5 +134,23 @@ class PaymentServicesServiceTest {
         assertEquals(expected, response);
         verify(provider).getServicesByCategoryAndCity(3, 2, new HashMap<>());
         verify(mapper).convertResponse(mwResponse);
+    }
+
+    @Test
+    void givenPersonIdAndAccountNumberAndAffiliateCodeWhenDeleteAffiliationServiceThenOK() throws IOException {
+        //Arrange
+        String personId = "12345";
+
+        String affiliateServiceId = "20";
+        GenericResponse expected = GenericResponse.instance(DeleteAffiliateServiceResponse.SUCCESS);
+        when(mapper.convertRequest(anyString(),anyString())).thenReturn(DeleteAffiliateServiceMWRequestFixture.withDefault());
+
+        //Act
+        GenericResponse actual = service.deleteAffiliationService(personId, affiliateServiceId, new HashMap<>());
+
+        //Assert
+        assertEquals(expected.getCode(), actual.getCode());
+        assertEquals(expected.getMessage(), actual.getMessage());
+        verify(mapper).convertRequest(anyString(),anyString());
     }
 }

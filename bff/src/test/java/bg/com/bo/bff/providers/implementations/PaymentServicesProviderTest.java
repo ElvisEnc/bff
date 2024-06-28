@@ -3,7 +3,6 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
-import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.DeviceMW;
@@ -11,8 +10,21 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.payment.services.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.DeleteAffiliateServiceMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
-import bg.com.bo.bff.providers.dtos.response.payment.service.*;
+import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.DeleteAffiliateServiceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.DeleteAffiliateServiceMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponseFixture;
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -30,8 +42,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.jsonResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -262,5 +284,23 @@ class PaymentServicesProviderTest {
 
         //Assert
         assertNull(response.getData());
+    }
+
+    @Test
+    void givenDeleteAffiliateServiceMWRequestWhenDeleteAffiliationServiceThenOK() throws IOException {
+        // Arrange
+        DeleteAffiliateServiceMWRequest request = DeleteAffiliateServiceMWRequestFixture.withDefault();
+        DeleteAffiliateServiceMWResponse expected = DeleteAffiliateServiceMWResponseFixture.withDefault();
+        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(expected);
+        stubFor(post(anyUrl()).willReturn(jsonResponse(jsonResponse, HttpStatus.SC_OK)));
+
+        // Act
+        DeleteAffiliateServiceMWResponse actual = provider.deleteAffiliationService(request, new HashMap<>());
+
+        // Assert
+        assertEquals(expected.getData().getAffiliationNewCod(),actual.getData().getAffiliationNewCod());
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+
     }
 }

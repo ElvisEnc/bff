@@ -1,14 +1,17 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.SubCategoryCitiesMWResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
+import bg.com.bo.bff.application.dtos.response.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
+import bg.com.bo.bff.application.dtos.response.payment.services.DeleteAffiliateServiceResponse;
+import bg.com.bo.bff.providers.dtos.request.payment.services.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.providers.mappings.payment.services.IPaymentServicesMapper;
@@ -57,5 +60,13 @@ public class PaymentServicesService implements IPaymentServicesService {
     public ListServicesResponse getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException {
         final ListServicesMWResponse result = provider.getServicesByCategoryAndCity(subCategoryId, cityId, parameters);
         return mapper.convertResponse(result);
+    }
+
+    @Override
+    public GenericResponse deleteAffiliationService(String personId, String accountNumber, Map<String, String> parameter) throws IOException {
+        final DeleteAffiliateServiceMWRequest request = mapper.convertRequest(personId, accountNumber);
+        provider.deleteAffiliationService(request, parameter);
+
+        return GenericResponse.instance(DeleteAffiliateServiceResponse.SUCCESS);
     }
 }

@@ -1,8 +1,17 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.response.payment.service.*;
+import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.services.DeleteAffiliateServiceResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IPaymentServicesService;
@@ -22,13 +31,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,6 +51,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PaymentServicesControllerTest {
     private static final String GET_SUB_CATEGORIES = "/api/v1/payment-services/categories/{categoryId}/subcategories";
     private static final String GET_SUBCATEGORY_CITIES = "/api/v1/payment-services/subcategories/{subCategoryId}/cities";
+    private static final String DELETE_AFFILIATE_SERVICE = "/api/v1/payment-services/persons/{personId}/affiliate-services/{affiliateServiceId}";
+
     private MockMvc mockMvc;
     @InjectMocks
     private PaymentServicesController controller;
@@ -203,5 +219,30 @@ class PaymentServicesControllerTest {
         assertNotNull(result);
         assertEquals(response, actual);
         verify(service).getServicesByCategoryAndCity(any(), any(), any());
+    }
+
+    @Test
+    void givenPersonIdAndAccountNumberAndAffiliateCodeWhenDeleteAffiliationServiceThenOK() throws Exception {
+        // Arrange
+        String personId = "12345";
+        String affiliateServiceId = "20";
+        GenericResponse expected = GenericResponse.instance(DeleteAffiliateServiceResponse.SUCCESS);
+        when(service.deleteAffiliationService(anyString(),anyString(),any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc.perform(delete(DELETE_AFFILIATE_SERVICE, personId, affiliateServiceId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response,actual);
+        verify(service).deleteAffiliationService(anyString(),anyString(),any());
+
     }
 }
