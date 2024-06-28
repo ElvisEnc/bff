@@ -151,7 +151,12 @@ public enum AppError {
     VALIDATE_MARRIED_AND_USE_HUSBAND_LAST_NAME_PERSON(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "El apellido del conyuge no puede estar vacio"),
     VALIDATE_USE_HUSBAND_LAST_NAME_PERSON(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "El campo usa apellido del conyuge no puede estar vacio"),
     REFERENCE_INVALID(HttpStatus.BAD_REQUEST, "BAD_REQUEST","BAD_REQUEST" , "Los datos de la referencia estan incompletos"),
-    VALIDATE_CITY_CODE(HttpStatus.BAD_REQUEST, "BAD_REQUEST" , "BAD_REQUEST","El codigo de ciudad no existe" );
+    INCOME_LEVEL_NOT_EXIST(HttpStatus.BAD_REQUEST, "BAD_REQUEST","BAD_REQUEST" , "El código de nivel de ingreso no existe"),
+    INCOME_SOURCE_NOT_EXIST(HttpStatus.BAD_REQUEST, "BAD_REQUEST","BAD_REQUEST" , "El código de fuente de ingreso no existe"),
+    POSITION_NOT_EXIST(HttpStatus.BAD_REQUEST, "BAD_REQUEST","BAD_REQUEST" , "El código de cargo no existe"),
+    ECONOMIC_ACTIVITY_NOT_EXIST(HttpStatus.BAD_REQUEST, "BAD_REQUEST","BAD_REQUEST" , "El código de actividad económica no existe"),
+    COMPANY_NAME_NOT_NULL(HttpStatus.BAD_REQUEST, "BAD_REQUEST","BAD_REQUEST" , "El nombre de la compañia no debe ser nulo"),
+    CITY_CODE_NOT_EXIST(HttpStatus.BAD_REQUEST, "BAD_REQUEST" , "BAD_REQUEST","El código de ciudad no existe" );
 
     private final HttpStatus httpCode;
     private final String code;

@@ -53,19 +53,18 @@ public class UpdatePersonalDetail {
         private String type;
 
         @Schema(description = "Nombre de la empresa", example = "Empresa S.A.")
+        @Pattern(regexp = "^\\S.{1,}\\S$", message = "El el nombre de la empresa debe tener almenos 3 letras")
         private String company;
 
         @Schema(description = "Cargo en la empresa", example = "Gerente")
         private String position;
 
         @Schema(description = "Nivel de ingresos", example = "1000")
-        @Min(value = 1, message = "El nivel de ingresos debe estar en el rango entre 1 y 5")
-        @Max(value = 5, message = "El nivel de ingresos debe estar en el rango entre 1 y 5")
-        @NotNull(message = "El nivel de ingresos no puede ser nulo")
+        @NotNull(message = "El código de nivel ingresos no puede ser nulo")
         private Integer incomeLevel;
 
         @Schema(description = "Actividad económica", example = "12345")
-        private int economicActivity;
+        private Integer economicActivity;
 
     }
 
@@ -82,7 +81,7 @@ public class UpdatePersonalDetail {
         @Schema(description = "Número de celular", example = "70003030")
         @NotBlank(message = "El número celular de  no puede estar vacio")
         @Size(min = 8, max = 8, message = "El número de telefono celular debe tener 8 digitos.")
-        @Pattern(regexp = "^[1-9][0-9]{0,100}$", message = "Error en el formato número de telefono celular")
+        @Pattern(regexp = "^[1-9]\\d{0,100}$", message = "Error en el formato número de telefono celular")
         private String cellPhoneNumber;
 
         @Schema(description= "Calle", example = "Calle Falsa")
@@ -91,7 +90,6 @@ public class UpdatePersonalDetail {
         @Schema(description = "Correo electrónico", example = "ejemplo@dominio.com")
         @NotBlank(message = "El correo electronico  no puede estar vacio")
         @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Formato de correo incorrecto")
-
         private String email;
 
         @NotNull(message = "El codigo de zona no puede estar vacio")

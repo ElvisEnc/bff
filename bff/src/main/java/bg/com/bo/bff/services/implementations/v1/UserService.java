@@ -28,6 +28,7 @@ import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
 import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
+import bg.com.bo.bff.providers.dtos.response.personal.information.EconomyActivity;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
@@ -39,7 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -50,6 +50,8 @@ public class UserService implements IUserService {
     private static final String HAS_HUSBAND_LAST_NAME_YES = "S";
     private static final String HAS_HUSBAND_LAST_NAME_NO = "N";
     private static final String MARRIED_AND_COMMON_LAW_UNION = "CU";
+    private static final String BANK_EMPLOYEE = "3";
+    private static final String DEPENDENT_INCOME_SOURCE ="D";
     private final ILoginMiddlewareProvider loginMiddlewareProvider;
     private final IPersonalInformationNetProvider personalInformationNetProvider;
     private final IPersonalInformationMapper iPersonalInformationMapper;
@@ -151,10 +153,64 @@ public class UserService implements IUserService {
         validateCityCode(request.getPersonalData().getDepartmentCode(),
                 request.getPersonalData().getCityCode(), parameter);
 
+        UpdatePersonalDetail.EconomicalActivity economicalActivity   = validateEconomicalActivity(
+                personId,
+                request.getEconomicalActivity(),
+                request.getPersonalData().getBankEmployee(),
+                personalInformation.getDataContent().getClientDataList().get(0).getIncomeLevel(),
+                personalInformation.getDataContent().getClientDataList().get(0).getEconomicActivity(),
+                personalInformation.getDataContent().getEconomicActivities().get(0)
+        );
+
+        request.setEconomicalActivity(economicalActivity);
         UpdatePersonalInformationNetRequest updatePersonalInformationNetRequest = iPersonalInformationMapper.convertRequest(personId, request, personalInformation);
         personalInformationNetProvider.updatePersonalInformation(updatePersonalInformationNetRequest, parameter);
 
         return GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
+    }
+
+    private UpdatePersonalDetail.EconomicalActivity validateEconomicalActivity(String personId,
+                                                                               UpdatePersonalDetail.EconomicalActivity economicalActivity,
+                                                                               String bankEmployee,
+                                                                               String incomeLevel,
+                                                                               int economicActivity,
+                                                                               EconomyActivity economyActivity) {
+        if(bankEmployee.equals(BANK_EMPLOYEE)){
+            return UpdatePersonalDetail.EconomicalActivity.builder()
+                    .type(economyActivity.getIncomeSource())
+                    .company(economyActivity.getCompany())
+                    .position(economyActivity.getPosition())
+                    .incomeLevel(Integer.valueOf(incomeLevel))
+                    .economicActivity(economicActivity)
+                    .build();
+        }
+
+        final EconomicActivityResponse economicActivityResponse = personalInformationNetProvider.getEconomicalActivity(Integer.valueOf(personId));
+
+        if(economicActivityResponse.getIncomeSource().stream().noneMatch(x->x.getId().equals(economicalActivity.getType()))) {
+            throw new GenericException(AppError.INCOME_SOURCE_NOT_EXIST.getMessage(), AppError.INCOME_SOURCE_NOT_EXIST.getHttpCode(), AppError.INCOME_SOURCE_NOT_EXIST.getCode());
+        }
+
+        if(economicActivityResponse.getIncomeLevel().stream().noneMatch(x->x.getId().equals(economicalActivity.getIncomeLevel().toString()))){
+            throw new GenericException(AppError.INCOME_LEVEL_NOT_EXIST.getMessage(), AppError.INCOME_LEVEL_NOT_EXIST.getHttpCode(), AppError.INCOME_LEVEL_NOT_EXIST.getCode());
+        }
+
+        if(!economicalActivity.getType().equals(DEPENDENT_INCOME_SOURCE)){
+            return economicalActivity;
+        }
+
+        if(economicActivityResponse.getJobTitle().stream().noneMatch(x->x.getId().equals(economicalActivity.getPosition()))){
+            throw new GenericException(AppError.POSITION_NOT_EXIST.getMessage(), AppError.POSITION_NOT_EXIST.getHttpCode(), AppError.POSITION_NOT_EXIST.getCode());
+        }
+
+        if(economicActivityResponse.getEconomicActivity().stream().noneMatch(x->x.getId().equals(String.valueOf(economicalActivity.getEconomicActivity())))){
+            throw new GenericException(AppError.ECONOMIC_ACTIVITY_NOT_EXIST.getMessage(), AppError.ECONOMIC_ACTIVITY_NOT_EXIST.getHttpCode(), AppError.ECONOMIC_ACTIVITY_NOT_EXIST.getCode());
+        }
+
+        if(economicalActivity.getCompany() ==  null){
+            throw new GenericException(AppError.COMPANY_NAME_NOT_NULL.getMessage(), AppError.COMPANY_NAME_NOT_NULL.getHttpCode(), AppError.COMPANY_NAME_NOT_NULL.getCode());
+        }
+        return economicalActivity;
     }
 
     private UpdatePersonalDetail.Reference validateReference(UpdatePersonalDetail.Reference reference, PersonalInformationNetResponse personalInformation) {
@@ -168,7 +224,6 @@ public class UserService implements IUserService {
         }
         if (reference.getName() == null || reference.getTelephone() == null) {
             throw new GenericException(AppError.REFERENCE_INVALID.getMessage(), AppError.REFERENCE_INVALID.getHttpCode(), AppError.REFERENCE_INVALID.getCode());
-
         }
         if (reference.getName().isBlank()) {
             throw new GenericException(AppError.REFERENCE_INVALID.getMessage(), AppError.REFERENCE_INVALID.getHttpCode(), AppError.REFERENCE_INVALID.getCode());
@@ -192,7 +247,7 @@ public class UserService implements IUserService {
             return;
         }
 
-        AppError error = AppError.VALIDATE_CITY_CODE;
+        AppError error = AppError.CITY_CODE_NOT_EXIST;
         throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
     }
 

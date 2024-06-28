@@ -6,9 +6,9 @@ public class UpdateDataUserRequestFixture {
     public static UpdateDataUserRequest withDefault(){
 
         UpdatePersonalDetail.EconomicalActivity economicalActivity = UpdatePersonalDetail.EconomicalActivity.builder()
-                .economicActivity(65191)
+                .economicActivity(1401)
                 .company("eMPRESA DE PAPE")
-                .position("GERENTE")
+                .position("AR1")
                 .incomeLevel(1)
                 .type("D")
                 .build();
