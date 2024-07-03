@@ -271,7 +271,7 @@ class PaymentServicesProviderTest {
     void givenValidDataWhenGetListServicesThenEmptyList() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(PaymentServicesMWResponseFixture.withErrorMDWPSM005());
+        String jsonResponse = Util.objectToString(PaymentServicesMWResponseFixture.withErrorMDWPSM007());
         stubFor(get(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
 
         // Act

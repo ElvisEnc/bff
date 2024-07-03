@@ -34,6 +34,18 @@ public class PaymentServicesMWResponseFixture {
                 .build();
     }
 
+    public static ApiErrorResponse withErrorMDWPSM007() {
+        List<ErrorDetailResponse> list = new ArrayList<>();
+        ErrorDetailResponse errorDetailResponse = ErrorDetailResponse.builder()
+                .code(PaymentServicesMiddlewareError.MDWPSM_007.getCodeMiddleware())
+                .description(PaymentServicesMiddlewareError.MDWPSM_007.getMessage())
+                .build();
+        list.add(errorDetailResponse);
+        return ApiErrorResponse.builder()
+                .errorDetailResponse(list)
+                .build();
+    }
+
 
     public static SubcategoriesMWResponse withDefaultSubcategoriesMWResponse() {
         return new SubcategoriesMWResponse(

@@ -71,66 +71,128 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @param classType           type of the response class.
      * @param additionalEvaluator evaluator and resolver for handling specific response scenarios.
      * @return an object of the given class type.
-     * @throws IOException if an I/O exception occurs.
      */
     protected <E> E get(String url, Header[] headers, Class<E> classType, AdditionalEvaluator<E> additionalEvaluator) throws IOException {
-        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
-        try (CloseableHttpClient httpClient = createHttpClient()) {
-            HttpGet request = new HttpGet(url);
-
-            if (headers != null && headers.length > 0)
-                request.setHeaders(headers);
-            request.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-
-            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                int statusCode = httpResponse.getStatusLine().getStatusCode();
-                String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
-                if (statusCode == HttpStatus.SC_OK)
-                    return Util.stringToObject(jsonResponse, classType);
-
-                if (additionalEvaluator != null && additionalEvaluator.getEvaluator().evaluate(jsonResponse, this::mapProviderIError))
-                    return additionalEvaluator.getResolver().resolve(jsonResponse, classType, this::mapProviderIError);
-
-                IMiddlewareError error = this.mapProviderIError(jsonResponse);
-                if (error.equals(DefaultMiddlewareError.DEFAULT))
-                    LOGGER.error(String.format("Not Mapped Error:%s", jsonResponse));
-
-                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
-            }
-        } catch (GenericException ex) {
-            throw ex;
-        } catch (Exception e) {
-            LOGGER.error(e);
-            throw new GenericException(DefaultMiddlewareError.DEFAULT.getMessage(), DefaultMiddlewareError.DEFAULT.getHttpCode(), DefaultMiddlewareError.DEFAULT.getCode());
-        }
+        return executeRequest(new HttpGet(url), headers, null, classType, additionalEvaluator);
     }
 
+    /**
+     * Execute a HttpPost using HttpClientFactory and a token given by TokenMiddlewareProvider.
+     * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
+     * @param url                 url of resource.
+     * @param headers             list of headers for request.
+     * @param requestBody         body of the request.
+     * @param classType           type of response class.
+     * @return an object of the given class type.
+     */
     protected <E, R> E post(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
-        return executeRequest(new HttpPost(url), headers, requestBody, classType);
+        return post(url, headers, requestBody, classType, null);
     }
 
+    /**
+     * Execute a HttpPost using HttpClientFactory and a token given by TokenMiddlewareProvider.
+     * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
+     * @param url                 url of resource.
+     * @param headers             list of headers for request.
+     * @param requestBody         body of the request.
+     * @param classType           type of response class.
+     * @param additionalEvaluator evaluator and resolver for handling specific response scenarios.
+     * @return an object of the given class type.
+     */
+    protected <E, R> E post(String url, Header[] headers, R requestBody, Class<E> classType, AdditionalEvaluator<E> additionalEvaluator) throws IOException {
+        return executeRequest(new HttpPost(url), headers, requestBody, classType, additionalEvaluator);
+    }
+
+    /**
+     * Execute a HttpPatch using HttpClientFactory and a token given by TokenMiddlewareProvider.
+     * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
+     * @param url                 url of resource.
+     * @param headers             list of headers for request.
+     * @param requestBody         body of the request.
+     * @param classType           type of response class.
+     * @return an object of the given class type.
+     */
     protected <E, R> E patch(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
-        return executeRequest(new HttpPatch(url), headers, requestBody, classType);
+        return patch(url, headers, requestBody, classType, null);
+    }
+
+    /**
+     * Execute a HttpPatch using HttpClientFactory and a token given by TokenMiddlewareProvider.
+     * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
+     * @param url                 url of resource.
+     * @param headers             list of headers for request.
+     * @param requestBody         body of the request.
+     * @param classType           type of response class.
+     * @param additionalEvaluator evaluator and resolver for handling specific response scenarios.
+     * @return an object of the given class type.
+     */
+    protected <E, R> E patch(String url, Header[] headers, R requestBody, Class<E> classType, AdditionalEvaluator<E> additionalEvaluator) throws IOException {
+        return executeRequest(new HttpPatch(url), headers, requestBody, classType, additionalEvaluator);
     }
 
     /**
      * Execute a HttpDeleteWithBody using HttpClientFactory and a token given by TokenMiddlewareProvider.
      * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
      *
-     * @param url       url of resource.
-     * @param headers   list of headers for request.
-     * @param classType type of response class.
+     * @param url         url of resource.
+     * @param headers     list of headers for request.
+     * @param requestBody body of the request.
+     * @param classType   type of response class.
      * @return an object of given params type.
      */
     protected <E, R> E deleteWithBody(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
-        return executeRequest(new HttpDeleteWithBody(url), headers, requestBody, classType);
+        return deleteWithBody(url, headers, requestBody, classType, null);
     }
 
+    /**
+     * Execute a HttpDeleteWithBody using HttpClientFactory and a token given by TokenMiddlewareProvider.
+     * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
+     * @param url                 url of resource.
+     * @param headers             list of headers for request.
+     * @param requestBody         body of the request.
+     * @param classType           type of response class.
+     * @param additionalEvaluator evaluator and resolver for handling specific response scenarios.
+     * @return an object of the given class type.
+     */
+    protected <E, R> E deleteWithBody(String url, Header[] headers, R requestBody, Class<E> classType, AdditionalEvaluator<E> additionalEvaluator) throws IOException {
+        return executeRequest(new HttpDeleteWithBody(url), headers, requestBody, classType, additionalEvaluator);
+    }
+
+    /**
+     * Execute a HttpPut using HttpClientFactory and a token given by TokenMiddlewareProvider.
+     * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
+     * @param url                 url of resource.
+     * @param headers             list of headers for request.
+     * @param requestBody         body of the request.
+     * @param classType           type of response class.
+     * @return an object of the given class type.
+     */
     protected <E, R> E put(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
-        return executeRequest(new HttpPut(url), headers, requestBody, classType);
+        return put(url, headers, requestBody, classType, null);
     }
 
-    private <E, R> E executeRequest(HttpUriRequest request, Header[] headers, R requestBody, Class<E> classType) throws IOException {
+    /**
+     * Execute a HttpPut using HttpClientFactory and a token given by TokenMiddlewareProvider.
+     * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
+     * @param url                 url of resource.
+     * @param headers             list of headers for request.
+     * @param requestBody         body of the request.
+     * @param classType           type of response class.
+     * @param additionalEvaluator evaluator and resolver for handling specific response scenarios.
+     * @return an object of the given class type.
+     */
+    protected <E, R> E put(String url, Header[] headers, R requestBody, Class<E> classType, AdditionalEvaluator<E> additionalEvaluator) throws IOException {
+        return executeRequest(new HttpPut(url), headers, requestBody, classType, additionalEvaluator);
+    }
+
+    private <E, R> E executeRequest(HttpUriRequest request, Header[] headers, R requestBody, Class<E> classType, AdditionalEvaluator<E> additionalEvaluator) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             if (headers != null && headers.length > 0) {
@@ -141,7 +203,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
             if (request instanceof HttpEntityEnclosingRequestBase httpEntityEnclosingRequestBase) {
                 StringEntity entity = new StringEntity(Util.objectToString(requestBody));
                 httpEntityEnclosingRequestBase.setEntity(entity);
-                request.setHeader("Content-Type", "application/json");
+                request.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             }
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
@@ -149,6 +211,9 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED || statusCode == HttpStatus.SC_NO_CONTENT)
                     return Util.stringToObject(jsonResponse, classType);
+
+                if (additionalEvaluator != null && additionalEvaluator.getEvaluator().evaluate(jsonResponse, this::mapProviderIError))
+                    return additionalEvaluator.getResolver().resolve(jsonResponse, classType, this::mapProviderIError);
 
                 IMiddlewareError error = this.mapProviderIError(jsonResponse);
                 if (error.equals(DefaultMiddlewareError.DEFAULT))
@@ -190,10 +255,10 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      */
     private IMiddlewareError findByCode(String code) {
         for (IMiddlewareError constant : appErrorValue.getEnumConstants())
-            if (constant.getCodeMiddleware().equals(code))
+            if (constant.getCodeMiddleware() != null && constant.getCodeMiddleware().equals(code))
                 return constant;
         for (IMiddlewareError constant : DefaultMiddlewareError.values())
-            if (constant.getCodeMiddleware().equals(code))
+            if (constant.getCodeMiddleware() != null && constant.getCodeMiddleware().equals(code))
                 return constant;
 
         return DefaultMiddlewareError.DEFAULT;

@@ -25,7 +25,7 @@ public enum HeadersMW {
 
     private final String name;
 
-    public static Header[] getMWIdentificationChannelHeaders(Map<String, String> parameters) {
+    public static Header[] getMWIdentificationChannelHeaders() {
         return new Header[]{
                 new BasicHeader(DeviceMW.MIDDLEWARE_CHANNEL.getCode(), CanalMW.GANAMOVIL.getCanal()),
                 new BasicHeader(DeviceMW.APPLICATION_ID.getCode(), CanalMW.GANAMOVIL.getCanal())};
@@ -43,7 +43,7 @@ public enum HeadersMW {
 
     public static Header[] getDefaultHeaders(Map<String, String> parameters) {
         return getHeaders(getDeviceHeaders(parameters),
-                getMWIdentificationChannelHeaders(parameters),
+                getMWIdentificationChannelHeaders(),
                 getRequestIdHeaders(parameters),
                 new Header[]{new BasicHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName())});
     }
