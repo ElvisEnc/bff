@@ -1,14 +1,12 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
-import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequestFixture;
-import bg.com.bo.bff.application.dtos.response.*;
-import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
-import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
-import bg.com.bo.bff.application.dtos.response.personal.information.DistrictsResponseFixture;
+import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.request.user.UserRequestFixture;
+import bg.com.bo.bff.application.dtos.request.user.UpdateDataUserRequest;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DepartmentsResponse;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DistrictsResponse;
 import bg.com.bo.bff.application.dtos.response.user.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
@@ -16,15 +14,13 @@ import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.request.PersonalInformationNetRequestFixture;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
+import bg.com.bo.bff.providers.dtos.request.personal.information.PersonalInformationNetRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
-import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
-import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalUpdateNetResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
-import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.personal.information.DistrictsNetResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.login.mw.LoginMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.login.mw.BiometricStatusMWResponse;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
@@ -204,7 +200,7 @@ class UserServicesTests {
     @Test
     void givenValidDataWhenGetContactInformation() throws IOException {
         // Arrange
-        ContactResponse expected = GetContactResponseFixture.withDefault();
+        ContactResponse expected = UserResponseFixture.withDefaultContactResponse();
         when(provider.getContactInfo()).thenReturn(expected);
 
         // Act
@@ -220,8 +216,8 @@ class UserServicesTests {
         // Arrange
         String result = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"M\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":null,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
         PersonalInformationNetResponse expectedResponse = Util.stringToObject(result, PersonalInformationNetResponse.class);
-        PersonalResponse expected = GetPersonalInformationResponseFixture.withDefault();
-        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefault();
+        PersonalResponse expected = UserResponseFixture.withDefaultPersonalResponse();
+        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefaultApiPersonalInformationNetRequest();
 
         when(iPersonalInformationMapper.mapperRequest(any())).thenReturn(requestMapperMock);
         when(personalInformationNetProvider.getPersonalInformation(requestMapperMock, map)).thenReturn(expectedResponse);
@@ -239,7 +235,7 @@ class UserServicesTests {
     @Test
     void givenValidPersonIdWhenGetBiometricStatus() throws IOException {
         // Arrange
-        BiometricStatusMWResponse responseExpected = BiometricStatusMWResponseFixture.withDefault();
+        BiometricStatusMWResponse responseExpected = LoginMWResponseFixture.withDefaultBiometricStatusMWResponse();
         when(provider.getBiometricsMW(any(), any())).thenReturn(responseExpected);
 
         // Act
@@ -247,14 +243,14 @@ class UserServicesTests {
 
         // Assert
         verify(provider).getBiometricsMW(any(), any());
-        assertEquals(BiometricsResponseFixture.withDefault(), response);
+        assertEquals(UserResponseFixture.withDefaultBiometricsResponse(), response);
     }
 
     @Test
     void givenPersonIdWhenUpdateBiometricThenResponseExpected() throws IOException {
         // Arrange
-        UpdateBiometricsResponse responseExpected = UpdateBiometricsResponseFixture.withDefault();
-        UpdateBiometricsRequest request = UpdateBiometricsRequestFixture.withDefault();
+        UpdateBiometricsResponse responseExpected = UserResponseFixture.withDefaultUpdateBiometricsResponse();
+        UpdateBiometricsRequest request = UserRequestFixture.withDefaultUpdateBiometricsRequest();
         when(provider.updateBiometricsMW(any(), any(), any())).thenReturn(responseExpected);
 
         // Act
@@ -262,7 +258,7 @@ class UserServicesTests {
 
         // Assert
         verify(provider).updateBiometricsMW(any(), any(), any());
-        assertEquals(UpdateBiometricsResponseFixture.withDefault(), response);
+        assertEquals(UserResponseFixture.withDefaultUpdateBiometricsResponse(), response);
     }
 
     @Test
@@ -283,7 +279,7 @@ class UserServicesTests {
     @Test
     void givenPersonIdWhenGetEconomicActivityThenResponseExpected() throws IOException {
         // Arrange
-        EconomicActivityResponse responseExpected = EconomicActivityResponseFixture.withDefault();
+        EconomicActivityResponse responseExpected = UserResponseFixture.withDefaultEconomicActivityResponse();
         when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(responseExpected);
 
         // Act
@@ -291,14 +287,14 @@ class UserServicesTests {
 
         // Assert
         verify(personalInformationNetProvider).getEconomicalActivity(any());
-        assertEquals(EconomicActivityResponseFixture.withDefault(), response);
+        assertEquals(UserResponseFixture.withDefaultEconomicActivityResponse(), response);
     }
 
     @Test
     void givenValidDataWhenGetDepartments() throws IOException {
         // Arrange
-        DepartmentsNetResponse expectedNet = DepartmentsNetResponseFixture.withDefault();
-        DepartmentsResponse expected = DepartmentsResponseFixture.withDefault();
+        DepartmentsNetResponse expectedNet = PersonalInformationNetResponseFixture.withDefaultDepartmentsNetResponse();
+        DepartmentsResponse expected = UserResponseFixture.withDefaultDepartmentsResponse();
 
         Mockito.when(apiFaceNetProvider.getDepartments(Mockito.any())).thenReturn(expectedNet);
         Mockito.when(iApiFaceMapper.mapToDepartmentsResponse(expectedNet)).thenReturn(expected);
@@ -315,8 +311,8 @@ class UserServicesTests {
     void givenDepartmentIdWhenGetDistrictsThenReturnSuccess() throws IOException {
         // Arrange
         String departmentId = "5";
-        DistrictsNetResponse expectedNetResponse = DistrictsNetResponseFixture.withDefault();
-        DistrictsResponse expectedResponse = DistrictsResponseFixture.withDefault();
+        DistrictsNetResponse expectedNetResponse = PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponse();
+        DistrictsResponse expectedResponse = UserResponseFixture.withDefaultDistrictsResponse();
 
         Mockito.when(personalInformationNetProvider.getDistricts(Mockito.any(), Mockito.any())).thenReturn(expectedNetResponse);
         Mockito.when(iPersonalInformationMapper.mapToDistrictsResponse(expectedNetResponse)).thenReturn(expectedResponse);
@@ -332,42 +328,42 @@ class UserServicesTests {
     @Test
     void whenGetMaritalStatusThenResponseExpected() {
         // Arrange
-        MaritalStatusResponse responseExpected = MaritalStatusResponseFixture.withDefault();
+        MaritalStatusResponse responseExpected = UserResponseFixture.withDefaultMaritalStatusResponse();
         when(personalInformationNetProvider.getMaritalStatuses()).thenReturn(responseExpected);
 
         // Act
-        MaritalStatusResponse response = service.getMaritalStatus( new HashMap<>());
+        MaritalStatusResponse response = service.getMaritalStatus(new HashMap<>());
 
         // Assert
         verify(personalInformationNetProvider).getMaritalStatuses();
-        assertEquals(MaritalStatusResponseFixture.withDefault(), response);
+        assertEquals(UserResponseFixture.withDefaultMaritalStatusResponse(), response);
     }
 
     @Test
     void givenUpdateDataUserRequestWhenUpdateDataUserThenUpdateDataUserResponse() throws IOException {
         // Assert
         GenericResponse expected = GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
-        UpdateDataUserRequest request = UpdateDataUserRequestFixture.withDefault();
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
         String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"M\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":null,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
-        DistrictsNetResponse expectedNetResponse = DistrictsNetResponseFixture.withDefault();
+        DistrictsNetResponse expectedNetResponse = PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponse();
         String personId = "1234";
-        when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(EconomicActivityResponseFixture.withDefaultEconomicActivity());
+        when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(UserResponseFixture.withDefaultEconomicActivity());
         when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
-        when(personalInformationNetProvider.updatePersonalInformation(any(), any())).thenReturn(PersonalUpdateNetResponseFixture.withDefault());
+        when(personalInformationNetProvider.updatePersonalInformation(any(), any())).thenReturn(PersonalInformationNetResponseFixture.withDefaultPersonalUpdateNetResponse());
         when(personalInformationNetProvider.getDistricts(Mockito.any(), Mockito.any())).thenReturn(expectedNetResponse);
         // Act
         GenericResponse actual = service.updateDataUser(personId, request, map);
 
         //Assert
-        assertEquals(expected,actual);
-        verify(personalInformationNetProvider).getPersonalInformation(any(),any());
-        verify(personalInformationNetProvider).updatePersonalInformation(any(),any());
+        assertEquals(expected, actual);
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+        verify(personalInformationNetProvider).updatePersonalInformation(any(), any());
     }
 
     @Test
     void givenUpdateDataUserRequestWhenUpdateDataUserThenNotAcceptable() throws IOException {
         // Assert
-        UpdateDataUserRequest request = UpdateDataUserRequestFixture.withDefault();
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
         String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
         String personId = "1234";
         when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
@@ -390,7 +386,7 @@ class UserServicesTests {
     void givenUpdateDataUserRequestAndSpouseNameIsNullWhenUpdateDataUserThenValidateMarriedPerson() throws IOException {
         // Assert
         GenericResponse expected = GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
-        UpdateDataUserRequest request = UpdateDataUserRequestFixture.validateMarriedPersonWhenSpouseNameIsNull();
+        UpdateDataUserRequest request = UserRequestFixture.validateMarriedPersonWhenSpouseNameIsNull();
         String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"M\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":null,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
 
         String personId = "1234";
@@ -414,7 +410,7 @@ class UserServicesTests {
     @Test
     void givenUpdateDataUserRequestAndSpouseNameIsBlankWhenUpdateDataUserThenValidateMarriedPerson() throws IOException {
         // Assert
-        UpdateDataUserRequest request = UpdateDataUserRequestFixture.validateMarriedPersonWhenSpouseNameIsBlank();
+        UpdateDataUserRequest request = UserRequestFixture.validateMarriedPersonWhenSpouseNameIsBlank();
         String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":null,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
 
         String personId = "1234";
@@ -436,12 +432,11 @@ class UserServicesTests {
     @Test
     void givenUpdateDataUserRequestAndHasHusbandLastNameIsSWhenUpdateDataUserThenValidateMarriedPerson() throws IOException {
         // Assert
-        UpdateDataUserRequest request = UpdateDataUserRequestFixture.validateMarriedPersonWhenAsHusbandLastNameIsS();
+        UpdateDataUserRequest request = UserRequestFixture.validateMarriedPersonWhenAsHusbandLastNameIsS();
         String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":null,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
 
         String personId = "1234";
         when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
-
 
         // Act
         try {

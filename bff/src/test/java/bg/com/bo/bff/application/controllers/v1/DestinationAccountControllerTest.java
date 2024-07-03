@@ -1,16 +1,11 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.*;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequestFixture;
-import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequestFixture;
-import bg.com.bo.bff.application.dtos.response.*;
-import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponseFixture;
+import bg.com.bo.bff.application.dtos.request.destination.account.*;
+import bg.com.bo.bff.application.dtos.response.destination.account.*;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.response.accounts.AddAccountResponse;
-import bg.com.bo.bff.providers.dtos.response.accounts.AddThirdAccountResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AddAccountResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AddThirdAccountResponse;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -105,7 +100,7 @@ class DestinationAccountControllerTest {
     void givenValidaDataWhenAddThirdAccountThenReturnOk() throws Exception {
         // Arrange
         GenericResponse expected = GenericResponse.instance(AddThirdAccountResponse.SUCCESS);
-        AddThirdAccountRequest request = AddThirdAccountRequestFixture.withDefault();
+        AddThirdAccountRequest request = DestinationAccountRequestFixture.withDefaultAddThirdAccountRequest();
         when(service.addThirdAccount(any(), any(), any())).thenReturn(expected);
 
         // Act
@@ -130,7 +125,7 @@ class DestinationAccountControllerTest {
     void givenValidaDataWhenAddQRAccountThenReturnOk() throws Exception {
         // Arrange
         GenericResponse expected = GenericResponse.instance(AddAccountResponse.SUCCESS);
-        AddQRAccountRequest request = AddQRAccountRequestFixture.withDefaultOK();
+        AddQRAccountRequest request = DestinationAccountRequestFixture.withDefaultAddQRAccountRequest();
 
         when(service.addQRAccount(any(), any(), any(), any())).thenReturn(expected);
 
@@ -156,7 +151,7 @@ class DestinationAccountControllerTest {
     void givenValidaDataWhenAddAchAccountThenReturnOk() throws Exception {
         // Arrange
         GenericResponse expected = GenericResponse.instance(AddAccountResponse.SUCCESS);
-        AddAchAccountRequest request = AddAchAccountRequestFixture.withDefault();
+        AddAchAccountRequest request = DestinationAccountRequestFixture.withDefaultAddAchAccountRequest();
         when(service.addAchAccount(any(), any(), any())).thenReturn(expected);
 
         // Act
@@ -204,7 +199,7 @@ class DestinationAccountControllerTest {
     void givenValidaDataWhenAddWalletdAccountThenReturnOk() throws Exception {
         // Arrange
         GenericResponse expected = GenericResponse.instance(AddThirdAccountResponse.SUCCESS);
-        AddWalletAccountRequest request = AddWalletAccountRequestFixture.withDefault();
+        AddWalletAccountRequest request = DestinationAccountRequestFixture.withDefaultAddWalletAccountRequest();
 
         when(service.addWalletAccount(any(), any(), any())).thenReturn(expected);
 
@@ -280,7 +275,7 @@ class DestinationAccountControllerTest {
     @Test
     void givenUrlGetBanksWhenGetBanksThenReturnList() throws Exception {
         // Arrange
-        BanksResponse expected = BanksResponseFixture.withDefault();
+        BanksResponse expected = DestinationAccountResponseFixture.withDefaultBanksResponse();
         when(service.getBanks()).thenReturn(expected);
 
         // Act
@@ -304,7 +299,7 @@ class DestinationAccountControllerTest {
     void givenBankCodeWhenGetBranchOfficeThenListBranchOffice() throws Exception {
         // Arrange
         Integer bankCode = 1017;
-        BranchOfficeResponse mockResponse = BranchOfficeResponseFixture.withDefault();
+        BranchOfficeResponse mockResponse = DestinationAccountResponseFixture.withDefaultBranchOfficeResponse();
         when(service.getBranchOffice(bankCode)).thenReturn(mockResponse);
 
         // Act
@@ -347,7 +342,7 @@ class DestinationAccountControllerTest {
     @Test
     void givenAccountNumberAndClientNameWhenGetValidateDestinationAccountThenValidateAccountResponse() throws Exception {
         // Arrange
-        ValidateAccountResponse expected = ValidateAccountResponseFixture.withDefault();
+        ValidateAccountResponse expected = DestinationAccountResponseFixture.withDefaultValidateAccountResponse();
         when(service.getValidateDestinationAccounts(any(), any(), any())).thenReturn(expected);
 
         // Act

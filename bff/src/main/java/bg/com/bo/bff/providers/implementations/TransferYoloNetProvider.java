@@ -4,11 +4,11 @@ import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.*;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.TransferYoloNetRequest;
-import bg.com.bo.bff.providers.dtos.response.DynamicAppError;
-import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
-import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.transfer.TransferYoloNetRequest;
+import bg.com.bo.bff.providers.dtos.response.generic.DynamicAppError;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
+import bg.com.bo.bff.providers.dtos.response.personal.information.ProviderNetResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
 import bg.com.bo.bff.mappings.providers.transfer.IYoloMapper;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
@@ -39,7 +39,7 @@ public class TransferYoloNetProvider implements ITransferYoloNetProvider {
     }
 
     @Override
-    public TransferResponseMD transferToYolo(Integer personId, Integer accountId, Integer accountNumber, TransferRequest request) throws IOException {
+    public TransferMWResponse transferToYolo(Integer personId, Integer accountId, Integer accountNumber, TransferRequest request) throws IOException {
         TransferYoloNetRequest requestDataYolo = iYoloMapper.mapperRequest(personId, accountId, accountNumber, request);
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String path = urlProviderYoloNet + "Transferencias/RealizarTranferenciaBilletera";
@@ -56,7 +56,7 @@ public class TransferYoloNetProvider implements ITransferYoloNetProvider {
                 if (statusCode == HttpStatus.SC_OK) {
                     ProviderNetResponse response = Util.stringToObject(jsonResponse, ProviderNetResponse.class);
                     if (response.getErrorCode().equals(AppDataYoloNet.CODIGO_EXITO.getValue())) {
-                        return TransferResponseMD.toFormat(iYoloMapper.convertResponse(response));
+                        return TransferMWResponse.toFormat(iYoloMapper.convertResponse(response));
                     } else {
                         LOGGER.error(jsonResponse);
                         DynamicAppError error = Util.mapNetProviderError(jsonResponse);

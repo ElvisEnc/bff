@@ -1,7 +1,7 @@
 package bg.com.bo.bff.mappings.services.auth;
 
 import bg.com.bo.bff.models.UserData;
-import bg.com.bo.bff.models.jwt.JwtAccess;
+import bg.com.bo.bff.providers.dtos.response.jwt.JwtAccess;
 import org.springframework.stereotype.Component;
 
 @Component

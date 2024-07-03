@@ -1,15 +1,14 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequest;
-import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
-import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
-import bg.com.bo.bff.application.dtos.response.user.UpdateDataUserResponse;
+import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.request.user.UpdateDataUserRequest;
+import bg.com.bo.bff.application.dtos.response.user.BiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateBiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DistrictsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
-import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;

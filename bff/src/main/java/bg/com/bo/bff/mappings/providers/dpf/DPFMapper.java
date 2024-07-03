@@ -1,8 +1,8 @@
 package bg.com.bo.bff.mappings.providers.dpf;
 
-import bg.com.bo.bff.application.dtos.response.DPFDataResponse;
-import bg.com.bo.bff.application.dtos.response.DPFListResponse;
-import bg.com.bo.bff.providers.dtos.response.DPFMWResponse;
+import bg.com.bo.bff.application.dtos.response.dpf.DpfDataResponse;
+import bg.com.bo.bff.application.dtos.response.dpf.DpfListResponse;
+import bg.com.bo.bff.providers.dtos.response.dpf.mw.DpfMWResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,11 +10,11 @@ import java.util.List;
 
 @Component
 public class DPFMapper implements IDPFMapper {
-    public DPFListResponse mapToDPFListResponse(DPFMWResponse mwResponse) {
-        List<DPFDataResponse> dataList = new ArrayList<>();
+    public DpfListResponse mapToDPFListResponse(DpfMWResponse mwResponse) {
+        List<DpfDataResponse> dataList = new ArrayList<>();
         if (mwResponse != null && mwResponse.getData() != null) {
-            for(DPFMWResponse.DPFManagerMWData dpfManagerArray : mwResponse.getData()) {
-                DPFDataResponse data = DPFDataResponse.builder()
+            for(DpfMWResponse.DPFManagerMWData dpfManagerArray : mwResponse.getData()) {
+                DpfDataResponse data = DpfDataResponse.builder()
                         .numDPF(dpfManagerArray.getNumDpf())
                         .numDpfBGA(dpfManagerArray.getNumDpfBGA())
                         .clientName(dpfManagerArray.getClientName())
@@ -31,7 +31,7 @@ public class DPFMapper implements IDPFMapper {
                 dataList.add(data);
             }
         }
-        return DPFListResponse.builder()
+        return DpfListResponse.builder()
                 .data(dataList)
                 .build();
     }

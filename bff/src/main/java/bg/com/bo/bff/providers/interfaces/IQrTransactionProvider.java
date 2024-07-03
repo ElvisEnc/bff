@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.providers.dtos.requests.qr.QRPaymentMWRequest;
-import bg.com.bo.bff.providers.dtos.response.qr.QRPaymentMWResponse;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.QRPaymentMWRequest;
+import bg.com.bo.bff.providers.dtos.response.qr.mw.QRPaymentMWResponse;
 
 
 import java.io.IOException;

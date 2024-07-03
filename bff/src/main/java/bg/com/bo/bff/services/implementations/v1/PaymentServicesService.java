@@ -1,18 +1,13 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.services.DeleteAffiliateServiceResponse;
-import bg.com.bo.bff.providers.dtos.request.payment.services.DeleteAffiliateServiceMWRequest;
-import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.*;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliatedServiceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.CategoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ListServicesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubCategoryCitiesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubcategoriesMWResponse;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.mappings.providers.services.IPaymentServicesMapper;
 import bg.com.bo.bff.services.interfaces.IPaymentServicesService;

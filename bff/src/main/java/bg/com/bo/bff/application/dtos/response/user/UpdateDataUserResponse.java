@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum UpdateDataUserResponse implements IGenericControllerResponse {
-      SUCCESS("SUCCESS","Actulización correcta.");
+      SUCCESS("SUCCESS","Actualización correcta.");
       private final String code;
       private final String message;
 }

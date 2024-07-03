@@ -5,12 +5,10 @@ import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
-import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProviderFixture;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProviderFixture;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
-import bg.com.bo.bff.mappings.providers.apiface.IApiFaceMapper;
-import bg.com.bo.bff.mappings.providers.information.IPersonalInformationMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -27,7 +25,6 @@ import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 

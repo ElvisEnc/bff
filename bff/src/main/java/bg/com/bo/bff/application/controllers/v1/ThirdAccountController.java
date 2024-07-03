@@ -1,7 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.response.ErrorResponse;
-import bg.com.bo.bff.models.ThirdAccountListResponse;
+import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.ThirdAccountListResponse;
 import bg.com.bo.bff.services.interfaces.IThirdAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,7 +29,7 @@ public class ThirdAccountController {
 
     @Operation(summary = "Third Accounts Request", description = "Este es el Endpoint donde el usuario obtendrá sus cuentas de terceros")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene todas las cuentas de terceros, para un personId con su companyId", content = @Content(schema = @Schema(implementation = ThirdAccountListResponse.class),mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Obtiene todas las cuentas de terceros, para un personId con su companyId", content = @Content(schema = @Schema(implementation = ThirdAccountListResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "406", description = "El document no corresponde al personId o el companyId, devuelve un 406 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Un error interno, devuelve un 500 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))

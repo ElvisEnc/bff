@@ -1,7 +1,7 @@
 package bg.com.bo.bff.mappings.providers.transfer;
 
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
-import bg.com.bo.bff.providers.dtos.request.TransferMWRequest;
+import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequest;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

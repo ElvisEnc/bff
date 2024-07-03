@@ -1,7 +1,6 @@
 package bg.com.bo.bff.mappings;
 
-import bg.com.bo.bff.application.dtos.response.AccountTypeResponse;
-import bg.com.bo.bff.commons.enums.AccountType;
+import bg.com.bo.bff.application.dtos.response.destination.account.AccountType;
 import bg.com.bo.bff.mappings.services.DestinationAccountServiceMapper;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +12,10 @@ public class DestinationAccountServiceMapperTests {
     @Test
     void givenAccountTypeWhenConvertToAccountTypeResponseThenReturnValidAccountType() {
         //Arrange
-        AccountType accountType = AccountType.MOBILE;
+        bg.com.bo.bff.commons.enums.AccountType accountType = bg.com.bo.bff.commons.enums.AccountType.MOBILE;
 
         //Act
-        AccountTypeResponse accountTypeResponse = mapper.convert(accountType);
+        AccountType accountTypeResponse = mapper.convert(accountType);
 
         //Assert
         assertEquals(accountType.getCode(), accountTypeResponse.getCode());

@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.config.encryption.payload;
 
-import bg.com.bo.bff.application.dtos.response.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.utils.Util;

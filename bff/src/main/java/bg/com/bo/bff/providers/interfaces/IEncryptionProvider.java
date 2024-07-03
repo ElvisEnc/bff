@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.models.EncryptInfo;
-import bg.com.bo.bff.models.UserEncryptionKeys;
+import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
+import bg.com.bo.bff.providers.dtos.response.encryption.UserEncryptionKeys;
 
 import java.io.IOException;
 import java.security.KeyPair;

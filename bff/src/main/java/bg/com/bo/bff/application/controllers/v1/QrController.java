@@ -1,16 +1,16 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
-import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QRCodeGenerateRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QRCodeRegenerateRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QRPaymentRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
-import bg.com.bo.bff.application.dtos.response.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.commons.utils.Headers;
-import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
-import bg.com.bo.bff.providers.dtos.response.qr.QRPaymentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.mw.QRCodeGenerateResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.mw.QRPaymentMWResponse;
 import bg.com.bo.bff.services.interfaces.IQrService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-
 
 @RestController
 @Validated
@@ -81,9 +80,7 @@ public class QrController {
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
-
-            @RequestBody
-            final @Valid QRCodeGenerateRequest request
+            @RequestBody final @Valid QRCodeGenerateRequest request
     ) throws IOException {
 
         return ResponseEntity.ok(iQrService.generateQR(request, Headers.getParameter(httpServletRequest)));
@@ -103,9 +100,7 @@ public class QrController {
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
-
-            @RequestBody
-            final @Valid QRCodeRegenerateRequest request
+            @RequestBody final @Valid QRCodeRegenerateRequest request
     ) throws IOException {
 
         return ResponseEntity.ok(iQrService.regenerateQR(request, Headers.getParameter(httpServletRequest)));
@@ -125,9 +120,7 @@ public class QrController {
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
-
-            @RequestBody
-            final @Valid QrDecryptRequest request
+            @RequestBody final @Valid QrDecryptRequest request
     ) throws IOException {
         return ResponseEntity.ok(iQrService.decryptQR(request, Headers.getParameter(httpServletRequest)));
     }
@@ -148,11 +141,10 @@ public class QrController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotNull @Parameter(description = "Este es el código de persona", example = "1234567") String personId,
             @PathVariable("accountId") @NotNull @Parameter(description = "Este es el accountId", example = "1234567") String accountId,
-            @RequestBody
-            final QRPaymentRequest request
+            @RequestBody final QRPaymentRequest request
     ) throws IOException {
 
-        return ResponseEntity.ok(iQrService.qrPayment(request,personId,
+        return ResponseEntity.ok(iQrService.qrPayment(request, personId,
                 accountId, Headers.getParameter(httpServletRequest)));
     }
 }

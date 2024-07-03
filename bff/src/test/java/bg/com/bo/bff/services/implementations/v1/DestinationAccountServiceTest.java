@@ -1,23 +1,17 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.*;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequestFixture;
-import bg.com.bo.bff.application.dtos.response.*;
-import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
-import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponseFixture;
+import bg.com.bo.bff.application.dtos.request.destination.account.*;
+import bg.com.bo.bff.application.dtos.response.destination.account.*;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.commons.enums.AccountType;
 import bg.com.bo.bff.mappings.services.DestinationAccountServiceMapper;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.ThirdAccountListResponse;
-import bg.com.bo.bff.models.ThirdAccountListResponseFixture;
-import bg.com.bo.bff.models.dtos.BanksMWResponse;
-import bg.com.bo.bff.providers.dtos.response.BanksMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.BranchOfficeMWResponse;
-import bg.com.bo.bff.providers.dtos.response.BranchOfficeMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMWResponse;
-import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.accounts.AddAccountResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.ThirdAccountListResponse;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AchAccountMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.BanksMWResponse;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.BranchOfficeMWResponse;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AchAccountMWResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AddAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
 import bg.com.bo.bff.mappings.providers.account.IDestinationAccountMapper;
@@ -63,7 +57,7 @@ class DestinationAccountServiceTest {
         ClientToken clientToken = new ClientToken();
         clientToken.setAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjdjNjlmZjNjZjdlNjE5MWU2NGUxMmZhMGVlNmM2ZWNiNTBiODkyY2E5NzIyMmJmZmMxMTc0Yzg5ZTcwNGM5NDQiLCJyb2xlIjoiMTY5YjRlM2IyNzhiYzAzYzZjNWUzNTQ4MDk5ZDUyZTk1MzRmZDRkNjhmMTM0MmEzNzM0OWFjYjQ1NWQ2ZWRjOCIsImdyb3Vwc2lkIjoiMmZhN2MxYjljNjE1ZmU5NThjYmFkODAyNDQzMGNjYjM3ZGE5YTEyMGExMjJiYWI0ZDEyMTFjMGQ3MDMyMTEwYiIsInByaW1hcnlzaWQiOiIyNGI4YjIxNTE1ZTU4ZDdkYTJiZTE1ZWFkZjBhODUyODg5NjEyNTMzODI4ZjkxNDA2YWJmNjRmYjgyYTViNjE2IiwibmJmIjoxNjk5OTIyMzg5LCJleHAiOjE2OTk5MjQxODksImlhdCI6MTY5OTkyMjM4OSwiaXNzIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIiwiYXVkIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIn0.J-Is_mRLEwwn8Z-RyAe40t0TpkLoppTE7roWe0zXFoc");
         clientToken.setExpiresIn(1699924189);
-        AddThirdAccountRequest request = AddThirdAccountRequestFixture.withDefault();
+        AddThirdAccountRequest request = DestinationAccountRequestFixture.withDefaultAddThirdAccountRequest();
         when(thirdAccountProvider.
                 addThirdAccount(any(), any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
         when(thirdAccountProvider.generateAccessToken()).thenReturn(clientToken);
@@ -83,7 +77,7 @@ class DestinationAccountServiceTest {
         ClientToken clientToken = new ClientToken();
         clientToken.setAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjdjNjlmZjNjZjdlNjE5MWU2NGUxMmZhMGVlNmM2ZWNiNTBiODkyY2E5NzIyMmJmZmMxMTc0Yzg5ZTcwNGM5NDQiLCJyb2xlIjoiMTY5YjRlM2IyNzhiYzAzYzZjNWUzNTQ4MDk5ZDUyZTk1MzRmZDRkNjhmMTM0MmEzNzM0OWFjYjQ1NWQ2ZWRjOCIsImdyb3Vwc2lkIjoiMmZhN2MxYjljNjE1ZmU5NThjYmFkODAyNDQzMGNjYjM3ZGE5YTEyMGExMjJiYWI0ZDEyMTFjMGQ3MDMyMTEwYiIsInByaW1hcnlzaWQiOiIyNGI4YjIxNTE1ZTU4ZDdkYTJiZTE1ZWFkZjBhODUyODg5NjEyNTMzODI4ZjkxNDA2YWJmNjRmYjgyYTViNjE2IiwibmJmIjoxNjk5OTIyMzg5LCJleHAiOjE2OTk5MjQxODksImlhdCI6MTY5OTkyMjM4OSwiaXNzIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIiwiYXVkIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIn0.J-Is_mRLEwwn8Z-RyAe40t0TpkLoppTE7roWe0zXFoc");
         clientToken.setExpiresIn(1699924189);
-        AddAchAccountRequest request = AddAchAccountRequestFixture.withDefault();
+        AddAchAccountRequest request = DestinationAccountRequestFixture.withDefaultAddAchAccountRequest();
         when(achAccountProvider.generateAccessToken()).thenReturn(clientToken);
         when(achAccountProvider.
                 addAchAccount(any(), any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
@@ -111,9 +105,9 @@ class DestinationAccountServiceTest {
         when(thirdAccountProvider.addWalletAccount(any(), any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
         when(thirdAccountProvider.addThirdAccount(any(), any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
 
-        when(iDestinationAccountMapper.mapToAchRequest("1212", request)).thenReturn(AddAchAccountBasicRequestFixture.withDefaultOK());
-        when(iDestinationAccountMapper.mapToThirdRequest("1212", request)).thenReturn(AddThirdAccountBasicRequestFixture.withDefaultOK());
-        when(iDestinationAccountMapper.mapToWalletRequest("1212", request)).thenReturn(AddWalletAccountBasicRequestFixture.withDefaultOK());
+        when(iDestinationAccountMapper.mapToAchRequest("1212", request)).thenReturn(DestinationAccountRequestFixture.withDefaultOKAddAchAccountBasicRequest());
+        when(iDestinationAccountMapper.mapToThirdRequest("1212", request)).thenReturn(DestinationAccountRequestFixture.withDefaultOKAddThirdAccountBasicRequest());
+        when(iDestinationAccountMapper.mapToWalletRequest("1212", request)).thenReturn(DestinationAccountRequestFixture.withDefaultOKAddWalletAccountBasicRequest());
 
         // Act
         GenericResponse responseACH = service.addQRAccount("1212", "ACH", request, new HashMap<>());
@@ -160,7 +154,7 @@ class DestinationAccountServiceTest {
         ClientToken clientToken = new ClientToken();
         clientToken.setAccessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjdjNjlmZjNjZjdlNjE5MWU2NGUxMmZhMGVlNmM2ZWNiNTBiODkyY2E5NzIyMmJmZmMxMTc0Yzg5ZTcwNGM5NDQiLCJyb2xlIjoiMTY5YjRlM2IyNzhiYzAzYzZjNWUzNTQ4MDk5ZDUyZTk1MzRmZDRkNjhmMTM0MmEzNzM0OWFjYjQ1NWQ2ZWRjOCIsImdyb3Vwc2lkIjoiMmZhN2MxYjljNjE1ZmU5NThjYmFkODAyNDQzMGNjYjM3ZGE5YTEyMGExMjJiYWI0ZDEyMTFjMGQ3MDMyMTEwYiIsInByaW1hcnlzaWQiOiIyNGI4YjIxNTE1ZTU4ZDdkYTJiZTE1ZWFkZjBhODUyODg5NjEyNTMzODI4ZjkxNDA2YWJmNjRmYjgyYTViNjE2IiwibmJmIjoxNjk5OTIyMzg5LCJleHAiOjE2OTk5MjQxODksImlhdCI6MTY5OTkyMjM4OSwiaXNzIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIiwiYXVkIjoiaHR0cDovL3NlcnZpY2lvcy5iZ2EuY29tLmJvIn0.J-Is_mRLEwwn8Z-RyAe40t0TpkLoppTE7roWe0zXFoc");
         clientToken.setExpiresIn(1699924189);
-        AddWalletAccountRequest request = AddWalletAccountRequestFixture.withDefault();
+        AddWalletAccountRequest request = DestinationAccountRequestFixture.withDefaultAddWalletAccountRequest();
         when(thirdAccountProvider.
                 addWalletAccount(any(), any(), any())).thenReturn(GenericResponse.instance(AddAccountResponse.SUCCESS));
         when(thirdAccountProvider.generateAccessToken()).thenReturn(clientToken);
@@ -230,7 +224,7 @@ class DestinationAccountServiceTest {
     @Test
     void givenGetServiceBanksWhenGetBanksThenReturnList() throws Exception {
         // Arrange
-        BanksMWResponse expected = BanksMWResponseFixture.withDefault();
+        BanksMWResponse expected = AchAccountMWResponseFixture.withDefaultBanksMWResponse();
         when(achAccountProvider.
                 getBanks()).thenReturn(expected);
 
@@ -249,8 +243,8 @@ class DestinationAccountServiceTest {
     void giveValidBankCodeWhenGetAllBranchOfficeBankThenReturnSuccess() throws IOException {
         // Arrange
         Integer bankCode = 123;
-        BranchOfficeMWResponse responseMWMock = BranchOfficeMWResponseFixture.withDefault();
-        BranchOfficeResponse expectedResponse = BranchOfficeResponseFixture.withDefault();
+        BranchOfficeMWResponse responseMWMock = AchAccountMWResponseFixture.withDefaultBranchOfficeMWResponse();
+        BranchOfficeResponse expectedResponse = DestinationAccountResponseFixture.withDefaultBranchOfficeResponse();
         Mockito.when(achAccountProvider.getAllBranchOfficeBank(Mockito.any()))
                 .thenReturn(responseMWMock);
         Mockito.when(iDestinationAccountMapper.mapToBranchOfficeResponse(responseMWMock)).thenReturn(expectedResponse);
@@ -270,7 +264,7 @@ class DestinationAccountServiceTest {
         // Arrange
         String accountNumber = "1310766620";
         String clientName = "BANCO";
-        ValidateAccountResponse expected = ValidateAccountResponseFixture.withDefault();
+        ValidateAccountResponse expected = DestinationAccountResponseFixture.withDefaultValidateAccountResponse();
         when(thirdAccountProvider.validateAccount(any(), any(), any())).thenReturn(expected);
         // Act
 
@@ -291,9 +285,9 @@ class DestinationAccountServiceTest {
         ClientToken clientToken = new ClientToken();
         clientToken.setAccessToken(accessToken);
 
-        ThirdAccountListResponse thirdAccountsResponse = ThirdAccountListResponseFixture.withDefault();
-        ThirdAccountListResponse walletAccountsResponse = ThirdAccountListResponseFixture.withDefault();
-        AchAccountMWResponse achAccountMWResponse = AchAccountMWResponseFixture.withDefault();
+        ThirdAccountListResponse thirdAccountsResponse = DestinationAccountResponseFixture.withDefaultThirdAccountListResponse();
+        ThirdAccountListResponse walletAccountsResponse = DestinationAccountResponseFixture.withDefaultThirdAccountListResponse();
+        AchAccountMWResponse achAccountMWResponse = AchAccountMWResponseFixture.withDefaultAchAccountMWResponse();
 
         when(thirdAccountProvider.generateAccessToken()).thenReturn(clientToken);
         when(thirdAccountProvider.getThirdAccounts(personId, accessToken, parameter)).thenReturn(thirdAccountsResponse);

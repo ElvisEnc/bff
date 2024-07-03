@@ -1,14 +1,14 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
-import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QRCodeGenerateRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QRCodeRegenerateRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QRPaymentRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
-import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
-import bg.com.bo.bff.providers.dtos.response.qr.QRPaymentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.mw.QRCodeGenerateResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.mw.QRPaymentMWResponse;
 
 import java.io.IOException;
 import java.util.Map;

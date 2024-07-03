@@ -3,9 +3,9 @@ package bg.com.bo.bff.mappings.providers.transfer;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.commons.enums.AppDataYoloNet;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.request.TransferYoloNetRequest;
-import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
-import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
+import bg.com.bo.bff.providers.dtos.request.transfer.TransferYoloNetRequest;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
+import bg.com.bo.bff.providers.dtos.response.personal.information.ProviderNetResponse;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -37,8 +37,8 @@ public class YoloMapper implements IYoloMapper {
     }
 
     @Override
-    public TransferResponseMD convertResponse(ProviderNetResponse yoloNetResponse) {
-        TransferResponseMD.TransferMDData transferResponse = TransferResponseMD.TransferMDData.builder().build();
+    public TransferMWResponse convertResponse(ProviderNetResponse yoloNetResponse) {
+        TransferMWResponse.TransferMWData transferResponse = TransferMWResponse.TransferMWData.builder().build();
         Object firstElement = yoloNetResponse.getData().get(0);
 
         Map<String, Object> firstMap = (Map<String, Object>) firstElement;
@@ -69,7 +69,7 @@ public class YoloMapper implements IYoloMapper {
                 transferResponse.setToCurrency(moneda);
             }
         }
-        return TransferResponseMD.builder()
+        return TransferMWResponse.builder()
                 .data(transferResponse)
                 .build();
     }

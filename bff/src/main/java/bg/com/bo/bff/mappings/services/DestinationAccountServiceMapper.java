@@ -1,7 +1,6 @@
 package bg.com.bo.bff.mappings.services;
 
-import bg.com.bo.bff.application.dtos.response.AccountTypeResponse;
-import bg.com.bo.bff.commons.enums.AccountType;
+import bg.com.bo.bff.application.dtos.response.destination.account.AccountType;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -11,7 +10,7 @@ import java.util.List;
 public interface DestinationAccountServiceMapper {
     DestinationAccountServiceMapper INSTANCE = Mappers.getMapper(DestinationAccountServiceMapper.class);
 
-    List<AccountTypeResponse> convert(List<AccountType> list);
+    List<AccountType> convert(List<bg.com.bo.bff.commons.enums.AccountType> list);
 
-    AccountTypeResponse convert(AccountType accountType);
+    AccountType convert(bg.com.bo.bff.commons.enums.AccountType accountType);
 }

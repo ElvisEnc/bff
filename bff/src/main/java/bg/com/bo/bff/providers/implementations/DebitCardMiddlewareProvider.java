@@ -1,18 +1,13 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.debit.card.*;
-import bg.com.bo.bff.providers.dtos.response.debit.card.*;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCLimitsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.debit.card.mw.*;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.*;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;

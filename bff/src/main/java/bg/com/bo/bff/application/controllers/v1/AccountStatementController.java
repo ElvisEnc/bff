@@ -1,8 +1,8 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.ExtractRequest;
-import bg.com.bo.bff.application.dtos.response.ErrorResponse;
-import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
+import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementExtractResponse;
 import bg.com.bo.bff.services.interfaces.IAccountStatementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,17 +32,17 @@ public class AccountStatementController {
 
     @Operation(summary = "Extracto", description = "Obtener el extracto de una cuenta")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene los extractos dentro de la fecha", content = @Content(schema = @Schema(implementation = ExtractDataResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Obtiene los extractos dentro de la fecha", content = @Content(schema = @Schema(implementation = AccountStatementExtractResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Algún error en los filtros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/{accountId}/persons/{personId}")
-    public ResponseEntity<ExtractDataResponse> extract(
+    public ResponseEntity<AccountStatementExtractResponse> extract(
             @PathVariable("accountId") @NotBlank @Parameter(description = "id de la cuenta", example = "654654678") String accountId,
             @PathVariable("personId") @NotBlank @Parameter(description = "código de persona", example = "12345") String personId,
             @Valid @RequestBody ExtractRequest body
     ) throws IOException {
-        ExtractDataResponse response = iAccountStatementService.getAccountStatement(body, accountId);
+        AccountStatementExtractResponse response = iAccountStatementService.getAccountStatement(body, accountId);
 
         return ResponseEntity.ok(response);
     }

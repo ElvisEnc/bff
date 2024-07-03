@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 

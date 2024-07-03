@@ -1,14 +1,13 @@
 package bg.com.bo.bff.providers.implementations;
 
-
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.request.qr.QRPaymentMWRequestFixture;
-import bg.com.bo.bff.application.dtos.response.qr.QRPaymentMWResponseFixture;
+import bg.com.bo.bff.application.dtos.request.qr.QrRequestFixture;
+import bg.com.bo.bff.application.dtos.response.qr.QrResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.requests.qr.QRPaymentMWRequest;
-import bg.com.bo.bff.providers.dtos.response.qr.QRPaymentMWResponse;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.QRPaymentMWRequest;
+import bg.com.bo.bff.providers.dtos.response.qr.mw.QRPaymentMWResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -50,9 +49,6 @@ class QrTransactionProviderTest {
     @Mock
     private IHttpClientFactory httpClientFactoryMock;
 
-    @Mock
-    private ClientToken clientTokenMock;
-
     private Map<String, String> map;
 
     @BeforeEach
@@ -70,13 +66,13 @@ class QrTransactionProviderTest {
     @Test
     void givenQRPaymentRequestWhenQrPaymentThenQRPaymentMWResponse() throws IOException {
         // Arrange
-        QRPaymentMWRequest request = QRPaymentMWRequestFixture.withDefault();
+        QRPaymentMWRequest request = QrRequestFixture.withDefaultQRPaymentMWRequest();
         ClientToken clientToken = new ClientToken();
         clientToken.setAccessToken(UUID.randomUUID().toString());
-      
-        QRPaymentMWResponse expected = QRPaymentMWResponseFixture.withDefault();
+
+        QRPaymentMWResponse expected = QrResponseFixture.withDefaultQrPaymentMWResponse();
         String jsonResponse = new ObjectMapper().writeValueAsString(expected);
-       
+
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientToken);
         when(middlewareConfig.getUrlBase()).thenReturn("http://localhost:8080");
@@ -87,6 +83,5 @@ class QrTransactionProviderTest {
 
         //Asserts
         assertEquals(new ObjectMapper().writeValueAsString(expected), new ObjectMapper().writeValueAsString(actual));
-        
     }
 }

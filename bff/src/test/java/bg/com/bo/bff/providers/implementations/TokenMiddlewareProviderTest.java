@@ -6,7 +6,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientTokenFixture;
-import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -29,7 +29,7 @@ import java.util.Collections;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
 
 @ExtendWith(MockitoExtension.class)

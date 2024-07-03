@@ -1,8 +1,8 @@
 package bg.com.bo.bff.commons.converters;
 
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.response.ApiErrorResponse;
-import bg.com.bo.bff.providers.dtos.response.ErrorDetailResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
 import org.springframework.http.HttpStatus;
 
 import java.io.IOException;

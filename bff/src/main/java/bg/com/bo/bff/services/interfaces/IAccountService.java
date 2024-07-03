@@ -1,9 +1,9 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponse;
-import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
+import bg.com.bo.bff.application.dtos.request.own.account.UpdateTransactionLimitRequest;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.own.account.GetTransactionLimitResponse;
+import bg.com.bo.bff.application.dtos.response.own.account.AccountListResponse;
 
 import java.io.IOException;
 import java.util.Map;

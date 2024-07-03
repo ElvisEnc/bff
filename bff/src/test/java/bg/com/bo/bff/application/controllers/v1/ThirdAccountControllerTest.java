@@ -1,7 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.models.ThirdAccount;
-import bg.com.bo.bff.models.ThirdAccountListResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.ThirdAccount;
+import bg.com.bo.bff.application.dtos.response.destination.account.ThirdAccountListResponse;
 import bg.com.bo.bff.services.interfaces.IThirdAccountService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

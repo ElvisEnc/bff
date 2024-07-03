@@ -9,22 +9,17 @@ import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.payment.services.DeleteAffiliateServiceMWRequest;
-import bg.com.bo.bff.providers.dtos.request.payment.services.DeleteAffiliateServiceMWRequestFixture;
-import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
-import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.service.DeleteAffiliateServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.DeleteAffiliateServiceMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponseFixture;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentServicesMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliatedServiceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.CategoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.DeleteAffiliateServiceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ListServicesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.PaymentServicesMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubCategoryCitiesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubcategoriesMWResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -93,7 +88,7 @@ class PaymentServicesProviderTest {
     @Test
     void whenGetCategoriesPaymentServicesProviderThenExpectResponse() throws IOException {
         // Arrange
-        CategoryMWResponse expectedResponse = CategoryMWResponseFixture.withDefault();
+        CategoryMWResponse expectedResponse = PaymentServicesMWResponseFixture.withDefaultCategoryMWResponse();
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = Util.objectToString(expectedResponse);
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
@@ -112,7 +107,7 @@ class PaymentServicesProviderTest {
     void givenCategoryIdWhenGetSubcategoriesThenSubcategoriesMWResponse() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String expected = Util.objectToString(SubcategoriesMWResponseFixture.withDefault());
+        String expected = Util.objectToString(PaymentServicesMWResponseFixture.withDefaultSubcategoriesMWResponse());
         stubFor(get(anyUrl()).willReturn(okJson(expected)));
 
         // Act
@@ -129,7 +124,7 @@ class PaymentServicesProviderTest {
     void givenCategoryIdWhenGetSubcategoriesThenErrorNotAcceptable() throws IOException {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = SubcategoriesMWResponseFixture.errorMDWPSM_003();
+        String jsonResponse = PaymentServicesMWResponseFixture.errorMDWPSM_003();
         stubFor(get(anyUrl()).willReturn(jsonResponse(jsonResponse, HttpStatus.SC_NOT_ACCEPTABLE)));
 
         // Act
@@ -148,7 +143,7 @@ class PaymentServicesProviderTest {
         // Arrange
 
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String expected = Util.objectToString(SubCategoryCitiesMWResponseFixture.withDefault());
+        String expected = Util.objectToString(PaymentServicesMWResponseFixture.withDefaultSubCategoryCitiesMWResponse());
         stubFor(get(anyUrl()).willReturn(okJson(expected)));
 
         // Act
@@ -166,7 +161,7 @@ class PaymentServicesProviderTest {
     void givenSubCategoryIdWhenGetSubcategoryCitiesThenErrorNotAcceptable() throws IOException {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = SubCategoryCitiesMWResponseFixture.errorMDWPSM004();
+        String jsonResponse = PaymentServicesMWResponseFixture.errorMDWPSM004();
         stubFor(get(anyUrl()).willReturn(jsonResponse(jsonResponse, HttpStatus.SC_NOT_ACCEPTABLE)));
 
         // Act
@@ -185,7 +180,7 @@ class PaymentServicesProviderTest {
     void givenPersonIdWhenGetAffiliationsServicesThenExpectResponse() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(AffiliatedServiceMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(PaymentServicesMWResponseFixture.withDefaultAffiliatedServiceMWResponse());
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
@@ -193,7 +188,7 @@ class PaymentServicesProviderTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response, AffiliatedServiceMWResponseFixture.withDefault());
+        assertEquals(response, PaymentServicesMWResponseFixture.withDefaultAffiliatedServiceMWResponse());
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
@@ -203,7 +198,7 @@ class PaymentServicesProviderTest {
     void givenPersonIdWithNoAffiliationsWhenGetAffiliationsServicesThenEmptyList() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(AffiliatedServiceMWResponseFixture.withErrorMDWPSM005());
+        String jsonResponse = Util.objectToString(PaymentServicesMWResponseFixture.withErrorMDWPSM005());
         stubFor(get(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
 
         // Act
@@ -258,7 +253,7 @@ class PaymentServicesProviderTest {
     void givenValidDataWhenGetListServicesThenExpectResponse() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(ListServicesMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(PaymentServicesMWResponseFixture.withDefaultListServicesMWResponse());
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
@@ -266,7 +261,7 @@ class PaymentServicesProviderTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response, ListServicesMWResponseFixture.withDefault());
+        assertEquals(response, PaymentServicesMWResponseFixture.withDefaultListServicesMWResponse());
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
@@ -276,7 +271,7 @@ class PaymentServicesProviderTest {
     void givenValidDataWhenGetListServicesThenEmptyList() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(ListServicesMWResponseFixture.withErrorMDWPSM005());
+        String jsonResponse = Util.objectToString(PaymentServicesMWResponseFixture.withErrorMDWPSM005());
         stubFor(get(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
 
         // Act
@@ -289,8 +284,8 @@ class PaymentServicesProviderTest {
     @Test
     void givenDeleteAffiliateServiceMWRequestWhenDeleteAffiliationServiceThenOK() throws IOException {
         // Arrange
-        DeleteAffiliateServiceMWRequest request = DeleteAffiliateServiceMWRequestFixture.withDefault();
-        DeleteAffiliateServiceMWResponse expected = DeleteAffiliateServiceMWResponseFixture.withDefault();
+        DeleteAffiliateServiceMWRequest request = PaymentServicesMWRequestFixture.withDefaultDeleteAffiliateServiceMWRequest();
+        DeleteAffiliateServiceMWResponse expected = PaymentServicesMWResponseFixture.withDefaultDeleteAffiliateServiceMWResponse();
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = Util.objectToString(expected);
         stubFor(post(anyUrl()).willReturn(jsonResponse(jsonResponse, HttpStatus.SC_OK)));
@@ -299,7 +294,7 @@ class PaymentServicesProviderTest {
         DeleteAffiliateServiceMWResponse actual = provider.deleteAffiliationService(request, new HashMap<>());
 
         // Assert
-        assertEquals(expected.getData().getAffiliationNewCod(),actual.getData().getAffiliationNewCod());
+        assertEquals(expected.getData().getAffiliationNewCod(), actual.getData().getAffiliationNewCod());
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
 
     }

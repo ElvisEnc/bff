@@ -1,24 +1,17 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
-import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequestFixture;
-import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
-import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequestFixture;
+import bg.com.bo.bff.application.dtos.request.qr.QRCodeGenerateRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QRCodeRegenerateRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QRPaymentRequest;
-import bg.com.bo.bff.application.dtos.request.qr.QRPaymentRequestFixture;
 import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
-import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequestFixture;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
-import bg.com.bo.bff.application.dtos.request.qr.QrListRequestFixture;
-import bg.com.bo.bff.application.dtos.response.QRCodeGenerateResponseFixture;
-import bg.com.bo.bff.application.dtos.response.qr.QRPaymentMWResponseFixture;
+import bg.com.bo.bff.application.dtos.request.qr.QrRequestFixture;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
-import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponseFixture;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
-import bg.com.bo.bff.application.dtos.response.qr.QrListResponseFixture;
+import bg.com.bo.bff.application.dtos.response.qr.QrResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
-import bg.com.bo.bff.providers.dtos.response.qr.QRPaymentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.mw.QRCodeGenerateResponse;
+import bg.com.bo.bff.providers.dtos.response.qr.mw.QRPaymentMWResponse;
 import bg.com.bo.bff.services.interfaces.IQrService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -110,9 +103,9 @@ class QrControllerTest {
     @Test
     void givenPersonCodeWhenGetQrsGeneratedAndPaidThenAllListQr() throws Exception {
         // Arrange
-        QrListRequest requestMock = QrListRequestFixture.withDefault();
+        QrListRequest requestMock = QrRequestFixture.withDefaultQrListRequest();
 
-        QrListResponse responseExpected = QrListResponseFixture.withDefault();
+        QrListResponse responseExpected = QrResponseFixture.withDefaultQrListResponse();
         when(service.getQrGeneratedPaid(any(), any(), any())).thenReturn(responseExpected);
 
         // Act
@@ -133,12 +126,13 @@ class QrControllerTest {
         verify(service).getQrGeneratedPaid(any(), any(), any());
         assertNotNull(result);
     }
+
     @Test
     void givenQRCodeGenerateRequestWhenGenerateQRThenQRCodeGenerateResponse() throws Exception {
         // Arrange
-        QRCodeGenerateResponse expected = QRCodeGenerateResponseFixture.withDefault();
-        QRCodeGenerateRequest request = QRCodeGenerateRequestFixture.whitDefault();
-        when(service.generateQR(any(),any())).thenReturn(expected);
+        QRCodeGenerateResponse expected = QrResponseFixture.withDefaultQRCodeGenerateResponse();
+        QRCodeGenerateRequest request = QrRequestFixture.whitDefaultQRCodeGenerateRequest();
+        when(service.generateQR(any(), any())).thenReturn(expected);
 
         // Act
 
@@ -162,9 +156,9 @@ class QrControllerTest {
     @Test
     void givenQRCodeRegenerateRequestWhenGenerateQRThenQRCodeGenerateResponse() throws Exception {
         // Arrange
-        QRCodeGenerateResponse expected = QRCodeGenerateResponseFixture.withDefault();
-        QRCodeRegenerateRequest request = QRCodeRegenerateRequestFixture.withDefault();
-        when(service.regenerateQR(any(),any())).thenReturn(expected);
+        QRCodeGenerateResponse expected = QrResponseFixture.withDefaultQRCodeGenerateResponse();
+        QRCodeRegenerateRequest request = QrRequestFixture.withDefaultQRCodeRegenerateRequest();
+        when(service.regenerateQR(any(), any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(post(REGENERATE_QR_URL)
@@ -187,10 +181,10 @@ class QrControllerTest {
     @Test
     void givenDataEncryptRequestWhenDecryptQRThenQRDecryptResponse() throws Exception {
         // Arrange
-        QrDecryptResponse expected = QrDecryptResponseFixture.withDefault();
-        QrDecryptRequest request = QrDecryptRequestFixture.withDefault();
+        QrDecryptResponse expected = QrResponseFixture.withDefaultQrDecryptResponse();
+        QrDecryptRequest request = QrRequestFixture.withDefaultQrDecryptRequest();
 
-        when(service.decryptQR(any(),any())).thenReturn(expected);
+        when(service.decryptQR(any(), any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(post(DECRYPT_QR_URL)
@@ -213,14 +207,14 @@ class QrControllerTest {
     @Test
     void givenQRPaymentRequestWhenQrPaymentThenQRPaymentMWResponse() throws Exception {
         // Arrange
-        final String personId= "12333";
-        final String accountId= "12333";
-        QRPaymentMWResponse expected = QRPaymentMWResponseFixture.withDefault();
-        QRPaymentRequest request = QRPaymentRequestFixture.withDefault();
-        when(service.qrPayment(any(),any(),any(),any())).thenReturn(expected);
+        final String personId = "12333";
+        final String accountId = "12333";
+        QRPaymentMWResponse expected = QrResponseFixture.withDefaultQrPaymentMWResponse();
+        QRPaymentRequest request = QrRequestFixture.withDefaultQRPaymentRequest();
+        when(service.qrPayment(any(), any(), any(), any())).thenReturn(expected);
 
         //Act
-        MvcResult result = mockMvc.perform(post(PAYMENT_QR_URL,personId,accountId)
+        MvcResult result = mockMvc.perform(post(PAYMENT_QR_URL, personId, accountId)
                         .content(objectMapper.writeValueAsString(request))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -233,7 +227,7 @@ class QrControllerTest {
 
         // Assert
         assertEquals(response, actual);
-        verify(service).qrPayment(any(),any(),any(),any());
+        verify(service).qrPayment(any(), any(), any(), any());
 
     }
 

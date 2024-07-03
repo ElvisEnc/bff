@@ -1,10 +1,10 @@
 package bg.com.bo.bff.services.interfaces;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.*;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
-import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.InternetAuthorizationResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import org.springframework.stereotype.Service;
 

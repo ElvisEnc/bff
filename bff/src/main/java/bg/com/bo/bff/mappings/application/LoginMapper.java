@@ -1,7 +1,7 @@
 package bg.com.bo.bff.mappings.application;
 
-import bg.com.bo.bff.application.dtos.response.LoginResponse;
-import bg.com.bo.bff.models.dtos.login.LoginResult;
+import bg.com.bo.bff.application.dtos.response.login.LoginResponse;
+import bg.com.bo.bff.application.dtos.response.login.LoginResult;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

@@ -1,12 +1,16 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.LogoutRequest;
-import bg.com.bo.bff.application.dtos.response.*;
-import bg.com.bo.bff.application.dtos.request.LoginRequest;
-import bg.com.bo.bff.application.dtos.request.RefreshSessionRequest;
+import bg.com.bo.bff.application.dtos.request.login.LogoutRequest;
+import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
+import bg.com.bo.bff.application.dtos.request.login.RefreshSessionRequest;
+import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.login.DeviceEnrollmentResponse;
+import bg.com.bo.bff.application.dtos.response.login.LoginResponse;
+import bg.com.bo.bff.application.dtos.response.login.LoginResult;
+import bg.com.bo.bff.application.dtos.response.login.TokenDataResponse;
 import bg.com.bo.bff.mappings.application.LoginMapper;
 import bg.com.bo.bff.commons.utils.Headers;
-import bg.com.bo.bff.models.dtos.login.*;
 import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import io.swagger.v3.oas.annotations.Operation;
@@ -97,8 +101,7 @@ public class LoginController {
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion
-
-          ) throws IOException {
+    ) throws IOException {
         DeviceEnrollmentResponse response = iLoginServices.validation(
                 Headers.getParameter(httpServletRequest,
                         deviceId,

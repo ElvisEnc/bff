@@ -1,13 +1,13 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponse;
-import bg.com.bo.bff.application.dtos.response.TransactionLimitData;
-import bg.com.bo.bff.providers.dtos.response.TransactionLimitListMWResponse;
-import bg.com.bo.bff.models.dtos.accounts.AccountListResponse;
-import bg.com.bo.bff.models.dtos.middleware.ClientMWToken;
-import bg.com.bo.bff.providers.dtos.request.UpdateTransactionLimitMWRequest;
+import bg.com.bo.bff.application.dtos.request.own.account.UpdateTransactionLimitRequest;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.own.account.GetTransactionLimitResponse;
+import bg.com.bo.bff.application.dtos.response.own.account.TransactionLimitData;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.TransactionLimitListMWResponse;
+import bg.com.bo.bff.application.dtos.response.own.account.AccountListResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.ClientMWToken;
+import bg.com.bo.bff.providers.dtos.request.own.account.mw.UpdateTransactionLimitMWRequest;
 import bg.com.bo.bff.providers.interfaces.IAccountProvider;
 import bg.com.bo.bff.services.interfaces.IAccountService;
 import org.springframework.stereotype.Service;

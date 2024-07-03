@@ -1,15 +1,15 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
+import bg.com.bo.bff.application.dtos.request.transfer.TransferRequestFixture;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.response.ApiErrorResponse;
-import bg.com.bo.bff.providers.dtos.response.ErrorDetailResponse;
-import bg.com.bo.bff.providers.dtos.response.TransferMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -108,7 +108,7 @@ class TransferACHMiddlewareProviderTest {
 
         Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
 
-        TransferResponseMD result = provider.transferAchAccount("123455", "123", TransferRequestFixture.withDefault(), map);
+        TransferMWResponse result = provider.transferAchAccount("123455", "123", TransferRequestFixture.withDefault(), map);
 
         assertNotNull(result);
         verify(tokenMiddlewareProvider).generateAccountAccessToken(any(), any(), any());

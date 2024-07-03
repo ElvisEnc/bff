@@ -1,17 +1,17 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
-import bg.com.bo.bff.application.dtos.request.LoginRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
+import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
+import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
-import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
-import bg.com.bo.bff.providers.dtos.request.login.LogoutMWRequest;
-import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
-import bg.com.bo.bff.providers.dtos.response.login.DeviceEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.login.LoginFactorData;
-import bg.com.bo.bff.providers.dtos.response.login.LoginFactorMWResponse;
+import bg.com.bo.bff.application.dtos.response.login.LoginValidationServiceResponse;
+import bg.com.bo.bff.providers.dtos.request.login.mw.LogoutMWRequest;
+import bg.com.bo.bff.providers.dtos.response.login.mw.BiometricStatusMWResponse;
+import bg.com.bo.bff.providers.dtos.response.login.mw.DeviceEnrollmentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.login.mw.LoginFactorData;
+import bg.com.bo.bff.providers.dtos.response.login.mw.LoginFactorMWResponse;
 
 import java.io.IOException;
 import java.util.Map;

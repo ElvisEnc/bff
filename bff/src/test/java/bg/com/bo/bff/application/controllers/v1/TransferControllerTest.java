@@ -1,13 +1,12 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.Pcc01Request;
-import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
+import bg.com.bo.bff.application.dtos.request.transfer.TransferRequestFixture;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
-import bg.com.bo.bff.application.dtos.response.Pcc01Response;
+import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Response;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.response.TransferMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.services.interfaces.ITransferService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Assertions;
@@ -61,7 +60,7 @@ class TransferControllerTest {
 
     @Test
     void transferOwnAccount() throws Exception {
-        TransferResponseMD expected = TransferMWResponseFixture.withDefault();
+        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
         TransferRequest request = TransferRequestFixture.withDefault();
         when(transferService.transferOwnAccount(any(), any(), any(), any())).thenReturn(expected);
 
@@ -79,7 +78,7 @@ class TransferControllerTest {
 
     @Test
     void transferThirdAccounts() throws Exception {
-        TransferResponseMD expected = TransferMWResponseFixture.withDefault();
+        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
         TransferRequest request = TransferRequestFixture.withDefault();
         when(transferService.transferThirdAccount(any(), any(), any(), any())).thenReturn(expected);
 
@@ -97,7 +96,7 @@ class TransferControllerTest {
 
     @Test
     void transferACHAccounts() throws Exception {
-        TransferResponseMD expected = TransferMWResponseFixture.withDefault();
+        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
         TransferRequest request = TransferRequestFixture.withDefault();
         when(transferService.transferAchAccount(any(), any(), any(), any())).thenReturn(expected);
 
@@ -116,7 +115,7 @@ class TransferControllerTest {
     @Test
     void givePersonCodeAndAccountWhenTransferYoloThenReturnSuccess() throws Exception {
         // Arrange
-        TransferResponseMD expected = TransferMWResponseFixture.withDefault();
+        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
         TransferRequest request = TransferRequestFixture.withDefault();
         when(transferService.transferWallet(any(), any(), any(), any(), any())).thenReturn(expected);
 

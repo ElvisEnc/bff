@@ -1,12 +1,8 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.providers.dtos.request.debit.card.*;
-import bg.com.bo.bff.providers.dtos.response.debit.card.*;
-import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.providers.dtos.request.debit.card.mw.*;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.*;
 
 import java.io.IOException;
 import java.util.Map;

@@ -1,19 +1,15 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.PaymentServiceResponseFixture;
 import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponseFixture;
 import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponseFixture;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponseFixture;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponseFixture;
-import bg.com.bo.bff.application.dtos.response.payment.services.DeleteAffiliateServiceResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.DeleteAffiliateServiceResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IPaymentServicesService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -100,7 +96,7 @@ class PaymentServicesControllerTest {
     @Test
     void whenGetCategoriesThenResponseListCategories() throws Exception {
         //Arrange
-        ApiDataResponse<List<CategoryResponse>> expectedResponse = CategoryResponseFixture.withDefaultData();
+        ApiDataResponse<List<CategoryResponse>> expectedResponse = PaymentServiceResponseFixture.withDefaultDataListCategoryResponse();
         when(service.getCategories(any())).thenReturn(expectedResponse.getData());
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
@@ -127,7 +123,7 @@ class PaymentServicesControllerTest {
     void givenCategoryIdWhenGetSubcategoriesThenSubcategoriesResponse() throws Exception {
 
         //Arrange
-        SubcategoriesResponse expected = SubcategoriesResponseFixture.withDefault();
+        SubcategoriesResponse expected = PaymentServiceResponseFixture.withDefaultSubcategoriesResponse();
         when(service.getSubcategories(any(), any())).thenReturn(expected);
 
         // Act
@@ -151,7 +147,7 @@ class PaymentServicesControllerTest {
     void givenSubCategoryIdWhenGetSubcategoryCitiesThenSubCategoryCitiesResponse() throws Exception {
 
         //Arrange
-        SubCategoryCitiesResponse expected = SubCategoryCitiesResponseFixture.withDefault();
+        SubCategoryCitiesResponse expected = PaymentServiceResponseFixture.withDefaultSubCategoryCitiesResponse();
         when(service.getSubcategoryCities(any(), any())).thenReturn(expected);
 
         // Act
@@ -174,7 +170,7 @@ class PaymentServicesControllerTest {
     @Test
     void givenPersonIdWhenGetAffiliateServiceThenResponseListAffiliations() throws Exception {
         //Arrange
-        ApiDataResponse<List<AffiliateServiceResponse>> expectedResponse = AffiliateServiceResponseFixture.withDataDefault();
+        ApiDataResponse<List<AffiliateServiceResponse>> expectedResponse = PaymentServiceResponseFixture.withDataDefaultListAffiliateServiceResponse();
         when(service.getAffiliateServices(any(), any())).thenReturn(expectedResponse.getData());
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
@@ -200,7 +196,7 @@ class PaymentServicesControllerTest {
     @Test
     void givenValidDataWhenGetListServicesByCityThenResponse() throws Exception {
         //Arrange
-        ListServicesResponse expectedResponse = ListServicesResponseFixture.withDefault();
+        ListServicesResponse expectedResponse = PaymentServiceResponseFixture.withDefaultListServicesResponse();
         when(service.getServicesByCategoryAndCity(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
@@ -227,7 +223,7 @@ class PaymentServicesControllerTest {
         String personId = "12345";
         String affiliateServiceId = "20";
         GenericResponse expected = GenericResponse.instance(DeleteAffiliateServiceResponse.SUCCESS);
-        when(service.deleteAffiliationService(anyString(),anyString(),any())).thenReturn(expected);
+        when(service.deleteAffiliationService(anyString(), anyString(), any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(delete(DELETE_AFFILIATE_SERVICE, personId, affiliateServiceId)
@@ -241,8 +237,8 @@ class PaymentServicesControllerTest {
         String actual = result.getResponse().getContentAsString();
 
         // Assert
-        assertEquals(response,actual);
-        verify(service).deleteAffiliationService(anyString(),anyString(),any());
+        assertEquals(response, actual);
+        verify(service).deleteAffiliationService(anyString(), anyString(), any());
 
     }
 }

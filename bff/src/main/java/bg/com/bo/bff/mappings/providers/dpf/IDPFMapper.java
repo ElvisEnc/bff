@@ -1,8 +1,8 @@
 package bg.com.bo.bff.mappings.providers.dpf;
 
-import bg.com.bo.bff.application.dtos.response.DPFListResponse;
-import bg.com.bo.bff.providers.dtos.response.DPFMWResponse;
+import bg.com.bo.bff.application.dtos.response.dpf.DpfListResponse;
+import bg.com.bo.bff.providers.dtos.response.dpf.mw.DpfMWResponse;
 
 public interface IDPFMapper {
-    DPFListResponse mapToDPFListResponse(DPFMWResponse mwResponse);
+    DpfListResponse mapToDPFListResponse(DpfMWResponse mwResponse);
 }

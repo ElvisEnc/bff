@@ -3,7 +3,7 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
 import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;

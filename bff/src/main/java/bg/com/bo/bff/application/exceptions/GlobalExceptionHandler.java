@@ -1,7 +1,7 @@
 package bg.com.bo.bff.application.exceptions;
 
 
-import bg.com.bo.bff.application.dtos.response.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.commons.enums.HttpError;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.UnexpectedTypeException;

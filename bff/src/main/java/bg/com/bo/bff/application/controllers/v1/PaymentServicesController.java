@@ -1,14 +1,14 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.response.ErrorResponse;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
 import bg.com.bo.bff.commons.utils.Headers;
-import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IPaymentServicesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -123,7 +123,6 @@ public class PaymentServicesController {
             @ApiResponse(responseCode = "404", description = "Error si la categoria no tiene subcategorias", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
-
     @DeleteMapping("/persons/{personId}/affiliate-services/{affiliateServiceId}")
     public ResponseEntity<GenericResponse> deleteAffiliation(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
@@ -142,7 +141,7 @@ public class PaymentServicesController {
             @Pattern(regexp = "^\\d+$", message = "Número de servicio de afiliacion es invalido")
             @PathVariable("affiliateServiceId") final String affiliateServiceId
     ) throws IOException {
-        return  ResponseEntity.ok(service.deleteAffiliationService(personId,affiliateServiceId, Headers.getParameter(httpServletRequest,
+        return ResponseEntity.ok(service.deleteAffiliationService(personId, affiliateServiceId, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,
@@ -166,7 +165,7 @@ public class PaymentServicesController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") Integer personId
     ) throws IOException {
-        List<AffiliateServiceResponse> affiliateServices = service.getAffiliateServices(personId,Headers.getParameter(httpServletRequest));
+        List<AffiliateServiceResponse> affiliateServices = service.getAffiliateServices(personId, Headers.getParameter(httpServletRequest));
         return ResponseEntity.ok(ApiDataResponse.of(affiliateServices));
     }
 
@@ -191,7 +190,7 @@ public class PaymentServicesController {
             @Min(value = 0, message = "La cityId debe ser mayor a 0")
             @PathVariable("cityId") final Integer cityId
     ) throws IOException {
-        return  ResponseEntity.ok(service.getServicesByCategoryAndCity(subCategoryId, cityId, Headers.getParameter(httpServletRequest,
+        return ResponseEntity.ok(service.getServicesByCategoryAndCity(subCategoryId, cityId, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,

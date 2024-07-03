@@ -1,13 +1,13 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.ExtractRequest;
-import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementExtractResponse;
 import bg.com.bo.bff.commons.enums.AccountStatementType;
 import bg.com.bo.bff.commons.filters.AmountRangeFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.commons.filters.TypeFilter;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.providers.dtos.response.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.services.interfaces.IAccountStatementService;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class AccountStatementService implements IAccountStatementService {
     }
 
     @Override
-    public ExtractDataResponse getAccountStatement(ExtractRequest request, String accountId) throws IOException {
+    public AccountStatementExtractResponse getAccountStatement(ExtractRequest request, String accountId) throws IOException {
         String startDate = request.getFilters().getPagination().getStartDate();
         String endDate = request.getFilters().getPagination().getEndDate();
         String key = new StringBuilder().append(accountId).append("|").append(startDate).append("|").append(endDate).toString();
@@ -54,14 +54,14 @@ public class AccountStatementService implements IAccountStatementService {
 
         data = new PageFilter(request.getFilters().getPagination().getPage(), request.getFilters().getPagination().getPageSize()).apply(data);
 
-        List<ExtractDataResponse.ExtractResponse> extractResponseList = data.stream().map(AccountStatementService::toProviderResponse).toList();
+        List<AccountStatementExtractResponse.AccountStatementExtract> extractResponseList = data.stream().map(AccountStatementService::toProviderResponse).toList();
 
-        ExtractDataResponse response = new ExtractDataResponse();
+        AccountStatementExtractResponse response = new AccountStatementExtractResponse();
         response.setData(extractResponseList);
         return response;
     }
 
-    public static ExtractDataResponse.ExtractResponse toProviderResponse(AccountReportBasicResponse.AccountReportData accountReportData) {
+    public static AccountStatementExtractResponse.AccountStatementExtract toProviderResponse(AccountReportBasicResponse.AccountReportData accountReportData) {
         HashMap<String, Integer> hashMap = new HashMap<>();
         hashMap.put("ACEP", 1);
         hashMap.put("ENPROC", 2);
@@ -72,7 +72,7 @@ public class AccountStatementService implements IAccountStatementService {
         LocalDate date = LocalDate.parse(accountReportData.getProcessDate(), inputFormatter);
         String formattedDate = date.format(outputFormatter);
 
-        return ExtractDataResponse.ExtractResponse.builder()
+        return AccountStatementExtractResponse.AccountStatementExtract.builder()
                 .status(String.valueOf(hashMap.get(accountReportData.getStatus())))
                 .type(Objects.equals(accountReportData.getMoveType(), "D") ? AccountStatementType.DEBITO.getCode() : AccountStatementType.CREDITO.getCode())
                 .amount(accountReportData.getAmount())

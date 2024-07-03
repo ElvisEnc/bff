@@ -3,24 +3,17 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.debit.card.*;
-import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.*;
-import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWErrorResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DebitCardMWResponseFixture;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.debit.card.mw.*;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.*;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -97,7 +90,7 @@ class DebitCardMiddlewareProviderTest {
     void givenInvalidResponseWhenChangeAmountThenException() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(DebitCardMWErrorResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.withDefaultApiErrorResponse());
         stubFor(patch(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
 
         // Act
@@ -117,7 +110,7 @@ class DebitCardMiddlewareProviderTest {
     void givenPersonCodeWhenGetLisDebitCardThenExpectResponse() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(ListDebitCardMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.withDefaultListDebitCardMWResponse());
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
@@ -125,7 +118,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response, ListDebitCardMWResponseFixture.withDefault());
+        assertEquals(response, DebitCardMWResponseFixture.withDefaultListDebitCardMWResponse());
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
@@ -135,7 +128,7 @@ class DebitCardMiddlewareProviderTest {
     void givenPersonCodeWithNoCardsWhenGetLisDebitCardThenEmptyList() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(DebitCardMWErrorResponseFixture.withErrorMDWTJD004());
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.withErrorMDWTJD004());
         stubFor(get(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
 
         // Act
@@ -190,7 +183,7 @@ class DebitCardMiddlewareProviderTest {
     void givenPersonCodeAndCardIdWhenGetAccountLisDebitCardThenExpectResponse() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(AccountsDebitCardMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.withDefaultAccountsDebitCardMWResponse());
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
@@ -198,7 +191,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response, AccountsDebitCardMWResponseFixture.withDefault());
+        assertEquals(response, DebitCardMWResponseFixture.withDefaultAccountsDebitCardMWResponse());
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
@@ -246,9 +239,9 @@ class DebitCardMiddlewareProviderTest {
     @Test
     void givenPersonIdAndCardIdWhenGetListAuthorizationsThenDCInternetAuthorizationNWResponse() throws IOException {
         // Arrange
-        DCInternetAuthorizationNWResponse expected = DCInternetAuthorizationNWResponseFixture.withDefault();
+        DCInternetAuthorizationNWResponse expected = DebitCardMWResponseFixture.withDefaultDCInternetAuthorizationNWResponse();
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(DCInternetAuthorizationNWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.withDefaultDCInternetAuthorizationNWResponse());
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         String personId = "1234";
@@ -266,7 +259,7 @@ class DebitCardMiddlewareProviderTest {
     void givenPersonIdAndCardIdWhenGetListAuthorizationsThenErrorMDWTJD_005() throws IOException {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = DCInternetAuthorizationNWResponseFixture.withErrorMDWTJD005();
+        String jsonResponse = DebitCardMWResponseFixture.withErrorMDWTJD005();
         stubFor(get(anyUrl()).willReturn(jsonResponse(jsonResponse, HttpStatus.SC_NOT_ACCEPTABLE)));
         String personId = "1234";
         String cardId = "123";
@@ -288,11 +281,11 @@ class DebitCardMiddlewareProviderTest {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_DELETE_AUTH_PURCHASE);
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(DeleteAuthPurchaseMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.withDefaultDeleteAuthPurchaseMWResponse());
         stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.deleteAuth(DeleteAuthPurchaseMWRequestFixture.withDefault(), map);
+        GenericResponse response = debitCardMiddlewareProvider.deleteAuth(DebitCardMWRequestFixture.withDefaultDeleteAuthPurchaseMWRequest(), map);
 
         // Assert
         assertNotNull(response);
@@ -307,11 +300,11 @@ class DebitCardMiddlewareProviderTest {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_DELETE_AUTH_PURCHASE);
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(DeleteAuthPurchaseMWResponseFixture.errorDefault());
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.errorDefaultDeleteAuthPurchaseMWResponse());
         stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.deleteAuth(DeleteAuthPurchaseMWRequestFixture.withDefault(), map);
+        GenericResponse response = debitCardMiddlewareProvider.deleteAuth(DebitCardMWRequestFixture.withDefaultDeleteAuthPurchaseMWRequest(), map);
 
         // Assert
         assertNotNull(response);
@@ -397,9 +390,9 @@ class DebitCardMiddlewareProviderTest {
     @Test
     void givenCreateAuthorizationOnlinePurchaseMWRequestWhenCreateAuthorizationOnlinePurchaseThenCreateAuthorizationOnlinePurchaseMWResponse() throws IOException {
         // Arrange
-        CreateAuthorizationOnlinePurchaseMWRequest request = CreateAuthorizationOnlinePurchaseMWRequestFixture.withDefault();
+        CreateAuthorizationOnlinePurchaseMWRequest request = DebitCardMWRequestFixture.withDefaultCreateAuthorizationOnlinePurchaseMWRequest();
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(CreateAuthorizationOnlinePurchaseMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.withDefaultCreateAuthorizationOnlinePurchaseMWResponse());
         stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
@@ -473,11 +466,11 @@ class DebitCardMiddlewareProviderTest {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVATE_DEBIT_CARD);
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(UpdateSecureMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.withDefaultUpdateSecureMWResponse());
         stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.activateDebitCard(ActivateDebitCardMWRequestFixture.withDefault(), map);
+        GenericResponse response = debitCardMiddlewareProvider.activateDebitCard(DebitCardMWRequestFixture.withDefaultActivateDebitCardMWRequest(), map);
 
         // Assert
         assertNotNull(response);
@@ -499,7 +492,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(patch(anyUrl()).willReturn(aResponse()
                 .withStatus(406)
                 .withBody(Util.objectToString(errorMiddlewareProvider))));
-        ActivateDebitCardMWRequest request = ActivateDebitCardMWRequestFixture.withDefault();
+        ActivateDebitCardMWRequest request = DebitCardMWRequestFixture.withDefaultActivateDebitCardMWRequest();
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
@@ -517,11 +510,11 @@ class DebitCardMiddlewareProviderTest {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVE_ASSURANCE);
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(UpdateSecureMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(DebitCardMWResponseFixture.withDefaultUpdateSecureMWResponse());
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.activeDebitCardSecure(UpdateDebitCardSecureMWRequestFixture.withDefault(), map);
+        GenericResponse response = debitCardMiddlewareProvider.activeDebitCardSecure(DebitCardMWRequestFixture.withDefaultUpdateDebitCardSecureMWRequest(), map);
 
         // Assert
         assertNotNull(response);
@@ -539,7 +532,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.activeDebitCardSecure(UpdateDebitCardSecureMWRequestFixture.withDefault(), map);
+        GenericResponse response = debitCardMiddlewareProvider.activeDebitCardSecure(DebitCardMWRequestFixture.withDefaultUpdateDebitCardSecureMWRequest(), map);
 
         // Assert
         assertNotNull(response);
@@ -561,7 +554,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(post(anyUrl()).willReturn(aResponse()
                 .withStatus(406)
                 .withBody(Util.objectToString(errorMiddlewareProvider))));
-        UpdateDebitCardSecureMWRequest request = UpdateDebitCardSecureMWRequestFixture.withDefault();
+        UpdateDebitCardSecureMWRequest request = DebitCardMWRequestFixture.withDefaultUpdateDebitCardSecureMWRequest();
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
@@ -579,7 +572,7 @@ class DebitCardMiddlewareProviderTest {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
-        UpdateDebitCardSecureMWRequest request = UpdateDebitCardSecureMWRequestFixture.withDefault();
+        UpdateDebitCardSecureMWRequest request = DebitCardMWRequestFixture.withDefaultUpdateDebitCardSecureMWRequest();
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {

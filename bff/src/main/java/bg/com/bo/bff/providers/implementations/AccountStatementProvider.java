@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.request.export.account.statement.ExportRequest;
+import bg.com.bo.bff.application.dtos.request.account.statement.ExportRequest;
 import bg.com.bo.bff.application.dtos.request.account.statement.ExtractPagination;
 import bg.com.bo.bff.application.dtos.request.account.statement.ExtractRequest;
 import bg.com.bo.bff.application.exceptions.GenericException;
@@ -12,9 +12,9 @@ import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.AccountReportBasicRequest;
-import bg.com.bo.bff.providers.dtos.response.AccountReportBasicResponse;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountReportBasicRequest;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;

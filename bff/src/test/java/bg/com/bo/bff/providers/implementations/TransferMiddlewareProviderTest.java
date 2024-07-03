@@ -7,9 +7,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.response.*;
 import bg.com.bo.bff.mappings.providers.pcc01.Pcc01Mapper;
 import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpEntity;
@@ -35,9 +38,9 @@ import java.util.Map;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
+import bg.com.bo.bff.application.dtos.request.transfer.TransferRequestFixture;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,7 +105,7 @@ class TransferMiddlewareProviderTest {
 
         Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
 
-        TransferResponseMD result = provider.transferThirdAccount("123455", "123", TransferRequestFixture.withDefault(), map);
+        TransferMWResponse result = provider.transferThirdAccount("123455", "123", TransferRequestFixture.withDefault(), map);
 
         assertNotNull(result);
         verify(tokenMiddlewareProvider).generateAccountAccessToken(any(), any(), any());
@@ -160,7 +163,7 @@ class TransferMiddlewareProviderTest {
 
         Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
 
-        TransferResponseMD result = provider.transferOwnAccount("123455", "123", TransferRequestFixture.withDefault(), map);
+        TransferMWResponse result = provider.transferOwnAccount("123455", "123", TransferRequestFixture.withDefault(), map);
 
         assertNotNull(result);
         verify(tokenMiddlewareProvider).generateAccountAccessToken(any(), any(), any());

@@ -3,20 +3,17 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
-import bg.com.bo.bff.application.dtos.request.qr.QrListRequestFixture;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.request.qr.QrRequestFixture;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.dtos.BanksMWResponse;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.response.*;
-import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMWResponse;
-import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.*;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.response.qr.mw.QrMWResponseFixture;
 import bg.com.bo.bff.mappings.providers.account.AchAccountMWtMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -82,7 +79,7 @@ class AchAccountMiddlewareProviderTest {
     @Test
     void givenValidBankCodeWhenGetBanksThenExpectResponse() throws IOException {
         // Arrange
-        BanksMWResponse expectedResponse = BanksMWResponseFixture.withDefault();
+        BanksMWResponse expectedResponse = AchAccountMWResponseFixture.withDefaultBanksMWResponse();
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = Util.objectToString(expectedResponse);
         stubFor(get(anyUrl())
@@ -119,7 +116,7 @@ class AchAccountMiddlewareProviderTest {
     void giveValidBankCodeWhenGetAllBranchOfficeBankThenExpectResponse() throws IOException {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(BranchOfficeMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(AchAccountMWResponseFixture.withDefaultBranchOfficeMWResponse());
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
@@ -127,7 +124,7 @@ class AchAccountMiddlewareProviderTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response.getData().getResponse(), BranchOfficeMWResponseFixture.withDefault().getData().getResponse());
+        assertEquals(response.getData().getResponse(), AchAccountMWResponseFixture.withDefaultBranchOfficeMWResponse().getData().getResponse());
     }
 
     @Test
@@ -186,7 +183,7 @@ class AchAccountMiddlewareProviderTest {
     void givePersonCodeWhenGetAchAccountsThenExpectResponse() throws IOException {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(AchAccountMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(AchAccountMWResponseFixture.withDefaultAchAccountMWResponse());
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
@@ -194,7 +191,7 @@ class AchAccountMiddlewareProviderTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response.getData(), AchAccountMWResponseFixture.withDefault().getData());
+        assertEquals(response.getData(), AchAccountMWResponseFixture.withDefaultAchAccountMWResponse().getData());
     }
 
     @Test
@@ -252,15 +249,15 @@ class AchAccountMiddlewareProviderTest {
     void givePersonCodeWhenGetQrListThenExpectResponse() throws IOException {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(QrListMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(QrMWResponseFixture.withDefaultQrListMWResponse());
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        QrListMWResponse response = achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrListRequestFixture.withDefault(), 123, new HashMap<>());
+        QrListMWResponse response = achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrRequestFixture.withDefaultQrListRequest(), 123, new HashMap<>());
 
         // Assert
         assertNotNull(response);
-        assertEquals(response.getData(), QrListMWResponseFixture.withDefault().getData());
+        assertEquals(response.getData(), QrMWResponseFixture.withDefaultQrListMWResponse().getData());
     }
 
     @Test
@@ -278,7 +275,7 @@ class AchAccountMiddlewareProviderTest {
                 .withBody(Util.objectToString(errorMiddlewareProvider))));
 
         // Act
-        QrListMWResponse response = achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrListRequestFixture.withDefault(), 123, new HashMap<>());
+        QrListMWResponse response = achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrRequestFixture.withDefaultQrListRequest(), 123, new HashMap<>());
 
         // Assert
         assertTrue(response.getData().isEmpty());
@@ -292,7 +289,7 @@ class AchAccountMiddlewareProviderTest {
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrListRequestFixture.withDefault(), 123, new HashMap<>());
+            achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrRequestFixture.withDefaultQrListRequest(), 123, new HashMap<>());
         });
 
         // Assert
@@ -307,7 +304,7 @@ class AchAccountMiddlewareProviderTest {
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrListRequestFixture.withDefault(), 123, new HashMap<>());
+            achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrRequestFixture.withDefaultQrListRequest(), 123, new HashMap<>());
         });
 
         // Assert

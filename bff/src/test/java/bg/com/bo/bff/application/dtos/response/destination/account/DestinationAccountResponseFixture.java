@@ -2,6 +2,7 @@ package bg.com.bo.bff.application.dtos.response.destination.account;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.List;
 
 public class DestinationAccountResponseFixture {
     public static DestinationAccountResponse withDefault() {
@@ -37,5 +38,57 @@ public class DestinationAccountResponseFixture {
                 .accountAliases("UnitTest")
                 .destinationAccountType(1)
                 .build();
+    }
+
+    public static BanksResponse withDefaultBanksResponse() {
+        return new BanksResponse(
+                List.of(
+                        new Bank("ADM TARJETAS DE CREDITO A.T.C", "01111"),
+                        new Bank("BANCO BISA", "01112")
+                )
+        );
+    }
+
+    public static BranchOfficeResponse withDefaultBranchOfficeResponse() {
+        return BranchOfficeResponse.builder()
+                .data(Arrays.asList(
+                        BranchOfficeDataResponse.builder()
+                                .id("001")
+                                .description("Sucursal 1")
+                                .build(),
+                        BranchOfficeDataResponse.builder()
+                                .id("002")
+                                .description("Sucursal 2")
+                                .build()
+                ))
+                .build();
+    }
+
+    public static ValidateAccountResponse withDefaultValidateAccountResponse() {
+        return new ValidateAccountResponse(
+                "6957474",
+                "1310766620",
+                "5219027",
+                "EMPLEADO BANCO",
+                "068",
+                "701"
+        );
+    }
+
+    public static ThirdAccountListResponse withDefaultThirdAccountListResponse() {
+        ThirdAccount thirdAccount = new ThirdAccount();
+        thirdAccount.setId("123454654654");
+        thirdAccount.setAccountId("1234345354354");
+        thirdAccount.setAccountNumber("123456453452345");
+        thirdAccount.setCurrencyCode("testt");
+        thirdAccount.setCurrencyAcronym("testt");
+        thirdAccount.setAccountType("testt");
+        thirdAccount.setAccountTypeAbbreviation("testt");
+        thirdAccount.setClientName("testt");
+        thirdAccount.setAccountAliases("testt");
+        thirdAccount.setIsFavorite("testt");
+        ThirdAccountListResponse response = new ThirdAccountListResponse();
+        response.setData(List.of(thirdAccount));
+        return response;
     }
 }

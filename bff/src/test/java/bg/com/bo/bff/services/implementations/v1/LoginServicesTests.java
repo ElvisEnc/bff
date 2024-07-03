@@ -1,12 +1,12 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.LogoutRequest;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.request.login.LogoutRequest;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.mappings.services.LoginServiceMapper;
-import bg.com.bo.bff.application.dtos.request.LoginRequest;
-import bg.com.bo.bff.providers.dtos.request.login.LogoutMWRequest;
+import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
+import bg.com.bo.bff.providers.dtos.request.login.mw.LogoutMWRequest;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.implementations.LoginMiddlewareProvider;

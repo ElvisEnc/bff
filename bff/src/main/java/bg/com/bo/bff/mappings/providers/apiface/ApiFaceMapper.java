@@ -1,7 +1,7 @@
 package bg.com.bo.bff.mappings.providers.apiface;
 
-import bg.com.bo.bff.application.dtos.response.apiface.DepartmentDetail;
-import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DepartmentDetail;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DepartmentsResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentNetDetail;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
 import org.springframework.stereotype.Component;

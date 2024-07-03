@@ -1,7 +1,7 @@
 package bg.com.bo.bff.mappings.providers.keycloak;
 
-import bg.com.bo.bff.models.dtos.TokenDataServiceResponse;
-import bg.com.bo.bff.models.jwt.JwtKey;
+import bg.com.bo.bff.models.TokenDataServiceResponse;
+import bg.com.bo.bff.providers.dtos.response.jwt.JwtKey;
 import bg.com.bo.bff.providers.dtos.response.keycloak.CreateTokenKCResponse;
 import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakKeyResponse;
 import org.mapstruct.Mapper;

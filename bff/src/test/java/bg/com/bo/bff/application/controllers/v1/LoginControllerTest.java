@@ -1,17 +1,17 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.Device;
-import bg.com.bo.bff.application.dtos.request.LoginRequest;
-import bg.com.bo.bff.application.dtos.request.LoginRequestFixture;
-import bg.com.bo.bff.application.dtos.request.LogoutRequest;
-import bg.com.bo.bff.application.dtos.response.DeviceEnrollmentResponse;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.LoginResponse;
+import bg.com.bo.bff.application.dtos.request.login.Device;
+import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
+import bg.com.bo.bff.application.dtos.request.login.LoginRequestFixture;
+import bg.com.bo.bff.application.dtos.request.login.LogoutRequest;
+import bg.com.bo.bff.application.dtos.response.login.DeviceEnrollmentResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.login.LoginResponse;
 import bg.com.bo.bff.mappings.application.LoginMapper;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.application.exceptions.UnauthorizedException;
-import bg.com.bo.bff.models.dtos.login.LoginResult;
-import bg.com.bo.bff.models.dtos.login.TokenData;
+import bg.com.bo.bff.application.dtos.response.login.LoginResult;
+import bg.com.bo.bff.application.dtos.response.login.TokenData;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;

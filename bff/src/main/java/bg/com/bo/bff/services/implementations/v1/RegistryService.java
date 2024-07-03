@@ -1,14 +1,14 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
-import bg.com.bo.bff.application.dtos.response.RegistryResponse;
+import bg.com.bo.bff.application.dtos.response.registry.RegistryResponse;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
 import bg.com.bo.bff.commons.enums.response.RegistryControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.CipherUtils;
-import bg.com.bo.bff.models.EncryptInfo;
-import bg.com.bo.bff.models.UserEncryptionKeys;
+import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
+import bg.com.bo.bff.providers.dtos.response.encryption.UserEncryptionKeys;
 import bg.com.bo.bff.providers.interfaces.IEncryptionProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginAGNProvider;
 import bg.com.bo.bff.services.interfaces.IRegistryService;

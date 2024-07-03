@@ -5,7 +5,7 @@ import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
 import bg.com.bo.bff.commons.utils.CipherUtils;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.models.EncryptInfo;
+import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
 import bg.com.bo.bff.models.EncryptionPayload;
 import bg.com.bo.bff.models.PayloadKey;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;

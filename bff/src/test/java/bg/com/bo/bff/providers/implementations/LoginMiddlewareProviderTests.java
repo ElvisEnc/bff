@@ -3,26 +3,30 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
-import bg.com.bo.bff.application.dtos.request.*;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
-import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponseFixture;
+import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
+import bg.com.bo.bff.application.dtos.request.login.LoginRequestFixture;
+import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.request.user.UserRequestFixture;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateBiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.user.UserResponseFixture;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.converters.ErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
-import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponseFixture;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.login.*;
-import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
-import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
-import bg.com.bo.bff.providers.dtos.response.LogoutMWRequestFixture;
-import bg.com.bo.bff.providers.dtos.response.login.*;
+import bg.com.bo.bff.application.dtos.response.login.LoginValidationServiceResponse;
+import bg.com.bo.bff.providers.dtos.response.login.mw.LoginMWResponseFixture;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.login.mw.LoginMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.login.mw.LogoutMWRequest;
+import bg.com.bo.bff.providers.dtos.request.login.mw.UpdateBiometricsMWRequest;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
 import bg.com.bo.bff.mappings.providers.login.ILoginMapper;
 import bg.com.bo.bff.mappings.providers.login.LoginMWMapper;
+import bg.com.bo.bff.providers.dtos.response.login.mw.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -66,8 +70,8 @@ class LoginMiddlewareProviderTests {
     private static final String JSON_DATA = "IntcIm5hbWVcIjpcIlwiLFwicGFnaW5hdGlvblwiOntcInBhZ2VcIjoxLFwicGFnZVNpemVcIjoxMH19Ig==";
     Map<String, String> map;
     LoginRequest loginRequest = LoginRequestFixture.withDefault();
-    UpdateBiometricsRequest updateBiometricsRequest = UpdateBiometricsRequestFixture.withDefault();
-    UpdateBiometricsMWRequest updateBiometricsMWRequest = UpdateBiometricsMWRequestFixture.withDefault();
+    UpdateBiometricsRequest updateBiometricsRequest = UserRequestFixture.withDefaultUpdateBiometricsRequest();
+    UpdateBiometricsMWRequest updateBiometricsMWRequest = LoginMWRequestFixture.withDefaultUpdateBiometricsMWRequest();
 
     @BeforeEach
     void init() {
@@ -117,13 +121,13 @@ class LoginMiddlewareProviderTests {
     void givePersonCodeWhenValidateCredentialsThenExpectResponse() throws IOException {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        Mockito.when(mapper.mapperRequest(any(), any())).thenReturn(LoginMWCredentialRequestFixture.withDefault());
-        Mockito.when(mapper.converResponse(any(), any())).thenReturn(LoginValidationServiceResponseFixture.withDefault());
-        String jsonResponse = Util.objectToString(LoginMWCredentialResponseFixture.withDefault());
+        Mockito.when(mapper.mapperRequest(any(), any())).thenReturn(LoginMWRequestFixture.withDefaultLoginCredentialMWRequest());
+        Mockito.when(mapper.converResponse(any(), any())).thenReturn(LoginMWResponseFixture.withDefaultLoginValidationServiceResponse());
+        String jsonResponse = Util.objectToString(LoginMWResponseFixture.withDefaultLoginCredentialMWResponse());
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        LoginValidationServiceResponse response = loginMiddlewareProvider.validateCredentials(LoginRequestFixture.withDefault(), LoginFactorDataMWResponseFixture.withDefault(), map);
+        LoginValidationServiceResponse response = loginMiddlewareProvider.validateCredentials(LoginRequestFixture.withDefault(), LoginMWResponseFixture.withDefaultLoginFactorData(), map);
 
         // Assert
         assertNotNull(response);
@@ -133,9 +137,9 @@ class LoginMiddlewareProviderTests {
     void giveUnexpectedErrorOccursWhenValidateCredentialsThenGenericException() throws IOException {
         // Arrange
 
-        LoginFactorData data = LoginFactorDataMWResponseFixture.withDefault();
+        LoginFactorData data = LoginMWResponseFixture.withDefaultLoginFactorData();
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        Mockito.when(mapper.mapperRequest(any(), any())).thenReturn(LoginMWCredentialRequestFixture.withDefault());
+        Mockito.when(mapper.mapperRequest(any(), any())).thenReturn(LoginMWRequestFixture.withDefaultLoginCredentialMWRequest());
         errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
                 .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
                         .code("BAD_REQUEST")
@@ -156,8 +160,7 @@ class LoginMiddlewareProviderTests {
     @Test
     void giveErrorWhenValidateCredentialsThenRuntimeException() throws IOException {
         // Arrange
-
-        LoginFactorData data = LoginFactorDataMWResponseFixture.withDefault();
+        LoginFactorData data = LoginMWResponseFixture.withDefaultLoginFactorData();
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
 
@@ -183,7 +186,7 @@ class LoginMiddlewareProviderTests {
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         //Act
-        GenericResponse response = loginMiddlewareProvider.logout(generic, generic, generic, generic, generic, generic, LogoutMWRequestFixture.withDefault());
+        GenericResponse response = loginMiddlewareProvider.logout(generic, generic, generic, generic, generic, generic, LoginMWRequestFixture.withDefaultLogoutMWRequest());
 
         //Assert
         assertNotNull(response);
@@ -193,7 +196,7 @@ class LoginMiddlewareProviderTests {
     @Test
     void givenInvalidDataWhenLogoutThenReturnException() throws IOException {
         //Arrange
-        LogoutMWRequest mwRequest = LogoutMWRequestFixture.withDefault();
+        LogoutMWRequest mwRequest = LoginMWRequestFixture.withDefaultLogoutMWRequest();
         errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
                 .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
                         .code("500")
@@ -228,7 +231,7 @@ class LoginMiddlewareProviderTests {
         stubFor(put(anyUrl()).willReturn(okJson(jsonResponse)));
 
         //Act
-        GenericResponse response = loginMiddlewareProvider.changePassword("123", "123", ChangePasswordRequestFixture.withDefault(), new HashMap<>());
+        GenericResponse response = loginMiddlewareProvider.changePassword("123", "123", UserRequestFixture.withDefaultChangePasswordRequest(), new HashMap<>());
 
         //Assert
         assertNotNull(response);
@@ -242,7 +245,7 @@ class LoginMiddlewareProviderTests {
 
         //Act
         Exception exception = assertThrows(Exception.class, () -> {
-            loginMiddlewareProvider.changePassword("123", "123", ChangePasswordRequestFixture.withDefault(), new HashMap<>());
+            loginMiddlewareProvider.changePassword("123", "123", UserRequestFixture.withDefaultChangePasswordRequest(), new HashMap<>());
         });
 
         //Assert
@@ -273,7 +276,7 @@ class LoginMiddlewareProviderTests {
     void givePersonIdWhenGetBiometricsThenExpectResponse() throws IOException {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(BiometricStatusMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(LoginMWResponseFixture.withDefaultBiometricStatusMWResponse());
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
@@ -281,7 +284,7 @@ class LoginMiddlewareProviderTests {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response.getData(), BiometricStatusMWResponseFixture.withDefault().getData());
+        assertEquals(response.getData(), LoginMWResponseFixture.withDefaultBiometricStatusMWResponse().getData());
     }
 
     @Test
@@ -327,7 +330,7 @@ class LoginMiddlewareProviderTests {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         Mockito.when(mapper.mapperUpdateBiometricRequest(updateBiometricsRequest)).thenReturn(updateBiometricsMWRequest);
-        String jsonResponse = Util.objectToString(UpdateBiometricMWResponseFixture.withDefault());
+        String jsonResponse = Util.objectToString(LoginMWResponseFixture.withDefaultUpdateBiometricMWResponse());
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
@@ -335,7 +338,7 @@ class LoginMiddlewareProviderTests {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response, UpdateBiometricsResponseFixture.withDefault());
+        assertEquals(response, UserResponseFixture.withDefaultUpdateBiometricsResponse());
         Mockito.verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
         Mockito.verify(mapper).mapperUpdateBiometricRequest(updateBiometricsRequest);
         Mockito.verify(httpClientFactoryMock).create();

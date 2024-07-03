@@ -1,9 +1,9 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
-import bg.com.bo.bff.application.dtos.request.RegistryRequestFixture;
-import bg.com.bo.bff.application.dtos.response.RegistryResponse;
-import bg.com.bo.bff.application.dtos.response.RegistryResponseFixture;
+import bg.com.bo.bff.application.dtos.request.registry.RegistryRequestFixture;
+import bg.com.bo.bff.application.dtos.response.registry.RegistryResponse;
+import bg.com.bo.bff.application.dtos.response.registry.RegistryResponseFixture;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.IRegistryService;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,9 +48,9 @@ class RegistryControllerTest {
         when(registryService.registerByMigration(any())).thenReturn(expected);
 
         mockMvc.perform(post(URL_REGISTER_DEVICE)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(Util.objectToString(request, false)))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request, false)))
                 .andExpect(status().isOk())
                 .andReturn();
 

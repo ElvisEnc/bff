@@ -1,12 +1,12 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.LoginRequest;
-import bg.com.bo.bff.application.dtos.request.LogoutRequest;
-import bg.com.bo.bff.application.dtos.response.DeviceEnrollmentResponse;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.TokenDataResponse;
-import bg.com.bo.bff.models.dtos.login.LoginResult;
-import bg.com.bo.bff.application.dtos.request.RefreshSessionRequest;
+import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
+import bg.com.bo.bff.application.dtos.request.login.LogoutRequest;
+import bg.com.bo.bff.application.dtos.response.login.DeviceEnrollmentResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.login.TokenDataResponse;
+import bg.com.bo.bff.application.dtos.response.login.LoginResult;
+import bg.com.bo.bff.application.dtos.request.login.RefreshSessionRequest;
 
 import java.io.IOException;
 import java.util.Map;

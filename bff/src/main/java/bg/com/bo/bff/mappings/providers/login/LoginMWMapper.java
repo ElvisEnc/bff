@@ -1,10 +1,10 @@
 package bg.com.bo.bff.mappings.providers.login;
 
-import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
-import bg.com.bo.bff.providers.dtos.request.login.ChangePasswordMWRequest;
-import bg.com.bo.bff.providers.dtos.request.login.LoginFactorMWRequest;
-import bg.com.bo.bff.application.dtos.request.LoginRequest;
-import bg.com.bo.bff.providers.dtos.request.login.MWOwnerAccountRequest;
+import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
+import bg.com.bo.bff.providers.dtos.request.login.mw.ChangePasswordMWRequest;
+import bg.com.bo.bff.providers.dtos.request.login.mw.LoginFactorMWRequest;
+import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
+import bg.com.bo.bff.providers.dtos.request.login.mw.MWOwnerAccountRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

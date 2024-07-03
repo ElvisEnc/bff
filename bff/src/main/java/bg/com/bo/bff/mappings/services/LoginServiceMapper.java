@@ -1,11 +1,11 @@
 package bg.com.bo.bff.mappings.services;
 
-import bg.com.bo.bff.application.dtos.response.TokenDataResponse;
-import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
-import bg.com.bo.bff.models.dtos.TokenDataServiceResponse;
-import bg.com.bo.bff.models.dtos.login.CreateTokenServiceResponse;
-import bg.com.bo.bff.models.dtos.login.LoginResult;
-import bg.com.bo.bff.models.dtos.login.RefreshSessionResult;
+import bg.com.bo.bff.application.dtos.response.login.TokenDataResponse;
+import bg.com.bo.bff.application.dtos.response.login.LoginValidationServiceResponse;
+import bg.com.bo.bff.models.TokenDataServiceResponse;
+import bg.com.bo.bff.providers.dtos.response.jwt.keycloak.CreateTokenServiceResponse;
+import bg.com.bo.bff.application.dtos.response.login.LoginResult;
+import bg.com.bo.bff.application.dtos.response.login.RefreshSessionResult;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

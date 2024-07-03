@@ -1,19 +1,19 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.*;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.AccountTD;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
-import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.InternetAuthorizationResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.providers.dtos.request.debit.card.*;
-import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.CreateAuthorizationOnlinePurchaseMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
+import bg.com.bo.bff.providers.dtos.request.debit.card.mw.*;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.AccountsDebitCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.ListDebitCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.CreateAuthorizationOnlinePurchaseMWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
 import bg.com.bo.bff.mappings.providers.card.IDebitCardMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.CreateAuthorizationOnlinePurchaseResponse;

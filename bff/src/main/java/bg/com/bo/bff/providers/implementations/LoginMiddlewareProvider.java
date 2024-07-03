@@ -1,11 +1,11 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
-import bg.com.bo.bff.application.dtos.request.LoginRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
+import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
+import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
@@ -16,20 +16,17 @@ import bg.com.bo.bff.commons.converters.IErrorResponse;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.CanalMW;
 import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.providers.dtos.request.login.mw.*;
+import bg.com.bo.bff.providers.dtos.response.login.mw.*;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.enums.response.user.UserControllerResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.UserContact;
-import bg.com.bo.bff.models.dtos.login.LoginValidationServiceResponse;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.login.ChangePasswordMWRequest;
-import bg.com.bo.bff.providers.dtos.request.login.LogoutMWRequest;
-import bg.com.bo.bff.providers.dtos.request.login.MWOwnerAccountRequest;
-import bg.com.bo.bff.providers.dtos.response.ApiDataResponse;
-import bg.com.bo.bff.providers.dtos.response.login.*;
-import bg.com.bo.bff.providers.dtos.request.login.*;
+import bg.com.bo.bff.providers.dtos.response.personal.information.UserContactResponse;
+import bg.com.bo.bff.application.dtos.response.login.LoginValidationServiceResponse;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.mappings.providers.login.ILoginMapper;
@@ -248,7 +245,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
         try (InputStream file = getClass().getResourceAsStream("/files/ContactResponse.json")) {
             assert file != null;
             jsonContact = new String(file.readAllBytes());
-            UserContact userContact = objectMapper.readValue(jsonContact, UserContact.class);
+            UserContactResponse userContact = objectMapper.readValue(jsonContact, UserContactResponse.class);
             String jsonResponse = Util.objectToString(userContact.getCompanyContactDetail());
             return Util.stringToObject(jsonResponse, ContactResponse.class);
         } catch (IOException e) {

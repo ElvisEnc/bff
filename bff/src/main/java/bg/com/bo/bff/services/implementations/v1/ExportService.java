@@ -1,13 +1,13 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.export.account.statement.ExportRequest;
-import bg.com.bo.bff.application.dtos.response.ExportResponse;
+import bg.com.bo.bff.application.dtos.request.account.statement.ExportRequest;
+import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementExportResponse;
 import bg.com.bo.bff.commons.enums.AccountStatementType;
 import bg.com.bo.bff.commons.filters.AmountRangeFilter;
 import bg.com.bo.bff.commons.filters.TypeFilter;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.providers.dtos.response.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountReportBasicResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementCsvProvider;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementPdfProvider;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
@@ -35,7 +35,7 @@ public class ExportService implements IExportService {
     }
 
     @Override
-    public ExportResponse generateReport(ExportRequest request, String accountId) throws IOException {
+    public AccountStatementExportResponse generateReport(ExportRequest request, String accountId) throws IOException {
         ClientToken clientToken = iAccountStatementProvider.generateToken();
 
         AccountReportBasicResponse basicResponse = iAccountStatementProvider.getAccountStatementForExport(request, accountId, clientToken.getAccessToken());
@@ -56,7 +56,7 @@ public class ExportService implements IExportService {
         String format = request.getFormat();
         String base64 = Objects.equals(format, "PDF") ? Util.encodeByteArrayToBase64(pdfProvider.generatePdf(basicResponseData, request, accountId)) : Util.encodeByteArrayToBase64(csvProvider.generateCsv(basicResponseData));
 
-        ExportResponse response = new ExportResponse();
+        AccountStatementExportResponse response = new AccountStatementExportResponse();
         response.setData(base64);
         return response;
     }

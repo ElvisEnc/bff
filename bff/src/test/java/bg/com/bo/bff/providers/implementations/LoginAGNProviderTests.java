@@ -2,11 +2,11 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
-import bg.com.bo.bff.application.dtos.request.RegistryRequestFixture;
+import bg.com.bo.bff.application.dtos.request.registry.RegistryRequestFixture;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.enums.CredentialsType;
 import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.commons.io.IOUtils;

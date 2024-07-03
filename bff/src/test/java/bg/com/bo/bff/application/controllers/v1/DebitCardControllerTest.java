@@ -1,17 +1,9 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequestFixture;
 import bg.com.bo.bff.application.dtos.request.debit.card.*;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
-import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponseFixture;
-import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
-import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponseFixture;
-import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
-import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponseFixture;
-import bg.com.bo.bff.application.dtos.response.InternetAuthorizationResponseFixture;
-import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.*;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.CreateAuthorizationOnlinePurchaseResponse;
@@ -105,7 +97,7 @@ class DebitCardControllerTest {
         // Arrange
         String personId = "169494";
         String cardId = "123456";
-        DCLimitsRequest request = DCLimitsRequestFixture.withDefault();
+        DCLimitsRequest request = DebitCardRequestFixture.withDefaultDCLimitsRequest();
         GenericResponse mockResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT);
         when(service.changeAmount(any(), any(), any(), any())).thenReturn(mockResponse);
 
@@ -127,7 +119,7 @@ class DebitCardControllerTest {
     @Test
     void givenPersonCodeWhenGetListDebitCardThenSuccess() throws Exception {
         // Arrange
-        ListDebitCardResponse responseExpected = ListDebitCardResponseFixture.withDefault();
+        ListDebitCardResponse responseExpected = DebitCardResponseFixture.withDefaultListDebitCardResponse();
         when(service.getListDebitCard(any(), any())).thenReturn(responseExpected);
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
@@ -153,7 +145,7 @@ class DebitCardControllerTest {
     @Test
     void givenPersonIdAndCardIdWhenGetAccountListDebitCardThenSuccess() throws Exception {
         // Arrange
-        ListAccountTDResponse responseExpected = ListAccountTDResponseFixture.withDefault();
+        ListAccountTDResponse responseExpected = DebitCardResponseFixture.withDefaultListAccountTDResponse();
         when(service.getAccountsTD(any(), any(), any())).thenReturn(responseExpected);
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
@@ -180,7 +172,7 @@ class DebitCardControllerTest {
         // Arrange
         String personId = "169494";
         String cardId = "123456";
-        InternetAuthorizationResponse expected = InternetAuthorizationResponseFixture.withDefault();
+        InternetAuthorizationResponse expected = DebitCardResponseFixture.withDefaultInternetAuthorizationResponse();
         when(service.getListAuthorizations(any(), any(), any())).thenReturn(expected);
 
         // Act
@@ -206,7 +198,7 @@ class DebitCardControllerTest {
         String personId = "169494";
         String cardId = "123456";
         GenericResponse expected = GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.SUCCESS_CREATE);
-        CreateAuthorizationOnlinePurchaseRequest request = CreateAuthorizationOnlinePurchaseRequestFixture.withDefault();
+        CreateAuthorizationOnlinePurchaseRequest request = DebitCardRequestFixture.withDefaultCreateAuthOnlinePurchaseRequest();
         when(service.createAuthorizationOnlinePurchase(any(), any(), any(), any())).thenReturn(GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.SUCCESS_CREATE));
 
         // Act
@@ -256,7 +248,7 @@ class DebitCardControllerTest {
     void givenPersonIdAndCardIdWhenActiveAssuranceThenSuccess() throws Exception {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVE_ASSURANCE);
-        UpdateDebitCardAssuranceRequest request = UpdateDebitCardAssuranceRequestFixture.withDefault();
+        UpdateDebitCardAssuranceRequest request = DebitCardRequestFixture.withDefaultUpdateDebitCardAssuranceRequest();
         when(service.activeDebitCardAssurance(any(), any(), any(), any())).thenReturn(expectedResponse);
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
@@ -284,7 +276,7 @@ class DebitCardControllerTest {
     void givenPersonIdAndCardIdWhenActivateDebitCardThenSuccess() throws Exception {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVATE_DEBIT_CARD);
-        ActivateDebitCardRequest request = ActivateDebitCardRequestFixture.withDefault();
+        ActivateDebitCardRequest request = DebitCardRequestFixture.withDefaultActivateDebitCardRequest();
         when(service.activateDebitCard(any(), any(), any(), any())).thenReturn(expectedResponse);
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
@@ -313,7 +305,7 @@ class DebitCardControllerTest {
         // Arrange
         String personId = "169494";
         String cardId = "123456";
-        DCDetailResponse mockResponse = DCDetailResponseFixture.withDefault();
+        DCDetailResponse mockResponse = DebitCardResponseFixture.withDefaultDCDetailResponse();
         when(service.detail(any(), any(), any())).thenReturn(mockResponse);
 
         // Act
@@ -335,7 +327,7 @@ class DebitCardControllerTest {
         // Arrange
         String personId = "169494";
         String cardId = "123456";
-        DCLockStatusRequest request = DCLockStatusRequestFixture.withDefault();
+        DCLockStatusRequest request = DebitCardRequestFixture.withDefaultDCLockStatusRequest();
         GenericResponse mockResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_UPDATE_STATUS_LOCK);
         when(service.lockStatus(any(), any(), any(), any())).thenReturn(mockResponse);
 
@@ -363,7 +355,7 @@ class DebitCardControllerTest {
         // Arrange
         String personId = "169494";
         String cardId = "123456";
-        DCAccountsOrderRequest request = DCAccountsOrderRequestFixture.withDefault();
+        DCAccountsOrderRequest request = DebitCardRequestFixture.withDefaultDCAccountsOrderRequest();
         GenericResponse mockResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_MODIFY_ACCOUNTS_ORDER);
         when(service.modifyAccountsOrder(any(), any(), any(), any())).thenReturn(mockResponse);
 

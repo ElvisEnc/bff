@@ -1,12 +1,12 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.*;
-import bg.com.bo.bff.application.dtos.response.ErrorResponse;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListAccountTDResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.ListDebitCardResponse;
-import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.InternetAuthorizationResponse;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.services.interfaces.IDebitCardService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -6,19 +6,18 @@ import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.PersonalInformationNetRequestFixture;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
-import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
-import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProviderFixture;
-import bg.com.bo.bff.providers.dtos.response.ProviderNetResponse;
+import bg.com.bo.bff.providers.dtos.request.personal.information.PersonalInformationNetRequestFixture;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProviderFixture;
+import bg.com.bo.bff.providers.dtos.response.personal.information.ProviderNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
-import bg.com.bo.bff.providers.dtos.request.UpdatePersonalInformationNetRequestFixture;
 import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalInformationNetRequest;
-import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalUpdateNetResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
-import bg.com.bo.bff.providers.dtos.response.personal.update.PersonalUpdateNetResponse;
+import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalUpdateNetResponse;
 import bg.com.bo.bff.mappings.providers.information.IPersonalInformationMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -83,7 +82,7 @@ class PersonalInformationNetProviderTest {
                 .willReturn(okJson(jsonResponse)));
 
         // Act
-        PersonalInformationNetResponse response = personalInformationNetProvider.getPersonalInformation(PersonalInformationNetRequestFixture.withDefault(), map);
+        PersonalInformationNetResponse response = personalInformationNetProvider.getPersonalInformation(PersonalInformationNetRequestFixture.withDefaultApiPersonalInformationNetRequest(), map);
 
         // Assert
         assertNotNull(response);
@@ -93,8 +92,8 @@ class PersonalInformationNetProviderTest {
     @Test
     void givenPersonIdWhenGetEconomicalActivityThenSuccess() throws IOException {
         // Arrange
-        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefault();
-        EconomicActivityResponse responseMock = EconomicActivityResponseFixture.withDefault();
+        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefaultApiPersonalInformationNetRequest();
+        EconomicActivityResponse responseMock = UserResponseFixture.withDefaultEconomicActivityResponse();
         when(mapper.mapperRequest(any())).thenReturn(requestMapperMock);
         when(mapper.convertEconomicActivity(any())).thenReturn(responseMock);
 
@@ -118,7 +117,7 @@ class PersonalInformationNetProviderTest {
     @Test
     void givenErrorWhenGetEconomicalActivityThenError() throws IOException {
         // Arrange
-        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefault();
+        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefaultApiPersonalInformationNetRequest();
         when(mapper.mapperRequest(any())).thenReturn(requestMapperMock);
 
         String resultErrorNet = "{\"CodigoError\":\"ERROR\",\"Datos\":[],\"Mensaje\":\"ERROR\"}";
@@ -142,7 +141,7 @@ class PersonalInformationNetProviderTest {
     @Test
     void givenError400WhenGetEconomicalActivityThenError400() throws IOException {
         // Arrange
-        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefault();
+        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefaultApiPersonalInformationNetRequest();
         when(mapper.mapperRequest(any())).thenReturn(requestMapperMock);
 
         ErrorMiddlewareProvider error = ErrorMiddlewareProviderFixture.errorBadRequest();
@@ -191,7 +190,7 @@ class PersonalInformationNetProviderTest {
                 .willReturn(okJson(jsonResponse)));
 
         // Act
-        DistrictsNetResponse response = personalInformationNetProvider.getDistricts(requestMapperMock,map);
+        DistrictsNetResponse response = personalInformationNetProvider.getDistricts(requestMapperMock, map);
 
         // Assert
         assertNotNull(response);
@@ -202,7 +201,8 @@ class PersonalInformationNetProviderTest {
     void getMaritalStatusesSuccess() throws IOException {
         // Arrange
         ObjectMapper objectMapper = new ObjectMapper();
-        TypeReference<List<MaritalStatus>> typeReference = new TypeReference<>() {};
+        TypeReference<List<MaritalStatus>> typeReference = new TypeReference<>() {
+        };
         InputStream inputStream = TypeReference.class.getResourceAsStream("/files/MaritalStatusResponse.json");
         List<MaritalStatus> expectedMaritalStatusList = objectMapper.readValue(inputStream, typeReference);
 
@@ -217,8 +217,8 @@ class PersonalInformationNetProviderTest {
     @Test
     void givenUpdateDataUserRequestWhenUpdateDataUserThenUpdateDataUserResponse() throws IOException {
         //Arrange
-        UpdatePersonalInformationNetRequest request = UpdatePersonalInformationNetRequestFixture.withDefault();
-        PersonalUpdateNetResponse expectedResponse = PersonalUpdateNetResponseFixture.withDefault();
+        UpdatePersonalInformationNetRequest request = PersonalInformationNetRequestFixture.withDefaultUpdatePersonalInformationNetRequest();
+        PersonalUpdateNetResponse expectedResponse = PersonalInformationNetResponseFixture.withDefaultPersonalUpdateNetResponse();
         String jsonResponse = Util.objectToString(expectedResponse);
 
         stubFor(post(anyUrl())

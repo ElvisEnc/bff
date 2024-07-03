@@ -1,9 +1,9 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.TransferRequestFixture;
+import bg.com.bo.bff.application.dtos.request.transfer.TransferRequestFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.response.TransferMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferACHProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
@@ -50,10 +50,10 @@ class TransferServiceTest {
 
     @Test
     void transferOwnAccount() throws IOException {
-        TransferResponseMD expected = TransferMWResponseFixture.withDefault();
+        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
         when(transferProvider.transferOwnAccount(any(), any(), any(), any())).thenReturn(expected);
 
-        TransferResponseMD response = service.transferOwnAccount("123456", "123", TransferRequestFixture.withDefault(), map);
+        TransferMWResponse response = service.transferOwnAccount("123456", "123", TransferRequestFixture.withDefault(), map);
         assertNotNull(response);
 
         verify(transferProvider).transferOwnAccount(any(), any(), any(), any());
@@ -61,10 +61,10 @@ class TransferServiceTest {
 
     @Test
     void transferThirdAccount() throws IOException {
-        TransferResponseMD expected = TransferMWResponseFixture.withDefault();
+        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
         when(transferProvider.transferThirdAccount(any(), any(), any(), any())).thenReturn(expected);
 
-        TransferResponseMD response = service.transferThirdAccount("123456", "123", TransferRequestFixture.withDefault(), map);
+        TransferMWResponse response = service.transferThirdAccount("123456", "123", TransferRequestFixture.withDefault(), map);
         assertNotNull(response);
 
         verify(transferProvider).transferThirdAccount(any(), any(), any(), any());
@@ -72,10 +72,10 @@ class TransferServiceTest {
 
     @Test
     void transferACHAccount() throws IOException {
-        TransferResponseMD expected = TransferMWResponseFixture.withDefault();
+        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
         when(transferACHProvider.transferAchAccount(any(), any(), any(), any())).thenReturn(expected);
 
-        TransferResponseMD response = service.transferAchAccount("123456", "123", TransferRequestFixture.withDefault(), map);
+        TransferMWResponse response = service.transferAchAccount("123456", "123", TransferRequestFixture.withDefault(), map);
         assertNotNull(response);
 
         verify(transferACHProvider).transferAchAccount(any(), any(), any(), any());
@@ -84,11 +84,11 @@ class TransferServiceTest {
     @Test
     void givePersonCodeAndAccountWhenTransferWalletThenReturnSuccess() throws IOException {
         // Arrange
-        TransferResponseMD expected = TransferMWResponseFixture.withDefault();
+        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
         when(transferYoloNetProvider.transferToYolo(any(), any(), any(), any())).thenReturn(expected);
 
         // Act
-        TransferResponseMD response = service.transferWallet(personId,accountId,accountNumber, TransferRequestFixture.withDefault(),map);
+        TransferMWResponse response = service.transferWallet(personId,accountId,accountNumber, TransferRequestFixture.withDefault(),map);
 
         // Assert
         assertNotNull(response);

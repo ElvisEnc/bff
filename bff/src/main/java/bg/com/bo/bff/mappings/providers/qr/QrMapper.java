@@ -1,23 +1,23 @@
 package bg.com.bo.bff.mappings.providers.qr;
 
-import bg.com.bo.bff.application.dtos.request.QRCodeGenerateRequest;
-import bg.com.bo.bff.application.dtos.request.QRCodeRegenerateRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QRCodeGenerateRequest;
+import bg.com.bo.bff.application.dtos.request.qr.QRCodeRegenerateRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.request.qr.QRPaymentRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.request.QRCodeGenerateMWRequest;
-import bg.com.bo.bff.providers.dtos.request.QRCodeRegenerateMWRequest;
-import bg.com.bo.bff.providers.dtos.response.qr.QRCodeGenerateResponse;
-import bg.com.bo.bff.providers.dtos.response.qr.QrGeneratedPaidMW;
-import bg.com.bo.bff.providers.dtos.requests.qr.CreditorAccount;
-import bg.com.bo.bff.providers.dtos.requests.qr.DebtorAccount;
-import bg.com.bo.bff.providers.dtos.requests.qr.InstructedAmount;
-import bg.com.bo.bff.providers.dtos.requests.qr.OwnerAccount;
-import bg.com.bo.bff.providers.dtos.requests.qr.QRPaymentMWRequest;
-import bg.com.bo.bff.providers.dtos.requests.qr.RiskMW;
-import bg.com.bo.bff.providers.dtos.requests.qr.SupplementaryMWData;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.QRCodeGenerateMWRequest;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.QRCodeRegenerateMWRequest;
+import bg.com.bo.bff.providers.dtos.response.qr.mw.QRCodeGenerateResponse;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.QrGeneratedPaidMW;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.CreditorAccount;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.DebtorAccount;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.InstructedAmount;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.OwnerAccount;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.QRPaymentMWRequest;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.RiskMW;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.SupplementaryMWData;
 
 import org.springframework.stereotype.Component;
 

@@ -1,17 +1,17 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.request.Pcc01Request;
+import bg.com.bo.bff.application.dtos.request.transfer.Pcc01Request;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
-import bg.com.bo.bff.application.dtos.response.Pcc01Response;
+import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Response;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.*;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.TransferMWRequest;
-import bg.com.bo.bff.providers.dtos.response.Pcc01MWResponse;
-import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequest;
+import bg.com.bo.bff.providers.dtos.response.transfer.Pcc01MWResponse;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.mappings.providers.pcc01.Pcc01Mapper;
@@ -89,7 +89,7 @@ public class TransferMiddlewareProvider implements ITransferProvider {
     }
 
     @Override
-    public TransferResponseMD transferOwnAccount(String personId, String accountId, TransferRequest request, Map<String, String> parameters) throws IOException {
+    public TransferMWResponse transferOwnAccount(String personId, String accountId, TransferRequest request, Map<String, String> parameters) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
         TransferMWRequest requestData = transferMapper.convert("own", personId, accountId, request);
 
@@ -111,9 +111,9 @@ public class TransferMiddlewareProvider implements ITransferProvider {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
-                    TransferResponseMD response = Util.stringToObject(jsonResponse, TransferResponseMD.class);
+                    TransferMWResponse response = Util.stringToObject(jsonResponse, TransferMWResponse.class);
                     if (!Objects.equals(response.getData().getStatus(), "PENDING")) {
-                        return TransferResponseMD.toFormat(response);
+                        return TransferMWResponse.toFormat(response);
                     } else {
                         LOGGER.error(jsonResponse);
                         AppError error = AppError.MDWTRM_PENDING;
@@ -134,7 +134,7 @@ public class TransferMiddlewareProvider implements ITransferProvider {
     }
 
     @Override
-    public TransferResponseMD transferThirdAccount(String personId, String accountId, TransferRequest request, Map<String, String> parameters) throws IOException {
+    public TransferMWResponse transferThirdAccount(String personId, String accountId, TransferRequest request, Map<String, String> parameters) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey());
         TransferMWRequest requestData = transferMapper.convert("own", personId, accountId, request);
 
@@ -155,9 +155,9 @@ public class TransferMiddlewareProvider implements ITransferProvider {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
-                    TransferResponseMD response = Util.stringToObject(jsonResponse, TransferResponseMD.class);
+                    TransferMWResponse response = Util.stringToObject(jsonResponse, TransferMWResponse.class);
                     if (!Objects.equals(response.getData().getStatus(), "PENDING")) {
-                        return TransferResponseMD.toFormat(response);
+                        return TransferMWResponse.toFormat(response);
                     } else {
                         LOGGER.error(jsonResponse);
                         AppError error = AppError.MDWTRM_PENDING;

@@ -1,14 +1,14 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequest;
-import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
-import bg.com.bo.bff.application.dtos.response.ErrorResponse;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
-import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
-import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
+import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.request.user.UpdateDataUserRequest;
+import bg.com.bo.bff.application.dtos.response.user.BiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateBiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DepartmentsResponse;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DistrictsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
@@ -204,7 +204,7 @@ public class UserController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("departmentId") @NotNull @Parameter(description = "Código del departamento", example = "1") String departmentId
     ) throws IOException {
-        return ResponseEntity.ok(userService.getDistricts(departmentId,Headers.getParameter(httpServletRequest,
+        return ResponseEntity.ok(userService.getDistricts(departmentId, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,
@@ -244,7 +244,7 @@ public class UserController {
             @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") String personId,
             @RequestBody @Valid UpdateDataUserRequest request
     ) throws IOException {
-        return ResponseEntity.ok(userService.updateDataUser(personId,request,Headers.getParameter(httpServletRequest,
+        return ResponseEntity.ok(userService.updateDataUser(personId, request, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,

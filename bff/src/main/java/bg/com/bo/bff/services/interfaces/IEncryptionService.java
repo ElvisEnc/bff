@@ -1,6 +1,6 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.models.EncryptInfo;
+import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;

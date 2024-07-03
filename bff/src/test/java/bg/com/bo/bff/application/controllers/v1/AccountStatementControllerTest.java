@@ -1,9 +1,9 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.ExtractRequestFixture;
+import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementRequestFixture;
 import bg.com.bo.bff.application.dtos.request.account.statement.ExtractRequest;
-import bg.com.bo.bff.application.dtos.response.ExtractDataResponse;
-import bg.com.bo.bff.application.dtos.response.ExtractDataResponseFixture;
+import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementExtractResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementResponseFixture;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.IAccountStatementService;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
- class AccountStatementControllerTest {
+class AccountStatementControllerTest {
     private MockMvc mockMvc;
     @InjectMocks
     private AccountStatementController controller;
@@ -40,8 +40,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     @Test
     void GivenExtractWhenRequestIsValidThenReturnExtractData() throws Exception {
         // Arrange
-        ExtractRequest request = ExtractRequestFixture.withDefault();
-        ExtractDataResponse expectedResponse = ExtractDataResponseFixture.withDefault();
+        ExtractRequest request = AccountStatementRequestFixture.withDefaultExtractRequest();
+        AccountStatementExtractResponse expectedResponse = AccountStatementResponseFixture.withDefaultAccountStatementExtractResponse();
         Mockito.when(service.getAccountStatement(Mockito.any(), Mockito.any())).thenReturn(expectedResponse);
 
         // Act

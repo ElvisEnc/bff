@@ -1,12 +1,12 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.providers.dtos.request.payment.services.DeleteAffiliateServiceMWRequest;
-import bg.com.bo.bff.providers.dtos.response.payment.service.AffiliatedServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.CategoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.DeleteAffiliateServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.ListServicesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.SubCategoryCitiesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.SubcategoriesMWResponse;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliatedServiceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.CategoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.DeleteAffiliateServiceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ListServicesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubCategoryCitiesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubcategoriesMWResponse;
 
 
 

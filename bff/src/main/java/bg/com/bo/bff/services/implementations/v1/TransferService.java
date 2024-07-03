@@ -1,9 +1,9 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.Pcc01Request;
+import bg.com.bo.bff.application.dtos.request.transfer.Pcc01Request;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
-import bg.com.bo.bff.application.dtos.response.Pcc01Response;
-import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
+import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Response;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferACHProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
@@ -26,22 +26,22 @@ public class TransferService implements ITransferService {
     }
 
     @Override
-    public TransferResponseMD transferOwnAccount(String personId, String accountId, TransferRequest transferRequest, Map<String, String> parameter) throws IOException {
+    public TransferMWResponse transferOwnAccount(String personId, String accountId, TransferRequest transferRequest, Map<String, String> parameter) throws IOException {
         return transferProvider.transferOwnAccount(personId, accountId, transferRequest, parameter);
     }
 
     @Override
-    public TransferResponseMD transferThirdAccount(String personId, String accountId, TransferRequest transferRequest, Map<String, String> parameter) throws IOException {
+    public TransferMWResponse transferThirdAccount(String personId, String accountId, TransferRequest transferRequest, Map<String, String> parameter) throws IOException {
         return transferProvider.transferThirdAccount(personId, accountId, transferRequest, parameter);
     }
 
     @Override
-    public TransferResponseMD transferWallet(Integer personId, Integer accountId, Integer accountNumber, TransferRequest transferRequest, Map<String, String> parameter) throws IOException {
+    public TransferMWResponse transferWallet(Integer personId, Integer accountId, Integer accountNumber, TransferRequest transferRequest, Map<String, String> parameter) throws IOException {
         return transferYoloNetProvider.transferToYolo(personId, accountId, accountNumber, transferRequest);
     }
 
     @Override
-    public TransferResponseMD transferAchAccount(String personId, String accountId, TransferRequest transferRequest, Map<String, String> parameter) throws IOException {
+    public TransferMWResponse transferAchAccount(String personId, String accountId, TransferRequest transferRequest, Map<String, String> parameter) throws IOException {
         return transferACHProvider.transferAchAccount(personId, accountId, transferRequest, parameter);
     }
 

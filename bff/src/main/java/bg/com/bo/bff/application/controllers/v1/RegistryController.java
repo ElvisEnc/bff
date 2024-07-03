@@ -1,8 +1,8 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
-import bg.com.bo.bff.application.dtos.response.ErrorResponse;
-import bg.com.bo.bff.application.dtos.response.RegistryResponse;
+import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.registry.RegistryResponse;
 import bg.com.bo.bff.services.interfaces.IRegistryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

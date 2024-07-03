@@ -1,11 +1,11 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.ValidateAccountResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.ValidateAccountResponse;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.ThirdAccountListResponse;
-import bg.com.bo.bff.providers.dtos.request.AddThirdAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.request.AddWalletAccountBasicRequest;
+import bg.com.bo.bff.application.dtos.response.destination.account.ThirdAccountListResponse;
+import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddThirdAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddWalletAccountBasicRequest;
 
 import java.io.IOException;
 import java.util.Map;

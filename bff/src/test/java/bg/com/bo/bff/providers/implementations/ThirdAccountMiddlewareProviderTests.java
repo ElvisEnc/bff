@@ -2,24 +2,25 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
-import bg.com.bo.bff.application.dtos.request.AddThirdAccountBasicRequestFixture;
-import bg.com.bo.bff.application.dtos.request.AddWalletAccountBasicRequestFixture;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.ValidateAccountResponse;
-import bg.com.bo.bff.application.dtos.response.ValidateAccountResponseFixture;
+import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequestFixture;
+import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponseFixture;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.ThirdAccount;
+import bg.com.bo.bff.application.dtos.response.destination.account.ThirdAccountListResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.ValidateAccountResponse;
 import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.*;
 import bg.com.bo.bff.application.exceptions.RequestException;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.AddThirdAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.request.AddWalletAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.request.DeleteThirdAccountMWRequest;
-import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddThirdAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddWalletAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.third.account.mw.DeleteThirdAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.mappings.providers.account.ThirdAccountListMapper;
-import bg.com.bo.bff.providers.dtos.response.ThirdAccountListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.third.account.mw.ThirdAccountListMWResponse;
 import bg.com.bo.bff.mappings.providers.account.ThirdAccountMWtMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -269,7 +270,7 @@ class ThirdAccountMiddlewareProviderTests {
     void givenValidaDataWhenAddThirdAccountThenReturnOk() throws IOException {
         // Arrange
         final String token = "1212121";
-        final AddThirdAccountBasicRequest request = AddThirdAccountBasicRequestFixture.withDefaultOK();
+        final AddThirdAccountBasicRequest request = DestinationAccountRequestFixture.withDefaultOKAddThirdAccountBasicRequest();
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
@@ -293,7 +294,7 @@ class ThirdAccountMiddlewareProviderTests {
     void givenValidaDataWhenAddWalletAccountThenReturnOk() throws IOException {
         // Arrange
         final String token = "1212121";
-        final AddWalletAccountBasicRequest request = AddWalletAccountBasicRequestFixture.withDefaultOK();
+        final AddWalletAccountBasicRequest request = DestinationAccountRequestFixture.withDefaultOKAddWalletAccountBasicRequest();
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponseMock);
@@ -350,7 +351,7 @@ class ThirdAccountMiddlewareProviderTests {
         // Arrange
         Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
         Mockito.when(middlewareConfig.getUrlBase()).thenReturn(MiddlewareConfigFixture.withDefault().getUrlBase());
-        String jsonExpected = Util.objectToString(ThirdAccountListResponseFixture.withDefault());
+        String jsonExpected = Util.objectToString(DestinationAccountResponseFixture.withDefaultThirdAccountListResponse());
         stubFor(get(anyUrl()).willReturn(okJson(jsonExpected)));
 
         // Act
@@ -358,7 +359,7 @@ class ThirdAccountMiddlewareProviderTests {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response.getData(), ThirdAccountListResponseFixture.withDefault().getData());
+        assertEquals(response.getData(), DestinationAccountResponseFixture.withDefaultThirdAccountListResponse().getData());
     }
 
     @Test
@@ -366,7 +367,7 @@ class ThirdAccountMiddlewareProviderTests {
         // Arrange
         Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
         Mockito.when(middlewareConfig.getUrlBase()).thenReturn(MiddlewareConfigFixture.withDefault().getUrlBase());
-        String jsonExpected = Util.objectToString(ThirdAccountListResponseFixture.withDefault());
+        String jsonExpected = Util.objectToString(DestinationAccountResponseFixture.withDefaultThirdAccountListResponse());
         stubFor(get(anyUrl()).willReturn(okJson(jsonExpected)));
 
         // Act
@@ -374,7 +375,7 @@ class ThirdAccountMiddlewareProviderTests {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response.getData(), ThirdAccountListResponseFixture.withDefault().getData());
+        assertEquals(response.getData(), DestinationAccountResponseFixture.withDefaultThirdAccountListResponse().getData());
     }
 
     @Test
@@ -415,12 +416,13 @@ class ThirdAccountMiddlewareProviderTests {
         // Assert
         assertEquals("Internal server error.", exception.getMessage());
     }
+
     @Test
     void givenAccountNumberAndClientNameWhenGetValidateDestinationAccountThenValidateAccountResponse() throws IOException {
         // Arrange
-        final String accountNumber ="1310766620";
-        final String clientName ="BANCO";
-        final ValidateAccountResponse expected = ValidateAccountResponseFixture.withDefault();
+        final String accountNumber = "1310766620";
+        final String clientName = "BANCO";
+        final ValidateAccountResponse expected = DestinationAccountResponseFixture.withDefaultValidateAccountResponse();
         final String jsonResponse = Util.objectToString(expected);
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
         Mockito.when(tokenMiddlewareProvider.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientTokenMock);

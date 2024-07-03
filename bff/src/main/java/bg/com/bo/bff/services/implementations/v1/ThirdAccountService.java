@@ -1,7 +1,7 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.ThirdAccountListResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.ThirdAccountListResponse;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
 import bg.com.bo.bff.services.interfaces.IThirdAccountService;
 import org.springframework.beans.factory.annotation.Autowired;

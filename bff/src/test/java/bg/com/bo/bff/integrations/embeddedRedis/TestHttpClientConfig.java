@@ -1,6 +1,6 @@
 package bg.com.bo.bff.integrations.embeddedRedis;
 
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import org.apache.http.impl.client.*;
 import org.springframework.boot.test.context.TestConfiguration;
 

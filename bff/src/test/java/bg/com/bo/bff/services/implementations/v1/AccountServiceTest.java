@@ -1,12 +1,12 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateTransactionLimitRequestFixture;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponse;
-import bg.com.bo.bff.application.dtos.response.GetTransactionLimitResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.TransactionLimitListMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.accounts.TransactionLimitUpdateAccountResponse;
+import bg.com.bo.bff.application.dtos.request.own.account.UpdateTransactionLimitRequest;
+import bg.com.bo.bff.application.dtos.request.own.account.AccountRequestFixture;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.own.account.AccountResponseFixture;
+import bg.com.bo.bff.application.dtos.response.own.account.GetTransactionLimitResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.OwnAccountMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.TransactionLimitUpdateAccountResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,33 +36,33 @@ class AccountServiceTest {
     @Test
     void givenPersonAndIdAccountAndAmountWhenTransactionLimitUpdateThenGenericResponseSuccess() throws IOException {
         // Arrange
-        UpdateTransactionLimitRequest request = UpdateTransactionLimitRequestFixture.withDefault();
-        when(provider.updateTransactionLimit(any(),any(), any(), any())).thenReturn(GenericResponse.instance(TransactionLimitUpdateAccountResponse.SUCCESS));
+        UpdateTransactionLimitRequest request = AccountRequestFixture.withDefaultUpdateTransactionLimitRequest();
+        when(provider.updateTransactionLimit(any(), any(), any(), any())).thenReturn(GenericResponse.instance(TransactionLimitUpdateAccountResponse.SUCCESS));
 
         // Act
-        GenericResponse response = service.updateTransactionLimit("1212","122334", request, new HashMap<>());
+        GenericResponse response = service.updateTransactionLimit("1212", "122334", request, new HashMap<>());
 
         // Assert
         assertNotNull(response);
-        assertEquals(response.getCode(),TransactionLimitUpdateAccountResponse.SUCCESS.getCode());
-        assertEquals(response.getMessage(),TransactionLimitUpdateAccountResponse.SUCCESS.getMessage());
-        verify(provider).updateTransactionLimit(any(),any(),any(),any());
+        assertEquals(response.getCode(), TransactionLimitUpdateAccountResponse.SUCCESS.getCode());
+        assertEquals(response.getMessage(), TransactionLimitUpdateAccountResponse.SUCCESS.getMessage());
+        verify(provider).updateTransactionLimit(any(), any(), any(), any());
 
     }
 
     @Test
     void givenPersonAndIdAccountAndAmountWhenTransactionLimitUpdateThenGetTransactionLimitResponse() throws IOException {
         // Arrange
-        GetTransactionLimitResponse expected = GetTransactionLimitResponseFixture.withDefault();
-        when(provider.getTransactionLimit(any(),any(), any())).thenReturn(TransactionLimitListMWResponseFixture.withDefault());
+        GetTransactionLimitResponse expected = AccountResponseFixture.withDefaultGetTransactionLimitResponse();
+        when(provider.getTransactionLimit(any(), any(), any())).thenReturn(OwnAccountMWResponseFixture.withDefaultTransactionLimitListMWResponse());
 
         // Act
         GetTransactionLimitResponse actual = service.getTransactionLimit("1212", "122334", new HashMap<>());
 
         // Assert
         assertNotNull(actual);
-        assertEquals(expected.getData().getAmountLimit(),actual.getData().getAmountLimit());
-        assertEquals(expected.getData().getCountLimit(),actual.getData().getCountLimit());
-        verify(provider).getTransactionLimit(any(),any(),any());
+        assertEquals(expected.getData().getAmountLimit(), actual.getData().getAmountLimit());
+        assertEquals(expected.getData().getCountLimit(), actual.getData().getCountLimit());
+        verify(provider).getTransactionLimit(any(), any(), any());
     }
 }

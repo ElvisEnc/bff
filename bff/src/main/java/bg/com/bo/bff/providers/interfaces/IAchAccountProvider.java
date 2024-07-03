@@ -1,13 +1,13 @@
 package bg.com.bo.bff.providers.interfaces;
 
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.dtos.BanksMWResponse;
-import bg.com.bo.bff.providers.dtos.request.AddAchAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.response.BranchOfficeMWResponse;
-import bg.com.bo.bff.providers.dtos.response.account.ach.AchAccountMWResponse;
-import bg.com.bo.bff.providers.dtos.response.qr.QrListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.BanksMWResponse;
+import bg.com.bo.bff.providers.dtos.request.ach.account.mw.AddAchAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.BranchOfficeMWResponse;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AchAccountMWResponse;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.QrListMWResponse;
 
 import java.io.IOException;
 import java.util.Map;

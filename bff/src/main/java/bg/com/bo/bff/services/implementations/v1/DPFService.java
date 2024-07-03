@@ -1,8 +1,8 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.response.DPFDataResponse;
-import bg.com.bo.bff.application.dtos.response.DPFListResponse;
-import bg.com.bo.bff.providers.dtos.response.DPFMWResponse;
+import bg.com.bo.bff.application.dtos.response.dpf.DpfDataResponse;
+import bg.com.bo.bff.application.dtos.response.dpf.DpfListResponse;
+import bg.com.bo.bff.providers.dtos.response.dpf.mw.DpfMWResponse;
 import bg.com.bo.bff.providers.interfaces.IDPFProvider;
 import bg.com.bo.bff.mappings.providers.dpf.IDPFMapper;
 import bg.com.bo.bff.services.interfaces.IDPFService;
@@ -22,15 +22,15 @@ public class DPFService implements IDPFService {
     }
 
     @Override
-    public DPFListResponse getDPFsList(String personId, String deviceId, Map<String, String> parameters) throws IOException {
-        DPFMWResponse mWResponse = dpfProvider.getDPFsList(
+    public DpfListResponse getDPFsList(String personId, String deviceId, Map<String, String> parameters) throws IOException {
+        DpfMWResponse mWResponse = dpfProvider.getDPFsList(
                 personId,
                 deviceId,
                 parameters
         );
 
-        DPFListResponse dpfListResponse = idpfMapper.mapToDPFListResponse(mWResponse);
-        dpfListResponse.getData().sort(Comparator.comparing(DPFDataResponse::getExpirationDate));
+        DpfListResponse dpfListResponse = idpfMapper.mapToDPFListResponse(mWResponse);
+        dpfListResponse.getData().sort(Comparator.comparing(DpfDataResponse::getExpirationDate));
 
         return dpfListResponse;
     }

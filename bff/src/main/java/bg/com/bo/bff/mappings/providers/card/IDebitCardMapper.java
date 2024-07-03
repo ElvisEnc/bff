@@ -7,13 +7,13 @@ import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
 import bg.com.bo.bff.application.dtos.request.debit.card.UpdateDebitCardAssuranceRequest;
 import bg.com.bo.bff.application.dtos.response.debit.card.AccountTD;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
-import bg.com.bo.bff.application.dtos.response.debitcard.InternetAuthorizationResponse;
-import bg.com.bo.bff.providers.dtos.request.debit.card.*;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCInternetAuthorizationNWResponse;
+import bg.com.bo.bff.application.dtos.response.debit.card.InternetAuthorizationResponse;
+import bg.com.bo.bff.providers.dtos.request.debit.card.mw.*;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.AccountsDebitCardMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.ListDebitCardMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.DCDetailMWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.AccountsDebitCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.ListDebitCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.DCDetailMWResponse;
 
 import java.util.List;
 

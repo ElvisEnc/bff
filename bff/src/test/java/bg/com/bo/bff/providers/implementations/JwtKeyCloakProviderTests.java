@@ -1,22 +1,22 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.HttpClientConfig;
-import bg.com.bo.bff.application.dtos.request.LogoutRequest;
+import bg.com.bo.bff.application.dtos.request.login.LogoutRequest;
 import bg.com.bo.bff.mappings.providers.GenericsMapper;
 import bg.com.bo.bff.mappings.services.keycloak.KeyCloakJsonMapper;
 import bg.com.bo.bff.mappings.providers.keycloak.KeyCloakObjectMapper;
 import bg.com.bo.bff.mappings.providers.keycloak.KeyCloakMapper;
 import bg.com.bo.bff.providers.dtos.response.keycloak.ErrorKCResponse;
-import bg.com.bo.bff.models.dtos.login.CreateTokenServiceResponse;
+import bg.com.bo.bff.providers.dtos.response.jwt.keycloak.CreateTokenServiceResponse;
 import bg.com.bo.bff.application.exceptions.CreateTokenServiceException;
 import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
-import bg.com.bo.bff.models.jwt.JwtAccess;
-import bg.com.bo.bff.models.jwt.JwtKey;
+import bg.com.bo.bff.providers.dtos.response.jwt.JwtAccess;
+import bg.com.bo.bff.providers.dtos.response.jwt.JwtKey;
 import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakCertListResponse;
 import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakKeyResponse;
 import bg.com.bo.bff.providers.dtos.response.keycloak.CreateTokenKCResponse;
 import bg.com.bo.bff.commons.enums.UserRole;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;

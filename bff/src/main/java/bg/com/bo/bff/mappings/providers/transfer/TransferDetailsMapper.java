@@ -1,6 +1,6 @@
 package bg.com.bo.bff.mappings.providers.transfer;
 
-import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +21,7 @@ public class TransferDetailsMapper {
     private String toAccount;
     private String nroEntry;
 
-    public TransferDetailsMapper(TransferResponseMD response) {
+    public TransferDetailsMapper(TransferMWResponse response) {
         this.title = "¡Transferencia exitosa!";
         this.amount = String.valueOf(response.getData().getAmount());
         this.currency = response.getData().getCurrency();

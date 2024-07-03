@@ -1,7 +1,9 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.response.*;
-import bg.com.bo.bff.providers.dtos.response.*;
+import bg.com.bo.bff.application.dtos.response.dpf.DpfListResponse;
+import bg.com.bo.bff.application.dtos.response.dpf.DpfResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.dpf.mw.DpfMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.dpf.mw.DpfMWResponse;
 import bg.com.bo.bff.providers.interfaces.IDPFProvider;
 import bg.com.bo.bff.mappings.providers.dpf.IDPFMapper;
 import org.junit.jupiter.api.Assertions;
@@ -35,13 +37,13 @@ class DPFServiceTest {
     void giveValidPersonIdWhenGetListDPFsThenReturnSuccess() throws IOException {
         // Arrange
         String personId = "169494";
-        DPFMWResponse expectedResponse = DPFMWResponseFixture.withDefault();
-        DPFListResponse expected = DPFResponseFixture.withDefault();
+        DpfMWResponse expectedResponse = DpfMWResponseFixture.withDefaultDpfMWResponse();
+        DpfListResponse expected = DpfResponseFixture.withDefaultDpfListResponse();
         Mockito.when(provider.getDPFsList(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(expectedResponse);
         Mockito.when(iDPFMapper.mapToDPFListResponse(expectedResponse)).thenReturn(expected);
 
         // Act
-        DPFListResponse response = service.getDPFsList(personId, "123", new HashMap<>());
+        DpfListResponse response = service.getDPFsList(personId, "123", new HashMap<>());
 
         // Assert
         Assertions.assertNotNull(response);

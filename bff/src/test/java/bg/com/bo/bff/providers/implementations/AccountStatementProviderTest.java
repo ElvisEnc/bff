@@ -3,12 +3,12 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
-import bg.com.bo.bff.application.dtos.request.ExtractRequestFixture;
+import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementRequestFixture;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.response.AccountReportBasicResponse;
-import bg.com.bo.bff.providers.dtos.response.AccountReportBasicResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.ErrorMiddlewareProvider;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.OwnAccountMWResponseFixture;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -57,11 +57,11 @@ class AccountStatementProviderTest {
     @Test
     void getAccountStatementSuccess() throws IOException {
         //Arrange
-        String jsonResponse = new ObjectMapper().writeValueAsString(AccountReportBasicResponseFixture.withDefault());
+        String jsonResponse = new ObjectMapper().writeValueAsString(OwnAccountMWResponseFixture.withDefaultAccountReportBasicResponse());
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         //Act
-        AccountReportBasicResponse response = accountStatementProvider.getAccountStatement(ExtractRequestFixture.withDefault(), "aeraer", "4354", "654645", false);
+        AccountReportBasicResponse response = accountStatementProvider.getAccountStatement(AccountStatementRequestFixture.withDefaultExtractRequest(), "aeraer", "4354", "654645", false);
 
         //Assert
         assertNotNull(response);
@@ -80,7 +80,7 @@ class AccountStatementProviderTest {
 
         //Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            accountStatementProvider.getAccountStatement(ExtractRequestFixture.withDefault(), "token", "accountId", "extractId", false);
+            accountStatementProvider.getAccountStatement(AccountStatementRequestFixture.withDefaultExtractRequest(), "token", "accountId", "extractId", false);
         });
 
         //Assert
@@ -99,7 +99,7 @@ class AccountStatementProviderTest {
         stubFor(post(anyUrl()).willReturn(aResponse().withStatus(404).withBody(new ObjectMapper().writeValueAsString(errorMiddlewareProvider))));
 
         //Act
-        AccountReportBasicResponse response = accountStatementProvider.getAccountStatement(ExtractRequestFixture.withDefault(), "token", "accountId", "extractId", false);
+        AccountReportBasicResponse response = accountStatementProvider.getAccountStatement(AccountStatementRequestFixture.withDefaultExtractRequest(), "token", "accountId", "extractId", false);
 
         //Assert
         assertTrue(response.getData().isEmpty());
@@ -112,7 +112,7 @@ class AccountStatementProviderTest {
 
         //Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            accountStatementProvider.getAccountStatement(ExtractRequestFixture.withDefault(), "token", "accountId", "extractId", false);
+            accountStatementProvider.getAccountStatement(AccountStatementRequestFixture.withDefaultExtractRequest(), "token", "accountId", "extractId", false);
         });
 
         //Assert

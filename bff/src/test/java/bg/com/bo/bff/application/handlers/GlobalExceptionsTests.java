@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.handlers;
 
-import bg.com.bo.bff.application.dtos.response.ErrorResponse;
+import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.exceptions.BadRequestException;
 import bg.com.bo.bff.application.exceptions.GlobalExceptionHandler;
 import bg.com.bo.bff.application.exceptions.NotAcceptableException;

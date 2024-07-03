@@ -1,11 +1,11 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.request.Pcc01Request;
-import bg.com.bo.bff.application.dtos.response.Pcc01Data;
-import bg.com.bo.bff.application.dtos.response.Pcc01Response;
+import bg.com.bo.bff.application.dtos.request.transfer.Pcc01Request;
+import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Data;
+import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Response;
 import bg.com.bo.bff.models.ClientToken;
-import bg.com.bo.bff.models.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.mappings.providers.pcc01.Pcc01Mapper;
 import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;

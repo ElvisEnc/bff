@@ -1,7 +1,7 @@
 package bg.com.bo.bff.services.interfaces;
 
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
-import bg.com.bo.bff.application.dtos.response.RegistryResponse;
+import bg.com.bo.bff.application.dtos.response.registry.RegistryResponse;
 
 import java.security.NoSuchAlgorithmException;
 

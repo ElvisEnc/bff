@@ -1,15 +1,15 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequest;
-import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
-import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
+import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.request.user.UpdateDataUserRequest;
+import bg.com.bo.bff.application.dtos.response.user.BiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateBiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DistrictsResponse;
 import bg.com.bo.bff.application.dtos.response.user.UpdateDataUserResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
-import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
@@ -27,7 +27,7 @@ import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetReq
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
 import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalInformationNetRequest;
-import bg.com.bo.bff.providers.dtos.response.login.BiometricStatusMWResponse;
+import bg.com.bo.bff.providers.dtos.response.login.mw.BiometricStatusMWResponse;
 import bg.com.bo.bff.providers.dtos.response.personal.information.EconomyActivity;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;

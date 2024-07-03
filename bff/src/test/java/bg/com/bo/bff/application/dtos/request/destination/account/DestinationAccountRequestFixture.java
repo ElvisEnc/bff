@@ -1,6 +1,10 @@
 package bg.com.bo.bff.application.dtos.request.destination.account;
 
 
+import bg.com.bo.bff.providers.dtos.request.ach.account.mw.AddAchAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddThirdAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddWalletAccountBasicRequest;
+
 public class DestinationAccountRequestFixture {
     public static DestinationAccountRequest withDefault() {
         return DestinationAccountRequest.builder()
@@ -21,6 +25,86 @@ public class DestinationAccountRequestFixture {
                 .identificationNumber("123456789")
                 .bankCode("1234")
                 .reference("Referencia")
+                .build();
+    }
+
+    public static AddQRAccountRequest withDefaultAddQRAccountRequest() {
+        return AddQRAccountRequest.builder()
+                .accountNumber("123456789")
+                .holderName("Prueba holder")
+                .identificationNumber("123456789")
+                .bankCode("1234")
+                .reference("Referencia")
+                .build();
+    }
+
+    public static AddAchAccountBasicRequest withDefaultOKAddAchAccountBasicRequest() {
+        return AddAchAccountBasicRequest.builder()
+                .personId("12345")
+                .companyPersonId("12345")
+                .isFavorite("S")
+                .isEnabled("S")
+                .reference("Prueba")
+                .destinationAccountNumber("123456789")
+                .destinationBankCode("1234")
+                .destinationBranchOfficeCode("SCZ")
+                .destinationAccountTypeCode("CCAD")
+                .destinationHolderName("Prueba holder")
+                .destinationIDNumber("123456789")
+                .email("email@gmail.com")
+                .build();
+    }
+
+    public static AddAchAccountRequest withDefaultAddAchAccountRequest() {
+        return AddAchAccountRequest.builder()
+                .isFavorite("N")
+                .isEnabled("S")
+                .reference("referencia con espacios")
+                .destinationAccountNumber("123456789")
+                .destinationBankCode("123456789")
+                .destinationBranchOfficeCode("123456789")
+                .destinationAccountTypeCode("123456789")
+                .destinationHolderName("123456789")
+                .destinationIDNumber("123456789")
+                .email("reynaldo@gmai.com")
+                .build();
+    }
+
+    public static AddThirdAccountBasicRequest withDefaultOKAddThirdAccountBasicRequest() {
+        return AddThirdAccountBasicRequest.builder()
+                .personId("12345")
+                .companyPersonId("12345")
+                .toAccountNumber("123456789")
+                .reference("Prueba")
+                .isFavorite("S")
+                .build();
+
+    }
+
+    public static AddThirdAccountRequest withDefaultAddThirdAccountRequest() {
+        return AddThirdAccountRequest.builder()
+                .toAccountNumber("123456789")
+                .reference("Prueba")
+                .isFavorite("S")
+                .build();
+    }
+
+    public static AddWalletAccountBasicRequest withDefaultOKAddWalletAccountBasicRequest() {
+        return AddWalletAccountBasicRequest.builder()
+                .personId("12345")
+                .companyPersonId("12345")
+                .toAccountNumber("123456789")
+                .reference("Prueba")
+                .isFavorite("S")
+                .build();
+
+    }
+
+    public static AddWalletAccountRequest withDefaultAddWalletAccountRequest() {
+        return AddWalletAccountRequest.builder()
+                .toAccountNumber("123456789")
+                .reference("Prueba")
+                .isFavorite("S")
                 .build();
     }
 }

@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.implementations;
 
-import bg.com.bo.bff.providers.dtos.response.TransferResponseMD;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.providers.interfaces.IGenerateImage;
 import bg.com.bo.bff.mappings.providers.transfer.TransferDetailsMapper;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class GenerateImageProvider implements IGenerateImage {
     }
 
     @Override
-    public String generateImage(TransferResponseMD response) {
+    public String generateImage(TransferMWResponse response) {
         TransferDetailsMapper transferDetailsProvider = new TransferDetailsMapper(response);
         BufferedImage background = decodeBase64Image(layoutBG);
         Graphics2D g = (Graphics2D) background.getGraphics();

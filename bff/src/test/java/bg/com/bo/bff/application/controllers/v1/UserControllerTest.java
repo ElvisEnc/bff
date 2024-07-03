@@ -1,26 +1,18 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.ChangePasswordRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateBiometricsRequestFixture;
-import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequest;
-import bg.com.bo.bff.application.dtos.request.UpdateDataUserRequestFixture;
-import bg.com.bo.bff.application.dtos.response.BiometricsResponse;
-import bg.com.bo.bff.application.dtos.response.BiometricsResponseFixture;
-import bg.com.bo.bff.application.dtos.response.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.GetContactResponseFixture;
-import bg.com.bo.bff.application.dtos.response.GetPersonalInformationResponseFixture;
-import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponse;
-import bg.com.bo.bff.application.dtos.response.UpdateBiometricsResponseFixture;
-import bg.com.bo.bff.application.dtos.response.apiface.DepartmentsResponse;
-import bg.com.bo.bff.application.dtos.response.apiface.DistrictsResponse;
-import bg.com.bo.bff.application.dtos.response.personal.information.DistrictsResponseFixture;
+import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
+import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
+import bg.com.bo.bff.application.dtos.request.user.UserRequestFixture;
+import bg.com.bo.bff.application.dtos.request.user.UpdateDataUserRequest;
+import bg.com.bo.bff.application.dtos.response.user.BiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateBiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.user.UserResponseFixture;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DepartmentsResponse;
+import bg.com.bo.bff.application.dtos.response.user.apiface.DistrictsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
-import bg.com.bo.bff.application.dtos.response.user.DepartmentsResponseFixture;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
-import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponseFixture;
 import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
-import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponseFixture;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.dtos.response.user.UpdateDataUserResponse;
 import bg.com.bo.bff.commons.enums.DeviceMW;
@@ -148,7 +140,7 @@ class UserControllerTest {
     @Test
     void givenValidDataWhenGetContactInformation() throws Exception {
         // Arrange
-        ContactResponse expected = GetContactResponseFixture.withDefault();
+        ContactResponse expected = UserResponseFixture.withDefaultContactResponse();
         when(userService.getContactInfo()).thenReturn(expected);
 
         // Act & Assert
@@ -165,7 +157,7 @@ class UserControllerTest {
     @Test
     void givenValidDataWhenGetPersonalInformation() throws Exception {
         // Arrange
-        PersonalResponse expected = GetPersonalInformationResponseFixture.withDefault();
+        PersonalResponse expected = UserResponseFixture.withDefaultPersonalResponse();
         when(userService.getPersonalInformation(any(), any())).thenReturn(expected);
 
         // Act & Assert
@@ -187,7 +179,7 @@ class UserControllerTest {
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
 
-        BiometricsResponse expected = BiometricsResponseFixture.withDefault();
+        BiometricsResponse expected = UserResponseFixture.withDefaultBiometricsResponse();
         when(userService.getBiometrics(any(), any())).thenReturn(expected);
 
         // Act
@@ -208,8 +200,8 @@ class UserControllerTest {
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
 
-        UpdateBiometricsResponse expected = UpdateBiometricsResponseFixture.withDefault();
-        UpdateBiometricsRequest request = UpdateBiometricsRequestFixture.withDefault();
+        UpdateBiometricsResponse expected = UserResponseFixture.withDefaultUpdateBiometricsResponse();
+        UpdateBiometricsRequest request = UserRequestFixture.withDefaultUpdateBiometricsRequest();
         when(userService.updateBiometrics(any(), any(), any())).thenReturn(expected);
 
         // Act
@@ -234,7 +226,7 @@ class UserControllerTest {
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
 
-        EconomicActivityResponse expected = EconomicActivityResponseFixture.withDefault();
+        EconomicActivityResponse expected = UserResponseFixture.withDefaultEconomicActivityResponse();
         when(userService.getEconomicActivity(any(), any())).thenReturn(expected);
 
         // Act
@@ -255,7 +247,7 @@ class UserControllerTest {
     @Test
     void givenValidDataWhenGetDepartments() throws Exception {
         // Arrange
-        DepartmentsResponse expected = DepartmentsResponseFixture.withDefault();
+        DepartmentsResponse expected = UserResponseFixture.withDefaultDepartmentsResponse();
         when(userService.getDepartments(any())).thenReturn(expected);
 
         // Act & Assert
@@ -275,7 +267,7 @@ class UserControllerTest {
     @Test
     void givenDepartmentIdWhenGetDistricts() throws Exception {
         // Arrange
-        DistrictsResponse expected = DistrictsResponseFixture.withDefault();
+        DistrictsResponse expected = UserResponseFixture.withDefaultDistrictsResponse();
         when(userService.getDistricts(any(), any())).thenReturn(expected);
 
         // Act & Assert
@@ -301,7 +293,7 @@ class UserControllerTest {
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
 
-        MaritalStatusResponse expected = MaritalStatusResponseFixture.withDefault();
+        MaritalStatusResponse expected = UserResponseFixture.withDefaultMaritalStatusResponse();
         when(userService.getMaritalStatus(any())).thenReturn(expected);
 
         // Act
@@ -316,18 +308,17 @@ class UserControllerTest {
 
         // Arrange
         assertEquals(response, responseExpected);
-        verify(userService).getMaritalStatus( any());
+        verify(userService).getMaritalStatus(any());
     }
 
     @Test
     void givenUpdateDataUserRequestWhenUpdateDataUserThenUpdateDataUserResponse() throws Exception {
-
         // Assert
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
 
         GenericResponse expected = GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
-        UpdateDataUserRequest request = UpdateDataUserRequestFixture.withDefault();
-        when(userService.updateDataUser(any(),any(), any())).thenReturn(expected);
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
+        when(userService.updateDataUser(any(), any(), any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(post(URL_UPDATE_DATA_USER, "123")
@@ -344,6 +335,6 @@ class UserControllerTest {
 
         // Arrange
         assertEquals(response, responseExpected);
-        verify(userService).updateDataUser(any(), any(),any());
+        verify(userService).updateDataUser(any(), any(), any());
     }
 }
