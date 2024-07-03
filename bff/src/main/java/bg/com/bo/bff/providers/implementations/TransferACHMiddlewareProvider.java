@@ -13,8 +13,6 @@ import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.ACHMiddlewareError;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -32,15 +30,8 @@ public class TransferACHMiddlewareProvider extends MiddlewareProvider<ACHMiddlew
     @Override
     public TransferMWResponse transferAchAccount(String personId, String accountId, TransferRequest request, Map<String, String> parameters) throws IOException {
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.ACH_TRANSFER_MANAGER.getName() + String.format(URL_PATH_COMPLEMENT_TRANSFER_ACH);
-        Header[] headers = {
-                new BasicHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal()),
-                new BasicHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal()),
-                new BasicHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName()),
-                new BasicHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode())),
-                new BasicHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()))
-        };
         TransferMWRequest requestData = TransferMWtMapper.INSTANCE.convert("ach", personId, accountId, request);
-        TransferAchMwResponse response = post(url, headers, requestData, TransferAchMwResponse.class);
+        TransferAchMwResponse response = post(url, HeadersMW.getDefaultHeaders(parameters), requestData,TransferAchMwResponse.class);
         return TransferAchMwResponse.toFormat(response);
     }
 }

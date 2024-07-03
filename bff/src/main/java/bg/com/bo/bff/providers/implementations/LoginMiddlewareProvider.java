@@ -67,7 +67,6 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
         this.mapper = mapper;
     }
 
-
     private CloseableHttpClient createHttpClient() {
         return httpClientFactory.create();
     }
@@ -217,7 +216,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             String jsonMapper = objectMapper.writeValueAsString(changePasswordMWRequest);
             StringEntity entity = new StringEntity(jsonMapper);
             request.setEntity(entity);
-            request.setHeaders(HeadersMW.getHeadersMW(parameters));
+            request.setHeaders(HeadersMW.getDefaultHeaders(parameters));
             request.addHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
@@ -260,7 +259,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
 
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.LOGIN_MANAGER.getName() + "/bs/v1/device/validate-enrollment?deviceId=" + parameter.get(DeviceMW.DEVICE_ID.getCode());
             HttpGet request = new HttpGet(path);
-            request.setHeaders(HeadersMW.getHeadersMW(parameter));
+            request.setHeaders(HeadersMW.getDefaultHeaders(parameter));
             request.addHeader("Authorization", "Bearer " + token);
 
 

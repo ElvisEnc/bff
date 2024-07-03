@@ -9,8 +9,6 @@ import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.DPFMiddlewareError;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,14 +26,6 @@ public class DPFMiddlewareProvider extends MiddlewareProvider<DPFMiddlewareError
     @Override
     public DpfMWResponse getDPFsList(String personId, String deviceId, Map<String, String> parameters) throws IOException {
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.DPF_MANAGER.getName() + String.format(URL_PATH_COMPLEMENT_PDF_LIST, personId, personId);
-        Header[] headers = {
-                new BasicHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal()),
-                new BasicHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal()),
-                new BasicHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName()),
-                new BasicHeader(DeviceMW.DEVICE_ID.getCode(), deviceId),
-                new BasicHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()))
-        };
-
-        return get(url, headers, DpfMWResponse.class);
+        return get(url, HeadersMW.getDefaultHeaders(parameters), DpfMWResponse.class);
     }
 }
