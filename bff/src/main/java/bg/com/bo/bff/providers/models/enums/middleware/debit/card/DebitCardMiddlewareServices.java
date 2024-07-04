@@ -16,6 +16,8 @@ public enum DebitCardMiddlewareServices {
     DELETE_LIMIT_INTERNET("/bs/v1/debit-card/delete-limit-internet"),
     CREATE_AUTHORIZATION_ONLINE_PURCHASE("/bs/v1/debit-card/register-limit-internet"),
     ACTIVE_SECURE("/bs/v1/debit-card/activate-secure"),
-    ACTIVE_DEBIT_CARD("/bs/v1/debit-card/activate-debit-card");
+    ACTIVE_DEBIT_CARD("/bs/v1/debit-card/activate-debit-card"),
+    CHANGE_PIN_CARD("/bs/v1/debit-card/change-pin-debit-card");
+
     private final String serviceURL;
 }

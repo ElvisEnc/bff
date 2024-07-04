@@ -117,4 +117,15 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
             return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_MODIFY_ACCOUNTS_ORDER);
         }
     }
+
+    @Override
+    public GenericResponse changePinCard(ChangePinMWRequest requestMW, Map<String, String> parameters) throws IOException {
+        String url = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.CHANGE_PIN_CARD.getServiceURL();
+        ChangePinMWResponse response = patch(url, HeadersMW.getDefaultHeaders(parameters), requestMW, ChangePinMWResponse.class);
+        if (response.getData().getIdPci() != null) {
+            return GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_PIN_CARD);
+        } else {
+            return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_CHANGE_PIN_CARD);
+        }
+    }
 }

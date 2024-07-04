@@ -35,4 +35,6 @@ public interface IDebitCardService {
     GenericResponse lockStatus(String personId, String cardId, DCLockStatusRequest request, Map<String, String> parameters) throws IOException;
 
     GenericResponse modifyAccountsOrder(String personId, String cardId, DCAccountsOrderRequest body, Map<String, String> parameters) throws IOException;
+
+    GenericResponse changePinCard(String personId, String cardId, ChangePinRequest body, Map<String, String> parameters) throws IOException;
 }

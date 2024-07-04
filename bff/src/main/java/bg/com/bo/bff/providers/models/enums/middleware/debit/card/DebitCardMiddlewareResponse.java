@@ -18,7 +18,9 @@ public enum DebitCardMiddlewareResponse implements IGenericControllerResponse {
     SUCCESS_ACTIVE_ASSURANCE("SUCCESS","Se activo el seguro de la tarjeta de debito"),
     ERROR_ACTIVE_ASSURANCE("ERROR","No se pudo activar el seguro de la tarjeta de debito"),
     SUCCESS_ACTIVATE_DEBIT_CARD("SUCCESS","Su tarjeta de debito ha sido activada exitosamente!"),
-    ERROR_ACTIVATE_DEBIT_CARD("ERROR","Ocurrio algo inesperado, no se pudo activar la tarjeta de debito");
+    ERROR_ACTIVATE_DEBIT_CARD("ERROR","Ocurrio algo inesperado, no se pudo activar la tarjeta de debito"),
+    SUCCESS_CHANGE_PIN_CARD("SUCCESS","Se cambio el pin de la tarjeta de debito exitosamente"),
+    ERROR_CHANGE_PIN_CARD("ERROR","Ocurrio algo inesperado, no se pudo cambiar el pin de la tarjeta de debito");
 
     private final String code;
     private final String message;

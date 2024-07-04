@@ -171,4 +171,13 @@ public class DebitCardMapper implements IDebitCardMapper {
                 .limitNumber(response.getData().getLimitExtractions())
                 .build();
     }
+
+    @Override
+    public ChangePinMWRequest mapToChangePinRequest(String personId, String cardId, ChangePinRequest request) {
+        return ChangePinMWRequest.builder()
+                .pinBlock(request.getPin())
+                .idPci(cardId)
+                .personId(personId)
+                .build();
+    }
 }

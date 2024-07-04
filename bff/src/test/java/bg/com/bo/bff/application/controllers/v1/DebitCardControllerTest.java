@@ -377,4 +377,32 @@ class DebitCardControllerTest {
         assertEquals(response, actual);
         verify(service).modifyAccountsOrder(any(), any(), any(), any());
     }
+
+    @Test
+    void givenValidDataWhenChangePinCardThenGenericResponseSuccess() throws Exception {
+        // Arrange
+        String personId = "169494";
+        String cardId = "123456";
+        ChangePinRequest request = DebitCardRequestFixture.withDefaultChangePinRequest();
+        GenericResponse mockResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_PIN_CARD);
+        when(service.changePinCard(any(), any(), any(), any())).thenReturn(mockResponse);
+
+        // Act
+        String URL_PATCH_CHANGE_PIN_CARD = "/api/v1/debit-cards/persons/{personId}/cards/{cardId}/change-pin";
+        MvcResult result = mockMvc.perform(patch(URL_PATCH_CHANGE_PIN_CARD, personId, cardId)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request, false)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(mockResponse);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).changePinCard(any(), any(), any(), any());
+    }
 }

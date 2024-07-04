@@ -1,10 +1,6 @@
 package bg.com.bo.bff.mappings.providers.card;
 
-import bg.com.bo.bff.application.dtos.request.debit.card.CreateAuthorizationOnlinePurchaseRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCAccountsOrderRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLockStatusRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.UpdateDebitCardAssuranceRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.*;
 import bg.com.bo.bff.application.dtos.response.debit.card.AccountTD;
 import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
 import bg.com.bo.bff.application.dtos.response.debit.card.InternetAuthorizationResponse;
@@ -39,4 +35,6 @@ public interface IDebitCardMapper {
     CreateAuthorizationOnlinePurchaseMWRequest mapToCreateAuthorizationOnlinePurchaseMWRequest(CreateAuthorizationOnlinePurchaseRequest request, String cardId, Integer intInitial, Integer intFinal, String action);
 
     DCDetailResponse mapToDetailResponse(DCDetailMWResponse response);
+
+    ChangePinMWRequest mapToChangePinRequest(String personId, String cardId, ChangePinRequest request);
 }

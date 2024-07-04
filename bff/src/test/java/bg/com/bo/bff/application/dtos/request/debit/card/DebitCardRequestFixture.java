@@ -67,4 +67,10 @@ public class DebitCardRequestFixture {
                 .openingRequestNumber("123")
                 .build();
     }
+
+    public static ChangePinRequest withDefaultChangePinRequest() {
+        return ChangePinRequest.builder()
+                .pin("1234")
+                .build();
+    }
 }

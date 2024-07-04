@@ -71,4 +71,12 @@ public class DebitCardMWRequestFixture {
                 .personId("1234")
                 .build();
     }
+
+    public static ChangePinMWRequest withDefaultChangePinCard() {
+        return ChangePinMWRequest.builder()
+                .personId("1")
+                .idPci("1")
+                .pinBlock("1")
+                .build();
+    }
 }

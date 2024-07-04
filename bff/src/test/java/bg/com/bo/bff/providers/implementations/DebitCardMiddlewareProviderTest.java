@@ -582,4 +582,21 @@ class DebitCardMiddlewareProviderTest {
         // Assert
         assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
     }
+
+    @Test
+    void givenValidDataWhenChangePinCardThenExpectResponse() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = "{ \"data\": { \"idPci\": \"1435360\" } }";
+        stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = debitCardMiddlewareProvider.changePinCard(
+                DebitCardMWRequestFixture.withDefaultChangePinCard(), map
+        );
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_PIN_CARD));
+    }
 }

@@ -295,4 +295,27 @@ class DebitCardServiceTest {
         verify(provider).modifyAccountsOrder(expectedRequest, new HashMap<>());
         verify(mapper).mapToAccountsOrderRequest(personId, cardId, request);
     }
+
+    @Test
+    void givenValidDataWhenChangePinCardThenReturnGenericResponse() throws IOException {
+        // Arrange
+        String personId = "169494";
+        String cardId = "1234";
+        ChangePinRequest request = DebitCardRequestFixture.withDefaultChangePinRequest();
+        ChangePinMWRequest expectedRequest = DebitCardMWRequestFixture.withDefaultChangePinCard();
+
+        GenericResponse expected = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_PIN_CARD);
+
+        when(provider.changePinCard(Mockito.any(), Mockito.any())).thenReturn(expected);
+        when(mapper.mapToChangePinRequest(personId, cardId, request)).thenReturn(expectedRequest);
+
+        // Act
+        GenericResponse response = service.changePinCard(personId, cardId, request, new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).changePinCard(expectedRequest, new HashMap<>());
+        verify(mapper).mapToChangePinRequest(personId, cardId, request);
+    }
 }

@@ -126,4 +126,10 @@ public class DebitCardService implements IDebitCardService {
         DCAccountsOrderMWRequest requestMW = idcMapper.mapToAccountsOrderRequest(personId, cardId, body);
         return idcProvider.modifyAccountsOrder(requestMW, parameters);
     }
+
+    @Override
+    public GenericResponse changePinCard(String personId, String cardId, ChangePinRequest body, Map<String, String> parameters) throws IOException {
+        ChangePinMWRequest requestMW = idcMapper.mapToChangePinRequest(personId, cardId, body);
+        return idcProvider.changePinCard(requestMW, parameters);
+    }
 }
