@@ -3,11 +3,7 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliatedServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.CategoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ListServicesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubCategoryCitiesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubcategoriesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.mappings.providers.services.IPaymentServicesMapper;
 import bg.com.bo.bff.services.interfaces.IPaymentServicesService;
@@ -63,5 +59,11 @@ public class PaymentServicesService implements IPaymentServicesService {
         provider.deleteAffiliationService(request, parameter);
 
         return GenericResponse.instance(DeleteAffiliateServiceResponse.SUCCESS);
+    }
+
+    @Override
+    public AffiliateCriteriaResponse getAffiliateCriteria(String personId, String serviceCode, Map<String, String> parameters) throws IOException {
+        final AffiliateCriteriaMWResponse mwResponse = provider.getAffiliateCriteria(personId, serviceCode, parameters);
+        return mapper.convertResponse(mwResponse);
     }
 }

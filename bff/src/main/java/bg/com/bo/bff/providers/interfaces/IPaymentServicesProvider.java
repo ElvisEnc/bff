@@ -1,14 +1,7 @@
 package bg.com.bo.bff.providers.interfaces;
 
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliatedServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.CategoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.DeleteAffiliateServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ListServicesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubCategoryCitiesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubcategoriesMWResponse;
-
-
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -26,4 +19,6 @@ public interface IPaymentServicesProvider {
     ListServicesMWResponse getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException;
 
     DeleteAffiliateServiceMWResponse deleteAffiliationService(DeleteAffiliateServiceMWRequest request, Map<String, String> parameter) throws IOException;
+
+    AffiliateCriteriaMWResponse getAffiliateCriteria (String personId, String serviceCode, Map<String, String> parameter) throws IOException;
 }

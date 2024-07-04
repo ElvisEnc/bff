@@ -84,4 +84,43 @@ public class PaymentServiceResponseFixture {
                 .data(data)
                 .build();
     }
+
+    public static AffiliateCriteriaResponse withDefaultAffiliateCriteriaResponse() {
+        return AffiliateCriteriaResponse.builder()
+                .serviceCode("123")
+                .year(2024)
+                .subServices(List.of(
+                        AffiliateCriteriaResponse.SubService.builder()
+                                .criteriaLabel("test")
+                                .abbreviation("test")
+                                .build()
+                ))
+                .criteria(List.of(
+                        AffiliateCriteriaResponse.SearchCriteria.builder()
+                                .labelCriteria("test")
+                                .description("test")
+                                .searchCriteriaId("123")
+                                .searchCriteriaIdAbbreviation("123")
+                                .fields(List.of(
+                                        AffiliateCriteriaResponse.SearchCriteria.Field.builder()
+                                                .identifier(123)
+                                                .label("test")
+                                                .description("test")
+                                                .abbreviation("test")
+                                                .isMandatory("S")
+                                                .minimumLength("1")
+                                                .maximumLength("10")
+                                                .dataTypeCode("1")
+                                                .values(List.of(
+                                                        AffiliateCriteriaResponse.SearchCriteria.Field.Value.builder()
+                                                                .code("test")
+                                                                .description("test")
+                                                                .build()
+                                                ))
+                                                .build()
+                                ))
+                                .build()
+                ))
+                .build();
+    }
 }

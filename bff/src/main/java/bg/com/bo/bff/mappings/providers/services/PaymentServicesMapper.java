@@ -6,11 +6,8 @@ import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCities
 import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ListServicesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliatedServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.CategoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubCategoryCitiesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubcategoriesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
+import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -83,5 +80,54 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                 .personId(personId)
                 .build();
 
+    }
+
+    @Override
+    public AffiliateCriteriaResponse convertResponse(AffiliateCriteriaMWResponse mwResponse) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return AffiliateCriteriaResponse.builder()
+                    .year(0)
+                    .serviceCode(null)
+                    .criteria(Collections.emptyList())
+                    .subServices(Collections.emptyList())
+                    .build();
+        List<AffiliateCriteriaResponse.SearchCriteria> criteria = mwResponse.getData().getSearchCriteria().stream()
+                .map(mw -> AffiliateCriteriaResponse.SearchCriteria.builder()
+                        .description(mw.getDescription())
+                        .labelCriteria(mw.getLabelCriteria())
+                        .searchCriteriaId(mw.getSearchCriteriaId())
+                        .searchCriteriaIdAbbreviation(mw.getSearchCriteriaIdAbbreviation())
+                        .fields(mw.getFields().stream()
+                                .map(f -> AffiliateCriteriaResponse.SearchCriteria.Field.builder()
+                                        .identifier(f.getIdentifier())
+                                        .label(f.getLabel())
+                                        .description(f.getDescription())
+                                        .abbreviation(f.getAbbreviation())
+                                        .isMandatory(f.getIsMandatory())
+                                        .minimumLength(f.getMinimumLength())
+                                        .maximumLength(f.getMaximumLength())
+                                        .dataTypeCode(f.getDataTypeCode())
+                                        .values(f.getValues().stream()
+                                                .map(v -> AffiliateCriteriaResponse.SearchCriteria.Field.Value.builder()
+                                                        .code(v.getCode())
+                                                        .description(v.getDescription())
+                                                        .build())
+                                                .toList())
+                                        .build())
+                                .toList())
+                        .build())
+                .toList();
+        List<AffiliateCriteriaResponse.SubService> subServices = mwResponse.getData().getSubServices().stream()
+                .map(mw -> AffiliateCriteriaResponse.SubService.builder()
+                        .abbreviation(mw.getAbbreviation())
+                        .criteriaLabel(mw.getLabelCriteria())
+                        .build())
+                .toList();
+        return AffiliateCriteriaResponse.builder()
+                .year(mwResponse.getData().getYear())
+                .serviceCode(mwResponse.getData().getServiceCode())
+                .criteria(criteria)
+                .subServices(subServices)
+                .build();
     }
 }

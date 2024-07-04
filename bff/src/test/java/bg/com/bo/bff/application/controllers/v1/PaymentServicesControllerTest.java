@@ -1,13 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.PaymentServiceResponseFixture;
-import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.DeleteAffiliateServiceResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IPaymentServicesService;
@@ -240,5 +234,30 @@ class PaymentServicesControllerTest {
         assertEquals(response, actual);
         verify(service).deleteAffiliationService(anyString(), anyString(), any());
 
+    }
+
+    @Test
+    void givenValidDataWhenGetAffiliateCriteriaThenResponse() throws Exception {
+        //Arrange
+        AffiliateCriteriaResponse expectedResponse = PaymentServiceResponseFixture.withDefaultAffiliateCriteriaResponse();
+        when(service.getAffiliateCriteria(any(), any(), any())).thenReturn(expectedResponse);
+
+        // Act
+        String path = "/api/v1/payment-services/persons/{personId}/affiliate-criteria";
+        MvcResult result = mockMvc.perform(get(path, 1)
+                        .param("serviceCode", "85")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expectedResponse);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).getAffiliateCriteria(any(), any(), any());
     }
 }

@@ -4,12 +4,7 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliatedServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.CategoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.DeleteAffiliateServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ListServicesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubCategoryCitiesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubcategoriesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
@@ -66,6 +61,13 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
     @Override
     public DeleteAffiliateServiceMWResponse deleteAffiliationService(DeleteAffiliateServiceMWRequest request, Map<String, String> parameters) throws IOException {
         final String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.PAYMENT_SERVICES.getName(), PaymentServicesMiddlewareServices.DELETE_AFFILIATE_SERVICE.getServiceURL());
-        return post(url,HeadersMW.getDefaultHeaders(parameters),request,DeleteAffiliateServiceMWResponse.class);
+        return post(url, HeadersMW.getDefaultHeaders(parameters), request, DeleteAffiliateServiceMWResponse.class);
+    }
+
+    @Override
+    public AffiliateCriteriaMWResponse getAffiliateCriteria(String personId, String serviceCode, Map<String, String> parameters) throws IOException {
+        final String pathServices = String.format(PaymentServicesMiddlewareServices.GET_AFFILIATE_CRITERIA.getServiceURL(), serviceCode);
+        final String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.PAYMENT_SERVICES.getName(), pathServices);
+        return get(url, HeadersMW.getDefaultHeaders(parameters), AffiliateCriteriaMWResponse.class);
     }
 }

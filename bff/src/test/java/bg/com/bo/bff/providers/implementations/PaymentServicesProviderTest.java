@@ -13,13 +13,7 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentServicesMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliatedServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.CategoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.DeleteAffiliateServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ListServicesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.PaymentServicesMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubCategoryCitiesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.SubcategoriesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -297,5 +291,24 @@ class PaymentServicesProviderTest {
         assertEquals(expected.getData().getAffiliationNewCod(), actual.getData().getAffiliationNewCod());
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
 
+    }
+
+    @Test
+    @DisplayName("Obtener criterios de afiliación por código de servicio")
+    void givenValidDataWhenGetAffiliateCriteriaThenExpectResponse() throws IOException {
+        // Arrange
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+
+        String jsonResponse = Util.objectToString(PaymentServicesMWResponseFixture.withDefaultAffiliateCriteriaMWResponse());
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        AffiliateCriteriaMWResponse response = provider.getAffiliateCriteria("123", "85", map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, PaymentServicesMWResponseFixture.withDefaultAffiliateCriteriaMWResponse());
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
 }

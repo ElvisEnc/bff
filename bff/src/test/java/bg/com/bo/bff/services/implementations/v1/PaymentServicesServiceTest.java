@@ -1,18 +1,9 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.PaymentServiceResponseFixture;
-import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.DeleteAffiliateServiceResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentServicesMWRequestFixture;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliatedServiceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.CategoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ListServicesMWResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.PaymentServicesMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.mappings.providers.services.IPaymentServicesMapper;
 import org.junit.jupiter.api.Test;
@@ -144,5 +135,23 @@ class PaymentServicesServiceTest {
         assertEquals(expected.getCode(), actual.getCode());
         assertEquals(expected.getMessage(), actual.getMessage());
         verify(mapper).convertRequest(anyString(), anyString());
+    }
+
+    @Test
+    void givenValidDataWhenGetAffiliateCriteriaThenAffiliateCriteria() throws IOException {
+        //Arrange
+        AffiliateCriteriaResponse expected = PaymentServiceResponseFixture.withDefaultAffiliateCriteriaResponse();
+        AffiliateCriteriaMWResponse mwResponse = PaymentServicesMWResponseFixture.withDefaultAffiliateCriteriaMWResponse();
+        when(provider.getAffiliateCriteria(any(), any(), any())).thenReturn(PaymentServicesMWResponseFixture.withDefaultAffiliateCriteriaMWResponse());
+        when(mapper.convertResponse(mwResponse)).thenReturn(expected);
+
+        //Act
+        AffiliateCriteriaResponse response = service.getAffiliateCriteria("123", "85", new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getAffiliateCriteria("123", "85", new HashMap<>());
+        verify(mapper).convertResponse(mwResponse);
     }
 }

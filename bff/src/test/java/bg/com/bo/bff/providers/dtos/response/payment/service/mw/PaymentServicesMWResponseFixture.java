@@ -130,4 +130,53 @@ public class PaymentServicesMWResponseFixture {
                 .msjContingency("test")
                 .build();
     }
+
+    public static AffiliateCriteriaMWResponse withDefaultAffiliateCriteriaMWResponse() {
+        return AffiliateCriteriaMWResponse.builder()
+                .data(
+                        AffiliateCriteriaMWResponse.DetailData.builder()
+                                .serviceCode("123")
+                                .year(123)
+                                .subServices(List.of(
+                                        AffiliateCriteriaMWResponse.DetailData.SubService.builder()
+                                                .labelCriteria("test")
+                                                .abbreviation("test")
+                                                .build()
+                                ))
+                                .searchCriteria(
+                                        List.of(
+                                                AffiliateCriteriaMWResponse.DetailData.SearchCriteria.builder()
+                                                        .labelCriteria("test")
+                                                        .description("test")
+                                                        .searchCriteriaId("test")
+                                                        .searchCriteriaIdAbbreviation("test")
+                                                        .fields(
+                                                                List.of(
+                                                                        AffiliateCriteriaMWResponse.DetailData.SearchCriteria.Field.builder()
+                                                                                .identifier(1)
+                                                                                .label("test")
+                                                                                .description("test")
+                                                                                .abbreviation("test")
+                                                                                .isMandatory("test")
+                                                                                .minimumLength("1")
+                                                                                .maximumLength("1")
+                                                                                .dataTypeCode("1")
+                                                                                .values(
+                                                                                        List.of(
+                                                                                                AffiliateCriteriaMWResponse.DetailData.SearchCriteria.Field.Value.builder()
+                                                                                                        .code("test")
+                                                                                                        .description("test")
+                                                                                                        .build()
+                                                                                        )
+                                                                                )
+                                                                                .build()
+                                                                )
+                                                        )
+                                                        .build()
+                                        )
+                                )
+                                .build()
+                )
+                .build();
+    }
 }
