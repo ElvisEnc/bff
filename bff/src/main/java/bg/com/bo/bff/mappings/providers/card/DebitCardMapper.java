@@ -6,6 +6,7 @@ import bg.com.bo.bff.application.dtos.response.debit.card.DebitCard;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCInternetAuthorization;
 import bg.com.bo.bff.application.dtos.response.debit.card.InternetAuthorizationResponse;
 import bg.com.bo.bff.commons.enums.debit.card.StatusType;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.request.debit.card.mw.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.mw.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
@@ -78,9 +79,9 @@ public class DebitCardMapper implements IDebitCardMapper {
     private DebitCard convertDebitCardMWToDebitCard(ListDebitCardMWResponse.DebitCardMW debitCardMW) {
         return DebitCard.builder()
                 .id(debitCardMW.getIdPci())
-                .cardNumber(debitCardMW.getCardId())
+                .cardNumber(Util.obfuscateCardNumber(debitCardMW.getCardId()))
                 .holderName(debitCardMW.getCardName())
-                .expiryDate(debitCardMW.getExpirationDate())
+                .expiryDate(Util.formatDate(debitCardMW.getExpirationDate()))
                 .status(debitCardMW.getStatusDescription())
                 .build();
     }
@@ -101,7 +102,7 @@ public class DebitCardMapper implements IDebitCardMapper {
         List<DCInternetAuthorization> result = response.getData().stream().map(x -> DCInternetAuthorization.builder()
                 .id(x.getInternetIdTjTD())
                 .amount(x.getAmount())
-                .period(new DCLimitsPeriod(x.getStartDate(), x.getEndDate()))
+                .period(new DCLimitsPeriod(Util.formatDate(x.getStartDate()), Util.formatDate(x.getEndDate())))
                 .build()
         ).toList();
         return InternetAuthorizationResponse.builder()
@@ -123,7 +124,7 @@ public class DebitCardMapper implements IDebitCardMapper {
     public UpdateDebitCardSecureMWRequest mapActiveAssuranceRequest(Integer personId, Integer cardId, UpdateDebitCardAssuranceRequest request) {
         return UpdateDebitCardSecureMWRequest.builder()
                 .personId(String.valueOf(personId))
-                .debitCardNew(request.getOpeningRequestFlow() ? "S" : "N")
+                .debitCardNew(Boolean.TRUE.equals(request.getOpeningRequestFlow()) ? "S" : "N")
                 .pciId(String.valueOf(cardId))
                 .acceptInsurance("S")
                 .email(request.getEmail())
@@ -160,13 +161,13 @@ public class DebitCardMapper implements IDebitCardMapper {
     @Override
     public DCDetailResponse mapToDetailResponse(DCDetailMWResponse response) {
         return DCDetailResponse.builder()
-                .cardNumber(response.getData().getCardNumber())
+                .cardNumber(Util.obfuscateCardNumber(response.getData().getCardNumber()))
                 .holderName(response.getData().getCardName())
-                .expirationDate(response.getData().getExpirationDate())
+                .expirationDate(Util.formatDate(response.getData().getExpirationDate()))
                 .status(response.getData().getStatus())
                 .statusDescription(response.getData().getStatusDescription())
                 .assured(Objects.equals(response.getData().getProtectionInsurance(), "S"))
-                .limitExpirationDate(response.getData().getLimitExpirationDate())
+                .limitExpirationDate(Util.formatDate(response.getData().getLimitExpirationDate()))
                 .limitAmount(response.getData().getLimitAmountME())
                 .limitNumber(response.getData().getLimitExtractions())
                 .build();

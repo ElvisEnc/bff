@@ -174,9 +174,9 @@ public class Util {
         for (DateTimeFormatter formatter : formatters) {
             try {
                 LocalDate date = LocalDate.parse(dateString, formatter);
-                return date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+                return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             } catch (DateTimeParseException e) {
-                LOGGER.error(e);
+                LOGGER.debug("Unable to parse date with format: %s".formatted(formatter.toString()), e);
             }
         }
         return dateString;
@@ -267,16 +267,25 @@ public class Util {
                 || "1018".equals(codeSegment) || "01018".equals(codeSegment)
                 || "MLD1018".equals(codeSegment);
     }
+
     /**
      * Convert a string number without explicit decimals to a big decimal number with n decimals.
      * Example: "100" -> 1.00
-     * @param number    string number to convert.
-     *                  The number is divided by 100 with n decimals.
-     *                  The number is rounded up.
-     * @param decimals  number of decimals.
+     *
+     * @param number   string number to convert.
+     *                 The number is divided by 100 with n decimals.
+     *                 The number is rounded up.
+     * @param decimals number of decimals.
      * @return decimal  number.
      */
     public static BigDecimal convertToDecimal(String number, int decimals) {
         return new BigDecimal(number).divide(new BigDecimal(100), decimals, RoundingMode.HALF_UP);
+    }
+
+    public static String obfuscateCardNumber(String cardNumber) {
+        if (cardNumber == null)
+            return "**** **** **** ****";
+        String lastFourDigits = cardNumber.substring(cardNumber.length() - 4);
+        return "**** **** **** " + lastFourDigits;
     }
 }
