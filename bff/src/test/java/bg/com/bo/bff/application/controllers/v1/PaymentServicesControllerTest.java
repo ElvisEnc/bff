@@ -1,8 +1,10 @@
 package bg.com.bo.bff.application.controllers.v1;
 
+import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IPaymentServicesService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -32,8 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -185,6 +186,34 @@ class PaymentServicesControllerTest {
         assertNotNull(result);
         assertEquals(response, actual);
         verify(service).getAffiliateServices(any(), any());
+    }
+
+    @Test
+    void givenPersonIdAffiliateIdWhenGetAffiliationDebtsServiceThenResponseListDebts() throws Exception {
+        //Arrange
+        DebtsRequest requestMock = PaymentServiceResponseFixture.withDefaultDebtsRequest();
+        DebtsResponse expectedResponse = PaymentServiceResponseFixture.withDefaultDebtsResponse();
+        when(service.getAffiliationDebts(any(), any(), any(), any())).thenReturn(expectedResponse);
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        // Act
+        String path = "/api/v1/payment-services/persons/{personId}/affiliate-services/{affiliateId}/debts";
+        MvcResult result = mockMvc.perform(post(path, 123, 123)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(requestMock))
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(ApiDataResponse.of(expectedResponse));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).getAffiliationDebts(any(), any(), any(), any());
     }
 
     @Test

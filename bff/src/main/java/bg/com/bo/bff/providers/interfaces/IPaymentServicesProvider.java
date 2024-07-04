@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.interfaces;
 
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 
@@ -15,6 +16,8 @@ public interface IPaymentServicesProvider {
     SubCategoryCitiesMWResponse getSubcategoryCities(Integer subCategoryId, Map<String, String> parameters) throws IOException;
 
     AffiliatedServiceMWResponse getAffiliationsServices(Integer personId, Map<String, String> parameters) throws IOException;
+
+    DebtsConsultationMWResponse debtsConsultation(DebtsConsultationMWRequest request, Map<String, String> parameters) throws IOException;
 
     ListServicesMWResponse getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException;
 

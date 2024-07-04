@@ -10,8 +10,10 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentServicesMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
@@ -39,6 +41,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.jsonResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -72,11 +75,11 @@ class PaymentServicesProviderTest {
         );
         httpClientFactoryMock = Mockito.mock(HttpClientConfig.class);
         tokenMiddlewareProviderMock = Mockito.mock(TokenMiddlewareProvider.class);
-        middlewareConfig = Mockito.mock(MiddlewareConfig.class);
+        middlewareConfig = MiddlewareConfigFixture.withDefault();
         when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
         provider = new PaymentServicesProvider(tokenMiddlewareProviderMock, middlewareConfig, httpClientFactoryMock);
 
-        setField(provider, "middlewareConfig", MiddlewareConfigFixture.withDefault(), MiddlewareConfig.class);
+        setField(provider, "middlewareConfig", middlewareConfig);
     }
 
     @Test
@@ -240,6 +243,26 @@ class PaymentServicesProviderTest {
 
         // Assert
         assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Get debts of affiliation services given PersonId and AffiliateId")
+    void givenDebtsRequestWhenGetDebtsConsultationThenExpectResponse() throws IOException {
+        // Arrange
+        DebtsConsultationMWRequest mwRequest = PaymentServicesMWResponseFixture.withDefaultDebtsRequestMW();
+        DebtsConsultationMWResponse expected = PaymentServicesMWResponseFixture.withDefaultDebtsResponseMW();
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(ApiDataResponse.of(expected));
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        DebtsConsultationMWResponse response = provider.debtsConsultation(mwRequest, map);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expected);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
 
     @Test

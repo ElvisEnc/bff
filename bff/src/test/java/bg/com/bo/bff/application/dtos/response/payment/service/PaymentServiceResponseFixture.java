@@ -1,7 +1,9 @@
 package bg.com.bo.bff.application.dtos.response.payment.service;
 
+import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,6 +20,40 @@ public class PaymentServiceResponseFixture {
 
     public static ApiDataResponse<List<AffiliateServiceResponse>> withDataDefaultListAffiliateServiceResponse() {
         return ApiDataResponse.of(Collections.singletonList(withDefaultAffiliateServiceResponse()));
+    }
+
+    public static DebtsRequest withDefaultDebtsRequest() {
+        return new DebtsRequest(123, 2024);
+    }
+
+    public static DebtsResponse withDefaultDebtsResponse() {
+        return DebtsResponse.builder()
+                .affiliationServiceId("123")
+                .serviceCode("123")
+                .invoiceNit("123")
+                .invoiceName("123")
+                .invoiceCanModify(false)
+                .debtDetails(Collections.singletonList(withDefaultDebtsDetail()))
+                .build();
+    }
+
+    public static DebtDetail withDefaultDebtsDetail() {
+        return DebtDetail.builder()
+                .description("123")
+                .referenceCode("123")
+                .monthPeriod(123)
+                .yearPeriod(123)
+                .commissionAmount(BigDecimal.valueOf(10.00))
+                .currencyCode("123")
+                .amount(BigDecimal.valueOf(10.00))
+                .accumulatedAmount(BigDecimal.valueOf(10.00))
+                .identifier(123L)
+                .validationType("123")
+                .detail("123")
+                .additionalDataDetails("123")
+                .paymentPlan("123")
+                .idGenerated("123")
+                .build();
     }
 
     public static CategoryResponse withDefaultCategoryResponse() {

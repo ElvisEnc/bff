@@ -1,9 +1,11 @@
 package bg.com.bo.bff.providers.dtos.response.payment.service.mw;
 
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -107,6 +109,42 @@ public class PaymentServicesMWResponseFixture {
                 .description("category")
                 .idCategory("1")
                 .detail("1")
+                .build();
+    }
+
+    public static DebtsConsultationMWRequest withDefaultDebtsRequestMW() {
+        return new DebtsConsultationMWRequest(123, 123, 2024, 123);
+    }
+
+    public static DebtsConsultationMWResponse withDefaultDebtsResponseMW() {
+        return DebtsConsultationMWResponse.builder()
+                .affiliationCode("123")
+                .serviceCode("123")
+                .invoiceTaxId("123")
+                .invoiceName("123")
+                .invoiceCanModifyData("123")
+                .debtDetails(Collections.singletonList(withDefaultDebtsDetailMW()))
+                .build();
+    }
+
+    public static DebtsConsultationMWResponse.DebtsConsultationDetail withDefaultDebtsDetailMW() {
+        return DebtsConsultationMWResponse.DebtsConsultationDetail.builder()
+                .description("123")
+                .referenceCode("123")
+                .monthPeriod(123)
+                .year(123)
+                .commissionAmount(BigDecimal.valueOf(10.00))
+                .currencyCode("123")
+                .amount(BigDecimal.valueOf(10.00))
+                .accumulatedAmount(BigDecimal.valueOf(10.00))
+                .identifier(123L)
+                .validationType("123")
+                .detail("123")
+                .additionalDataDetails("123")
+                .paymentPlanCode("123")
+                .idGeneratedForDebt("123")
+                .penaltyPayment(BigDecimal.valueOf(10.00))
+                .concept("123")
                 .build();
     }
 

@@ -1,13 +1,10 @@
 package bg.com.bo.bff.mappings.providers.services;
 
-import bg.com.bo.bff.application.dtos.response.payment.service.ListServicesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateServiceResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
+import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
+import bg.com.bo.bff.application.dtos.response.payment.service.*;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
-import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -56,6 +53,42 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                         .nameHolder(mw.getNameHolder())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public DebtsConsultationMWRequest mapperRequest(Integer personId, Integer affiliateServiceId, DebtsRequest request) {
+        return new DebtsConsultationMWRequest(request.serviceCode(), personId, request.year(), affiliateServiceId);
+    }
+
+    @Override
+    public DebtsResponse convertDebtsResponse(DebtsConsultationMWResponse mwResponse) {
+        List<DebtDetail> debtDetails = mwResponse.getDebtDetails().stream()
+                .map(detail ->
+                        DebtDetail.builder()
+                                .description(detail.getDescription())
+                                .referenceCode(detail.getReferenceCode())
+                                .monthPeriod(detail.getMonthPeriod())
+                                .yearPeriod(detail.getYear())
+                                .commissionAmount(detail.getCommissionAmount())
+                                .currencyCode(detail.getCurrencyCode())
+                                .amount(detail.getAmount())
+                                .accumulatedAmount(detail.getAccumulatedAmount())
+                                .identifier(detail.getIdentifier())
+                                .validationType(detail.getValidationType())
+                                .detail(detail.getDetail())
+                                .additionalDataDetails(detail.getAdditionalDataDetails())
+                                .paymentPlan(detail.getPaymentPlanCode())
+                                .idGenerated(detail.getIdGeneratedForDebt())
+                                .build())
+                .toList();
+        return DebtsResponse.builder()
+                .affiliationServiceId(mwResponse.getAffiliationCode())
+                .serviceCode(mwResponse.getServiceCode())
+                .invoiceNit(mwResponse.getInvoiceTaxId())
+                .invoiceName(mwResponse.getInvoiceName())
+                .invoiceCanModify(mwResponse.getInvoiceCanModifyData() != null && !"N".equals(mwResponse.getInvoiceCanModifyData()))
+                .debtDetails(debtDetails)
+                .build();
     }
 
     @Override

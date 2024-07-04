@@ -3,6 +3,8 @@ package bg.com.bo.bff.application.exceptions;
 
 import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.commons.enums.HttpError;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.UnexpectedTypeException;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +30,31 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
     private static final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class.getName());
 
-    @ExceptionHandler({MissingRequestHeaderException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class, ConstraintViolationException.class, UnexpectedTypeException.class})
+    @ExceptionHandler({MissingRequestHeaderException.class, MethodArgumentTypeMismatchException.class, ConstraintViolationException.class, UnexpectedTypeException.class})
     public ResponseEntity<ErrorResponse> handleValidationException(Exception exception) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), exception.getMessage());
         logger.debug(exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        String specificMessage = extractSpecificMessage(ex);
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), specificMessage);
+        logger.debug(ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    private String extractSpecificMessage(HttpMessageNotReadableException ex) {
+        Throwable cause = ex.getCause();
+        if (cause instanceof InvalidFormatException ife) {
+            String fieldName = ife.getPath().stream()
+                    .map(JsonMappingException.Reference::getFieldName)
+                    .collect(Collectors.joining("."));
+            String targetType = ife.getTargetType().getSimpleName();
+            return String.format("El campo '%s' debe ser un %s válido", fieldName, targetType);
+        }
+        return "El formato no es el esperado";
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -41,7 +63,7 @@ public class GlobalExceptionHandler {
                 .getFieldErrors()
                 .stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .collect(Collectors.toList());
+                .toList();
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), String.join(", ", errors));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }

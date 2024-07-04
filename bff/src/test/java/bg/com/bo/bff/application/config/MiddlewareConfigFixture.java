@@ -4,9 +4,19 @@ public class MiddlewareConfigFixture {
 
     public static MiddlewareConfig withDefault() {
         return MiddlewareConfig.builder()
-                .clientTransfer("1231212321")
-                .urlBase("http://url")
+                .urlBase("http://localhost:8080/")
                 .tokenPath("/path")
+                .clientLogin("clientLogin")
+                .clientOwnManager("clientOwnManager")
+                .clientTransfer("clientTransfer")
+                .clientTransferACH("clientTransferACH")
+                .clientThirdAccount("clientThirdAccount")
+                .clientAchAccount("clientAchAccount")
+                .dpfManager("dpfManager")
+                .clientGenerateQrManager("clientGenerateQrManager")
+                .clientQrTransactionManager("clientQrTransactionManager")
+                .clientDebitCardManager("clientDebitCardManager")
+                .clientPaymentServicesManager("clientPaymentServicesManager")
                 .build();
     }
 }

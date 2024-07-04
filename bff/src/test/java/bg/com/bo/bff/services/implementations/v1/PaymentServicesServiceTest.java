@@ -1,7 +1,9 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentServicesMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
@@ -99,6 +101,28 @@ class PaymentServicesServiceTest {
         assertEquals(expected, response);
         verify(provider).getAffiliationsServices(123, new HashMap<>());
         verify(mapper).convertResponse(mwResponse);
+    }
+
+    @Test
+    void givenPersonIdAffiliateIdWhenGetAffiliationDebtsThenListAffiliationsDebts() throws IOException {
+        //Arrange
+        DebtsRequest request = PaymentServiceResponseFixture.withDefaultDebtsRequest();
+        DebtsConsultationMWRequest mwRequestMock = PaymentServicesMWResponseFixture.withDefaultDebtsRequestMW();
+        DebtsConsultationMWResponse mwResponseMock = PaymentServicesMWResponseFixture.withDefaultDebtsResponseMW();
+        DebtsResponse expected = PaymentServiceResponseFixture.withDefaultDebtsResponse();
+        when(mapper.mapperRequest(123, 123, request)).thenReturn(mwRequestMock);
+        when(provider.debtsConsultation(any(), any())).thenReturn(mwResponseMock);
+        when(mapper.convertDebtsResponse(mwResponseMock)).thenReturn(expected);
+
+        //Act
+        DebtsResponse response = service.getAffiliationDebts(123, 123, request, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(mapper).mapperRequest(123, 123, request);
+        verify(provider).debtsConsultation(mwRequestMock, new HashMap<>());
+        verify(mapper).convertDebtsResponse(mwResponseMock);
     }
 
     @Test

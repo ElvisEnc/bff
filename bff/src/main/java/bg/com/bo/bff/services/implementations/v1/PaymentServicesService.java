@@ -1,7 +1,9 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
@@ -45,6 +47,13 @@ public class PaymentServicesService implements IPaymentServicesService {
     public List<AffiliateServiceResponse> getAffiliateServices(Integer personId, Map<String, String> parameter) throws IOException {
         AffiliatedServiceMWResponse mwResponse = provider.getAffiliationsServices(personId, parameter);
         return mapper.convertResponse(mwResponse);
+    }
+
+    @Override
+    public DebtsResponse getAffiliationDebts(Integer personId, Integer affiliateServiceId, DebtsRequest request, Map<String, String> parameter) throws IOException {
+        DebtsConsultationMWRequest mwRequest = mapper.mapperRequest(personId, affiliateServiceId, request);
+        DebtsConsultationMWResponse mwResponse = provider.debtsConsultation(mwRequest, parameter);
+        return mapper.convertDebtsResponse(mwResponse);
     }
 
     @Override
