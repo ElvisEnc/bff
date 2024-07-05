@@ -7,7 +7,7 @@ import bg.com.bo.bff.providers.models.interfaces.middleware.IResolverResponse;
 @lombok.Builder
 @lombok.NoArgsConstructor
 @lombok.AllArgsConstructor
-public class AdditionalEvaluator<R> {
+public class ResponseEvaluator<R> {
     private IEvaluatorResponse evaluator;
     private IResolverResponse<R> resolver;
 }
