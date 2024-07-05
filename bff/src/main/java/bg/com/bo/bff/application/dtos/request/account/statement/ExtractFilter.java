@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExtractFilter {
-
     @Valid
     private ExtractPagination pagination;
 
