@@ -17,6 +17,9 @@ public class AffiliateServiceResponse {
     @Schema(description = "id del servicio")
     private String serviceId;
 
+    @Schema(description = "código o número de la afiliación")
+    private String serviceCode;
+
     @Schema(description = "nombre del servicio")
     private String serviceName;
 
@@ -25,4 +28,10 @@ public class AffiliateServiceResponse {
 
     @Schema(description = "nombre del titular del servicio")
     private String nameHolder;
+
+    @Schema(description = "gestion")
+    private String year;
+
+    @Schema(description = "estado de contingencia")
+    private Boolean contingency;
 }

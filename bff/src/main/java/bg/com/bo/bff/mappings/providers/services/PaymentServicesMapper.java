@@ -30,6 +30,7 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                 .map(mw -> CategoryResponse.builder()
                         .categoryId(mw.getIdCategory())
                         .categoryName(mw.getDescription())
+                        .categoryDescription(mw.getDetail())
                         .build())
                 .toList();
     }
@@ -48,9 +49,12 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                 .map(mw -> AffiliateServiceResponse.builder()
                         .affiliateServiceId(mw.getAffiliationCode())
                         .serviceId(mw.getServiceCode())
+                        .serviceCode(mw.getInternalCod())
                         .serviceName(mw.getServiceDesc())
                         .referenceName(mw.getReferenceName())
                         .nameHolder(mw.getNameHolder())
+                        .year(mw.getYear())
+                        .contingency(!mw.getStateContingency().equals("N"))
                         .build())
                 .toList();
     }

@@ -16,4 +16,7 @@ public class CategoryResponse {
 
     @Schema(description = "id de la categoría")
     private String categoryName;
+
+    @Schema(description = "descripción de la categoría")
+    private String categoryDescription;
 }
