@@ -31,10 +31,10 @@ public class AffiliateCriteriaResponse {
     @AllArgsConstructor
     public static class SubService {
 
-        @Schema(description = "Etiqueta del criterio", example = "Etiqueta del criterio")
+        @Schema(description = "Etiqueta del criterio", example = "Pospago")
         private String criteriaLabel;
 
-        @Schema(description = "Abreviatura", example = "Abreviatura")
+        @Schema(description = "Abreviatura", example = "POS")
         private String abbreviation;
     }
 

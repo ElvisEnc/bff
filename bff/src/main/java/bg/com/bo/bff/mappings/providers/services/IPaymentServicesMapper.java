@@ -1,9 +1,11 @@
 package bg.com.bo.bff.mappings.providers.services;
 
-import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliateCriteriaMWResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 
@@ -17,11 +19,15 @@ public interface IPaymentServicesMapper {
 
     SubCategoryCitiesResponse convertResponse(SubCategoryCitiesMWResponse response);
 
-    List<AffiliateServiceResponse> convertResponse(AffiliatedServiceMWResponse mwResponse);
+    List<AffiliatedServicesResponse> convertResponse(AffiliatedServiceMWResponse mwResponse);
 
-    DebtsConsultationMWRequest mapperRequest(Integer personId, Integer affiliateServiceId, DebtsRequest request);
+    DebtsConsultationMWRequest mapperRequest(Integer personId, Integer affiliateServiceId, AffiliationDebtsRequest request);
 
-    DebtsResponse convertDebtsResponse(DebtsConsultationMWResponse mwRequest);
+    ServiceAffiliationMWRequest mapperRequest(String personId, ServiceAffiliationRequest request);
+
+    AffiliationDebtsResponse convertDebtsResponse(DebtsConsultationMWResponse mwRequest);
+
+    ServiceAffiliationResponse convertServiceAffiliationResponse(ServiceAffiliationMWResponse mwRequest);
 
     ListServicesResponse convertResponse(ListServicesMWResponse response);
 

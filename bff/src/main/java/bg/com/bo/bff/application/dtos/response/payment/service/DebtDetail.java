@@ -13,7 +13,7 @@ public class DebtDetail {
     @Schema(description = "descripción")
     private String description;
 
-    @Schema(description = "código de referencia")
+    @Schema(description = "código de referencia, equivale al internalCode")
     private String referenceCode;
 
     @Schema(description = "Mes")

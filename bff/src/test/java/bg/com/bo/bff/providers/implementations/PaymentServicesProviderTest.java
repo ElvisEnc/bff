@@ -13,6 +13,7 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentServicesMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
@@ -181,7 +182,7 @@ class PaymentServicesProviderTest {
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        AffiliatedServiceMWResponse response = provider.getAffiliationsServices(123, map);
+        AffiliatedServiceMWResponse response = provider.getAffiliatedServices(123, map);
 
         // Assert
         assertNotNull(response);
@@ -199,14 +200,14 @@ class PaymentServicesProviderTest {
         stubFor(get(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
 
         // Act
-        AffiliatedServiceMWResponse response = provider.getAffiliationsServices(123, map);
+        AffiliatedServiceMWResponse response = provider.getAffiliatedServices(123, map);
 
         //Assert
         assertNull(response.getData());
     }
 
     @Test
-    void giveErrorMiddlewareWhenGetListDebitCardThenGenericException() throws IOException {
+    void giveErrorMiddlewareWhenPaymentServicesProviderThenGenericException() throws IOException {
         // Arrange
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
@@ -221,7 +222,7 @@ class PaymentServicesProviderTest {
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            provider.getAffiliationsServices(123, map);
+            provider.getAffiliatedServices(123, map);
         });
 
         // Assert
@@ -231,14 +232,14 @@ class PaymentServicesProviderTest {
     }
 
     @Test
-    void giveInternalErrorWhenGetListDebitCardThenRuntimeException() throws IOException {
+    void giveInternalErrorWhenPaymentServicesProviderThenRuntimeException() throws IOException {
         // Arrange
         Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            provider.getAffiliationsServices(123, map);
+            provider.getAffiliatedServices(123, map);
         });
 
         // Assert
@@ -261,6 +262,26 @@ class PaymentServicesProviderTest {
         // Assert
         assertNotNull(response);
         assertThat(response).usingRecursiveComparison().isEqualTo(expected);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Should Successfully Affiliate Service in Payment Services Module")
+    void givenServiceAffiliationRequestWhenPostServiceAffiliationThenExpectResponse() throws IOException {
+        // Arrange
+        ServiceAffiliationMWRequest mwRequestMock=  PaymentServicesMWResponseFixture.withDefaultServiceAffiliationMWRequest();
+        ServiceAffiliationMWResponse expected= PaymentServicesMWResponseFixture.withDefaultServiceAffiliationMWResponse();
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(ApiDataResponse.of(expected));
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        ServiceAffiliationMWResponse response = provider.serviceAffiliation(mwRequestMock, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, expected);
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }

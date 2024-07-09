@@ -1,6 +1,10 @@
 package bg.com.bo.bff.providers.dtos.response.payment.service.mw;
 
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataRegisterServiceAffiliationMW;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataServiceAffiliationMW;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DependencyServiceAffiliationMW;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
@@ -146,6 +150,54 @@ public class PaymentServicesMWResponseFixture {
                 .penaltyPayment(BigDecimal.valueOf(10.00))
                 .concept("123")
                 .build();
+    }
+
+    public static ServiceAffiliationMWRequest withDefaultServiceAffiliationMWRequest() {
+        return ServiceAffiliationMWRequest.builder()
+                .serviceCode("42")
+                .criteriaSearchId("24")
+                .referenceName("referencia")
+                .year("2024")
+                .personId("123")
+                .accountNumber("0")
+                .isTemporal("N")
+                .searchFields(List.of(withDefaultDependencyServiceAffiliationMW()))
+                .dataAffiliation(List.of(withDefaultDataServiceAffiliationMW()))
+                .build();
+    }
+
+    public static DependencyServiceAffiliationMW withDefaultDependencyServiceAffiliationMW() {
+        return new DependencyServiceAffiliationMW(
+                "28",
+                "73166120"
+        );
+    }
+
+    public static DataServiceAffiliationMW withDefaultDataServiceAffiliationMW() {
+        return new DataServiceAffiliationMW(
+                "1",
+                "S/N",
+                "73166120",
+                "desc",
+                null,
+                List.of(withDefaultDataRegisterServiceAffiliationMW())
+        );
+    }
+
+    public static DataRegisterServiceAffiliationMW withDefaultDataRegisterServiceAffiliationMW() {
+        return new DataRegisterServiceAffiliationMW(
+                "cuenta",
+                "73166120",
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    public static ServiceAffiliationMWResponse withDefaultServiceAffiliationMWResponse() {
+        return new ServiceAffiliationMWResponse("1946919");
     }
 
     public static AffiliatedServiceMWResponse withDefaultAffiliatedServiceMWResponse() {

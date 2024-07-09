@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public record DebtsRequest(
+public record AffiliationDebtsRequest(
         @NotNull
         @Min(1)
         @Schema(example = "46521", description = "Código de servicio")

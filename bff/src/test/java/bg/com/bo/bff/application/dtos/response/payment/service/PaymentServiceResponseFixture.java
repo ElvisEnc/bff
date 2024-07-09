@@ -1,6 +1,10 @@
 package bg.com.bo.bff.application.dtos.response.payment.service;
 
-import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataRegisterServiceAffiliation;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataServiceAffiliation;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DependencyServiceAffiliation;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 
 import java.math.BigDecimal;
@@ -8,27 +12,27 @@ import java.util.Collections;
 import java.util.List;
 
 public class PaymentServiceResponseFixture {
-    public static AffiliateServiceResponse withDefaultAffiliateServiceResponse() {
-        return AffiliateServiceResponse.builder()
+    public static AffiliatedServicesResponse withDefaultAffiliateServiceResponse() {
+        return AffiliatedServicesResponse.builder()
                 .affiliateServiceId("123")
-                .serviceId("123")
+                .serviceCode("123")
                 .serviceName("test")
                 .referenceName("test")
                 .nameHolder("test")
                 .build();
     }
 
-    public static ApiDataResponse<List<AffiliateServiceResponse>> withDataDefaultListAffiliateServiceResponse() {
+    public static ApiDataResponse<List<AffiliatedServicesResponse>> withDataDefaultListAffiliateServiceResponse() {
         return ApiDataResponse.of(Collections.singletonList(withDefaultAffiliateServiceResponse()));
     }
 
-    public static DebtsRequest withDefaultDebtsRequest() {
-        return new DebtsRequest(123, 2024);
+    public static AffiliationDebtsRequest withDefaultDebtsRequest() {
+        return new AffiliationDebtsRequest(123, 2024);
     }
 
-    public static DebtsResponse withDefaultDebtsResponse() {
-        return DebtsResponse.builder()
-                .affiliationServiceId("123")
+    public static AffiliationDebtsResponse withDefaultDebtsResponse() {
+        return AffiliationDebtsResponse.builder()
+                .affiliateServiceId("123")
                 .serviceCode("123")
                 .invoiceNit("123")
                 .invoiceName("123")
@@ -56,6 +60,53 @@ public class PaymentServiceResponseFixture {
                 .build();
     }
 
+    public static ServiceAffiliationRequest withDefaultServiceAffiliationRequest() {
+        return new ServiceAffiliationRequest(
+                "42",
+                "24",
+                "referencia",
+                "2024",
+                "0",
+                false,
+                List.of(withDefaultDependencyServiceAffiliation()),
+                List.of(withDefaultDataServiceAffiliation())
+        );
+    }
+
+    public static DependencyServiceAffiliation withDefaultDependencyServiceAffiliation() {
+        return new DependencyServiceAffiliation(
+                "28",
+                "73166120"
+        );
+    }
+
+    public static DataServiceAffiliation withDefaultDataServiceAffiliation() {
+        return new DataServiceAffiliation(
+                "1",
+                "S/N",
+                "73166120",
+                "desc",
+                null,
+                List.of(withDefaultDataRegisterServiceAffiliation())  // dataRegister
+        );
+    }
+
+    public static DataRegisterServiceAffiliation withDefaultDataRegisterServiceAffiliation() {
+        return new DataRegisterServiceAffiliation(
+                "cuenta",
+                "73166120",
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    public static ServiceAffiliationResponse withDefaultServiceAffiliationResponse() {
+        return new ServiceAffiliationResponse("1946919");
+    }
+
     public static CategoryResponse withDefaultCategoryResponse() {
         return CategoryResponse.builder()
                 .categoryId("1")
@@ -71,16 +122,16 @@ public class PaymentServiceResponseFixture {
         return new ListServicesResponse(
                 List.of(
                         ListServicesResponse.Service.builder()
-                                .serviceId("1")
-                                .description("Servicio 1")
+                                .serviceCode("1")
+                                .serviceName("Servicio 1")
                                 .build(),
                         ListServicesResponse.Service.builder()
-                                .serviceId("2")
-                                .description("Servicio 2")
+                                .serviceCode("2")
+                                .serviceName("Servicio 2")
                                 .build(),
                         ListServicesResponse.Service.builder()
-                                .serviceId("3")
-                                .description("Servicio 3")
+                                .serviceCode("3")
+                                .serviceName("Servicio 3")
                                 .build()
                 )
         );
@@ -90,21 +141,21 @@ public class PaymentServiceResponseFixture {
         return new SubcategoriesResponse(
                 List.of(
                         SubcategoriesResponse.Subcategory.builder()
-                                .id(1)
+                                .subcategoryId(1)
                                 .categoryId(2)
-                                .description("UNIVERSIDADES")
+                                .subcategoryName("UNIVERSIDADES")
                                 .hasCity(Boolean.FALSE)
                                 .build(),
                         SubcategoriesResponse.Subcategory.builder()
-                                .id(1)
+                                .subcategoryId(1)
                                 .categoryId(2)
-                                .description("COLEGIOS")
+                                .subcategoryName("COLEGIOS")
                                 .hasCity(Boolean.TRUE)
                                 .build(),
                         SubcategoriesResponse.Subcategory.builder()
-                                .id(1)
+                                .subcategoryId(1)
                                 .categoryId(2)
-                                .description("INSTITUTOS")
+                                .subcategoryName("INSTITUTOS")
                                 .hasCity(Boolean.FALSE)
                                 .build()
                 )

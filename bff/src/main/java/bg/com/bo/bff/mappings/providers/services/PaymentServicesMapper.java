@@ -1,9 +1,17 @@
 package bg.com.bo.bff.mappings.providers.services;
 
-import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataRegisterServiceAffiliation;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataServiceAffiliation;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DependencyServiceAffiliation;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataRegisterServiceAffiliationMW;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataServiceAffiliationMW;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DependencyServiceAffiliationMW;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import org.springframework.stereotype.Component;
 
@@ -42,15 +50,15 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
     }
 
     @Override
-    public List<AffiliateServiceResponse> convertResponse(AffiliatedServiceMWResponse mwResponse) {
+    public List<AffiliatedServicesResponse> convertResponse(AffiliatedServiceMWResponse mwResponse) {
         if (mwResponse == null || mwResponse.getData() == null)
             return Collections.emptyList();
         return mwResponse.getData().stream()
-                .map(mw -> AffiliateServiceResponse.builder()
+                .map(mw -> AffiliatedServicesResponse.builder()
                         .affiliateServiceId(mw.getAffiliationCode())
-                        .serviceId(mw.getServiceCode())
-                        .serviceCode(mw.getInternalCod())
+                        .serviceCode(mw.getServiceCode())
                         .serviceName(mw.getServiceDesc())
+                        .internalCode(mw.getInternalCod())
                         .referenceName(mw.getReferenceName())
                         .nameHolder(mw.getNameHolder())
                         .year(mw.getYear())
@@ -60,12 +68,60 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
     }
 
     @Override
-    public DebtsConsultationMWRequest mapperRequest(Integer personId, Integer affiliateServiceId, DebtsRequest request) {
+    public DebtsConsultationMWRequest mapperRequest(Integer personId, Integer affiliateServiceId, AffiliationDebtsRequest request) {
         return new DebtsConsultationMWRequest(request.serviceCode(), personId, request.year(), affiliateServiceId);
     }
 
     @Override
-    public DebtsResponse convertDebtsResponse(DebtsConsultationMWResponse mwResponse) {
+    public ServiceAffiliationMWRequest mapperRequest(String personId, ServiceAffiliationRequest request) {
+        return ServiceAffiliationMWRequest.builder()
+                .serviceCode(request.serviceCode())
+                .criteriaSearchId(request.criteriaSearchId())
+                .referenceName(request.referenceName())
+                .year(request.year())
+                .personId(personId)
+                .accountNumber(request.accountNumber())
+                .isTemporal(request.isTemporal() ? "S" : "N")
+                .searchFields(mapDependencyServiceAffiliations(request.searchFields()))
+                .dataAffiliation(mapDataServiceAffiliations(request.dataAffiliation()))
+                .build();
+    }
+
+    private List<DependencyServiceAffiliationMW> mapDependencyServiceAffiliations(List<DependencyServiceAffiliation> list) {
+        return list.stream()
+                .map(dep -> new DependencyServiceAffiliationMW(dep.code(), dep.value()))
+                .toList();
+    }
+
+    private List<DataServiceAffiliationMW> mapDataServiceAffiliations(List<DataServiceAffiliation> dataAffiliation) {
+        return dataAffiliation.stream()
+                .map(da -> new DataServiceAffiliationMW(
+                        da.identify(),
+                        da.nameOwner(),
+                        da.code(),
+                        da.description(),
+                        da.additionalFact(),
+                        mapDataRegisterServiceAffiliations(da.dataRegister())
+                ))
+                .toList();
+    }
+
+    private List<DataRegisterServiceAffiliationMW> mapDataRegisterServiceAffiliations(List<DataRegisterServiceAffiliation> dataRegister) {
+        return dataRegister.stream()
+                .map(dr -> new DataRegisterServiceAffiliationMW(
+                        dr.label(),
+                        dr.value(),
+                        dr.mandatory(),
+                        dr.edit(),
+                        dr.group(),
+                        dr.description(),
+                        dr.code()
+                ))
+                .toList();
+    }
+
+    @Override
+    public AffiliationDebtsResponse convertDebtsResponse(DebtsConsultationMWResponse mwResponse) {
         List<DebtDetail> debtDetails = mwResponse.getDebtDetails().stream()
                 .map(detail ->
                         DebtDetail.builder()
@@ -85,8 +141,8 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                                 .idGenerated(detail.getIdGeneratedForDebt())
                                 .build())
                 .toList();
-        return DebtsResponse.builder()
-                .affiliationServiceId(mwResponse.getAffiliationCode())
+        return AffiliationDebtsResponse.builder()
+                .affiliateServiceId(mwResponse.getAffiliationCode())
                 .serviceCode(mwResponse.getServiceCode())
                 .invoiceNit(mwResponse.getInvoiceTaxId())
                 .invoiceName(mwResponse.getInvoiceName())
@@ -96,14 +152,19 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
     }
 
     @Override
+    public ServiceAffiliationResponse convertServiceAffiliationResponse(ServiceAffiliationMWResponse mwRequest) {
+        return new ServiceAffiliationResponse(mwRequest.affiliationNewCod());
+    }
+
+    @Override
     public ListServicesResponse convertResponse(ListServicesMWResponse mwResponse) {
         if (mwResponse == null || mwResponse.getData() == null)
             return new ListServicesResponse(Collections.emptyList());
         List<ListServicesResponse.Service> data =
                 mwResponse.getData().stream()
                         .map(mw -> ListServicesResponse.Service.builder()
-                                .serviceId(mw.getServiceCode())
-                                .description(mw.getServiceName())
+                                .serviceCode(mw.getServiceCode())
+                                .serviceName(mw.getServiceName())
                                 .build())
                         .toList();
         return new ListServicesResponse(data);

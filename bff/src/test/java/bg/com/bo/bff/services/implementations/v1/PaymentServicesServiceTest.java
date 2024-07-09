@@ -1,10 +1,12 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentServicesMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.mappings.providers.services.IPaymentServicesMapper;
@@ -88,34 +90,56 @@ class PaymentServicesServiceTest {
     @Test
     void givenPersonIdWhenGetAffiliateServicesThenListAffiliations() throws IOException {
         //Arrange
-        List<AffiliateServiceResponse> expected = PaymentServiceResponseFixture.withDataDefaultListAffiliateServiceResponse().getData();
+        List<AffiliatedServicesResponse> expected = PaymentServiceResponseFixture.withDataDefaultListAffiliateServiceResponse().getData();
         AffiliatedServiceMWResponse mwResponse = PaymentServicesMWResponseFixture.withDefaultAffiliatedServiceMWResponse();
-        when(provider.getAffiliationsServices(any(), any())).thenReturn(mwResponse);
+        when(provider.getAffiliatedServices(any(), any())).thenReturn(mwResponse);
         when(mapper.convertResponse(mwResponse)).thenReturn(expected);
 
         //Act
-        List<AffiliateServiceResponse> response = service.getAffiliateServices(123, new HashMap<>());
+        List<AffiliatedServicesResponse> response = service.getAffiliatedServices(123, new HashMap<>());
 
         //Assert
         assertNotNull(response);
         assertEquals(expected, response);
-        verify(provider).getAffiliationsServices(123, new HashMap<>());
+        verify(provider).getAffiliatedServices(123, new HashMap<>());
         verify(mapper).convertResponse(mwResponse);
+    }
+
+    @Test
+    void givenPersonIdWhenPostServiceAffiliationThenNewAffiliationCode() throws IOException {
+        //Arrange
+        ServiceAffiliationRequest requestMock = PaymentServiceResponseFixture.withDefaultServiceAffiliationRequest();
+        ServiceAffiliationMWRequest mwRequest=  PaymentServicesMWResponseFixture.withDefaultServiceAffiliationMWRequest();
+        ServiceAffiliationMWResponse responseMock= PaymentServicesMWResponseFixture.withDefaultServiceAffiliationMWResponse();
+        ServiceAffiliationResponse expected = PaymentServiceResponseFixture.withDefaultServiceAffiliationResponse();
+        when(mapper.mapperRequest("123",  requestMock)).thenReturn(mwRequest);
+        when(provider.serviceAffiliation(any(), any())).thenReturn(responseMock);
+        when(mapper.convertServiceAffiliationResponse(responseMock)).thenReturn(expected);
+
+        //Act
+        ServiceAffiliationResponse response = service.serviceAffiliation("123",  requestMock, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(mapper).mapperRequest("123", requestMock);
+        verify(provider).serviceAffiliation(mwRequest, new HashMap<>());
+        verify(mapper).convertServiceAffiliationResponse(responseMock);
     }
 
     @Test
     void givenPersonIdAffiliateIdWhenGetAffiliationDebtsThenListAffiliationsDebts() throws IOException {
         //Arrange
-        DebtsRequest request = PaymentServiceResponseFixture.withDefaultDebtsRequest();
+        AffiliationDebtsRequest request = PaymentServiceResponseFixture.withDefaultDebtsRequest();
         DebtsConsultationMWRequest mwRequestMock = PaymentServicesMWResponseFixture.withDefaultDebtsRequestMW();
         DebtsConsultationMWResponse mwResponseMock = PaymentServicesMWResponseFixture.withDefaultDebtsResponseMW();
-        DebtsResponse expected = PaymentServiceResponseFixture.withDefaultDebtsResponse();
+        AffiliationDebtsResponse expected = PaymentServiceResponseFixture.withDefaultDebtsResponse();
         when(mapper.mapperRequest(123, 123, request)).thenReturn(mwRequestMock);
         when(provider.debtsConsultation(any(), any())).thenReturn(mwResponseMock);
         when(mapper.convertDebtsResponse(mwResponseMock)).thenReturn(expected);
 
         //Act
-        DebtsResponse response = service.getAffiliationDebts(123, 123, request, new HashMap<>());
+        AffiliationDebtsResponse response = service.getAffiliationDebts(123, 123, request, new HashMap<>());
 
         //Assert
         assertNotNull(response);

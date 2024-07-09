@@ -18,8 +18,8 @@ public class ListServicesResponse {
     @Data
     public static class Service{
         @Schema(example = "1", description = "Código del servicio")
-        private String serviceId;
-        @Schema(example = "Servicio 1", description = "Nombre del servicio")
-        private String description;
+        private String serviceCode;
+        @Schema(example = "Entel", description = "Nombre del servicio")
+        private String serviceName;
     }
 }

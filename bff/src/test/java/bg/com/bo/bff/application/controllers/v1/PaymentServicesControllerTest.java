@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.commons.enums.DeviceMW;
@@ -42,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PaymentServicesControllerTest {
     private static final String GET_SUB_CATEGORIES = "/api/v1/payment-services/categories/{categoryId}/subcategories";
     private static final String GET_SUBCATEGORY_CITIES = "/api/v1/payment-services/subcategories/{subCategoryId}/cities";
-    private static final String DELETE_AFFILIATE_SERVICE = "/api/v1/payment-services/persons/{personId}/affiliate-services/{affiliateServiceId}";
+    private static final String DELETE_AFFILIATE_SERVICE = "/api/v1/payment-services/persons/{personId}/affiliate-services/{affiliateCode}";
 
     private MockMvc mockMvc;
     @InjectMocks
@@ -165,8 +166,8 @@ class PaymentServicesControllerTest {
     @Test
     void givenPersonIdWhenGetAffiliateServiceThenResponseListAffiliations() throws Exception {
         //Arrange
-        ApiDataResponse<List<AffiliateServiceResponse>> expectedResponse = PaymentServiceResponseFixture.withDataDefaultListAffiliateServiceResponse();
-        when(service.getAffiliateServices(any(), any())).thenReturn(expectedResponse.getData());
+        ApiDataResponse<List<AffiliatedServicesResponse>> expectedResponse = PaymentServiceResponseFixture.withDataDefaultListAffiliateServiceResponse();
+        when(service.getAffiliatedServices(any(), any())).thenReturn(expectedResponse.getData());
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
 
@@ -185,14 +186,42 @@ class PaymentServicesControllerTest {
         // Assert
         assertNotNull(result);
         assertEquals(response, actual);
-        verify(service).getAffiliateServices(any(), any());
+        verify(service).getAffiliatedServices(any(), any());
+    }
+
+    @Test
+    void givenPersonIdWhenPostServiceAffiliationThenResponseNewAffiliationCode() throws Exception {
+        //Arrange
+        ServiceAffiliationRequest requestMock = PaymentServiceResponseFixture.withDefaultServiceAffiliationRequest();
+        ServiceAffiliationResponse expectedResponse = PaymentServiceResponseFixture.withDefaultServiceAffiliationResponse();
+        when(service.serviceAffiliation(any(), any(), any())).thenReturn(expectedResponse);
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        // Act
+        String path = "/api/v1/payment-services/persons/{personId}/affiliate-services";
+        MvcResult result = mockMvc.perform(post(path, 123)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(requestMock))
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expectedResponse);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).serviceAffiliation(any(), any(), any());
     }
 
     @Test
     void givenPersonIdAffiliateIdWhenGetAffiliationDebtsServiceThenResponseListDebts() throws Exception {
         //Arrange
-        DebtsRequest requestMock = PaymentServiceResponseFixture.withDefaultDebtsRequest();
-        DebtsResponse expectedResponse = PaymentServiceResponseFixture.withDefaultDebtsResponse();
+        AffiliationDebtsRequest requestMock = PaymentServiceResponseFixture.withDefaultDebtsRequest();
+        AffiliationDebtsResponse expectedResponse = PaymentServiceResponseFixture.withDefaultDebtsResponse();
         when(service.getAffiliationDebts(any(), any(), any(), any())).thenReturn(expectedResponse);
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");

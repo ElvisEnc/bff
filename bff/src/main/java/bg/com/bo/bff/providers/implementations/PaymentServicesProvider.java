@@ -6,6 +6,7 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
@@ -51,7 +52,7 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
     }
 
     @Override
-    public AffiliatedServiceMWResponse getAffiliationsServices(Integer personId, Map<String, String> parameters) throws IOException {
+    public AffiliatedServiceMWResponse getAffiliatedServices(Integer personId, Map<String, String> parameters) throws IOException {
         String url = baseUrl + String.format(PaymentServicesMiddlewareServices.GET_AFFILIATIONS_SERVICES.getServiceURL(), personId);
         DefaultResultByMWErrorEvaluator<AffiliatedServiceMWResponse> additionalEvaluator = DefaultResultByMWErrorEvaluator.instance(PaymentServicesMiddlewareError.MDWPSM_005);
         return get(url, HeadersMW.getDefaultHeaders(parameters), AffiliatedServiceMWResponse.class, additionalEvaluator);
@@ -62,6 +63,13 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
         String url = baseUrl + PaymentServicesMiddlewareServices.GET_DEBTS.getServiceURL();
         ApiDataResponse<DebtsConsultationMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(parameters), request, ApiDataResponse.class);
         return Util.stringToObject(Util.objectToString(mwResponse.getData()), DebtsConsultationMWResponse.class);
+    }
+
+    @Override
+    public ServiceAffiliationMWResponse serviceAffiliation(ServiceAffiliationMWRequest request, Map<String, String> parameters) throws IOException {
+        String url = baseUrl + PaymentServicesMiddlewareServices.POST_SERVICE_AFFILIATION.getServiceURL();
+        ApiDataResponse<ServiceAffiliationMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(parameters), request, ApiDataResponse.class);
+        return Util.stringToObject(Util.objectToString(mwResponse.getData()), ServiceAffiliationMWResponse.class);
     }
 
     @Override

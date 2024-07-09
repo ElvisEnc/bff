@@ -10,18 +10,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AffiliateServiceResponse {
+public class AffiliatedServicesResponse {
     @Schema(description = "id de la afiliación")
     private String affiliateServiceId;
 
-    @Schema(description = "id del servicio")
-    private String serviceId;
-
-    @Schema(description = "código o número de la afiliación")
+    @Schema(description = "Código de servicio")
     private String serviceCode;
 
     @Schema(description = "nombre del servicio")
     private String serviceName;
+
+    @Schema(description = "código o número de la afiliación")
+    private String internalCode;
 
     @Schema(description = "referencia de la afiliación")
     private String referenceName;

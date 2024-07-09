@@ -1,10 +1,12 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import bg.com.bo.bff.mappings.providers.services.IPaymentServicesMapper;
@@ -44,13 +46,20 @@ public class PaymentServicesService implements IPaymentServicesService {
     }
 
     @Override
-    public List<AffiliateServiceResponse> getAffiliateServices(Integer personId, Map<String, String> parameter) throws IOException {
-        AffiliatedServiceMWResponse mwResponse = provider.getAffiliationsServices(personId, parameter);
+    public List<AffiliatedServicesResponse> getAffiliatedServices(Integer personId, Map<String, String> parameter) throws IOException {
+        AffiliatedServiceMWResponse mwResponse = provider.getAffiliatedServices(personId, parameter);
         return mapper.convertResponse(mwResponse);
     }
 
     @Override
-    public DebtsResponse getAffiliationDebts(Integer personId, Integer affiliateServiceId, DebtsRequest request, Map<String, String> parameter) throws IOException {
+    public ServiceAffiliationResponse serviceAffiliation(String personId, ServiceAffiliationRequest request, Map<String, String> parameter) throws IOException {
+        ServiceAffiliationMWRequest mwRequest = mapper.mapperRequest(personId, request);
+        ServiceAffiliationMWResponse mwResponse = provider.serviceAffiliation(mwRequest, parameter);
+        return mapper.convertServiceAffiliationResponse(mwResponse);
+    }
+
+    @Override
+    public AffiliationDebtsResponse getAffiliationDebts(Integer personId, Integer affiliateServiceId, AffiliationDebtsRequest request, Map<String, String> parameter) throws IOException {
         DebtsConsultationMWRequest mwRequest = mapper.mapperRequest(personId, affiliateServiceId, request);
         DebtsConsultationMWResponse mwResponse = provider.debtsConsultation(mwRequest, parameter);
         return mapper.convertDebtsResponse(mwResponse);
@@ -66,7 +75,6 @@ public class PaymentServicesService implements IPaymentServicesService {
     public GenericResponse deleteAffiliationService(String personId, String accountNumber, Map<String, String> parameter) throws IOException {
         final DeleteAffiliateServiceMWRequest request = mapper.convertRequest(personId, accountNumber);
         provider.deleteAffiliationService(request, parameter);
-
         return GenericResponse.instance(DeleteAffiliateServiceResponse.SUCCESS);
     }
 

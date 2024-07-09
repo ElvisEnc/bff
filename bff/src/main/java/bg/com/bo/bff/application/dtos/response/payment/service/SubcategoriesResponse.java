@@ -20,11 +20,11 @@ public class SubcategoriesResponse {
     @Builder
     public static class Subcategory {
         @Schema(example = "1", description = " ID de la subcategoria.")
-        private Integer id;
+        private Integer subcategoryId;
         @Schema(example = "1", description = "ID de categoria.")
         private Integer categoryId;
-        @Schema(example = "Colegio", description = "Descripción de subcategoria.")
-        private String description;
+        @Schema(example = "Colegio", description = "Nombre de la subcategoria.")
+        private String subcategoryName;
         @Schema(example = "true", description = "Indica si el servicio esta agrupado por ciudad.")
         private boolean hasCity;
     }

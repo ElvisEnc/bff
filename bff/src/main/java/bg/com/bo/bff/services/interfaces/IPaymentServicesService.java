@@ -1,6 +1,7 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.payment.service.DebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 
@@ -16,13 +17,15 @@ public interface IPaymentServicesService {
 
     SubCategoryCitiesResponse getSubcategoryCities(Integer subCategoryId, Map<String, String> parameters) throws IOException;
 
-    List<AffiliateServiceResponse> getAffiliateServices(Integer personId, Map<String, String> parameter) throws IOException;
+    List<AffiliatedServicesResponse> getAffiliatedServices(Integer personId, Map<String, String> parameter) throws IOException;
 
-    DebtsResponse getAffiliationDebts(Integer personId, Integer affiliateServiceId, DebtsRequest request, Map<String, String> parameter) throws IOException;
+    ServiceAffiliationResponse serviceAffiliation(String personId, ServiceAffiliationRequest request, Map<String, String> parameter) throws IOException;
+
+    AffiliationDebtsResponse getAffiliationDebts(Integer personId, Integer affiliateServiceId, AffiliationDebtsRequest request, Map<String, String> parameter) throws IOException;
 
     ListServicesResponse getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException;
 
     GenericResponse deleteAffiliationService(String personId, String affiliateServiceId, Map<String, String> parameter) throws IOException;
 
-    AffiliateCriteriaResponse getAffiliateCriteria (String personId, String serviceCode, Map<String, String> parameter) throws IOException;
+    AffiliateCriteriaResponse getAffiliateCriteria(String personId, String serviceCode, Map<String, String> parameter) throws IOException;
 }

@@ -9,9 +9,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DebtsResponse {
+public class AffiliationDebtsResponse {
     @Schema(description = "Código de afiliación")
-    private String affiliationServiceId;
+    private String affiliateServiceId;
 
     @Schema(description = "Código de servicio")
     private String serviceCode;
