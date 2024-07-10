@@ -25,7 +25,7 @@ public class DebitCardMapper implements IDebitCardMapper {
     @Override
     public DCLimitsMWRequest mapToLimitsRequest(DCLimitsRequest request, String personId, String cardId) {
         return DCLimitsMWRequest.builder()
-                .numberOperations(request.getDailyCount())
+                .numberOperations(String.valueOf(request.getDailyCount()))
                 .personId(personId)
                 .expirationDate(request.getPeriod().getEnd())
                 .pciId(cardId)

@@ -1,15 +1,17 @@
 package bg.com.bo.bff.application.dtos.request.debit.card;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class DebitCardRequestFixture {
     public static DCLimitsRequest withDefaultDCLimitsRequest() {
         return DCLimitsRequest.builder()
                 .dailyAmount(BigDecimal.valueOf(1000))
-                .dailyCount("10")
+                .dailyCount(10)
                 .period(DCLimitsPeriod.builder()
-                        .start("2024-06-06")
+                        .start(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                         .end("2024-06-06")
                         .build()
                 )

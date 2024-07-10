@@ -21,16 +21,17 @@ import java.math.BigDecimal;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DCLimitsRequest {
     @NotNull(message = "El monto límite es obligatorio")
-    @DecimalMin(value = "0", inclusive = false, message = "El monto debe ser mayor que cero")
-    @Digits(integer = 13, fraction = 0, message = "El monto puede tener hasta 13 dígitos enteros")
-    @Schema(description = "Monto límite a transacciones", example = "100")
+    @DecimalMin(value = "500", inclusive = true, message = "El monto debe ser al menos 500")
+    @DecimalMax(value = "1000", inclusive = true, message = "El monto debe ser como máximo 1000")
+    @Digits(integer = 4, fraction = 2, message = "El monto puede tener hasta 4 dígitos enteros y 2 decimales")
+    @Schema(description = "Monto límite a transacciones", example = "750.00")
     private BigDecimal dailyAmount;
 
     @NotNull(message = "La cantidad máxima de extracciones es obligatoria")
-    @NotBlank(message = "La cantidad máxima de extracciones no puede estar vacía")
-    @Pattern(regexp = "\\d+", message = "La cantidad máxima de extracciones solo permite números")
-    @Schema(description = "Cantidad máxima de extracciones diarias", example = "50")
-    private String dailyCount;
+    @Min(value = 1, message = "La cantidad máxima de extracciones debe ser al menos 1")
+    @Max(value = 10, message = "La cantidad máxima de extracciones debe ser como máximo 10")
+    @Schema(description = "Cantidad máxima de extracciones diarias", example = "5")
+    private Integer dailyCount;
 
     @Valid
     @JsonProperty
