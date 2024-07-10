@@ -5,6 +5,6 @@ import org.springframework.util.function.ThrowingFunction;
 import java.io.IOException;
 
 @FunctionalInterface
-public interface IResolverResponse<R> {
+public interface IResponseResolver<R> {
     R resolve(String response, Class<R> classType, ThrowingFunction<String, IMiddlewareError> mapper) throws NoSuchMethodException, IOException;
 }

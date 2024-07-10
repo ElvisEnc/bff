@@ -15,7 +15,7 @@ import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentS
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareServices;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
-import bg.com.bo.bff.providers.models.middleware.additional.evaluator.DefaultResultByMWErrorEvaluator;
+import bg.com.bo.bff.providers.models.middleware.response.handler.ByMwErrorResponseHandler;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -54,8 +54,8 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
     @Override
     public AffiliatedServiceMWResponse getAffiliatedServices(Integer personId, Map<String, String> parameters) throws IOException {
         String url = baseUrl + String.format(PaymentServicesMiddlewareServices.GET_AFFILIATIONS_SERVICES.getServiceURL(), personId);
-        DefaultResultByMWErrorEvaluator<AffiliatedServiceMWResponse> additionalEvaluator = DefaultResultByMWErrorEvaluator.instance(PaymentServicesMiddlewareError.MDWPSM_005);
-        return get(url, HeadersMW.getDefaultHeaders(parameters), AffiliatedServiceMWResponse.class, additionalEvaluator);
+        ByMwErrorResponseHandler<AffiliatedServiceMWResponse> responseHandler = ByMwErrorResponseHandler.instance(PaymentServicesMiddlewareError.MDWPSM_005);
+        return get(url, HeadersMW.getDefaultHeaders(parameters), AffiliatedServiceMWResponse.class, responseHandler);
     }
 
     @Override
@@ -76,8 +76,8 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
     public ListServicesMWResponse getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException {
         final String pathServices = String.format(PaymentServicesMiddlewareServices.GET_SERVICES.getServiceURL(), subCategoryId, cityId);
         final String url = String.format(URL_FORMAT, baseUrl, pathServices);
-        DefaultResultByMWErrorEvaluator<ListServicesMWResponse> additionalEvaluator = DefaultResultByMWErrorEvaluator.instance(PaymentServicesMiddlewareError.MDWPSM_007);
-        return get(url, HeadersMW.getDefaultHeaders(parameters), ListServicesMWResponse.class, additionalEvaluator);
+        ByMwErrorResponseHandler<ListServicesMWResponse> responseHandler = ByMwErrorResponseHandler.instance(PaymentServicesMiddlewareError.MDWPSM_007);
+        return get(url, HeadersMW.getDefaultHeaders(parameters), ListServicesMWResponse.class, responseHandler);
     }
 
     @Override

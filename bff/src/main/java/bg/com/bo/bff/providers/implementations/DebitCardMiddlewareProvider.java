@@ -12,7 +12,7 @@ import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddl
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareServices;
 import bg.com.bo.bff.providers.models.middleware.*;
-import bg.com.bo.bff.providers.models.middleware.additional.evaluator.DefaultResultByMWErrorEvaluator;
+import bg.com.bo.bff.providers.models.middleware.response.handler.ByMwErrorResponseHandler;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -39,8 +39,8 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
     @Override
     public ListDebitCardMWResponse listDebitCard(Integer personId, Map<String, String> parameters) throws IOException {
         String path = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.LIST_DEBIT_CARD.getServiceURL() + personId;
-        DefaultResultByMWErrorEvaluator<ListDebitCardMWResponse> additionalEvaluator = DefaultResultByMWErrorEvaluator.instance(DebitCardMiddlewareError.MDWTJD_004);
-        return get(path, HeadersMW.getDefaultHeaders(parameters), ListDebitCardMWResponse.class, additionalEvaluator);
+        ByMwErrorResponseHandler<ListDebitCardMWResponse> responseHandler = ByMwErrorResponseHandler.instance(DebitCardMiddlewareError.MDWTJD_004);
+        return get(path, HeadersMW.getDefaultHeaders(parameters), ListDebitCardMWResponse.class, responseHandler);
     }
 
     @Override

@@ -11,8 +11,8 @@ import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
-import bg.com.bo.bff.providers.models.middleware.additional.evaluator.ResponseEvaluator;
-import bg.com.bo.bff.providers.models.middleware.additional.evaluator.DefaultResponseEvaluator;
+import bg.com.bo.bff.providers.models.middleware.response.handler.ResponseHandler;
+import bg.com.bo.bff.providers.models.middleware.response.handler.DefaultResponseHandler;
 import org.apache.http.Header;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
@@ -57,7 +57,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @return an object of given params type.
      */
     protected <E> E get(String url, Header[] headers, Class<E> classType) throws IOException {
-        return get(url, headers, classType, DefaultResponseEvaluator.instance());
+        return get(url, headers, classType, DefaultResponseHandler.instance());
     }
 
     /**
@@ -69,11 +69,11 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @param url               url of the resource.
      * @param headers           list of headers for the request.
      * @param classType         type of the response class.
-     * @param responseEvaluator evaluator and resolver for handling specific response scenarios.
+     * @param responseHandler evaluator and resolver for handling specific response scenarios.
      * @return an object of the given class type.
      */
-    protected <E> E get(String url, Header[] headers, Class<E> classType, ResponseEvaluator<E> responseEvaluator) throws IOException {
-        return executeRequest(new HttpGet(url), headers, null, classType, responseEvaluator);
+    protected <E> E get(String url, Header[] headers, Class<E> classType, ResponseHandler<E> responseHandler) throws IOException {
+        return executeRequest(new HttpGet(url), headers, null, classType, responseHandler);
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @return an object of the given class type.
      */
     protected <E, R> E post(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
-        return post(url, headers, requestBody, classType, DefaultResponseEvaluator.instance());
+        return post(url, headers, requestBody, classType, DefaultResponseHandler.instance());
     }
 
     /**
@@ -98,11 +98,11 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @param headers           list of headers for request.
      * @param requestBody       body of the request.
      * @param classType         type of response class.
-     * @param responseEvaluator evaluator and resolver for handling specific response scenarios.
+     * @param responseHandler evaluator and resolver for handling specific response scenarios.
      * @return an object of the given class type.
      */
-    protected <E, R> E post(String url, Header[] headers, R requestBody, Class<E> classType, ResponseEvaluator<E> responseEvaluator) throws IOException {
-        return executeRequest(new HttpPost(url), headers, requestBody, classType, responseEvaluator);
+    protected <E, R> E post(String url, Header[] headers, R requestBody, Class<E> classType, ResponseHandler<E> responseHandler) throws IOException {
+        return executeRequest(new HttpPost(url), headers, requestBody, classType, responseHandler);
     }
 
     /**
@@ -116,7 +116,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @return an object of the given class type.
      */
     protected <E, R> E patch(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
-        return patch(url, headers, requestBody, classType, DefaultResponseEvaluator.instance());
+        return patch(url, headers, requestBody, classType, DefaultResponseHandler.instance());
     }
 
     /**
@@ -127,11 +127,11 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @param headers           list of headers for request.
      * @param requestBody       body of the request.
      * @param classType         type of response class.
-     * @param responseEvaluator evaluator and resolver for handling specific response scenarios.
+     * @param responseHandler evaluator and resolver for handling specific response scenarios.
      * @return an object of the given class type.
      */
-    protected <E, R> E patch(String url, Header[] headers, R requestBody, Class<E> classType, ResponseEvaluator<E> responseEvaluator) throws IOException {
-        return executeRequest(new HttpPatch(url), headers, requestBody, classType, responseEvaluator);
+    protected <E, R> E patch(String url, Header[] headers, R requestBody, Class<E> classType, ResponseHandler<E> responseHandler) throws IOException {
+        return executeRequest(new HttpPatch(url), headers, requestBody, classType, responseHandler);
     }
 
     /**
@@ -145,7 +145,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @return an object of given params type.
      */
     protected <E, R> E deleteWithBody(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
-        return deleteWithBody(url, headers, requestBody, classType, DefaultResponseEvaluator.instance());
+        return deleteWithBody(url, headers, requestBody, classType, DefaultResponseHandler.instance());
     }
 
     /**
@@ -156,11 +156,11 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @param headers           list of headers for request.
      * @param requestBody       body of the request.
      * @param classType         type of response class.
-     * @param responseEvaluator evaluator and resolver for handling specific response scenarios.
+     * @param responseHandler evaluator and resolver for handling specific response scenarios.
      * @return an object of the given class type.
      */
-    protected <E, R> E deleteWithBody(String url, Header[] headers, R requestBody, Class<E> classType, ResponseEvaluator<E> responseEvaluator) throws IOException {
-        return executeRequest(new HttpDeleteWithBody(url), headers, requestBody, classType, responseEvaluator);
+    protected <E, R> E deleteWithBody(String url, Header[] headers, R requestBody, Class<E> classType, ResponseHandler<E> responseHandler) throws IOException {
+        return executeRequest(new HttpDeleteWithBody(url), headers, requestBody, classType, responseHandler);
     }
 
     /**
@@ -174,7 +174,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @return an object of the given class type.
      */
     protected <E, R> E put(String url, Header[] headers, R requestBody, Class<E> classType) throws IOException {
-        return put(url, headers, requestBody, classType, DefaultResponseEvaluator.instance());
+        return put(url, headers, requestBody, classType, DefaultResponseHandler.instance());
     }
 
     /**
@@ -185,14 +185,14 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * @param headers           list of headers for request.
      * @param requestBody       body of the request.
      * @param classType         type of response class.
-     * @param responseEvaluator evaluator and resolver for handling specific response scenarios.
+     * @param responseHandler evaluator and resolver for handling specific response scenarios.
      * @return an object of the given class type.
      */
-    protected <E, R> E put(String url, Header[] headers, R requestBody, Class<E> classType, ResponseEvaluator<E> responseEvaluator) throws IOException {
-        return executeRequest(new HttpPut(url), headers, requestBody, classType, responseEvaluator);
+    protected <E, R> E put(String url, Header[] headers, R requestBody, Class<E> classType, ResponseHandler<E> responseHandler) throws IOException {
+        return executeRequest(new HttpPut(url), headers, requestBody, classType, responseHandler);
     }
 
-    private <E, R> E executeRequest(HttpUriRequest request, Header[] headers, R requestBody, Class<E> classType, ResponseEvaluator<E> responseEvaluator) throws IOException {
+    private <E, R> E executeRequest(HttpUriRequest request, Header[] headers, R requestBody, Class<E> classType, ResponseHandler<E> responseHandler) throws IOException {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             if (headers != null && headers.length > 0) {
@@ -210,8 +210,8 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
 
-                if (responseEvaluator != null && responseEvaluator.getEvaluator().evaluate(jsonResponse, statusCode, this::mapProviderIError))
-                    return responseEvaluator.getResolver().resolve(jsonResponse, classType, this::mapProviderIError);
+                if (responseHandler != null && responseHandler.getEvaluator().evaluate(jsonResponse, statusCode, this::mapProviderIError))
+                    return responseHandler.getResolver().resolve(jsonResponse, classType, this::mapProviderIError);
 
                 IMiddlewareError error = this.mapProviderIError(jsonResponse);
                 if (error.equals(DefaultMiddlewareError.DEFAULT))
