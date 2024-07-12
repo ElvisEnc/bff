@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
@@ -171,7 +172,7 @@ public class PaymentServicesController {
             @ApiResponse(responseCode = "406", description = "Error de negocio", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
-    @PostMapping("/persons/{personId}/affiliate-services")
+    @PutMapping("/persons/{personId}/affiliate-services")
     public ResponseEntity<ServiceAffiliationResponse> serviceAffiliation(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
@@ -203,6 +204,27 @@ public class PaymentServicesController {
             @Valid @RequestBody AffiliationDebtsRequest request
     ) throws IOException {
         return ResponseEntity.ok(ApiDataResponse.of(service.getAffiliationDebts(personId, affiliateServiceId, request, Headers.getParameter(httpServletRequest))));
+    }
+
+    @Operation(summary = "Pago de servicio", description = "Realiza pago de una servicio afiliado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pago de deuda"),
+            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "406", description = "Error de negocio", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PostMapping("/persons/{personId}/affiliate-services/{affiliateServiceId}/payment")
+    public ResponseEntity<PaymentDebtsResponse> paymentDebts(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Código de persona", example = "12345") String personId,
+            @PathVariable("affiliateServiceId") @OnlyNumber @Parameter(description = "Id del servicio afiliado", example = "12345") String affiliateServiceId,
+            @Valid @RequestBody PaymentDebtsRequest request
+    ) throws IOException {
+        return ResponseEntity.ok(service.paymentDebts(personId, affiliateServiceId, request, Headers.getParameter(httpServletRequest)));
     }
 
     @Operation(summary = "Obtener la lista de servicios por subcategoria y ciudad", description = "Lista los servicios por subcategorias y ciudades")

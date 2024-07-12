@@ -1,11 +1,13 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
@@ -63,6 +65,13 @@ public class PaymentServicesService implements IPaymentServicesService {
         DebtsConsultationMWRequest mwRequest = mapper.mapperRequest(personId, affiliateServiceId, request);
         DebtsConsultationMWResponse mwResponse = provider.debtsConsultation(mwRequest, parameter);
         return mapper.convertDebtsResponse(mwResponse);
+    }
+
+    @Override
+    public PaymentDebtsResponse paymentDebts(String personId, String affiliateServiceId, PaymentDebtsRequest request, Map<String, String> parameter) throws IOException {
+        PaymentDebtsMWRequest mwRequest = mapper.mapperRequest(personId, affiliateServiceId, request);
+        PaymentDebtsMWResponse mwResponse = provider.paymentDebts(mwRequest, parameter);
+        return mapper.convertPaymentResponse(mwResponse);
     }
 
     @Override

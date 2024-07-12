@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.dtos.response.payment.service;
 
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataRegisterServiceAffiliation;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataServiceAffiliation;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DependencyServiceAffiliation;
@@ -169,6 +170,48 @@ public class PaymentServiceResponseFixture {
         );
         return SubCategoryCitiesResponse.builder()
                 .data(data)
+                .build();
+    }
+
+    public static PaymentDebtsRequest withDefaultPaymentDebtsRequest() {
+        return new PaymentDebtsRequest(
+                "068",
+                BigDecimal.valueOf(100.00),
+                12546878L,
+                "324a029a-553f-4acb-abf4-4dcb25574463",
+                "12546878",
+                "Juan Perez",
+                "Test Company",
+                "77",
+                "Pagos"
+        );
+    }
+
+    public static PaymentDebtsResponse withDefaultPaymentDebtsResponse() {
+        return PaymentDebtsResponse.builder()
+                .status("success")
+                .maeId("mae123")
+                .nroTransaction("txn123")
+                .receiptDetail(withDefaultPaymentDebtsDetail())
+                .build();
+    }
+
+    public static PaymentDebtsDetail withDefaultPaymentDebtsDetail() {
+        return PaymentDebtsDetail.builder()
+                .affiliationNumber("aff123")
+                .servicePaymentCode("svc123")
+                .company("Test Company")
+                .accountingDate("2024-07-11")
+                .accountingTime("10:00")
+                .accountingEntry("entry123")
+                .currency("USD")
+                .amount(BigDecimal.valueOf(100.00))
+                .description("Test Payment")
+                .fromAccountNumber("123456789")
+                .fromHolder("John Doe")
+                .exchangeAmount(BigDecimal.valueOf(100.00))
+                .fromAccountCurrency("USD")
+                .exchangeRateDebit("1.0")
                 .build();
     }
 

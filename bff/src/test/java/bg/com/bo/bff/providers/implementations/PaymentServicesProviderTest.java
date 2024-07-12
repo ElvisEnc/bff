@@ -12,6 +12,7 @@ import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentServicesMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
@@ -262,6 +263,26 @@ class PaymentServicesProviderTest {
         // Assert
         assertNotNull(response);
         assertThat(response).usingRecursiveComparison().isEqualTo(expected);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Should successfully when Payment Debts")
+    void givenDebtsRequestWhenGetPaymentDebtsThenExpectResponse() throws IOException {
+        // Arrange
+        PaymentDebtsMWRequest mwRequest = PaymentServicesMWResponseFixture.withDefaultPaymentDebtsMWRequest();
+        PaymentDebtsMWResponse expected = PaymentServicesMWResponseFixture.withDefaultPaymentDebtsMWResponse();
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(ApiDataResponse.of(expected));
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        PaymentDebtsMWResponse response = provider.paymentDebts(mwRequest, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, expected);
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }

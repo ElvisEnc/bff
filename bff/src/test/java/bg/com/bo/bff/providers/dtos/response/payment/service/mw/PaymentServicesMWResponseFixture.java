@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.dtos.response.payment.service.mw;
 
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataRegisterServiceAffiliationMW;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataServiceAffiliationMW;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DependencyServiceAffiliationMW;
@@ -150,6 +151,61 @@ public class PaymentServicesMWResponseFixture {
                 .penaltyPayment(BigDecimal.valueOf(10.00))
                 .concept("123")
                 .build();
+    }
+
+    public static PaymentDebtsMWRequest withDefaultPaymentDebtsMWRequest() {
+        return PaymentDebtsMWRequest.builder()
+                .ownerAccount(PaymentDebtsMWRequest.PaymentOwnerAccount.builder()
+                        .schemeName("scheme123")
+                        .personId("person123")
+                        .companyId("company123")
+                        .build())
+                .instructedAmount(PaymentDebtsMWRequest.PaymentAmount.builder()
+                        .currency("USD")
+                        .amount(BigDecimal.valueOf(100.00))
+                        .build())
+                .debtorAccount(PaymentDebtsMWRequest.PaymentDebtor.builder()
+                        .schemeName("scheme123")
+                        .identification("ident123")
+                        .build())
+                .supplementaryData(PaymentDebtsMWRequest.PaymentSupplementary.builder()
+                        .idGeneratedForDebt("324a029a-553f-4acb-abf4-4dcb25574463")
+                        .invoiceNITCI("12546878")
+                        .invoiceName("Juan Perez")
+                        .company("Test Company")
+                        .affiliationCode("aff123")
+                        .serviceCode("svc123")
+                        .description("Test Payment")
+                        .build())
+                .risk(PaymentDebtsMWRequest.PaymentRisk.builder()
+                        .paymentContextCode("context123")
+                        .build())
+                .build();
+    }
+
+    public static PaymentDebtsMWResponse withDefaultPaymentDebtsMWResponse() {
+        return new PaymentDebtsMWResponse(
+                "success",
+                "mae123",
+                "txn123",
+                new PaymentDebtsMWResponse.ReceiptDetail(
+                        "2024-07-11",
+                        "10:00",
+                        "entry123",
+                        "123456789",
+                        "John Doe",
+                        BigDecimal.valueOf(100.00),
+                        "USD",
+                        BigDecimal.valueOf(100.00),
+                        "USD",
+                        "1.0",
+                        "Test Company",
+                        "aff123",
+                        "Test Payment",
+                        "svc123",
+                        "voucher123"
+                )
+        );
     }
 
     public static ServiceAffiliationMWRequest withDefaultServiceAffiliationMWRequest() {

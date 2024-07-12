@@ -1,6 +1,7 @@
 package bg.com.bo.bff.mappings.providers.services;
 
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataRegisterServiceAffiliation;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataServiceAffiliation;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DependencyServiceAffiliation;
@@ -8,6 +9,7 @@ import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.Servic
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataRegisterServiceAffiliationMW;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataServiceAffiliationMW;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DependencyServiceAffiliationMW;
@@ -70,6 +72,38 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
     @Override
     public DebtsConsultationMWRequest mapperRequest(Integer personId, Integer affiliateServiceId, AffiliationDebtsRequest request) {
         return new DebtsConsultationMWRequest(request.serviceCode(), personId, request.year(), affiliateServiceId);
+    }
+
+    @Override
+    public PaymentDebtsMWRequest mapperRequest(String personId, String affiliateServiceId, PaymentDebtsRequest request) {
+        return PaymentDebtsMWRequest.builder()
+                .ownerAccount(PaymentDebtsMWRequest.PaymentOwnerAccount.builder()
+                        .schemeName("personId")
+                        .personId(personId)
+                        .companyId(personId)
+                        .build()
+                )
+                .instructedAmount(PaymentDebtsMWRequest.PaymentAmount.builder()
+                        .currency(request.currency())
+                        .amount(request.amount())
+                        .build())
+                .debtorAccount(PaymentDebtsMWRequest.PaymentDebtor.builder()
+                        .schemeName("AccountId")
+                        .identification(String.valueOf(request.fromAccountId()))
+                        .build())
+                .supplementaryData(PaymentDebtsMWRequest.PaymentSupplementary.builder()
+                        .idGeneratedForDebt(request.idGeneratedForDebt())
+                        .invoiceNITCI(request.invoiceNit())
+                        .invoiceName(request.invoiceName())
+                        .company(request.company())
+                        .affiliationCode(affiliateServiceId)
+                        .serviceCode(request.serviceCode())
+                        .description(request.description())
+                        .build())
+                .risk(PaymentDebtsMWRequest.PaymentRisk.builder()
+                        .paymentContextCode("PaymentService")
+                        .build())
+                .build();
     }
 
     @Override
@@ -152,6 +186,31 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
     }
 
     @Override
+    public PaymentDebtsResponse convertPaymentResponse(PaymentDebtsMWResponse mwResponse) {
+        return PaymentDebtsResponse.builder()
+                .status(mwResponse.status())
+                .maeId(mwResponse.maeId())
+                .nroTransaction(mwResponse.nroTransaction())
+                .receiptDetail(PaymentDebtsDetail.builder()
+                        .affiliationNumber(mwResponse.receiptDetail().affiliationNumber())
+                        .servicePaymentCode(mwResponse.receiptDetail().servicePaymentCode())
+                        .company(mwResponse.receiptDetail().company())
+                        .accountingDate(mwResponse.receiptDetail().accountingDate())
+                        .accountingTime(mwResponse.receiptDetail().accountingTime())
+                        .accountingEntry(mwResponse.receiptDetail().accountingEntry())
+                        .currency(mwResponse.receiptDetail().currency())
+                        .amount(mwResponse.receiptDetail().amount())
+                        .description(mwResponse.receiptDetail().description())
+                        .fromAccountNumber(mwResponse.receiptDetail().fromAccountNumber())
+                        .fromHolder(mwResponse.receiptDetail().fromHolder())
+                        .exchangeAmount(mwResponse.receiptDetail().exchangeAmount())
+                        .fromAccountCurrency(mwResponse.receiptDetail().fromAccountCurrency())
+                        .exchangeRateDebit(mwResponse.receiptDetail().exchangeRateDebit())
+                        .build())
+                .build();
+    }
+
+    @Override
     public ServiceAffiliationResponse convertServiceAffiliationResponse(ServiceAffiliationMWResponse mwRequest) {
         return new ServiceAffiliationResponse(mwRequest.affiliationNewCod());
     }
@@ -172,7 +231,6 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
 
     @Override
     public DeleteAffiliateServiceMWRequest convertRequest(String personId, String affiliateServiceId) {
-
         return DeleteAffiliateServiceMWRequest.builder()
                 .affiliationCode(affiliateServiceId)
                 .personId(personId)

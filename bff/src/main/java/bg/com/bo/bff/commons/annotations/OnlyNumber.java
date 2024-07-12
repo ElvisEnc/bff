@@ -13,7 +13,11 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OnlyNumber {
-    String message() default "Se espera solo números y menor a 20 dígitos";
+    String message() default "Se espera solo números y menor a 18 dígitos";
+    String notNullMessage() default "El campo no puede ser nulo o vacío";
+    String onlyNumberMessage() default "El campo debe contener solo números";
+    String greaterThanZeroMessage() default "El valor debe ser mayor a cero";
+    String maxLengthMessage() default "El campo debe tener menos de 18 dígitos";
 
     Class<?>[] groups() default {};
 
