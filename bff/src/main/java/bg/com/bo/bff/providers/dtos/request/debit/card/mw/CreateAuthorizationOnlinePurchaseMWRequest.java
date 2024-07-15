@@ -15,7 +15,7 @@ public class CreateAuthorizationOnlinePurchaseMWRequest {
         private String action;
         private String initialDate;
         private String finalDate;
-        private BigDecimal amount;
+        private Integer amount;
         private Integer intInitial;
         private Integer intFinal;
 

@@ -59,7 +59,7 @@ public class DebitCardMWRequestFixture {
                 .action("A")
                 .initialDate("2024-06-01")
                 .finalDate("2024-06-10")
-                .amount(new BigDecimal("1000"))
+                .amount(1000)
                 .intInitial(1)
                 .intFinal(10)
                 .build();

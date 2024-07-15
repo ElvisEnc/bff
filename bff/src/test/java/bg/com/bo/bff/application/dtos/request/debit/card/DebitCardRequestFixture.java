@@ -32,7 +32,7 @@ public class DebitCardRequestFixture {
                 .end("2024-06-10")
                 .build();
         return CreateAuthorizationOnlinePurchaseRequest.builder()
-                .amount(new BigDecimal("1000"))
+                .amount(1000)
                 .period(period)
                 .build();
     }
@@ -43,7 +43,7 @@ public class DebitCardRequestFixture {
                 .end("2024-06-10")
                 .build();
         return CreateAuthorizationOnlinePurchaseRequest.builder()
-                .amount(new BigDecimal("1000"))
+                .amount(1000)
                 .period(period)
                 .build();
     }
