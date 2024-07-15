@@ -3,6 +3,8 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.PaymentServiceRequestFixture;
+import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
@@ -224,6 +226,26 @@ class PaymentServicesServiceTest {
         assertNotNull(response);
         assertEquals(expected, response);
         verify(provider).getAffiliateCriteria("123", "85", new HashMap<>());
+        verify(mapper).convertResponse(mwResponse);
+    }
+
+    @Test
+    void givenValidDataWhenValidateAffiliateCriteriaThenValidateAffiliateCriteria() throws IOException {
+        //Arrange
+        ValidateAffiliateCriteriaRequest request = PaymentServiceRequestFixture.withDefaultValidateAffiliateCriteria();
+        ValidateAffiliateCriteriaResponse expected = PaymentServiceResponseFixture.withDefaultValidateAffiliateCriteriaResponse();
+        ValidateAffiliateCriteriaMWResponse mwResponse = PaymentServicesMWResponseFixture.withDefaultValidateAffiliateCriteriaResponse();
+        when(provider.validateAffiliateCriteria(any(), any())).thenReturn(PaymentServicesMWResponseFixture.withDefaultValidateAffiliateCriteriaResponse());
+        when(mapper.mapperRequest(any(), any(), (ValidateAffiliateCriteriaRequest) any())).thenReturn(PaymentServicesMWRequestFixture.withDefaultValidateAffiliateCriteria());
+        when(mapper.convertResponse(mwResponse)).thenReturn(expected);
+
+        //Act
+        ValidateAffiliateCriteriaResponse response = service.validateAffiliateCriteria("123", "85", request, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).validateAffiliateCriteria(PaymentServicesMWRequestFixture.withDefaultValidateAffiliateCriteria(), new HashMap<>());
         verify(mapper).convertResponse(mwResponse);
     }
 }

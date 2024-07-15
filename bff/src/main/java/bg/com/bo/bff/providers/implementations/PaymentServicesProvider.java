@@ -6,6 +6,7 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
@@ -99,5 +100,13 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
         final String pathServices = String.format(PaymentServicesMiddlewareServices.GET_AFFILIATE_CRITERIA.getServiceURL(), serviceCode);
         final String url = String.format(URL_FORMAT, baseUrl, pathServices);
         return get(url, HeadersMW.getDefaultHeaders(parameters), AffiliateCriteriaMWResponse.class);
+    }
+
+    @Override
+    public ValidateAffiliateCriteriaMWResponse validateAffiliateCriteria(ValidateAffiliateCriteriaMWRequest mwRequest, Map<String, String> parameters) throws IOException {
+        final String pathServices = String.format(PaymentServicesMiddlewareServices.VALIDATE_AFFILIATE_CRITERIA.getServiceURL());
+        final String url = String.format(URL_FORMAT, baseUrl, pathServices);
+        ApiDataResponse<ValidateAffiliateCriteriaMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(parameters), mwRequest, ApiDataResponse.class);
+        return Util.stringToObject(Util.objectToString(mwResponse.getData()), ValidateAffiliateCriteriaMWResponse.class);
     }
 }

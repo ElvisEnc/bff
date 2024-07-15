@@ -253,4 +253,32 @@ public class PaymentServiceResponseFixture {
                 ))
                 .build();
     }
+
+    public static ValidateAffiliateCriteriaResponse withDefaultValidateAffiliateCriteriaResponse() {
+        return ValidateAffiliateCriteriaResponse.builder()
+                .serviceCode("123")
+                .dataAffiliation(List.of(
+                        ValidateAffiliateCriteriaResponse.DataAffiliation.builder()
+                                .identify(123)
+                                .nameOwner("test")
+                                .code("123")
+                                .description("test")
+                                .additionalFact("")
+                                .dataRegister(
+                                        List.of(
+                                                ValidateAffiliateCriteriaResponse.DataAffiliation.DataRegister.builder()
+                                                        .label("test")
+                                                        .value("test")
+                                                        .mandatory("S")
+                                                        .edit("S")
+                                                        .group("123")
+                                                        .description("test")
+                                                        .code("123")
+                                                        .build()
+                                        )
+                                )
+                                .build()
+                ))
+                .build();
+    }
 }

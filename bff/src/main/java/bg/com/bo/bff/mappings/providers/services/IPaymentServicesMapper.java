@@ -3,9 +3,11 @@ package bg.com.bo.bff.mappings.providers.services;
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliateCriteriaMWResponse;
@@ -40,4 +42,8 @@ public interface IPaymentServicesMapper {
     DeleteAffiliateServiceMWRequest convertRequest(String personId, String affiliateServiceId);
 
     AffiliateCriteriaResponse convertResponse(AffiliateCriteriaMWResponse mwResponse);
+
+    ValidateAffiliateCriteriaMWRequest mapperRequest(String personId, String serviceCode, ValidateAffiliateCriteriaRequest request);
+
+    ValidateAffiliateCriteriaResponse convertResponse(ValidateAffiliateCriteriaMWResponse mwResponse);
 }

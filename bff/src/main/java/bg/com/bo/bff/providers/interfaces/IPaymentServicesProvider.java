@@ -2,6 +2,7 @@ package bg.com.bo.bff.providers.interfaces;
 
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
@@ -30,4 +31,6 @@ public interface IPaymentServicesProvider {
     DeleteAffiliateServiceMWResponse deleteAffiliationService(DeleteAffiliateServiceMWRequest request, Map<String, String> parameter) throws IOException;
 
     AffiliateCriteriaMWResponse getAffiliateCriteria(String personId, String serviceCode, Map<String, String> parameter) throws IOException;
+
+    ValidateAffiliateCriteriaMWResponse validateAffiliateCriteria (ValidateAffiliateCriteriaMWRequest request, Map<String, String> parameter) throws IOException;
 }

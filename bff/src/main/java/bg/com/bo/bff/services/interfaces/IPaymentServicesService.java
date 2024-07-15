@@ -3,6 +3,7 @@ package bg.com.bo.bff.services.interfaces;
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 
@@ -31,4 +32,6 @@ public interface IPaymentServicesService {
     GenericResponse deleteAffiliationService(String personId, String affiliateServiceId, Map<String, String> parameter) throws IOException;
 
     AffiliateCriteriaResponse getAffiliateCriteria(String personId, String serviceCode, Map<String, String> parameter) throws IOException;
+
+    ValidateAffiliateCriteriaResponse validateAffiliateCriteria (String personId, String serviceCode, ValidateAffiliateCriteriaRequest request, Map<String, String> parameter) throws IOException;
 }

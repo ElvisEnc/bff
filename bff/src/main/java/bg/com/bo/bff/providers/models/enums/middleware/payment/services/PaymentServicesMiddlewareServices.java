@@ -15,7 +15,8 @@ public enum PaymentServicesMiddlewareServices {
     GET_SERVICES("/bs/v1/sub-categories/%s/cities/%s"),
     POST_SERVICE_AFFILIATION("/bs/v1/affiliations-services"),
     DELETE_AFFILIATE_SERVICE("/bs/v1/affiliations/delete"),
-    GET_AFFILIATE_CRITERIA("/bs/v1/search-criteria?serviceCode=%s");
+    GET_AFFILIATE_CRITERIA("/bs/v1/search-criteria?serviceCode=%s"),
+    VALIDATE_AFFILIATE_CRITERIA("/bs/v1/affiliations/validate");
     private final String serviceURL;
 }
 

@@ -14,6 +14,7 @@ import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultatio
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentServicesMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
@@ -373,6 +374,27 @@ class PaymentServicesProviderTest {
         // Assert
         assertNotNull(response);
         assertEquals(response, PaymentServicesMWResponseFixture.withDefaultAffiliateCriteriaMWResponse());
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Validar criterios de afiliación por código de servicio")
+    void givenValidDataWhenValidateAffiliateCriteriaThenExpectResponse() throws IOException {
+
+        // Arrange
+        ValidateAffiliateCriteriaMWRequest mwRequest = PaymentServicesMWRequestFixture.withDefaultValidateAffiliateCriteria();
+        ValidateAffiliateCriteriaMWResponse expected = PaymentServicesMWResponseFixture.withDefaultValidateAffiliateCriteriaResponse();
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(ApiDataResponse.of(expected));
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        ValidateAffiliateCriteriaMWResponse response = provider.validateAffiliateCriteria(mwRequest, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, PaymentServicesMWResponseFixture.withDefaultValidateAffiliateCriteriaResponse());
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }

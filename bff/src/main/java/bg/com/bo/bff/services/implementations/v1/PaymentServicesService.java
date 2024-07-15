@@ -3,10 +3,12 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
@@ -90,6 +92,13 @@ public class PaymentServicesService implements IPaymentServicesService {
     @Override
     public AffiliateCriteriaResponse getAffiliateCriteria(String personId, String serviceCode, Map<String, String> parameters) throws IOException {
         final AffiliateCriteriaMWResponse mwResponse = provider.getAffiliateCriteria(personId, serviceCode, parameters);
+        return mapper.convertResponse(mwResponse);
+    }
+
+    @Override
+    public ValidateAffiliateCriteriaResponse validateAffiliateCriteria(String personId, String serviceCode, ValidateAffiliateCriteriaRequest request, Map<String, String> parameter) throws IOException {
+        ValidateAffiliateCriteriaMWRequest mwRequest = mapper.mapperRequest(personId, serviceCode, request);
+        final ValidateAffiliateCriteriaMWResponse mwResponse = provider.validateAffiliateCriteria(mwRequest, parameter);
         return mapper.convertResponse(mwResponse);
     }
 }

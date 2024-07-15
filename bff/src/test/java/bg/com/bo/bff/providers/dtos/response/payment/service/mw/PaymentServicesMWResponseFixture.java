@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.dtos.response.payment.service.mw;
 
+import bg.com.bo.bff.application.dtos.response.payment.service.ValidateAffiliateCriteriaResponse;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataRegisterServiceAffiliationMW;
@@ -323,6 +324,34 @@ public class PaymentServicesMWResponseFixture {
                                 )
                                 .build()
                 )
+                .build();
+    }
+
+    public static ValidateAffiliateCriteriaMWResponse withDefaultValidateAffiliateCriteriaResponse() {
+        return ValidateAffiliateCriteriaMWResponse.builder()
+                .serviceCode("123")
+                .dataAffiliation(List.of(
+                        ValidateAffiliateCriteriaResponse.DataAffiliation.builder()
+                                .identify(123)
+                                .nameOwner("test")
+                                .code("123")
+                                .description("test")
+                                .additionalFact("")
+                                .dataRegister(
+                                        List.of(
+                                                ValidateAffiliateCriteriaResponse.DataAffiliation.DataRegister.builder()
+                                                        .label("test")
+                                                        .value("test")
+                                                        .mandatory("S")
+                                                        .edit("S")
+                                                        .group("123")
+                                                        .description("test")
+                                                        .code("123")
+                                                        .build()
+                                        )
+                                )
+                                .build()
+                ))
                 .build();
     }
 }

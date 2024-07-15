@@ -1,6 +1,7 @@
 package bg.com.bo.bff.mappings.providers.services;
 
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataRegisterServiceAffiliation;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataServiceAffiliation;
@@ -9,6 +10,7 @@ import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.Servic
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataRegisterServiceAffiliationMW;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataServiceAffiliationMW;
@@ -284,6 +286,31 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                 .serviceCode(mwResponse.getData().getServiceCode())
                 .criteria(criteria)
                 .subServices(subServices)
+                .build();
+    }
+
+    @Override
+    public ValidateAffiliateCriteriaMWRequest mapperRequest(String personId, String serviceCode, ValidateAffiliateCriteriaRequest request) {
+        return ValidateAffiliateCriteriaMWRequest.builder()
+                .serviceCode(Integer.valueOf(serviceCode))
+                .year(request.getYear())
+                .searchCriteriaId(request.getCriteriaId())
+                .searchCriteriaIdAbbreviation(request.getCriteriaIdAbbreviation())
+                .personId(Integer.valueOf(personId))
+                .searchFields(request.getSearchFields().stream()
+                        .map(f -> ValidateAffiliateCriteriaMWRequest.SearchField.builder()
+                                .code(f.getCode())
+                                .value(f.getValue())
+                                .build())
+                        .toList())
+                .build();
+    }
+
+    @Override
+    public ValidateAffiliateCriteriaResponse convertResponse(ValidateAffiliateCriteriaMWResponse mwResponse) {
+        return ValidateAffiliateCriteriaResponse.builder()
+                .serviceCode(mwResponse.getServiceCode())
+                .dataAffiliation(mwResponse.getDataAffiliation())
                 .build();
     }
 }

@@ -3,6 +3,7 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
@@ -262,7 +263,6 @@ public class PaymentServicesController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios", content = @Content(schema = @Schema(implementation = AffiliateCriteriaResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "Error si la categoria no tiene subcategorias", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/persons/{personId}/affiliate-criteria")
@@ -287,5 +287,33 @@ public class PaymentServicesController {
                 geoPositionX,
                 geoPositionY,
                 appVersion)));
+    }
+
+
+    @Operation(summary = "Validar criterios de afiliación", description = "Valida los criterios de afiliación de un servicio")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios", content = @Content(schema = @Schema(implementation = ValidateAffiliateCriteriaResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PostMapping("/persons/{personId}/validate-affiliate-criteria")
+    public ResponseEntity<ValidateAffiliateCriteriaResponse> validateAffiliateCriteria(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+
+            @Parameter(description = "Código de la persona", example = "123")
+            @NotNull
+            @Pattern(regexp = "^\\d+$", message = "Número de persona inválido")
+            @PathVariable("personId") final String personId,
+
+            @RequestParam(value = "serviceCode", required = true)
+            @Parameter(description = "Código del servicio", example = "85") final String serviceCode,
+
+            @Valid @RequestBody ValidateAffiliateCriteriaRequest body
+    ) throws IOException {
+        return ResponseEntity.ok(service.validateAffiliateCriteria(personId, serviceCode, body, Headers.getParameter(httpServletRequest)));
     }
 }
