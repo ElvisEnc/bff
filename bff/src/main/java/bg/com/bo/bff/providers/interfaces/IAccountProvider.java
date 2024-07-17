@@ -12,7 +12,7 @@ import java.util.Map;
 public interface IAccountProvider {
     ClientMWToken generateAccountAccessToken() throws IOException;
 
-    AccountListResponse getAccounts(String token, String personId, String documentNumber) throws IOException;
+    AccountListResponse getAccounts(String token, String personId, Map<String, String> parameter) throws IOException;
 
     GenericResponse updateTransactionLimit(String personId, String accountId, UpdateTransactionLimitMWRequest request, Map<String, String> parameter) throws IOException;
 

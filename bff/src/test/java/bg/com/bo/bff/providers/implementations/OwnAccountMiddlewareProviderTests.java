@@ -90,12 +90,7 @@ class OwnAccountMiddlewareProviderTests {
     void givenPersonIdWhenRequestGetAccountsThenListOwnAccounts() throws IOException {
         // Arrange
         String personId = "123456789";
-        String documenNumber = "1234";
 
-        ClientMWToken clientTokenMock = new ClientMWToken();
-
-        String json = objectMapperMWResponse.writeValueAsString(clientTokenMock);
-        InputStream tokenResponseMock = new ByteArrayInputStream(json.getBytes());
         AccountListMWResponse accountListMWResponseMock = new AccountListMWResponse();
         Account account = new Account();
         List<Account> list = new ArrayList<>();
@@ -115,7 +110,7 @@ class OwnAccountMiddlewareProviderTests {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
 
         // Act
-        AccountListResponse response = accountMiddlewareService.getAccounts("", personId, documenNumber);
+        AccountListResponse response = accountMiddlewareService.getAccounts("", personId, parameters);
 
         // Assert
         assertNotNull(response.getData());
@@ -125,31 +120,28 @@ class OwnAccountMiddlewareProviderTests {
     void givenThatErrorOcurredWhenCreatedClientThenRunTimeException() throws IOException {
         // Arrange
         String personId = "123456789";
-        String documenNumber = "1234";
 
         Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Test Catch General"));
 
         // Act
-        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, parameters));
     }
 
     @Test
     void givenThatErrorOcurredWhenClientRequestExecutedThenRequestException() throws IOException {
         // Arrange
         String personId = "123456789";
-        String documenNumber = "1234";
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenThrow(new RequestException("Test Request"));
 
         // Act
-        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, parameters));
     }
 
     @Test
     void givenStatusLineIs401WhenClientRequestRespondThenRuntimeException() throws IOException {
         // Arrange
         String personId = "123456789";
-        String documenNumber = "1234";
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenReturn(closeableHttpResponseMock);
@@ -157,14 +149,13 @@ class OwnAccountMiddlewareProviderTests {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(401);
 
         // Act
-        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, parameters));
     }
 
     @Test
     void givenStatusLineIs404WhenClientRequestRespondThenRuntimeException() throws IOException {
         // Arrange
         String personId = "123456789";
-        String documenNumber = "1234";
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenReturn(closeableHttpResponseMock);
@@ -172,35 +163,33 @@ class OwnAccountMiddlewareProviderTests {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(404);
 
         // Act
-        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, parameters));
     }
 
     @Test
     void givenStatusLineIs406WhenClientRequestRespondThenRuntimeException() throws IOException {
         // Arrange
         String personId = "123456789";
-        String documenNumber = "1234";
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenReturn(closeableHttpResponseMock);
         Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(406);
 
         // Act
-        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, parameters));
     }
 
     @Test
     void givenStatusLineIs500WhenClientRequestRespondThenRuntimeException() throws IOException {
         // Arrange
         String personId = "123456789";
-        String documenNumber = "1234";
         Mockito.when(httpClientFactoryMock.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpGet.class))).thenReturn(closeableHttpResponseMock);
         Mockito.when(closeableHttpResponseMock.getStatusLine()).thenReturn(statusLineMock);
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(500);
 
         // Act
-        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, documenNumber));
+        assertThrows(RuntimeException.class, () -> accountMiddlewareService.getAccounts("", personId, parameters));
     }
 
     @Test

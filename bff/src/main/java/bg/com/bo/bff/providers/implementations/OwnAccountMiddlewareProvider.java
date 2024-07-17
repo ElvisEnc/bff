@@ -105,16 +105,27 @@ public class OwnAccountMiddlewareProvider implements IAccountProvider {
         }
     }
 
-    public AccountListResponse getAccounts(String token, String personId, String documentNumber) throws IOException {
+    public AccountListResponse getAccounts(String token, String personId, Map<String, String> parameters) throws IOException {
         boolean propagateException = false;
 
+        String userDeviceId = parameters.get(DeviceMW.USER_DEVICE_ID.getCode());
+        if (userDeviceId == null || userDeviceId.isEmpty())
+            userDeviceId = "0";
+
         try (CloseableHttpClient httpClient = createHttpClient()) {
-            String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/persons/" + personId + "/companies/" + personId + "/devices/0/roles/" + PersonRol.PERSONA.getId();
-            HttpGet get = new HttpGet(path);
-            get.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
-            get.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
-            get.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
-            try (CloseableHttpResponse httpResponse = httpClient.execute(get)) {
+            String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/persons/" + personId + "/companies/" + personId + "/devices/" + userDeviceId +"/roles/" + PersonRol.PERSONA.getId();
+            HttpGet request = new HttpGet(path);
+            request.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
+            request.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
+            request.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));
+            request.setHeader(DeviceMW.DEVICE_NAME.getCode(), parameters.get(DeviceMW.DEVICE_NAME.getCode()));
+            request.setHeader(DeviceMW.GEO_POSITION_X.getCode(), parameters.get(DeviceMW.GEO_POSITION_X.getCode()));
+            request.setHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode()));
+            request.setHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode()));
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String response = EntityUtils.toString(httpResponse.getEntity());
 

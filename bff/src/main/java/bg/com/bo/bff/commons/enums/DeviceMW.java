@@ -14,7 +14,8 @@ public enum DeviceMW {
     GEO_POSITION_X("geo-position-x"),
     GEO_POSITION_Y("geo-position-y"),
     APP_VERSION("app-version"),
-    JSON_DATA("json-data");
+    JSON_DATA("json-data"),
+    USER_DEVICE_ID("user-device-id");
     private final String code;
 
 }

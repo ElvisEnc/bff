@@ -50,11 +50,14 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class OwnAccountControllerTest {
 
+    private static final String GET_ACCOUNTS_URL = "/api/v1/accounts/persons/{personId}/document-number/{document}";
+    private static final String GET_ACCOUNTS_ONLY_PERSON_ID_URL = "/api/v1/accounts/persons/{personId}";
     private static final String TRANSACTION_LIMIT_UPDATE_URL = "/api/v1/accounts/persons/{personId}/account/{accountId}/transactional-limits";
     private static final String TRANSACTION_LIMIT_GET_URL = "/api/v1/accounts/persons/{personId}/account/{accountId}/transactional-limits";
 
@@ -85,7 +88,8 @@ class OwnAccountControllerTest {
                 DeviceMW.DEVICE_NAME.getCode(), "OS",
                 DeviceMW.GEO_POSITION_X.getCode(), "121.11",
                 DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
-                DeviceMW.APP_VERSION.getCode(), "1.0.0"
+                DeviceMW.APP_VERSION.getCode(), "1.0.0",
+                DeviceMW.USER_DEVICE_ID.getCode(), "129"
         );
 
         Vector<String> lists = new Vector<>(map.keySet().stream().toList());
@@ -96,6 +100,7 @@ class OwnAccountControllerTest {
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false)
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+
         headers.add("topaz-channel", "2");
         headers.add(DeviceMW.DEVICE_ID.getCode(), "121j1hjh1jh1jh");
         headers.add(DeviceMW.DEVICE_NAME.getCode(), "Android");
@@ -103,34 +108,68 @@ class OwnAccountControllerTest {
         headers.add(DeviceMW.GEO_POSITION_Y.getCode(), "11101,1");
         headers.add(DeviceMW.APP_VERSION.getCode(), "1.0.0");
         headers.add(DeviceMW.DEVICE_IP.getCode(), "127.0.0.1");
+        headers.add(DeviceMW.USER_DEVICE_ID.getCode(), "129");
     }
 
     @Test
-    void givenPersonIdWhenGetAccountsThenResponseEntityOkAccountListResponse() throws IOException {
+    void givenPersonIdWhenGetAccountsThenResponseEntityOkAccountListResponse() throws Exception {
         // Arrange
         String personId = "123456";
         String documentNumber = "1234";
-        AccountListResponse accountListResponse = new AccountListResponse();
+        AccountListResponse expected = new AccountListResponse();
         Account account = new Account();
         List<Account> list = new ArrayList<>();
         list.add(account);
-        accountListResponse.setData(list);
-        Mockito.when(service.getAccounts(personId, documentNumber)).thenReturn(accountListResponse);
+        expected.setData(list);
 
-        try (MockedStatic<SecurityContextHolder> securityContextHolderMockedStatic = Mockito.mockStatic(SecurityContextHolder.class)) {
-            SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+        when(service.getAccounts(any(), any())).thenReturn(expected);
 
-            securityContextHolderMockedStatic.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+        // Act
+        MvcResult result = mockMvc.perform(get(GET_ACCOUNTS_URL, personId, documentNumber)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
 
-            // Act
-            ResponseEntity<AccountListResponse> response = controller.accounts(personId, documentNumber);
+        // Assert
+        assertEquals(response, actual);
+        verify(service).getAccounts(any(), any());
+    }
 
-            // Assert
-            assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
-            assertNotNull(response.getBody());
-        } catch (Exception e) {
-            fail("An exception was thrown.");
-        }
+    @Test
+    void givenOnlyPersonIdWhenGetAccountsThenResponseEntityOkAccountListResponse() throws Exception {
+        // Arrange
+        String personId = "123456";
+        AccountListResponse expected = new AccountListResponse();
+        Account account = new Account();
+        List<Account> list = new ArrayList<>();
+        list.add(account);
+        expected.setData(list);
+
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+        when(service.getAccounts(any(), any())).thenReturn(expected);
+
+        // Act
+        MvcResult result = mockMvc.perform(get(GET_ACCOUNTS_ONLY_PERSON_ID_URL, personId)
+                        .headers(this.headers)
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).getAccounts(any(), any());
     }
 
     @Test

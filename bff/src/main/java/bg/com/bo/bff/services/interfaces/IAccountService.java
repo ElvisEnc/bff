@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface IAccountService {
-    AccountListResponse getAccounts(String personId, String documentNumber) throws IOException;
+    AccountListResponse getAccounts(String personId, Map<String, String> parameters) throws IOException;
 
     GenericResponse updateTransactionLimit(String personId, String accountId, UpdateTransactionLimitRequest request, Map<String, String> parameter) throws IOException;
 

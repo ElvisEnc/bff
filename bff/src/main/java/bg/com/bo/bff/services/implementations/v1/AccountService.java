@@ -24,10 +24,10 @@ public class AccountService implements IAccountService {
         this.iAccountMiddlewareService = iAccountMiddlewareService;
     }
 
-    public AccountListResponse getAccounts(String personId, String documentNumber) throws IOException {
+    public AccountListResponse getAccounts(String personId, Map<String, String> parameter) throws IOException {
         ClientMWToken clientToken = iAccountMiddlewareService.generateAccountAccessToken();
         String token = clientToken.getAccessToken();
-        return iAccountMiddlewareService.getAccounts(token, personId, documentNumber);
+        return iAccountMiddlewareService.getAccounts(token, personId, parameter);
     }
 
     @Override
