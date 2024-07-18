@@ -1,6 +1,6 @@
 package bg.com.bo.bff.models;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @lombok.Data
 public class ClientToken {
@@ -9,5 +9,6 @@ public class ClientToken {
     Integer expiresIn;
     String scope;
     String jti;
-    Date requiredAt;
+    String requiredAt;
+    String expiredAt;
 }

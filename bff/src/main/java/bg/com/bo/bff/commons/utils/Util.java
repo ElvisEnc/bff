@@ -288,4 +288,8 @@ public class Util {
         String lastFourDigits = cardNumber.substring(cardNumber.length() - 4);
         return "**** **** **** " + lastFourDigits;
     }
+
+    public static String sanitizeProjectName(String projectName) {
+        return projectName.replaceAll("[^a-zA-Z0-9]", "");
+    }
 }

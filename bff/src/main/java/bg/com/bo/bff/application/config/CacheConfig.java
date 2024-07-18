@@ -1,6 +1,10 @@
 package bg.com.bo.bff.application.config;
 
 import bg.com.bo.bff.commons.constants.CacheConstants;
+import bg.com.bo.bff.models.ClientToken;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Expiry;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.cache.annotation.EnableCaching;
@@ -10,6 +14,7 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 import static org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 
@@ -36,6 +41,9 @@ public class CacheConfig {
 
     @Value("${cache.qr.generated.paid.ttl}")
     private Integer qrListGeneratedAndPaidTtl;
+
+    @Value("${cache.token.expiration.limit.range.ttl}")
+    private Integer cacheTokenExpirationLimitRangeTtl;
 
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
@@ -80,5 +88,27 @@ public class CacheConfig {
                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                 .prefixCacheNameWith(cachePrefix);
 
+    }
+
+    @Bean
+    public LoadingCache<String, ClientToken> tokenCache() {
+        return Caffeine.newBuilder()
+                .expireAfter(new Expiry<String, ClientToken>() {
+                    @Override
+                    public long expireAfterCreate(String key, ClientToken value, long currentTime) {
+                        return TimeUnit.SECONDS.toNanos(value.getExpiresIn() - cacheTokenExpirationLimitRangeTtl);
+                    }
+
+                    @Override
+                    public long expireAfterUpdate(String key, ClientToken value, long currentTime, long currentDuration) {
+                        return currentDuration;
+                    }
+
+                    @Override
+                    public long expireAfterRead(String key, ClientToken value, long currentTime, long currentDuration) {
+                        return currentDuration;
+                    }
+                })
+                .build(key -> null);
     }
 }
