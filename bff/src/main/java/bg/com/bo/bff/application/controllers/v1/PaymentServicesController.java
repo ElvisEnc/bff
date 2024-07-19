@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.ListServiceRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
@@ -46,7 +47,6 @@ public class PaymentServicesController {
 
     @Operation(summary = "Lista categorias", description = "Obtiene las categorias para pago de servicios")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene las categorias de pago de servicios"),
             @ApiResponse(responseCode = "200", description = "Obtiene las categorias de pago de servicios"),
             @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
@@ -194,7 +194,7 @@ public class PaymentServicesController {
             @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/affiliate-services/{affiliateServiceId}/debts")
-    public ResponseEntity<ApiDataResponse<AffiliationDebtsResponse>> getAffiliationDebts(
+    public ResponseEntity<AffiliationDebtsResponse> getAffiliationDebts(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
@@ -204,7 +204,7 @@ public class PaymentServicesController {
             @PathVariable("affiliateServiceId") @NotNull @Parameter(description = "Id del servicio afiliado", example = "12345") Integer affiliateServiceId,
             @Valid @RequestBody AffiliationDebtsRequest request
     ) throws IOException {
-        return ResponseEntity.ok(ApiDataResponse.of(service.getAffiliationDebts(personId, affiliateServiceId, request, Headers.getParameter(httpServletRequest))));
+        return ResponseEntity.ok(service.getAffiliationDebts(personId, affiliateServiceId, request, Headers.getParameter(httpServletRequest)));
     }
 
     @Operation(summary = "Pago de servicio", description = "Realiza pago de una servicio afiliado")
@@ -230,13 +230,13 @@ public class PaymentServicesController {
 
     @Operation(summary = "Obtener la lista de servicios por subcategoria y ciudad", description = "Lista los servicios por subcategorias y ciudades")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios", content = @Content(schema = @Schema(implementation = ListServicesResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios"),
             @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "Error si la categoria no tiene subcategorias", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/subcategories/{subCategoryId}/cities/{cityId}")
-    public ResponseEntity<ListServicesResponse> getServices(
+    public ResponseEntity<ApiDataResponse<List<ServiceResponse>>> getServices(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
@@ -251,12 +251,12 @@ public class PaymentServicesController {
             @Min(value = 0, message = "La cityId debe ser mayor o igual a 0")
             @PathVariable("cityId") final Integer cityId
     ) throws IOException {
-        return ResponseEntity.ok(service.getServicesByCategoryAndCity(subCategoryId, cityId, Headers.getParameter(httpServletRequest,
+        return ResponseEntity.ok(ApiDataResponse.of(service.getServicesByCategoryAndCity(subCategoryId, cityId, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,
                 geoPositionY,
-                appVersion)));
+                appVersion))));
     }
 
     @Operation(summary = "Obtener criterios de afiliación", description = "Obtiene los criterios de afiliación de un servicio")
@@ -289,7 +289,6 @@ public class PaymentServicesController {
                 appVersion)));
     }
 
-
     @Operation(summary = "Validar criterios de afiliación", description = "Valida los criterios de afiliación de un servicio")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios", content = @Content(schema = @Schema(implementation = ValidateAffiliateCriteriaResponse.class), mediaType = "application/json")),
@@ -315,5 +314,24 @@ public class PaymentServicesController {
             @Valid @RequestBody ValidateAffiliateCriteriaRequest body
     ) throws IOException {
         return ResponseEntity.ok(service.validateAffiliateCriteria(personId, serviceCode, body, Headers.getParameter(httpServletRequest)));
+    }
+
+    @Operation(summary = "Lista de servicios", description = "Listado de todos los servicios disponibles")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de servicios"),
+            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "406", description = "Error de negocio", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PostMapping()
+    public ResponseEntity<ApiDataResponse<List<ServiceResponse>>> listService(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @Valid @RequestBody ListServiceRequest request
+    ) throws IOException {
+        return ResponseEntity.ok(ApiDataResponse.of(service.getListService(request, Headers.getParameter(httpServletRequest))));
     }
 }

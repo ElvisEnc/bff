@@ -12,14 +12,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QrListOrderRequest {
+public class OrderRequest {
     @NotBlank(message = "field no puede estar en vacio")
-    @Schema(example = "REGISTRATION_DATE | EXPIRATION_DATE | AMOUNT", description = "Campo por el cual se va filtrar en orden ascendente o descendente, por defecto REGISTRATION_DATE")
+    @Schema(example = "FIELD", description = "Campo por el cual se va filtrar")
     private String field;
 
     @NotNull(message = "desc no puede ser nulo")
-    @Schema(example = "true", description = "true = Descendente, de hoy al más antiguo. false = Ascendente, Del más antiguo a hoy")
+    @Schema(example = "true", description = "true = Descendente, de hoy al más antiguo | z -> a --- false = Ascendente, Del más antiguo a hoy | a -> z")
     private Boolean desc;
 }
-
-

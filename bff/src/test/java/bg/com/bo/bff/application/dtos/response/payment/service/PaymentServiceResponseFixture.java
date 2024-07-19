@@ -1,11 +1,5 @@
 package bg.com.bo.bff.application.dtos.response.payment.service;
 
-import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
-import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
-import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataRegisterServiceAffiliation;
-import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataServiceAffiliation;
-import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DependencyServiceAffiliation;
-import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 
 import java.math.BigDecimal;
@@ -27,9 +21,6 @@ public class PaymentServiceResponseFixture {
         return ApiDataResponse.of(Collections.singletonList(withDefaultAffiliateServiceResponse()));
     }
 
-    public static AffiliationDebtsRequest withDefaultDebtsRequest() {
-        return new AffiliationDebtsRequest(123, 2024);
-    }
 
     public static AffiliationDebtsResponse withDefaultDebtsResponse() {
         return AffiliationDebtsResponse.builder()
@@ -61,49 +52,6 @@ public class PaymentServiceResponseFixture {
                 .build();
     }
 
-    public static ServiceAffiliationRequest withDefaultServiceAffiliationRequest() {
-        return new ServiceAffiliationRequest(
-                "42",
-                "24",
-                "referencia",
-                "2024",
-                "0",
-                false,
-                List.of(withDefaultDependencyServiceAffiliation()),
-                List.of(withDefaultDataServiceAffiliation())
-        );
-    }
-
-    public static DependencyServiceAffiliation withDefaultDependencyServiceAffiliation() {
-        return new DependencyServiceAffiliation(
-                "28",
-                "73166120"
-        );
-    }
-
-    public static DataServiceAffiliation withDefaultDataServiceAffiliation() {
-        return new DataServiceAffiliation(
-                "1",
-                "S/N",
-                "73166120",
-                "desc",
-                null,
-                List.of(withDefaultDataRegisterServiceAffiliation())  // dataRegister
-        );
-    }
-
-    public static DataRegisterServiceAffiliation withDefaultDataRegisterServiceAffiliation() {
-        return new DataRegisterServiceAffiliation(
-                "cuenta",
-                "73166120",
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-    }
-
     public static ServiceAffiliationResponse withDefaultServiceAffiliationResponse() {
         return new ServiceAffiliationResponse("1946919");
     }
@@ -112,6 +60,7 @@ public class PaymentServiceResponseFixture {
         return CategoryResponse.builder()
                 .categoryId("1")
                 .categoryName("category")
+                .categoryDescription("1")
                 .build();
     }
 
@@ -119,23 +68,15 @@ public class PaymentServiceResponseFixture {
         return ApiDataResponse.of(Collections.singletonList(withDefaultCategoryResponse()));
     }
 
-    public static ListServicesResponse withDefaultListServicesResponse() {
-        return new ListServicesResponse(
-                List.of(
-                        ListServicesResponse.Service.builder()
-                                .serviceCode("1")
-                                .serviceName("Servicio 1")
-                                .build(),
-                        ListServicesResponse.Service.builder()
-                                .serviceCode("2")
-                                .serviceName("Servicio 2")
-                                .build(),
-                        ListServicesResponse.Service.builder()
-                                .serviceCode("3")
-                                .serviceName("Servicio 3")
-                                .build()
-                )
-        );
+    public static List<ServiceResponse> withDefaultListServicesResponse() {
+        return Collections.singletonList(withDefaultServiceResponse());
+    }
+
+    public static ServiceResponse withDefaultServiceResponse() {
+        return ServiceResponse.builder()
+                .serviceCode("123")
+                .serviceName("test")
+                .build();
     }
 
     public static SubcategoriesResponse withDefaultSubcategoriesResponse() {
@@ -171,20 +112,6 @@ public class PaymentServiceResponseFixture {
         return SubCategoryCitiesResponse.builder()
                 .data(data)
                 .build();
-    }
-
-    public static PaymentDebtsRequest withDefaultPaymentDebtsRequest() {
-        return new PaymentDebtsRequest(
-                "068",
-                BigDecimal.valueOf(100.00),
-                12546878L,
-                "324a029a-553f-4acb-abf4-4dcb25574463",
-                "12546878",
-                "Juan Perez",
-                "Test Company",
-                "77",
-                "Pagos"
-        );
     }
 
     public static PaymentDebtsResponse withDefaultPaymentDebtsResponse() {
@@ -279,6 +206,17 @@ public class PaymentServiceResponseFixture {
                                 )
                                 .build()
                 ))
+                .build();
+    }
+
+    public static List<ServiceResponse> withDefaultListServiceResponse() {
+        return Collections.singletonList(withDefaultListService());
+    }
+
+    public static ServiceResponse withDefaultListService() {
+        return ServiceResponse.builder()
+                .serviceCode("42")
+                .serviceName("Entel")
                 .build();
     }
 }

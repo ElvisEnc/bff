@@ -1,6 +1,7 @@
 package bg.com.bo.bff.services.interfaces;
 
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.ListServiceRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
@@ -27,11 +28,13 @@ public interface IPaymentServicesService {
 
     PaymentDebtsResponse paymentDebts(String personId, String affiliateServiceId, PaymentDebtsRequest request, Map<String, String> parameter) throws IOException;
 
-    ListServicesResponse getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException;
+    List<ServiceResponse> getServicesByCategoryAndCity(Integer subCategoryId, Integer cityId, Map<String, String> parameters) throws IOException;
 
     GenericResponse deleteAffiliationService(String personId, String affiliateServiceId, Map<String, String> parameter) throws IOException;
 
     AffiliateCriteriaResponse getAffiliateCriteria(String personId, String serviceCode, Map<String, String> parameter) throws IOException;
 
-    ValidateAffiliateCriteriaResponse validateAffiliateCriteria (String personId, String serviceCode, ValidateAffiliateCriteriaRequest request, Map<String, String> parameter) throws IOException;
+    ValidateAffiliateCriteriaResponse validateAffiliateCriteria(String personId, String serviceCode, ValidateAffiliateCriteriaRequest request, Map<String, String> parameter) throws IOException;
+
+    List<ServiceResponse> getListService(ListServiceRequest request, Map<String, String> parameter) throws IOException;
 }

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 
 public record PaymentDebtsRequest(
         @NotBlank
+        @Size(min = 1, max = 10)
         @Pattern(regexp = "\\d+", message = "La moneda debe contener solo números")
         @Schema(description = "Código de la moneda", example = "068")
         String currency,
@@ -24,6 +25,7 @@ public record PaymentDebtsRequest(
         Long fromAccountId,
 
         @NotBlank
+        @Size(min = 1, max = 100)
         @Schema(description = "uuid", example = "324a029a-553f-4acb-abf4-4dcb25574463")
         String idGeneratedForDebt,
 

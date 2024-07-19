@@ -8,6 +8,7 @@ import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.Ser
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public interface IPaymentServicesProvider {
@@ -32,5 +33,7 @@ public interface IPaymentServicesProvider {
 
     AffiliateCriteriaMWResponse getAffiliateCriteria(String personId, String serviceCode, Map<String, String> parameter) throws IOException;
 
-    ValidateAffiliateCriteriaMWResponse validateAffiliateCriteria (ValidateAffiliateCriteriaMWRequest request, Map<String, String> parameter) throws IOException;
+    ValidateAffiliateCriteriaMWResponse validateAffiliateCriteria(ValidateAffiliateCriteriaMWRequest request, Map<String, String> parameter) throws IOException;
+
+    ListServicesMWResponse getListService(Map<String, String> parameter) throws IOException;
 }

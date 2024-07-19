@@ -82,7 +82,6 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                 .ownerAccount(PaymentDebtsMWRequest.PaymentOwnerAccount.builder()
                         .schemeName("personId")
                         .personId(personId)
-                        .companyId(personId)
                         .build()
                 )
                 .instructedAmount(PaymentDebtsMWRequest.PaymentAmount.builder()
@@ -158,7 +157,7 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
 
     @Override
     public AffiliationDebtsResponse convertDebtsResponse(DebtsConsultationMWResponse mwResponse) {
-        List<DebtDetail> debtDetails = mwResponse.getDebtDetails().stream()
+        List<DebtDetail> debtDetails = mwResponse.getData().getDebtDetails().stream()
                 .map(detail ->
                         DebtDetail.builder()
                                 .description(detail.getDescription())
@@ -178,11 +177,11 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                                 .build())
                 .toList();
         return AffiliationDebtsResponse.builder()
-                .affiliateServiceId(mwResponse.getAffiliationCode())
-                .serviceCode(mwResponse.getServiceCode())
-                .invoiceNit(mwResponse.getInvoiceTaxId())
-                .invoiceName(mwResponse.getInvoiceName())
-                .invoiceCanModify(mwResponse.getInvoiceCanModifyData() != null && !"N".equals(mwResponse.getInvoiceCanModifyData()))
+                .affiliateServiceId(mwResponse.getData().getAffiliationCode())
+                .serviceCode(mwResponse.getData().getServiceCode())
+                .invoiceNit(mwResponse.getData().getInvoiceTaxId())
+                .invoiceName(mwResponse.getData().getInvoiceName())
+                .invoiceCanModify(mwResponse.getData().getInvoiceCanModifyData() != null && !"N".equals(mwResponse.getData().getInvoiceCanModifyData()))
                 .debtDetails(debtDetails)
                 .build();
     }
@@ -218,17 +217,15 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
     }
 
     @Override
-    public ListServicesResponse convertResponse(ListServicesMWResponse mwResponse) {
+    public List<ServiceResponse> convertResponse(ListServicesMWResponse mwResponse) {
         if (mwResponse == null || mwResponse.getData() == null)
-            return new ListServicesResponse(Collections.emptyList());
-        List<ListServicesResponse.Service> data =
-                mwResponse.getData().stream()
-                        .map(mw -> ListServicesResponse.Service.builder()
-                                .serviceCode(mw.getServiceCode())
-                                .serviceName(mw.getServiceName())
-                                .build())
-                        .toList();
-        return new ListServicesResponse(data);
+            return Collections.emptyList();
+        return mwResponse.getData().stream()
+                .map(mw -> ServiceResponse.builder()
+                        .serviceCode(mw.getServiceCode())
+                        .serviceName(mw.getServiceName())
+                        .build())
+                .toList();
     }
 
     @Override

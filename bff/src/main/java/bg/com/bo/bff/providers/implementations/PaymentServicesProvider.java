@@ -62,9 +62,9 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
 
     @Override
     public DebtsConsultationMWResponse debtsConsultation(DebtsConsultationMWRequest request, Map<String, String> parameters) throws IOException {
-        String url = baseUrl + PaymentServicesMiddlewareServices.GET_DEBTS.getServiceURL();
-        ApiDataResponse<DebtsConsultationMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(parameters), request, ApiDataResponse.class);
-        return Util.stringToObject(Util.objectToString(mwResponse.getData()), DebtsConsultationMWResponse.class);
+        String url = baseUrl + PaymentServicesMiddlewareServices.DEBTS.getServiceURL();
+        ByMwErrorResponseHandler<DebtsConsultationMWResponse> responseHandler = ByMwErrorResponseHandler.instance(PaymentServicesMiddlewareError.MDWPSM_017);
+        return post(url, HeadersMW.getDefaultHeaders(parameters), request, DebtsConsultationMWResponse.class, responseHandler);
     }
 
     @Override
@@ -108,5 +108,12 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
         final String url = String.format(URL_FORMAT, baseUrl, pathServices);
         ApiDataResponse<ValidateAffiliateCriteriaMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(parameters), mwRequest, ApiDataResponse.class);
         return Util.stringToObject(Util.objectToString(mwResponse.getData()), ValidateAffiliateCriteriaMWResponse.class);
+    }
+
+    @Override
+    public ListServicesMWResponse getListService(Map<String, String> parameter) throws IOException {
+        String url = baseUrl + PaymentServicesMiddlewareServices.GET_LIST_SERVICES.getServiceURL();
+        ByMwErrorResponseHandler<ListServicesMWResponse> responseHandler = ByMwErrorResponseHandler.instance(PaymentServicesMiddlewareError.MDWPSM_007);
+        return get(url, HeadersMW.getDefaultHeaders(parameter), ListServicesMWResponse.class, responseHandler);
     }
 }

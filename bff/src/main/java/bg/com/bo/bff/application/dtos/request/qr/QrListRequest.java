@@ -21,5 +21,5 @@ public class QrListRequest {
     private PaginationRequest pagination;
 
     @Valid
-    private QrListOrderRequest order;
+    private OrderRequest order;
 }

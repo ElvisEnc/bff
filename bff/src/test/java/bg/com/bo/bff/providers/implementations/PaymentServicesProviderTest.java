@@ -252,10 +252,10 @@ class PaymentServicesProviderTest {
     @DisplayName("Get debts of affiliation services given PersonId and AffiliateId")
     void givenDebtsRequestWhenGetDebtsConsultationThenExpectResponse() throws IOException {
         // Arrange
-        DebtsConsultationMWRequest mwRequest = PaymentServicesMWResponseFixture.withDefaultDebtsRequestMW();
+        DebtsConsultationMWRequest mwRequest = PaymentServicesMWRequestFixture.withDefaultDebtsRequestMW();
         DebtsConsultationMWResponse expected = PaymentServicesMWResponseFixture.withDefaultDebtsResponseMW();
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(ApiDataResponse.of(expected));
+        String jsonResponse = Util.objectToString(expected);
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
@@ -272,7 +272,7 @@ class PaymentServicesProviderTest {
     @DisplayName("Should successfully when Payment Debts")
     void givenDebtsRequestWhenGetPaymentDebtsThenExpectResponse() throws IOException {
         // Arrange
-        PaymentDebtsMWRequest mwRequest = PaymentServicesMWResponseFixture.withDefaultPaymentDebtsMWRequest();
+        PaymentDebtsMWRequest mwRequest = PaymentServicesMWRequestFixture.withDefaultPaymentDebtsMWRequest();
         PaymentDebtsMWResponse expected = PaymentServicesMWResponseFixture.withDefaultPaymentDebtsMWResponse();
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = Util.objectToString(ApiDataResponse.of(expected));
@@ -292,7 +292,7 @@ class PaymentServicesProviderTest {
     @DisplayName("Should Successfully Affiliate Service in Payment Services Module")
     void givenServiceAffiliationRequestWhenPostServiceAffiliationThenExpectResponse() throws IOException {
         // Arrange
-        ServiceAffiliationMWRequest mwRequestMock=  PaymentServicesMWResponseFixture.withDefaultServiceAffiliationMWRequest();
+        ServiceAffiliationMWRequest mwRequestMock=  PaymentServicesMWRequestFixture.withDefaultServiceAffiliationMWRequest();
         ServiceAffiliationMWResponse expected= PaymentServicesMWResponseFixture.withDefaultServiceAffiliationMWResponse();
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = Util.objectToString(ApiDataResponse.of(expected));
@@ -395,6 +395,25 @@ class PaymentServicesProviderTest {
         // Assert
         assertNotNull(response);
         assertEquals(response, PaymentServicesMWResponseFixture.withDefaultValidateAffiliateCriteriaResponse());
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Should List Services when Get Services")
+    void givenRequestWhenGetListServicesThenListServices() throws IOException {
+        // Arrange
+        ListServicesMWResponse expected = PaymentServicesMWResponseFixture.withDefaultListServiceMWResponse();
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(expected);
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        ListServicesMWResponse response = provider.getListService( map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, expected);
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }

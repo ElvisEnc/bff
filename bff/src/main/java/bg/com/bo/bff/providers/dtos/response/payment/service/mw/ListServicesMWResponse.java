@@ -24,6 +24,3 @@ public class ListServicesMWResponse {
         private String serviceName;
     }
 }
-
-
-

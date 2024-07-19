@@ -37,7 +37,7 @@ public interface IPaymentServicesMapper {
 
     ServiceAffiliationResponse convertServiceAffiliationResponse(ServiceAffiliationMWResponse mwRequest);
 
-    ListServicesResponse convertResponse(ListServicesMWResponse response);
+    List<ServiceResponse> convertResponse(ListServicesMWResponse response);
 
     DeleteAffiliateServiceMWRequest convertRequest(String personId, String affiliateServiceId);
 

@@ -17,6 +17,7 @@ public record ServiceAffiliationRequest(
         String criteriaSearchId,
 
         @NotBlank
+        @Size(min = 3, max = 99)
         @Schema(description = "Nombre de la referencia", example = "referencia")
         String referenceName,
 
@@ -28,7 +29,7 @@ public record ServiceAffiliationRequest(
 
         @NotBlank
         @Pattern(regexp = "^\\d+")
-        @Schema(description = "Número de cuenta puede ser 0",example = "0")
+        @Schema(description = "Número de cuenta puede ser 0", example = "0")
         String accountNumber,
 
         @NotNull
@@ -36,9 +37,11 @@ public record ServiceAffiliationRequest(
         Boolean isTemporal,
 
         @Valid
+        @NotNull
         List<DependencyServiceAffiliation> searchFields,
 
         @Valid
+        @NotNull
         List<DataServiceAffiliation> dataAffiliation
 ) {
 }

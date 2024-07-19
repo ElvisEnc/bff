@@ -10,13 +10,14 @@ public enum PaymentServicesMiddlewareServices {
     GET_CATEGORIES("/bs/v1/categories"),
     GET_SUBCATEGORY_CITIES("/bs/v1/sub-categories/%s/cities"),
     GET_AFFILIATIONS_SERVICES("/bs/v1/affiliations-services/persons/%d"),
-    GET_DEBTS("/bs/v1/payment/debts"),
+    DEBTS("/bs/v1/payment/debts"),
     POST_PAYMENTS_DEBTS("/bs/v1/payments/debts"),
     GET_SERVICES("/bs/v1/sub-categories/%s/cities/%s"),
     POST_SERVICE_AFFILIATION("/bs/v1/affiliations-services"),
     DELETE_AFFILIATE_SERVICE("/bs/v1/affiliations/delete"),
     GET_AFFILIATE_CRITERIA("/bs/v1/search-criteria?serviceCode=%s"),
-    VALIDATE_AFFILIATE_CRITERIA("/bs/v1/affiliations/validate");
+    VALIDATE_AFFILIATE_CRITERIA("/bs/v1/affiliations/validate"),
+    GET_LIST_SERVICES("/bs/v1/services");
     private final String serviceURL;
 }
 

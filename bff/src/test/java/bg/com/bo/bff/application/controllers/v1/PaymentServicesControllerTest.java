@@ -1,10 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
-import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.*;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
-import bg.com.bo.bff.application.dtos.request.payment.service.PaymentServiceRequestFixture;
-import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.commons.enums.DeviceMW;
@@ -195,7 +192,7 @@ class PaymentServicesControllerTest {
     @Test
     void givenPersonIdWhenPostServiceAffiliationThenResponseNewAffiliationCode() throws Exception {
         //Arrange
-        ServiceAffiliationRequest requestMock = PaymentServiceResponseFixture.withDefaultServiceAffiliationRequest();
+        ServiceAffiliationRequest requestMock = PaymentServiceRequestFixture.withDefaultServiceAffiliationRequest();
         ServiceAffiliationResponse expectedResponse = PaymentServiceResponseFixture.withDefaultServiceAffiliationResponse();
         when(service.serviceAffiliation(any(), any(), any())).thenReturn(expectedResponse);
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
@@ -223,7 +220,7 @@ class PaymentServicesControllerTest {
     @Test
     void givenPersonIdAffiliateIdWhenGetAffiliationDebtsServiceThenResponseListDebts() throws Exception {
         //Arrange
-        AffiliationDebtsRequest requestMock = PaymentServiceResponseFixture.withDefaultDebtsRequest();
+        AffiliationDebtsRequest requestMock = PaymentServiceRequestFixture.withDefaultDebtsRequest();
         AffiliationDebtsResponse expectedResponse = PaymentServiceResponseFixture.withDefaultDebtsResponse();
         when(service.getAffiliationDebts(any(), any(), any(), any())).thenReturn(expectedResponse);
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
@@ -239,7 +236,7 @@ class PaymentServicesControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
-        String response = objectMapper.writeValueAsString(ApiDataResponse.of(expectedResponse));
+        String response = objectMapper.writeValueAsString(expectedResponse);
         String actual = result.getResponse().getContentAsString();
 
         // Assert
@@ -251,7 +248,7 @@ class PaymentServicesControllerTest {
     @Test
     void givenPersonIdAffiliateIdWhenPaymentDebtsThenResponseSuccess() throws Exception {
         //Arrange
-        PaymentDebtsRequest requestMock = PaymentServiceResponseFixture.withDefaultPaymentDebtsRequest();
+        PaymentDebtsRequest requestMock = PaymentServiceRequestFixture.withDefaultPaymentDebtsRequest();
         PaymentDebtsResponse expectedResponse = PaymentServiceResponseFixture.withDefaultPaymentDebtsResponse();
         when(service.paymentDebts(any(), any(), any(), any())).thenReturn(expectedResponse);
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
@@ -279,7 +276,7 @@ class PaymentServicesControllerTest {
     @Test
     void givenValidDataWhenGetListServicesByCityThenResponse() throws Exception {
         //Arrange
-        ListServicesResponse expectedResponse = PaymentServiceResponseFixture.withDefaultListServicesResponse();
+        List<ServiceResponse> expectedResponse = PaymentServiceResponseFixture.withDefaultListServicesResponse();
         when(service.getServicesByCategoryAndCity(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
@@ -291,7 +288,7 @@ class PaymentServicesControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
-        String response = objectMapper.writeValueAsString(expectedResponse);
+        String response = objectMapper.writeValueAsString(ApiDataResponse.of(expectedResponse));
         String actual = result.getResponse().getContentAsString();
 
         // Assert
@@ -380,4 +377,31 @@ class PaymentServicesControllerTest {
         verify(service).validateAffiliateCriteria(any(), any(), any(), any());
     }
 
+    @Test
+    void givenServiceRequestWhenGetServicesThenResponseListServices() throws Exception {
+        //Arrange
+        ListServiceRequest requestMock = PaymentServiceRequestFixture.withDefaultListServiceRequest();
+        List<ServiceResponse> expectedResponse = PaymentServiceResponseFixture.withDefaultListServiceResponse();
+        when(service.getListService(any(), any())).thenReturn(expectedResponse);
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        // Act
+        String path = "/api/v1/payment-services";
+        MvcResult result = mockMvc.perform(post(path)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(requestMock))
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(ApiDataResponse.of(expectedResponse));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).getListService(any(), any());
+    }
 }

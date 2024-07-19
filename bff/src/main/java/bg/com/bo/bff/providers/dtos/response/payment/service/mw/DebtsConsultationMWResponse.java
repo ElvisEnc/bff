@@ -10,12 +10,20 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DebtsConsultationMWResponse {
-    private String affiliationCode;
-    private String serviceCode;
-    private String invoiceTaxId;
-    private String invoiceName;
-    private String invoiceCanModifyData;
-    private List<DebtsConsultationDetail> debtDetails;
+    private DebtsConsultationMW data;
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DebtsConsultationMW{
+        private String affiliationCode;
+        private String serviceCode;
+        private String invoiceTaxId;
+        private String invoiceName;
+        private String invoiceCanModifyData;
+        private List<DebtsConsultationDetail> debtDetails;
+    }
 
     @Getter
     @Builder

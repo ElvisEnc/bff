@@ -4,10 +4,9 @@ import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAc
 import bg.com.bo.bff.commons.filters.interfaces.IFilter;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AccountNameFilter implements IFilter<DestinationAccount> {
-    private String searchText;
+    private final String searchText;
 
     public AccountNameFilter(String bankName) {
         this.searchText = bankName;
@@ -19,6 +18,6 @@ public class AccountNameFilter implements IFilter<DestinationAccount> {
                 .filter(account -> (account.getBankName() != null && account.getBankName().toLowerCase().contains(searchText.toLowerCase()))
                         || (account.getClientName() != null && account.getClientName().toLowerCase().contains(searchText.toLowerCase()))
                         || (account.getAccountAliases() != null && account.getAccountAliases().toLowerCase().contains(searchText.toLowerCase())))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

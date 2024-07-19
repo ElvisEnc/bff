@@ -1,6 +1,6 @@
 package bg.com.bo.bff.commons.filters;
 
-import bg.com.bo.bff.application.dtos.request.qr.QrListOrderRequest;
+import bg.com.bo.bff.application.dtos.request.qr.OrderRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
@@ -13,7 +13,7 @@ public class OrderFilter {
     private final String field;
     private final boolean desc;
 
-    public OrderFilter(QrListOrderRequest request) {
+    public OrderFilter(OrderRequest request) {
         this.field = request != null ? request.getField() : OrderFieldFilter.REGISTRATION_DATE.getCode();
         this.desc = request == null || request.getDesc();
     }

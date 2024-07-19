@@ -1,12 +1,6 @@
 package bg.com.bo.bff.providers.dtos.response.payment.service.mw;
 
 import bg.com.bo.bff.application.dtos.response.payment.service.ValidateAffiliateCriteriaResponse;
-import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
-import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
-import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataRegisterServiceAffiliationMW;
-import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DataServiceAffiliationMW;
-import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.DependencyServiceAffiliationMW;
-import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
@@ -118,19 +112,17 @@ public class PaymentServicesMWResponseFixture {
                 .build();
     }
 
-    public static DebtsConsultationMWRequest withDefaultDebtsRequestMW() {
-        return new DebtsConsultationMWRequest(123, 123, 2024, 123);
-    }
-
     public static DebtsConsultationMWResponse withDefaultDebtsResponseMW() {
         return DebtsConsultationMWResponse.builder()
-                .affiliationCode("123")
-                .serviceCode("123")
-                .invoiceTaxId("123")
-                .invoiceName("123")
-                .invoiceCanModifyData("123")
-                .debtDetails(Collections.singletonList(withDefaultDebtsDetailMW()))
-                .build();
+                .data(DebtsConsultationMWResponse.DebtsConsultationMW.builder()
+                        .affiliationCode("123")
+                        .serviceCode("123")
+                        .invoiceTaxId("123")
+                        .invoiceName("123")
+                        .invoiceCanModifyData("N")
+                        .debtDetails(Collections.singletonList(withDefaultDebtsDetailMW()))
+                        .build()
+                ).build();
     }
 
     public static DebtsConsultationMWResponse.DebtsConsultationDetail withDefaultDebtsDetailMW() {
@@ -151,36 +143,6 @@ public class PaymentServicesMWResponseFixture {
                 .idGeneratedForDebt("123")
                 .penaltyPayment(BigDecimal.valueOf(10.00))
                 .concept("123")
-                .build();
-    }
-
-    public static PaymentDebtsMWRequest withDefaultPaymentDebtsMWRequest() {
-        return PaymentDebtsMWRequest.builder()
-                .ownerAccount(PaymentDebtsMWRequest.PaymentOwnerAccount.builder()
-                        .schemeName("scheme123")
-                        .personId("person123")
-                        .companyId("company123")
-                        .build())
-                .instructedAmount(PaymentDebtsMWRequest.PaymentAmount.builder()
-                        .currency("USD")
-                        .amount(BigDecimal.valueOf(100.00))
-                        .build())
-                .debtorAccount(PaymentDebtsMWRequest.PaymentDebtor.builder()
-                        .schemeName("scheme123")
-                        .identification("ident123")
-                        .build())
-                .supplementaryData(PaymentDebtsMWRequest.PaymentSupplementary.builder()
-                        .idGeneratedForDebt("324a029a-553f-4acb-abf4-4dcb25574463")
-                        .invoiceNITCI("12546878")
-                        .invoiceName("Juan Perez")
-                        .company("Test Company")
-                        .affiliationCode("aff123")
-                        .serviceCode("svc123")
-                        .description("Test Payment")
-                        .build())
-                .risk(PaymentDebtsMWRequest.PaymentRisk.builder()
-                        .paymentContextCode("context123")
-                        .build())
                 .build();
     }
 
@@ -206,50 +168,6 @@ public class PaymentServicesMWResponseFixture {
                         "svc123",
                         "voucher123"
                 )
-        );
-    }
-
-    public static ServiceAffiliationMWRequest withDefaultServiceAffiliationMWRequest() {
-        return ServiceAffiliationMWRequest.builder()
-                .serviceCode("42")
-                .criteriaSearchId("24")
-                .referenceName("referencia")
-                .year("2024")
-                .personId("123")
-                .accountNumber("0")
-                .isTemporal("N")
-                .searchFields(List.of(withDefaultDependencyServiceAffiliationMW()))
-                .dataAffiliation(List.of(withDefaultDataServiceAffiliationMW()))
-                .build();
-    }
-
-    public static DependencyServiceAffiliationMW withDefaultDependencyServiceAffiliationMW() {
-        return new DependencyServiceAffiliationMW(
-                "28",
-                "73166120"
-        );
-    }
-
-    public static DataServiceAffiliationMW withDefaultDataServiceAffiliationMW() {
-        return new DataServiceAffiliationMW(
-                "1",
-                "S/N",
-                "73166120",
-                "desc",
-                null,
-                List.of(withDefaultDataRegisterServiceAffiliationMW())
-        );
-    }
-
-    public static DataRegisterServiceAffiliationMW withDefaultDataRegisterServiceAffiliationMW() {
-        return new DataRegisterServiceAffiliationMW(
-                "cuenta",
-                "73166120",
-                null,
-                null,
-                null,
-                null,
-                null
         );
     }
 
@@ -283,7 +201,7 @@ public class PaymentServicesMWResponseFixture {
                 .data(
                         AffiliateCriteriaMWResponse.DetailData.builder()
                                 .serviceCode("123")
-                                .year(123)
+                                .year(2024)
                                 .subServices(List.of(
                                         AffiliateCriteriaMWResponse.DetailData.SubService.builder()
                                                 .labelCriteria("test")
@@ -295,18 +213,18 @@ public class PaymentServicesMWResponseFixture {
                                                 AffiliateCriteriaMWResponse.DetailData.SearchCriteria.builder()
                                                         .labelCriteria("test")
                                                         .description("test")
-                                                        .searchCriteriaId("test")
-                                                        .searchCriteriaIdAbbreviation("test")
+                                                        .searchCriteriaId("123")
+                                                        .searchCriteriaIdAbbreviation("123")
                                                         .fields(
                                                                 List.of(
                                                                         AffiliateCriteriaMWResponse.DetailData.SearchCriteria.Field.builder()
-                                                                                .identifier(1)
+                                                                                .identifier(123)
                                                                                 .label("test")
                                                                                 .description("test")
                                                                                 .abbreviation("test")
-                                                                                .isMandatory("test")
+                                                                                .isMandatory("S")
                                                                                 .minimumLength("1")
-                                                                                .maximumLength("1")
+                                                                                .maximumLength("10")
                                                                                 .dataTypeCode("1")
                                                                                 .values(
                                                                                         List.of(
@@ -352,6 +270,16 @@ public class PaymentServicesMWResponseFixture {
                                 )
                                 .build()
                 ))
+                .build();
+    }
+
+    public static ListServicesMWResponse withDefaultListServiceMWResponse() {
+        return ListServicesMWResponse.builder()
+                .data(Collections.singletonList(
+                        ListServicesMWResponse.Service.builder()
+                                .serviceCode("42")
+                                .serviceName("Entel")
+                                .build()))
                 .build();
     }
 }

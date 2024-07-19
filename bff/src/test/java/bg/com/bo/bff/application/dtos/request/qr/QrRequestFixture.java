@@ -16,7 +16,7 @@ public class QrRequestFixture {
                         .page(1)
                         .pageSize(10)
                         .build())
-                .order(QrListOrderRequest.builder()
+                .order(OrderRequest.builder()
                         .field("REGISTRATION_DATE")
                         .desc(true)
                         .build())
