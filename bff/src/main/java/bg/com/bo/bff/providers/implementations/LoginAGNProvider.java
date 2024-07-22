@@ -4,13 +4,17 @@ import bg.com.bo.bff.application.dtos.request.registry.RegistryCredentialsReques
 import bg.com.bo.bff.application.dtos.request.registry.RegistryDeviceIdentificatorRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryOldDeviceIdentificatorRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
+import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.enums.CredentialsType;
 import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
+import bg.com.bo.bff.commons.enums.response.RegistryControllerErrorResponse;
 import bg.com.bo.bff.providers.dtos.request.login.agm.*;
 import bg.com.bo.bff.providers.dtos.response.encryption.UserEncryptionKeys;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.response.login.agm.RegistryDataResponse;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.providers.interfaces.ILoginAGNProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -135,8 +139,11 @@ public class LoginAGNProvider implements ILoginAGNProvider {
                 if (statusCode == HttpStatus.OK.value()) {
                     String response = EntityUtils.toString(httpResponse.getEntity());
                     RegistryDataResponse registryDataResponse = objectMapper.readValue(response, RegistryDataResponse.class);
-
-                    return Objects.equals(registryDataResponse.getStatusCode(), VALID_REGISTRATION_VALUE);
+                    if (!Objects.equals(registryDataResponse.getStatusCode(), RegistryControllerErrorResponse.ALREADY_REGISTERED.getCode())) {
+                        return Objects.equals(registryDataResponse.getStatusCode(), VALID_REGISTRATION_VALUE);
+                    } else {
+                        throw new HandledException(RegistryControllerErrorResponse.ALREADY_REGISTERED);
+                    }
                 } else
                     throw new HandledException(GenericControllerErrorResponse.NOT_HANDLED_RESPONSE);
             } catch (HandledException e) {
