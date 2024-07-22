@@ -45,6 +45,9 @@ public class CacheConfig {
     @Value("${cache.token.expiration.limit.range.ttl}")
     private Integer cacheTokenExpirationLimitRangeTtl;
 
+    @Value("${cache.user.data.ttl}")
+    private Integer userDataTtl;
+
     @Value("${cache.generic.data.ttl}")
     private Integer genericDataTtl;
 
@@ -78,6 +81,12 @@ public class CacheConfig {
                 .withCacheConfiguration(CacheConstants.QR_GENERATED_PAID,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(qrListGeneratedAndPaidTtl))
+                                .disableCachingNullValues()
+                                .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                                .prefixCacheNameWith(cachePrefix))
+                .withCacheConfiguration(CacheConstants.USER_DATA,
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofMinutes(userDataTtl))
                                 .disableCachingNullValues()
                                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                                 .prefixCacheNameWith(cachePrefix))

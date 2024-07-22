@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PageFilter<T> implements IFilter<T> {
-    private int page;
-    private int pageSize;
+    private final int page;
+    private final int pageSize;
 
     public PageFilter(int page, int pageSize) {
         this.page = page;
