@@ -14,8 +14,8 @@ public class ServiceOrderFilter implements IFilter<ServiceResponse> {
     private final boolean desc;
 
     public ServiceOrderFilter(ListServiceRequest.Filter filters) {
-        this.field = filters.getOrder() != null ? filters.getOrder().getField() : null;
-        this.desc = filters.getOrder() != null && filters.getOrder().getDesc();
+        this.field = filters.getOrder().getField();
+        this.desc = filters.getOrder().getDesc();
     }
 
     @Override

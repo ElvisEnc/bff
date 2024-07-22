@@ -17,6 +17,12 @@ public class PaymentServicesMWResponseFixture {
                 .build();
     }
 
+    public static ListServicesMWResponse withDefaultListServicesMWResponseNull() {
+        return ListServicesMWResponse.builder()
+                .data(null)
+                .build();
+    }
+
     public static ListServicesMWResponse.Service withDefaultItemServiceMW() {
         return ListServicesMWResponse.Service.builder()
                 .serviceCode("123")
@@ -103,6 +109,12 @@ public class PaymentServicesMWResponseFixture {
                 .build();
     }
 
+    public static CategoryMWResponse withDefaultCategoryMWResponseNull() {
+        return CategoryMWResponse.builder()
+                .data(null)
+                .build();
+    }
+
     public static CategoryMWResponse.CategoryMW withDefaultCategoryMW() {
         return CategoryMWResponse.CategoryMW.builder()
                 .idType("1")
@@ -120,6 +132,32 @@ public class PaymentServicesMWResponseFixture {
                         .invoiceTaxId("123")
                         .invoiceName("123")
                         .invoiceCanModifyData("N")
+                        .debtDetails(Collections.singletonList(withDefaultDebtsDetailMW()))
+                        .build()
+                ).build();
+    }
+
+    public static DebtsConsultationMWResponse withDefaultDebtsResponseMWModifyS() {
+        return DebtsConsultationMWResponse.builder()
+                .data(DebtsConsultationMWResponse.DebtsConsultationMW.builder()
+                        .affiliationCode("123")
+                        .serviceCode("123")
+                        .invoiceTaxId("123")
+                        .invoiceName("123")
+                        .invoiceCanModifyData("S")
+                        .debtDetails(Collections.singletonList(withDefaultDebtsDetailMW()))
+                        .build()
+                ).build();
+    }
+
+    public static DebtsConsultationMWResponse withDefaultDebtsResponseMWModifyNull() {
+        return DebtsConsultationMWResponse.builder()
+                .data(DebtsConsultationMWResponse.DebtsConsultationMW.builder()
+                        .affiliationCode("123")
+                        .serviceCode("123")
+                        .invoiceTaxId("123")
+                        .invoiceName("123")
+                        .invoiceCanModifyData(null)
                         .debtDetails(Collections.singletonList(withDefaultDebtsDetailMW()))
                         .build()
                 ).build();
@@ -181,6 +219,12 @@ public class PaymentServicesMWResponseFixture {
                 .build();
     }
 
+    public static AffiliatedServiceMWResponse withDefaultAffiliatedServiceMWResponseNull() {
+        return AffiliatedServiceMWResponse.builder()
+                .data(null)
+                .build();
+    }
+
     public static AffiliatedServiceMWResponse.AffiliatedServiceMW withDefaultAffiliatedServiceMW() {
         return AffiliatedServiceMWResponse.AffiliatedServiceMW.builder()
                 .serviceCode("123")
@@ -193,6 +237,27 @@ public class PaymentServicesMWResponseFixture {
                 .descriptionTag("test")
                 .stateContingency("test")
                 .msjContingency("test")
+                .build();
+    }
+
+    public static AffiliatedServiceMWResponse withDefaultAffiliatedServiceMWResponseContingencyN() {
+        return AffiliatedServiceMWResponse.builder()
+                .data(Collections.singletonList(withDefaultAffiliatedServiceMWContingencyN()))
+                .build();
+    }
+
+    public static AffiliatedServiceMWResponse.AffiliatedServiceMW withDefaultAffiliatedServiceMWContingencyN() {
+        return AffiliatedServiceMWResponse.AffiliatedServiceMW.builder()
+                .serviceCode("123")
+                .serviceDesc("test")
+                .referenceName("test")
+                .nameHolder("test")
+                .affiliationCode("123")
+                .internalCod("123")
+                .year("123")
+                .descriptionTag("test")
+                .stateContingency("N")
+                .msjContingency("N")
                 .build();
     }
 
@@ -242,6 +307,12 @@ public class PaymentServicesMWResponseFixture {
                                 )
                                 .build()
                 )
+                .build();
+    }
+
+    public static AffiliateCriteriaMWResponse withDefaultAffiliateCriteriaMWResponseNull() {
+        return AffiliateCriteriaMWResponse.builder()
+                .data(null)
                 .build();
     }
 

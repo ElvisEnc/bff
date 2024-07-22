@@ -29,6 +29,19 @@ public class PaymentServiceRequestFixture {
         );
     }
 
+    public static ServiceAffiliationRequest withDefaultServiceAffiliationRequestIsTemporalTrue() {
+        return new ServiceAffiliationRequest(
+                "42",
+                "24",
+                "referencia",
+                "2024",
+                "0",
+                true,
+                List.of(withDefaultDependencyServiceAffiliation()),
+                List.of(withDefaultDataServiceAffiliation())
+        );
+    }
+
     public static DependencyServiceAffiliation withDefaultDependencyServiceAffiliation() {
         return new DependencyServiceAffiliation(
                 "28",
@@ -116,6 +129,57 @@ public class PaymentServiceRequestFixture {
                         .order(null)
                         .search(null)
                         .build())
+                .build();
+    }
+
+    public static ListServiceRequest withDefaultSearchListServiceRequest() {
+        return ListServiceRequest.builder()
+                .filters(ListServiceRequest.Filter.builder()
+                        .pagination(null)
+                        .order(withDefaultOrderRequestTrue())
+                        .search("servicio")
+                        .build())
+                .build();
+    }
+
+    public static OrderRequest withDefaultOrderRequestTrue() {
+        return OrderRequest.builder()
+                .field("SERVICE_NAME")
+                .desc(true)
+                .build();
+    }
+
+    public static ListServiceRequest withDefaultOrderFalseListServiceRequest() {
+        return ListServiceRequest.builder()
+                .filters(ListServiceRequest.Filter.builder()
+                        .pagination(null)
+                        .order(withDefaultOrderRequestFalse())
+                        .search("entel")
+                        .build())
+                .build();
+    }
+
+    public static OrderRequest withDefaultOrderRequestFalse() {
+        return OrderRequest.builder()
+                .field("SERVICE_NAME")
+                .desc(false)
+                .build();
+    }
+
+    public static ListServiceRequest withDefaultEmptyListServiceRequest() {
+        return ListServiceRequest.builder()
+                .filters(ListServiceRequest.Filter.builder()
+                        .pagination(withDefaultPaginationRequestPage2())
+                        .order(null)
+                        .search("")
+                        .build())
+                .build();
+    }
+
+    public static PaginationRequest withDefaultPaginationRequestPage2() {
+        return PaginationRequest.builder()
+                .page(2)
+                .pageSize(10)
                 .build();
     }
 }

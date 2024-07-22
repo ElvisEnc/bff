@@ -3,6 +3,7 @@ package bg.com.bo.bff.application.dtos.response.payment.service;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,8 +13,11 @@ public class PaymentServiceResponseFixture {
                 .affiliateServiceId("123")
                 .serviceCode("123")
                 .serviceName("test")
+                .internalCode("123")
                 .referenceName("test")
                 .nameHolder("test")
+                .year("123")
+                .contingency(true)
                 .build();
     }
 
@@ -21,8 +25,46 @@ public class PaymentServiceResponseFixture {
         return ApiDataResponse.of(Collections.singletonList(withDefaultAffiliateServiceResponse()));
     }
 
+    public static AffiliatedServicesResponse withDefaultAffiliateServiceResponseContingencyTrue() {
+        return AffiliatedServicesResponse.builder()
+                .affiliateServiceId("123")
+                .serviceCode("123")
+                .serviceName("test")
+                .internalCode("123")
+                .referenceName("test")
+                .nameHolder("test")
+                .year("123")
+                .contingency(false)
+                .build();
+    }
+
+    public static ApiDataResponse<List<AffiliatedServicesResponse>> withDataDefaultListAffiliateServiceResponseContingencyTrue() {
+        return ApiDataResponse.of(Collections.singletonList(withDefaultAffiliateServiceResponseContingencyTrue()));
+    }
 
     public static AffiliationDebtsResponse withDefaultDebtsResponse() {
+        return AffiliationDebtsResponse.builder()
+                .affiliateServiceId("123")
+                .serviceCode("123")
+                .invoiceNit("123")
+                .invoiceName("123")
+                .invoiceCanModify(false)
+                .debtDetails(Collections.singletonList(withDefaultDebtsDetail()))
+                .build();
+    }
+
+    public static AffiliationDebtsResponse withDefaultDebtsResponseModifyTrue() {
+        return AffiliationDebtsResponse.builder()
+                .affiliateServiceId("123")
+                .serviceCode("123")
+                .invoiceNit("123")
+                .invoiceName("123")
+                .invoiceCanModify(true)
+                .debtDetails(Collections.singletonList(withDefaultDebtsDetail()))
+                .build();
+    }
+
+    public static AffiliationDebtsResponse withDefaultDebtsResponseModifyNull() {
         return AffiliationDebtsResponse.builder()
                 .affiliateServiceId("123")
                 .serviceCode("123")
@@ -181,6 +223,15 @@ public class PaymentServiceResponseFixture {
                 .build();
     }
 
+    public static AffiliateCriteriaResponse withDefaultAffiliateCriteriaResponseNull() {
+        return AffiliateCriteriaResponse.builder()
+                .serviceCode(null)
+                .year(0)
+                .subServices(new ArrayList<>())
+                .criteria(new ArrayList<>())
+                .build();
+    }
+
     public static ValidateAffiliateCriteriaResponse withDefaultValidateAffiliateCriteriaResponse() {
         return ValidateAffiliateCriteriaResponse.builder()
                 .serviceCode("123")
@@ -217,6 +268,17 @@ public class PaymentServiceResponseFixture {
         return ServiceResponse.builder()
                 .serviceCode("42")
                 .serviceName("Entel")
+                .build();
+    }
+
+    public static List<ServiceResponse> withDefaultListServiceResponseNull() {
+        return Collections.singletonList(withDefaultListServiceNull());
+    }
+
+    public static ServiceResponse withDefaultListServiceNull() {
+        return ServiceResponse.builder()
+                .serviceCode(null)
+                .serviceName(null)
                 .build();
     }
 }

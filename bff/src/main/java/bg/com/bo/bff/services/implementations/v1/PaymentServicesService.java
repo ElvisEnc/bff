@@ -120,7 +120,7 @@ public class PaymentServicesService implements IPaymentServicesService {
 
     @Override
     public List<ServiceResponse> getListService(ListServiceRequest request, Map<String, String> parameter) throws IOException {
-        Boolean isInitial = request.getFilters().getPagination() == null || request.getFilters().getPagination().getPage() == null || request.getFilters().getPagination().getPage() == 1;
+        Boolean isInitial = request.getFilters().getPagination() == null || request.getFilters().getPagination().getPage() == 1;
         List<ServiceResponse> list = self.getServiceCache(parameter, PAYMENT_SERVICE_KEY, isInitial);
 
         if (request.getFilters().getOrder() != null) {

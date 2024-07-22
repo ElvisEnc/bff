@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,6 +61,38 @@ class PaymentServicesServiceTest {
     }
 
     @Test
+    void whenGetCategoriesServiceThenListNull() throws IOException {
+        //Arrange
+        List<CategoryResponse> expected = new ArrayList<>();
+        CategoryMWResponse mwResponse = PaymentServicesMWResponseFixture.withDefaultCategoryMWResponseNull();
+        when(provider.getCategories(any())).thenReturn(mwResponse);
+
+        //Act
+        List<CategoryResponse> response = service.getCategories(new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getCategories(any());
+        verify(mapper).convertResponse(mwResponse);
+    }
+
+    @Test
+    void whenGetCategoriesServiceThenDataNull() throws IOException {
+        //Arrange
+        List<CategoryResponse> expected = new ArrayList<>();
+        when(provider.getCategories(any())).thenReturn(null);
+
+        //Act
+        List<CategoryResponse> response = service.getCategories(new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getCategories(any());
+    }
+
+    @Test
     void givenCategoryIdWhenGetSubcategoriesThenSubcategoriesResponse() throws IOException {
         //Arrange
         SubcategoriesResponse expected = PaymentServiceResponseFixture.withDefaultSubcategoriesResponse();
@@ -95,7 +128,6 @@ class PaymentServicesServiceTest {
         List<AffiliatedServicesResponse> expected = PaymentServiceResponseFixture.withDataDefaultListAffiliateServiceResponse().getData();
         AffiliatedServiceMWResponse mwResponse = PaymentServicesMWResponseFixture.withDefaultAffiliatedServiceMWResponse();
         when(provider.getAffiliatedServices(any(), any())).thenReturn(mwResponse);
-        when(mapper.convertResponse(mwResponse)).thenReturn(expected);
 
         //Act
         List<AffiliatedServicesResponse> response = service.getAffiliatedServices(123, new HashMap<>());
@@ -108,9 +140,81 @@ class PaymentServicesServiceTest {
     }
 
     @Test
+    void givenPersonIdWhenGetAffiliateServicesThenListAffiliationsContingencyN() throws IOException {
+        //Arrange
+        List<AffiliatedServicesResponse> expected = PaymentServiceResponseFixture.withDataDefaultListAffiliateServiceResponseContingencyTrue().getData();
+        AffiliatedServiceMWResponse mwResponse = PaymentServicesMWResponseFixture.withDefaultAffiliatedServiceMWResponseContingencyN();
+        when(provider.getAffiliatedServices(any(), any())).thenReturn(mwResponse);
+
+        //Act
+        List<AffiliatedServicesResponse> response = service.getAffiliatedServices(123, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getAffiliatedServices(123, new HashMap<>());
+        verify(mapper).convertResponse(mwResponse);
+    }
+
+    @Test
+    void givenPersonIdWhenGetAffiliateServicesThenListNull() throws IOException {
+        //Arrange
+        List<AffiliatedServicesResponse> expected = new ArrayList<>();
+        AffiliatedServiceMWResponse mwResponse = PaymentServicesMWResponseFixture.withDefaultAffiliatedServiceMWResponseNull();
+        when(provider.getAffiliatedServices(any(), any())).thenReturn(mwResponse);
+
+
+        //Act
+        List<AffiliatedServicesResponse> response = service.getAffiliatedServices(123, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getAffiliatedServices(123, new HashMap<>());
+        verify(mapper).convertResponse(mwResponse);
+    }
+
+    @Test
+    void givenPersonIdWhenGetAffiliateServicesThenListDataNull() throws IOException {
+        //Arrange
+        List<AffiliatedServicesResponse> expected = new ArrayList<>();
+        when(provider.getAffiliatedServices(any(), any())).thenReturn(null);
+
+        //Act
+        List<AffiliatedServicesResponse> response = service.getAffiliatedServices(123, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getAffiliatedServices(123, new HashMap<>());
+    }
+
+    @Test
     void givenPersonIdWhenPostServiceAffiliationThenNewAffiliationCode() throws IOException {
         //Arrange
         ServiceAffiliationRequest requestMock = PaymentServiceRequestFixture.withDefaultServiceAffiliationRequest();
+        ServiceAffiliationMWRequest mwRequest = PaymentServicesMWRequestFixture.withDefaultServiceAffiliationMWRequest();
+        ServiceAffiliationMWResponse responseMock = PaymentServicesMWResponseFixture.withDefaultServiceAffiliationMWResponse();
+        ServiceAffiliationResponse expected = PaymentServiceResponseFixture.withDefaultServiceAffiliationResponse();
+        when(mapper.mapperRequest("123", requestMock)).thenReturn(mwRequest);
+        when(provider.serviceAffiliation(any(), any())).thenReturn(responseMock);
+        when(mapper.convertServiceAffiliationResponse(responseMock)).thenReturn(expected);
+
+        //Act
+        ServiceAffiliationResponse response = service.serviceAffiliation("123", requestMock, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(mapper).mapperRequest("123", requestMock);
+        verify(provider).serviceAffiliation(mwRequest, new HashMap<>());
+        verify(mapper).convertServiceAffiliationResponse(responseMock);
+    }
+
+    @Test
+    void givenPersonIdWhenPostServiceAffiliationThenNewAffiliationCodeIsTemporalTrue() throws IOException {
+        //Arrange
+        ServiceAffiliationRequest requestMock = PaymentServiceRequestFixture.withDefaultServiceAffiliationRequestIsTemporalTrue();
         ServiceAffiliationMWRequest mwRequest = PaymentServicesMWRequestFixture.withDefaultServiceAffiliationMWRequest();
         ServiceAffiliationMWResponse responseMock = PaymentServicesMWResponseFixture.withDefaultServiceAffiliationMWResponse();
         ServiceAffiliationResponse expected = PaymentServiceResponseFixture.withDefaultServiceAffiliationResponse();
@@ -139,6 +243,46 @@ class PaymentServicesServiceTest {
         when(mapper.mapperRequest(123, 123, request)).thenReturn(mwRequestMock);
         when(provider.debtsConsultation(any(), any())).thenReturn(mwResponseMock);
         when(mapper.convertDebtsResponse(mwResponseMock)).thenReturn(expected);
+
+        //Act
+        AffiliationDebtsResponse response = service.getAffiliationDebts(123, 123, request, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expected);
+        verify(mapper).mapperRequest(123, 123, request);
+        verify(provider).debtsConsultation(mwRequestMock, new HashMap<>());
+        verify(mapper).convertDebtsResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenPersonIdAffiliateIdWhenGetAffiliationDebtsThenListAffiliationsDebtsModifyS() throws IOException {
+        //Arrange
+        AffiliationDebtsRequest request = PaymentServiceRequestFixture.withDefaultDebtsRequest();
+        DebtsConsultationMWRequest mwRequestMock = PaymentServicesMWRequestFixture.withDefaultDebtsRequestMW();
+        DebtsConsultationMWResponse mwResponseMock = PaymentServicesMWResponseFixture.withDefaultDebtsResponseMWModifyS();
+        AffiliationDebtsResponse expected = PaymentServiceResponseFixture.withDefaultDebtsResponseModifyTrue();
+        when(provider.debtsConsultation(any(), any())).thenReturn(mwResponseMock);
+
+        //Act
+        AffiliationDebtsResponse response = service.getAffiliationDebts(123, 123, request, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expected);
+        verify(mapper).mapperRequest(123, 123, request);
+        verify(provider).debtsConsultation(mwRequestMock, new HashMap<>());
+        verify(mapper).convertDebtsResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenPersonIdAffiliateIdWhenGetAffiliationDebtsThenListAffiliationsDebtsModifyNull() throws IOException {
+        //Arrange
+        AffiliationDebtsRequest request = PaymentServiceRequestFixture.withDefaultDebtsRequest();
+        DebtsConsultationMWRequest mwRequestMock = PaymentServicesMWRequestFixture.withDefaultDebtsRequestMW();
+        DebtsConsultationMWResponse mwResponseMock = PaymentServicesMWResponseFixture.withDefaultDebtsResponseMWModifyNull();
+        AffiliationDebtsResponse expected = PaymentServiceResponseFixture.withDefaultDebtsResponseModifyNull();
+        when(provider.debtsConsultation(any(), any())).thenReturn(mwResponseMock);
 
         //Act
         AffiliationDebtsResponse response = service.getAffiliationDebts(123, 123, request, new HashMap<>());
@@ -192,6 +336,38 @@ class PaymentServicesServiceTest {
     }
 
     @Test
+    void givenValidDataWhenGetListServicesThenListServicesNull() throws IOException {
+        //Arrange
+        List<ServiceResponse> expected = new ArrayList<>();
+        ListServicesMWResponse mwResponse = PaymentServicesMWResponseFixture.withDefaultListServicesMWResponseNull();
+        when(provider.getServicesByCategoryAndCity(any(), any(), any())).thenReturn(mwResponse);
+
+        //Act
+        List<ServiceResponse> response = service.getServicesByCategoryAndCity(3, 2, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getServicesByCategoryAndCity(3, 2, new HashMap<>());
+        verify(mapper).convertResponse(mwResponse);
+    }
+
+    @Test
+    void givenValidDataWhenGetListServicesThenListServicesDataNull() throws IOException {
+        //Arrange
+        List<ServiceResponse> expected = new ArrayList<>();
+        when(provider.getServicesByCategoryAndCity(any(), any(), any())).thenReturn(null);
+
+        //Act
+        List<ServiceResponse> response = service.getServicesByCategoryAndCity(3, 2, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getServicesByCategoryAndCity(3, 2, new HashMap<>());
+    }
+
+    @Test
     void givenPersonIdAndAccountNumberAndAffiliateCodeWhenDeleteAffiliationServiceThenOK() throws IOException {
         //Arrange
         String personId = "12345";
@@ -224,6 +400,39 @@ class PaymentServicesServiceTest {
         assertEquals(expected, response);
         verify(provider).getAffiliateCriteria("123", "85", new HashMap<>());
         verify(mapper).convertResponse(mwResponse);
+    }
+
+    @Test
+    void givenValidDataWhenGetAffiliateCriteriaThenAffiliateCriteriaNull() throws IOException {
+        //Arrange
+        AffiliateCriteriaResponse expected = PaymentServiceResponseFixture.withDefaultAffiliateCriteriaResponseNull();
+        AffiliateCriteriaMWResponse mwResponse = PaymentServicesMWResponseFixture.withDefaultAffiliateCriteriaMWResponseNull();
+        when(provider.getAffiliateCriteria(any(), any(), any())).thenReturn(mwResponse);
+
+        //Act
+        AffiliateCriteriaResponse response = service.getAffiliateCriteria("123", "85", new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getAffiliateCriteria("123", "85", new HashMap<>());
+        verify(mapper).convertResponse(mwResponse);
+    }
+
+
+    @Test
+    void givenValidDataWhenGetAffiliateCriteriaThenAffiliateCriteriaDataNull() throws IOException {
+        //Arrange
+        AffiliateCriteriaResponse expected = PaymentServiceResponseFixture.withDefaultAffiliateCriteriaResponseNull();
+        when(provider.getAffiliateCriteria(any(), any(), any())).thenReturn(null);
+
+        //Act
+        AffiliateCriteriaResponse response = service.getAffiliateCriteria("123", "85", new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getAffiliateCriteria("123", "85", new HashMap<>());
     }
 
     @Test
@@ -279,6 +488,66 @@ class PaymentServicesServiceTest {
     }
 
     @Test
+    void givenEmptyServicesRequestWithFiltersWhenGetServicesThenListFilteredServices() throws IOException {
+        //Arrange
+        ListServiceRequest request = PaymentServiceRequestFixture.withDefaultEmptyListServiceRequest();
+        List<ServiceResponse> expectedResponse = PaymentServiceResponseFixture.withDefaultListServiceResponse();
+        ReflectionTestUtils.setField(service, "self", self);
+        when(self.getServiceCache(any(), any(), anyBoolean())).thenReturn(expectedResponse);
+
+        //Act
+        List<ServiceResponse> response = service.getListService(request, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+    }
+
+    @Test
+    void givenServicesRequestFieldWithFiltersWhenGetServicesThenListFilteredServices() throws IOException {
+        //Arrange
+        ListServiceRequest request = PaymentServiceRequestFixture.withDefaultSearchListServiceRequest();
+        List<ServiceResponse> expectedResponse = PaymentServiceResponseFixture.withDefaultListServiceResponse();
+        ReflectionTestUtils.setField(service, "self", self);
+        when(self.getServiceCache(any(), any(), anyBoolean())).thenReturn(expectedResponse);
+
+        //Act
+        List<ServiceResponse> response = service.getListService(request, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+    }
+
+    @Test
+    void givenServicesRequestOrderFalseWithFiltersWhenGetServicesThenListFilteredServices() throws IOException {
+        //Arrange
+        ListServiceRequest request = PaymentServiceRequestFixture.withDefaultOrderFalseListServiceRequest();
+        List<ServiceResponse> expectedResponse = PaymentServiceResponseFixture.withDefaultListServiceResponse();
+        ReflectionTestUtils.setField(service, "self", self);
+        when(self.getServiceCache(any(), any(), anyBoolean())).thenReturn(expectedResponse);
+
+        //Act
+        List<ServiceResponse> response = service.getListService(request, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+    }
+
+    @Test
+    void givenServicesRequestWithFiltersWhenGetServicesThenListFilteredServicesNull() throws IOException {
+        //Arrange
+        ListServiceRequest request = PaymentServiceRequestFixture.withDefaultSearchListServiceRequest();
+        List<ServiceResponse> expectedResponse = PaymentServiceResponseFixture.withDefaultListServiceResponseNull();
+        ReflectionTestUtils.setField(service, "self", self);
+        when(self.getServiceCache(any(), any(), anyBoolean())).thenReturn(expectedResponse);
+
+        //Act
+        List<ServiceResponse> response = service.getListService(request, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+    }
+
+    @Test
     void givenServicesRequestWhenGetServicesThenListServices() throws IOException {
         //Arrange
         ListServicesMWResponse mwResponseMock = PaymentServicesMWResponseFixture.withDefaultListServiceMWResponse();
@@ -288,12 +557,12 @@ class PaymentServicesServiceTest {
         when(mapper.convertResponse(mwResponseMock)).thenReturn(expectedResponse);
 
         //Act
-        List<ServiceResponse> response = service.getServiceCache(new HashMap<>(), "payment_services",false);
+        List<ServiceResponse> response = service.getServiceCache(new HashMap<>(), "payment_services", false);
 
         //Assert
         assertNotNull(response);
         assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
-        verify(provider).getListService( new HashMap<>());
+        verify(provider).getListService(new HashMap<>());
         verify(mapper).convertResponse(mwResponseMock);
     }
 }
