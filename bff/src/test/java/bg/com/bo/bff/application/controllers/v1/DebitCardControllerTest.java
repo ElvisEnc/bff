@@ -223,8 +223,6 @@ class DebitCardControllerTest {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_DELETE_AUTH_PURCHASE);
         when(service.deleteAuthOnlinePurchases(any(), any(), any(), any())).thenReturn(expectedResponse);
-        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
-        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
 
         // Act
         String url = "/api/v1/debit-cards/persons/{personId}/cards/{carId}/authorizations/{authId}";

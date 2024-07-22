@@ -139,7 +139,12 @@ public class DebitCardController {
             @PathVariable() @NotNull @Parameter(description = "Este es el pciId de la tarjeta", example = "12345") Integer cardId,
             @PathVariable() @NotNull @Parameter(description = "Este es el id de la compra por internet", example = "12345") Integer authId
     ) throws IOException {
-        return ResponseEntity.ok(service.deleteAuthOnlinePurchases(personId, cardId, authId, Headers.getParameter(httpServletRequest)));
+        return ResponseEntity.ok(service.deleteAuthOnlinePurchases(personId, cardId, authId, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion)));
     }
 
     @Operation(summary = "Detalle de la tarjeta", description = "Detalle de una tarjeta de débito.")
