@@ -14,7 +14,7 @@ public record ServiceAffiliationRequest(
 
         @NotBlank
         @Schema(description = "Id del criterio", example = "24")
-        String criteriaSearchId,
+        String criteriaId,
 
         @NotBlank
         @Size(min = 3, max = 99)

@@ -8,6 +8,7 @@ import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataSe
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DependencyServiceAffiliation;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
@@ -85,7 +86,7 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                         .build()
                 )
                 .instructedAmount(PaymentDebtsMWRequest.PaymentAmount.builder()
-                        .currency(request.currency())
+                        .currency(request.currencyCode())
                         .amount(request.amount())
                         .build())
                 .debtorAccount(PaymentDebtsMWRequest.PaymentDebtor.builder()
@@ -93,7 +94,7 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                         .identification(String.valueOf(request.fromAccountId()))
                         .build())
                 .supplementaryData(PaymentDebtsMWRequest.PaymentSupplementary.builder()
-                        .idGeneratedForDebt(request.idGeneratedForDebt())
+                        .idGeneratedForDebt(request.idGenerated())
                         .invoiceNITCI(request.invoiceNit())
                         .invoiceName(request.invoiceName())
                         .company(request.company())
@@ -111,7 +112,7 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
     public ServiceAffiliationMWRequest mapperRequest(String personId, ServiceAffiliationRequest request) {
         return ServiceAffiliationMWRequest.builder()
                 .serviceCode(request.serviceCode())
-                .criteriaSearchId(request.criteriaSearchId())
+                .criteriaSearchId(request.criteriaId())
                 .referenceName(request.referenceName())
                 .year(request.year())
                 .personId(personId)
@@ -202,7 +203,7 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                         .currency(mwResponse.receiptDetail().currency())
                         .amount(mwResponse.receiptDetail().amount())
                         .description(mwResponse.receiptDetail().description())
-                        .fromAccountNumber(mwResponse.receiptDetail().fromAccountNumber())
+                        .fromAccountNumber(Util.formatDate(mwResponse.receiptDetail().fromAccountNumber()))
                         .fromHolder(mwResponse.receiptDetail().fromHolder())
                         .exchangeAmount(mwResponse.receiptDetail().exchangeAmount())
                         .fromAccountCurrency(mwResponse.receiptDetail().fromAccountCurrency())
@@ -250,8 +251,8 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                 .map(mw -> AffiliateCriteriaResponse.SearchCriteria.builder()
                         .description(mw.getDescription())
                         .labelCriteria(mw.getLabelCriteria())
-                        .searchCriteriaId(mw.getSearchCriteriaId())
-                        .searchCriteriaIdAbbreviation(mw.getSearchCriteriaIdAbbreviation())
+                        .criteriaId(mw.getSearchCriteriaId())
+                        .criteriaIdAbbreviation(mw.getSearchCriteriaIdAbbreviation())
                         .fields(mw.getFields().stream()
                                 .map(f -> AffiliateCriteriaResponse.SearchCriteria.Field.builder()
                                         .identifier(f.getIdentifier())

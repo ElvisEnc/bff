@@ -51,10 +51,10 @@ public class AffiliateCriteriaResponse {
         private String description;
 
         @Schema(description = "ID del criterio de búsqueda", example = "9461")
-        private String searchCriteriaId;
+        private String criteriaId;
 
         @Schema(description = "Abreviatura del ID del criterio de búsqueda", example = "9461")
-        private String searchCriteriaIdAbbreviation;
+        private String criteriaIdAbbreviation;
 
         @Schema(description = "Campos del criterio de búsqueda")
         private List<Field> fields;

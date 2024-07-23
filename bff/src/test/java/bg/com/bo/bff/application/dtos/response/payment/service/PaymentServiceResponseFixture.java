@@ -198,8 +198,8 @@ public class PaymentServiceResponseFixture {
                         AffiliateCriteriaResponse.SearchCriteria.builder()
                                 .labelCriteria("test")
                                 .description("test")
-                                .searchCriteriaId("123")
-                                .searchCriteriaIdAbbreviation("123")
+                                .criteriaId("123")
+                                .criteriaIdAbbreviation("123")
                                 .fields(List.of(
                                         AffiliateCriteriaResponse.SearchCriteria.Field.builder()
                                                 .identifier(123)

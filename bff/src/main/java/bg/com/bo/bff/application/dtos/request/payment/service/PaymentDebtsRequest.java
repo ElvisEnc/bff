@@ -11,7 +11,7 @@ public record PaymentDebtsRequest(
         @Size(min = 1, max = 10)
         @Pattern(regexp = "\\d+", message = "La moneda debe contener solo números")
         @Schema(description = "Código de la moneda", example = "068")
-        String currency,
+        String currencyCode,
 
         @NotNull
         @DecimalMin(value = "0", inclusive = false, message = "El monto debe ser mayor que cero")
@@ -27,7 +27,7 @@ public record PaymentDebtsRequest(
         @NotBlank
         @Size(min = 1, max = 100)
         @Schema(description = "uuid", example = "324a029a-553f-4acb-abf4-4dcb25574463")
-        String idGeneratedForDebt,
+        String idGenerated,
 
         @OnlyNumber
         @Schema(description = "Nit de la factura", example = "12546878")
