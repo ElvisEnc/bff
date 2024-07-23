@@ -12,7 +12,6 @@ public record AffiliationDebtsRequest(
         Integer serviceCode,
 
         @NotNull
-        @Max(9999)
         @Schema(example = "2024", description = "Año de la gestión")
         Integer year
 ) {

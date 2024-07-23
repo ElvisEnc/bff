@@ -7,7 +7,9 @@ import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.Servic
 import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
+import bg.com.bo.bff.commons.enums.AppError;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.commons.filters.ServiceNameFilter;
 import bg.com.bo.bff.commons.filters.ServiceOrderFilter;
@@ -29,6 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +83,8 @@ public class PaymentServicesService implements IPaymentServicesService {
 
     @Override
     public AffiliationDebtsResponse getAffiliationDebts(Integer personId, Integer affiliateServiceId, AffiliationDebtsRequest request, Map<String, String> parameter) throws IOException {
+        if (request.year() > LocalDate.now().getYear())
+            throw new GenericException("El año no puede ser mayor al año actual", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
         DebtsConsultationMWRequest mwRequest = mapper.mapperRequest(personId, affiliateServiceId, request);
         DebtsConsultationMWResponse mwResponse = provider.debtsConsultation(mwRequest, parameter);
         return mapper.convertDebtsResponse(mwResponse);

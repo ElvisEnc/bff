@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.request.payment.service.*;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.services.PaymentServicesMapper;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
@@ -23,10 +24,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -293,6 +294,21 @@ class PaymentServicesServiceTest {
         verify(mapper).mapperRequest(123, 123, request);
         verify(provider).debtsConsultation(mwRequestMock, new HashMap<>());
         verify(mapper).convertDebtsResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenBadYearWhenGetAffiliationDebtsThenBadRequest() throws IOException {
+        // Arrange
+        AffiliationDebtsRequest request = PaymentServiceRequestFixture.withDefaultDebtsRequestBadYear();
+        Map<String, String> parameters = new HashMap<>();
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.getAffiliationDebts(123, 123, request, parameters)
+        );
+
+        // Assert
+        assertEquals("BAD_REQUEST", exception.getCode());
     }
 
     @Test
