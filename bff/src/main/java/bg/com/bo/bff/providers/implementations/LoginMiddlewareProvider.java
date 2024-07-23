@@ -142,8 +142,8 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
 
     private HttpPost getHttpPost(String url, String token, Map<String, String> parameters, StringEntity entity) {
         HttpPost httpRequest = new HttpPost(url);
-        httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
-        httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(HeadersMW.AUTH.getName(), "Bearer " + token);
+        httpRequest.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
         httpRequest.setHeader(HeadersMW.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
         httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));
@@ -167,8 +167,8 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             StringEntity entity = new StringEntity(jsonMapper);
             request.setEntity(entity);
             request.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
-            request.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
-            request.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(HeadersMW.AUTH.getName(), "Bearer " + token);
+            request.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
             request.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
 
             request.setHeader("device-id", deviceId);
@@ -217,7 +217,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             StringEntity entity = new StringEntity(jsonMapper);
             request.setEntity(entity);
             request.setHeaders(HeadersMW.getDefaultHeaders(parameters));
-            request.addHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+            request.addHeader(HeadersMW.AUTH.getName(), "Bearer " + clientToken.getAccessToken());
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -318,8 +318,8 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
 
     private HttpGet httpGet(String url, String token, Map<String, String> parameters) {
         HttpGet httpRequest = new HttpGet(url);
-        httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
-        httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(HeadersMW.AUTH.getName(), "Bearer " + token);
+        httpRequest.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
         httpRequest.setHeader(HeadersMW.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
         httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));

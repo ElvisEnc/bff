@@ -62,8 +62,8 @@ public class TransferMiddlewareProvider implements ITransferProvider {
             String jsonMapper = objectMapper.writeValueAsString(request);
             StringEntity entity = new StringEntity(jsonMapper);
             HttpPost httpRequest = new HttpPost(path);
-            httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + token.getAccessToken());
-            httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(HeadersMW.AUTH.getName(), "Bearer " + token.getAccessToken());
+            httpRequest.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
             httpRequest.setHeader(HeadersMW.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
             httpRequest.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             httpRequest.setEntity(entity);
@@ -97,8 +97,8 @@ public class TransferMiddlewareProvider implements ITransferProvider {
             String pathGetAccounts = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/transfer/same-bank/to-own-account/";
             HttpPost httpPost = new HttpPost(pathGetAccounts);
 
-            httpPost.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-            httpPost.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpPost.setHeader(HeadersMW.AUTH.getName(), "Bearer " + clientToken.getAccessToken());
+            httpPost.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
             httpPost.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
             httpPost.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             httpPost.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
@@ -141,8 +141,8 @@ public class TransferMiddlewareProvider implements ITransferProvider {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String pathGetAccounts = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + "/bs/v1/transfer/same-bank/to-other-accounts/";
             HttpPost httpPost = new HttpPost(pathGetAccounts);
-            httpPost.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-            httpPost.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpPost.setHeader(HeadersMW.AUTH.getName(), "Bearer " + clientToken.getAccessToken());
+            httpPost.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
             httpPost.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
             httpPost.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             httpPost.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));

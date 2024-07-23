@@ -79,8 +79,8 @@ public class AccountStatementProvider implements IAccountStatementProvider {
             String jsonMapper = Util.objectToString(reportBasicRequest);
 
             StringEntity entity = new StringEntity(jsonMapper);
-            httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
-            httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(HeadersMW.AUTH.getName(), "Bearer " + token);
+            httpRequest.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
             httpRequest.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
             httpRequest.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             httpRequest.setEntity(entity);
@@ -133,8 +133,8 @@ public class AccountStatementProvider implements IAccountStatementProvider {
             String jsonMapper = Util.objectToString(reportBasicRequest);
 
             StringEntity entity = new StringEntity(jsonMapper);
-            httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
-            httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            httpRequest.setHeader(HeadersMW.AUTH.getName(), "Bearer " + token);
+            httpRequest.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
             httpRequest.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
             httpRequest.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             httpRequest.setEntity(entity);

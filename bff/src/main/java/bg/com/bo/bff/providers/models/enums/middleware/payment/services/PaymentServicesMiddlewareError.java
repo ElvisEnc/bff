@@ -33,6 +33,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
     MDWPSM_025(HttpStatus.BAD_REQUEST, "INVALID_CURRENCY", "MDWPSM-025", "Código de moneda incorrecto."),
     MDWPSM_026(HttpStatus.BAD_REQUEST, "SOURCE_ACCOUNT_KO", "MDWPSM-026", "No existe la cuenta de origen."),
     MDWPSM_029(HttpStatus.BAD_REQUEST, "SOURCE_ACCOUNT_KO", "MDWPSM-029", "La cuenta de origen no tiene permitido los débitos."),
+    MDWPSM_030(HttpStatus.BAD_REQUEST, "SELECT_FIRST_DEBT", "MDWPSM-030", "Debe seleccionar la primera cuota."),
     MDWPSM_033(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_OBTAINING_ITF", "MDWPSM-033", "Ocurrio un error al obtener los datos."),
     MDWPSM_034(HttpStatus.INTERNAL_SERVER_ERROR, "NO_COMBINATIONS", "MDWPSM-034", "Ocurrio un error al obtener los datos."),
     MDWPSM_035(HttpStatus.BAD_REQUEST, "SOURCE_ACCOUNT_KO", "MDWPSM-035", "No se puede procesar la transacción para la cuenta de origen."),

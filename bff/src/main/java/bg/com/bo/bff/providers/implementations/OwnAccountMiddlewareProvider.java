@@ -115,8 +115,8 @@ public class OwnAccountMiddlewareProvider implements IAccountProvider {
         try (CloseableHttpClient httpClient = createHttpClient()) {
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.OWN_ACCOUNT_MANAGER.getName() + "/bs/v1/accounts/persons/" + personId + "/companies/" + personId + "/devices/" + userDeviceId +"/roles/" + PersonRol.PERSONA.getId();
             HttpGet request = new HttpGet(path);
-            request.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
-            request.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(HeadersMW.AUTH.getName(), "Bearer " + token);
+            request.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
             request.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
             request.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
             request.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));
@@ -177,8 +177,8 @@ public class OwnAccountMiddlewareProvider implements IAccountProvider {
         String jsonMapper = Util.objectToString(request);
         StringEntity entity = new StringEntity(jsonMapper);
         HttpPut httpRequest = new HttpPut(path);
-        httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-        httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(HeadersMW.AUTH.getName(), "Bearer " + clientToken.getAccessToken());
+        httpRequest.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
         httpRequest.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
         httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameter.get(DeviceMW.DEVICE_ID.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameter.get(DeviceMW.DEVICE_IP.getCode()));
@@ -219,8 +219,8 @@ public class OwnAccountMiddlewareProvider implements IAccountProvider {
         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(ProjectNameMW.OWN_ACCOUNT_MANAGER.getName(), middlewareConfig.getClientOwnManager(), ProjectNameMW.OWN_ACCOUNT_MANAGER.getHeaderKey());
 
         HttpGet httpRequest = new HttpGet(path);
-        httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-        httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(HeadersMW.AUTH.getName(), "Bearer " + clientToken.getAccessToken());
+        httpRequest.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
         httpRequest.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
         httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameter.get(DeviceMW.DEVICE_ID.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameter.get(DeviceMW.DEVICE_IP.getCode()));

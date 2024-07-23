@@ -12,12 +12,13 @@ import java.util.*;
 @Getter
 @AllArgsConstructor
 public enum HeadersMW {
-    SEC("Secret"),
-    AUT("Authorization"),
-    MW_CHA("middleware-channel"),
-    TOP_CHA("topaz-channel"),
+    SECRET("Secret"),
+    AUTH("Authorization"),
+    MW_CHANNEL("middleware-channel"),
+    TOPAZ_CHANNEL("topaz-channel"),
     APP_ID("application-id"),
     CONTENT_TYPE("Content-Type"),
+    UTF_8("UTF-8"),
     APP_JSON("application/json"),
     DEVICE_ID("device-id"),
     DEVICE_IP("device-ip"),

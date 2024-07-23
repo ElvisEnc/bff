@@ -158,8 +158,8 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
             StringEntity entity = new StringEntity(jsonMapper);
             request.setEntity(entity);
             request.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
-            request.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-            request.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(HeadersMW.AUTH.getName(), "Bearer " + clientToken.getAccessToken());
+            request.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
             request.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
             request.setHeader(HeadersMW.DEVICE_ID.getName(), deviceId);
             request.setHeader(HeadersMW.DEVICE_IP.getName(), deviceIp);
@@ -190,8 +190,8 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
             String path = middlewareConfig.getUrlBase() + ProjectNameMW.THIRD_ACCOUNTS.getName() + "/bs/v1/wallets/" + identifier + "/persons/" + personId + "/wallet-accounts/" + accountNumber;
             HttpDeleteWithBody request = new HttpDeleteWithBody(path);
             request.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
-            request.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-            request.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+            request.setHeader(HeadersMW.AUTH.getName(), "Bearer " + clientToken.getAccessToken());
+            request.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
             request.setHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
             request.setHeader(HeadersMW.DEVICE_ID.getName(), deviceId);
             request.setHeader(HeadersMW.DEVICE_IP.getName(), deviceIp);
@@ -273,8 +273,8 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
 
 
         HttpGet httpRequest = new HttpGet(urlValidateAccount);
-        httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
-        httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(HeadersMW.AUTH.getName(), "Bearer " + clientToken.getAccessToken());
+        httpRequest.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
         httpRequest.setHeader(HeadersMW.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
         httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));
@@ -329,8 +329,8 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
 
     private HttpGet httpGet(String url, String token, Map<String, String> parameters) {
         HttpGet httpRequest = new HttpGet(url);
-        httpRequest.setHeader(HeadersMW.AUT.getName(), "Bearer " + token);
-        httpRequest.setHeader(HeadersMW.MW_CHA.getName(), CanalMW.GANAMOVIL.getCanal());
+        httpRequest.setHeader(HeadersMW.AUTH.getName(), "Bearer " + token);
+        httpRequest.setHeader(HeadersMW.MW_CHANNEL.getName(), CanalMW.GANAMOVIL.getCanal());
         httpRequest.setHeader(HeadersMW.APP_ID.getName(), ApplicationId.GANAMOVIL.getCode());
         httpRequest.setHeader(DeviceMW.DEVICE_ID.getCode(), parameters.get(DeviceMW.DEVICE_ID.getCode()));
         httpRequest.setHeader(DeviceMW.DEVICE_IP.getCode(), parameters.get(DeviceMW.DEVICE_IP.getCode()));

@@ -86,7 +86,7 @@ public class QrProvider implements IQRProvider {
 
             httpPost.setHeaders(getHeadersMW(parameters));
             httpPost.addHeader(HeadersMW.APP_ID.getName(), CanalMW.GANAMOVIL.getCanal());
-            httpPost.addHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+            httpPost.addHeader(HeadersMW.AUTH.getName(), "Bearer " + clientToken.getAccessToken());
             httpPost.setEntity(entity);
             ObjectMapper objectMapper = new ObjectMapper();
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {

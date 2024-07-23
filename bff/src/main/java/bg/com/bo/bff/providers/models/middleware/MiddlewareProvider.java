@@ -66,9 +66,9 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * If the evaluation is successful, it resolves the response using the resolver from the AdditionalEvaluator.
      * Otherwise, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
      *
-     * @param url               url of the resource.
-     * @param headers           list of headers for the request.
-     * @param classType         type of the response class.
+     * @param url             url of the resource.
+     * @param headers         list of headers for the request.
+     * @param classType       type of the response class.
      * @param responseHandler evaluator and resolver for handling specific response scenarios.
      * @return an object of the given class type.
      */
@@ -94,10 +94,10 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * Execute a HttpPost using HttpClientFactory and a token given by TokenMiddlewareProvider.
      * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
      *
-     * @param url               url of resource.
-     * @param headers           list of headers for request.
-     * @param requestBody       body of the request.
-     * @param classType         type of response class.
+     * @param url             url of resource.
+     * @param headers         list of headers for request.
+     * @param requestBody     body of the request.
+     * @param classType       type of response class.
      * @param responseHandler evaluator and resolver for handling specific response scenarios.
      * @return an object of the given class type.
      */
@@ -123,10 +123,10 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * Execute a HttpPatch using HttpClientFactory and a token given by TokenMiddlewareProvider.
      * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
      *
-     * @param url               url of resource.
-     * @param headers           list of headers for request.
-     * @param requestBody       body of the request.
-     * @param classType         type of response class.
+     * @param url             url of resource.
+     * @param headers         list of headers for request.
+     * @param requestBody     body of the request.
+     * @param classType       type of response class.
      * @param responseHandler evaluator and resolver for handling specific response scenarios.
      * @return an object of the given class type.
      */
@@ -152,10 +152,10 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * Execute a HttpDeleteWithBody using HttpClientFactory and a token given by TokenMiddlewareProvider.
      * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
      *
-     * @param url               url of resource.
-     * @param headers           list of headers for request.
-     * @param requestBody       body of the request.
-     * @param classType         type of response class.
+     * @param url             url of resource.
+     * @param headers         list of headers for request.
+     * @param requestBody     body of the request.
+     * @param classType       type of response class.
      * @param responseHandler evaluator and resolver for handling specific response scenarios.
      * @return an object of the given class type.
      */
@@ -181,10 +181,10 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
      * Execute a HttpPut using HttpClientFactory and a token given by TokenMiddlewareProvider.
      * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
      *
-     * @param url               url of resource.
-     * @param headers           list of headers for request.
-     * @param requestBody       body of the request.
-     * @param classType         type of response class.
+     * @param url             url of resource.
+     * @param headers         list of headers for request.
+     * @param requestBody     body of the request.
+     * @param classType       type of response class.
      * @param responseHandler evaluator and resolver for handling specific response scenarios.
      * @return an object of the given class type.
      */
@@ -198,10 +198,10 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
             if (headers != null && headers.length > 0) {
                 request.setHeaders(headers);
             }
-            request.setHeader(HeadersMW.AUT.getName(), "Bearer " + clientToken.getAccessToken());
+            request.setHeader(HeadersMW.AUTH.getName(), "Bearer " + clientToken.getAccessToken());
 
             if (request instanceof HttpEntityEnclosingRequestBase httpEntityEnclosingRequestBase) {
-                StringEntity entity = new StringEntity(Util.objectToString(requestBody));
+                StringEntity entity = new StringEntity(Util.objectToString(requestBody), HeadersMW.UTF_8.getName());
                 httpEntityEnclosingRequestBase.setEntity(entity);
                 request.setHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName());
             }
