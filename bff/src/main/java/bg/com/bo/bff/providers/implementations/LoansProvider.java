@@ -3,6 +3,7 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
@@ -10,6 +11,7 @@ import bg.com.bo.bff.providers.models.enums.middleware.loans.LoansMiddlewareErro
 import bg.com.bo.bff.providers.models.enums.middleware.loans.LoansMiddlewareServices;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
+import bg.com.bo.bff.providers.models.middleware.response.handler.ByMwErrorResponseHandler;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,5 +30,12 @@ public class LoansProvider extends MiddlewareProvider<LoansMiddlewareError> impl
     public ListLoansMWResponse getListLoansByPerson(String personId, Map<String, String> parameters) throws IOException {
         String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOANS.getServiceURL(), personId);
         return get(url, HeadersMW.getDefaultHeaders(parameters), ListLoansMWResponse.class);
+    }
+
+    @Override
+    public ListLoanPaymentsMWResponse getListLoanPayments(String loanId, String loamNumber, Map<String, String> parameters) throws IOException {
+        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOAN_PAYMENTS.getServiceURL(), loanId, loamNumber);
+        ByMwErrorResponseHandler<ListLoanPaymentsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(LoansMiddlewareError.MDWPRE_001);
+        return get(url, HeadersMW.getDefaultHeaders(parameters), ListLoanPaymentsMWResponse.class, responseHandler);
     }
 }

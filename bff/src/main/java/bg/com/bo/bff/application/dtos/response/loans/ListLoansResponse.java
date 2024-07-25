@@ -16,6 +16,10 @@ public class ListLoansResponse {
     @JsonProperty("loanId")
     private String loanId;
 
+    @Schema(description = "Número del préstamo")
+    @JsonProperty("loanNumber")
+    private String loanNumber;
+
     @Schema(description = "Nombre del cliente")
     @JsonProperty("customerName")
     private String customerName;
@@ -75,10 +79,6 @@ public class ListLoansResponse {
     @Schema(description = "Monto de cuota C")
     @JsonProperty("feeAmountC")
     private Double feeAmountC;
-
-    @Schema(description = "Cuenta de préstamo")
-    @JsonProperty("accountLoan")
-    private String accountLoan;
 
     @Schema(description = "Pago de cuota")
     @JsonProperty("feePayment")

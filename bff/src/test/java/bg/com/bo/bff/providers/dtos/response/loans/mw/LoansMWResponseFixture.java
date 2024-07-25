@@ -1,15 +1,6 @@
 package bg.com.bo.bff.providers.dtos.response.loans.mw;
 
-import bg.com.bo.bff.application.dtos.response.payment.service.ValidateAffiliateCriteriaResponse;
-import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
-import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
-import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class LoansMWResponseFixture {
     public static ListLoansMWResponse withDefaultListLoansMWResponse() {
@@ -33,7 +24,7 @@ public class LoansMWResponseFixture {
                 .lastPaymentDate("2021-09-01")
                 .product("Product")
                 .stateCode("1")
-                .state("State")
+                .state("Active")
                 .feePaymentDate("2021-09-01")
                 .feePaymentDueDate("2021-09-01")
                 .feeAmountK("100")
@@ -41,6 +32,41 @@ public class LoansMWResponseFixture {
                 .feeAmountC("100")
                 .feePayment("100")
                 .processDate("2021-09-01")
+                .build();
+    }
+
+    public static ListLoansMWResponse withDefaultListLoansMWResponseNull() {
+        return ListLoansMWResponse.builder()
+                .data(null)
+                .build();
+    }
+
+    public static ListLoanPaymentsMWResponse withDefaultListLoanPaymentsMWResponse() {
+        return ListLoanPaymentsMWResponse.builder()
+                .data(Collections.singletonList(withDefaultLoanPaymentMW()))
+                .build();
+    }
+
+    public static ListLoanPaymentsMWResponse.LoanPaymentMW withDefaultLoanPaymentMW() {
+        return ListLoanPaymentsMWResponse.LoanPaymentMW.builder()
+                .date("2024-07-11")
+                .accountEntry("entry123")
+                .advancedCapital("1000")
+                .originalCapital("5000")
+                .capitalPaid("500")
+                .expenses("50")
+                .interesAmountPaid("100")
+                .payLateFees("10")
+                .balance("4500")
+                .typeMovement("payment")
+                .totalInstallment("650")
+                .branch("branch123")
+                .build();
+    }
+
+    public static ListLoanPaymentsMWResponse withDefaultListLoanPaymentsMWResponseNull() {
+        return ListLoanPaymentsMWResponse.builder()
+                .data(null)
                 .build();
     }
 }

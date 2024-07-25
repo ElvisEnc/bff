@@ -1,7 +1,9 @@
 package bg.com.bo.bff.mappings.providers.loans;
 
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,7 @@ public class LoansMapper implements ILoansMapper {
         return mwResponse.getData().stream()
                 .map(mw -> ListLoansResponse.builder()
                         .loanId(mw.getLoanId())
+                        .loanNumber(mw.getLoanNumber())
                         .customerName(mw.getCustomerName())
                         .disbursementDate(Util.formatDate(mw.getDisbursementDate()))
                         .amountDisbursement(Double.valueOf(mw.getAmountDisbursement()))
@@ -33,9 +36,30 @@ public class LoansMapper implements ILoansMapper {
                         .feeAmountK(Double.valueOf(mw.getFeeAmountK()))
                         .feeAmountI(Double.valueOf(mw.getFeeAmountI()))
                         .feeAmountC(Double.valueOf(mw.getFeeAmountC()))
-                        .accountLoan(mw.getLoanNumber())
                         .feePayment(Double.valueOf(mw.getFeePayment()))
                         .processDate(Util.formatDate(mw.getProcessDate()))
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public List<LoanPaymentsResponse> convertResponse(ListLoanPaymentsMWResponse mwResponse) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return Collections.emptyList();
+        return mwResponse.getData().stream()
+                .map(mw -> LoanPaymentsResponse.builder()
+                        .date(Util.formatDate(mw.getDate()))
+                        .accountEntry(mw.getAccountEntry())
+                        .advancedCapital(mw.getAdvancedCapital())
+                        .originalCapital(mw.getOriginalCapital())
+                        .capitalPaid(mw.getCapitalPaid())
+                        .expenses(mw.getExpenses())
+                        .interestAmountPaid(mw.getInteresAmountPaid())
+                        .payLateFees(mw.getPayLateFees())
+                        .balance(mw.getBalance())
+                        .typeMovement(mw.getTypeMovement())
+                        .totalInstallment(mw.getTotalInstallment())
+                        .branch(mw.getBranch())
                         .build())
                 .toList();
     }

@@ -1,8 +1,10 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
+import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoansRequestFixture;
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoansResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
@@ -112,5 +114,32 @@ class LoansControllerTest {
         assertNotNull(result);
         assertEquals(response, actual);
         verify(service).getListLoansByPerson(any(), any(), any());
+    }
+
+    @Test
+    void givenLoansPaymentsRequestWhenGetLoanPaymentsThenResponseListLoanPayments() throws Exception {
+        //Arrange
+        LoanPaymentsRequest requestMock = LoansRequestFixture.withDefaultLoanPaymentsRequest();
+        List<LoanPaymentsResponse> expectedResponse = LoansResponseFixture.withDataDefaultLoanPaymentsResponse();
+        when(service.getLoanPayments(any(), any(), any(), any())).thenReturn(expectedResponse);
+
+
+        // Act
+        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments";
+        MvcResult result = mockMvc.perform(post(path, "123", "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(requestMock))
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(ApiDataResponse.of(expectedResponse));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).getLoanPayments(any(), any(), any(), any());
     }
 }

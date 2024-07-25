@@ -14,6 +14,7 @@ import bg.com.bo.bff.providers.dtos.request.payment.services.mw.*;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoansMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
@@ -92,4 +93,22 @@ class LoansProviderTest {
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
 
+    @Test
+    @DisplayName("Get list loan payments for a user given loanId and loanNumber")
+    void givenLoanPaymentRequestWhenGetLoanPaymentsThenExpectResponse() throws IOException {
+        // Arrange
+        ListLoanPaymentsMWResponse expectedResponse = LoansMWResponseFixture.withDefaultListLoanPaymentsMWResponse();
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        ListLoanPaymentsMWResponse response = provider.getListLoanPayments("123","123", map);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
 }
