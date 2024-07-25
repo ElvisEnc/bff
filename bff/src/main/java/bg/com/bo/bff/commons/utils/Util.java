@@ -30,8 +30,11 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -291,5 +294,22 @@ public class Util {
 
     public static String sanitizeProjectName(String projectName) {
         return projectName.replaceAll("[^a-zA-Z0-9]", "");
+    }
+
+    public static String formatterTime(String inputTime) {
+        List<DateTimeFormatter> formatters = Arrays.asList(
+                DateTimeFormatter.ofPattern("HH:mm:ss.SSSSSSSSS"),
+                DateTimeFormatter.ofPattern("HH:mm:ss"),
+                DateTimeFormatter.ofPattern("HH:mm")
+        );
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                LocalTime time = LocalTime.parse(inputTime, formatter);
+                return time.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+            } catch (DateTimeParseException e) {
+                LOGGER.debug("Unable to parse time with format: %s".formatted(formatter.toString()), e);
+            }
+        }
+        return inputTime;
     }
 }
