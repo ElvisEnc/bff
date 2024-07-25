@@ -9,6 +9,8 @@ services:
     environment:
       # Permite el debug remoto de la aplicacion.
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
     ports:
       - "8080:8080"
       - "5005:5005"
