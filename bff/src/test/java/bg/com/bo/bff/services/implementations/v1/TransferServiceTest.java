@@ -1,12 +1,21 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequestFixture;
+import bg.com.bo.bff.application.dtos.response.transfer.TransferResponse;
+import bg.com.bo.bff.application.dtos.response.transfer.TransferResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.mappings.providers.pcc01.Pcc01Mapper;
+import bg.com.bo.bff.mappings.providers.transfer.ITransferMapper;
+import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
+import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequest;
+import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferAchMwResponse;
 import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferWalletMWResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferACHProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferProvider;
-import bg.com.bo.bff.providers.interfaces.ITransferYoloNetProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,11 +38,13 @@ class TransferServiceTest {
     @Mock
     private ITransferACHProvider transferACHProvider;
     @Mock
-    private ITransferYoloNetProvider transferYoloNetProvider;
+    private TransferMWtMapper transferMapper;
+    @Mock
+    private Pcc01Mapper pcc01Mapper;
+    @Mock
+    private ITransferMapper mapper;
+
     private Map<String, String> map;
-    private final Integer personId = 123;
-    private final Integer accountId = 10213215;
-    private final Integer accountNumber = 121235468;
 
     @BeforeEach
     void setUp() {
@@ -45,53 +56,78 @@ class TransferServiceTest {
                 DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
                 DeviceMW.APP_VERSION.getCode(), "1.0.0"
         );
-        this.service = new TransferService(transferProvider, transferACHProvider, transferYoloNetProvider);
+        this.service = new TransferService(transferProvider, transferACHProvider, transferMapper, pcc01Mapper, mapper);
     }
 
     @Test
     void transferOwnAccount() throws IOException {
-        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
-        when(transferProvider.transferOwnAccount(any(), any(), any(), any())).thenReturn(expected);
+        TransferResponse expected = TransferResponseFixture.withDefault();
+        TransferMWResponse expectedMW = TransferMWResponseFixture.withDefault();
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+        TransferRequest transferRequest = TransferRequestFixture.withDefault();
 
-        TransferMWResponse response = service.transferOwnAccount("123456", "123", TransferRequestFixture.withDefault(), map);
+        when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
+        when(transferProvider.transferOwnAccount((requestMW), (map))).thenReturn(expectedMW);
+        when(mapper.convert((expectedMW))).thenReturn(expected);
+
+        TransferResponse response = service.transferOwnAccount("123456", "123", transferRequest, map);
+
         assertNotNull(response);
-
-        verify(transferProvider).transferOwnAccount(any(), any(), any(), any());
+        assertEquals(expected, response);
+        verify(transferProvider).transferOwnAccount(any(), any());
     }
 
     @Test
     void transferThirdAccount() throws IOException {
-        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
-        when(transferProvider.transferThirdAccount(any(), any(), any(), any())).thenReturn(expected);
+        TransferResponse expected = TransferResponseFixture.withDefault();
+        TransferMWResponse expectedMW = TransferMWResponseFixture.withDefault();
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+        TransferRequest transferRequest = TransferRequestFixture.withDefault();
 
-        TransferMWResponse response = service.transferThirdAccount("123456", "123", TransferRequestFixture.withDefault(), map);
+        when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
+        when(transferProvider.transferThirdAccount((requestMW), (map))).thenReturn(expectedMW);
+        when(mapper.convert((expectedMW))).thenReturn(expected);
+
+        TransferResponse response = service.transferThirdAccount("123456", "123", transferRequest, map);
+
         assertNotNull(response);
-
-        verify(transferProvider).transferThirdAccount(any(), any(), any(), any());
+        assertEquals(expected, response);
+        verify(transferProvider).transferThirdAccount(any(), any());
     }
 
     @Test
     void transferACHAccount() throws IOException {
-        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
-        when(transferACHProvider.transferAchAccount(any(), any(), any(), any())).thenReturn(expected);
+        TransferResponse expected = TransferResponseFixture.withDefault();
+        TransferAchMwResponse expectedMW = TransferMWResponseFixture.withDefaultACH();
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+        TransferRequest transferRequest = TransferRequestFixture.withDefault();
 
-        TransferMWResponse response = service.transferAchAccount("123456", "123", TransferRequestFixture.withDefault(), map);
+        when(transferMapper.convert(("ach"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
+        when(transferACHProvider.transferAchAccount((requestMW), (map))).thenReturn(expectedMW);
+        when(mapper.convert((expectedMW))).thenReturn(expected);
+
+        TransferResponse response = service.transferAchAccount("123456", "123", transferRequest, map);
+
         assertNotNull(response);
-
-        verify(transferACHProvider).transferAchAccount(any(), any(), any(), any());
+        assertEquals(expected, response);
+        verify(transferACHProvider).transferAchAccount(any(), any());
     }
 
     @Test
     void givePersonCodeAndAccountWhenTransferWalletThenReturnSuccess() throws IOException {
-        // Arrange
-        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
-        when(transferYoloNetProvider.transferToYolo(any(), any(), any(), any())).thenReturn(expected);
+        TransferResponse expected = TransferResponseFixture.withDefault();
+        TransferWalletMWResponse expectedMW = TransferMWResponseFixture.withDefaultWallet();
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+        TransferRequest transferRequest = TransferRequestFixture.withDefault();
 
-        // Act
-        TransferMWResponse response = service.transferWallet(personId,accountId,accountNumber, TransferRequestFixture.withDefault(),map);
+        when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
+        when(transferProvider.transferWalletAccount((requestMW), (map))).thenReturn(expectedMW);
+        when(mapper.convert((expectedMW))).thenReturn(expected);
 
-        // Assert
+        TransferResponse response = service.transferWallet("123456", "123", transferRequest, map);
+
         assertNotNull(response);
-        verify(transferYoloNetProvider).transferToYolo(any(), any(), any(), any());
+        assertEquals(expected, response);
+        verify(transferProvider).transferWalletAccount(any(), any());
     }
 }

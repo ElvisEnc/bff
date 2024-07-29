@@ -27,5 +27,3 @@ public interface TransferMWtMapper {
     })
     TransferMWRequest convert(@Context String typeTransfer, String personId, String accountId, TransferRequest transferRequest);
 }
-
-

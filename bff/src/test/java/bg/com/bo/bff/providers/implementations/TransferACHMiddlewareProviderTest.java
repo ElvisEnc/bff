@@ -6,8 +6,11 @@ import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequest;
+import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
+import bg.com.bo.bff.providers.dtos.response.transfer.TransferAchMwResponse;
 import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
@@ -94,6 +97,8 @@ class TransferACHMiddlewareProviderTest {
     @Test
     void transferACHAccount() throws IOException {
         ClientToken clientToken = getClientToken();
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+
         when(tokenMiddlewareProvider.generateAccountAccessToken(any(), any(), any())).thenReturn(clientToken);
         Mockito.when(httpClientFactory.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpGetResponseMock);
@@ -108,7 +113,7 @@ class TransferACHMiddlewareProviderTest {
 
         Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
 
-        TransferMWResponse result = provider.transferAchAccount("123455", "123", TransferRequestFixture.withDefault(), map);
+        TransferAchMwResponse result = provider.transferAchAccount(requestMW, map);
 
         assertNotNull(result);
         verify(tokenMiddlewareProvider).generateAccountAccessToken(any(), any(), any());
@@ -117,6 +122,7 @@ class TransferACHMiddlewareProviderTest {
     @Test
     void transferErrorACHAccount() throws IOException {
         ClientToken clientToken = getClientToken();
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
         when(tokenMiddlewareProvider.generateAccountAccessToken(any(), any(), any())).thenReturn(clientToken);
         Mockito.when(httpClientFactory.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpGetResponseMock);
@@ -136,7 +142,7 @@ class TransferACHMiddlewareProviderTest {
         InputStream inputStream = new ByteArrayInputStream(json.getBytes());
         Mockito.when(httpEntityMock.getContent()).thenReturn(inputStream);
 
-        GenericException response = assertThrows(GenericException.class, () -> provider.transferAchAccount("123455", "123", TransferRequestFixture.withDefault(), map));
+        GenericException response = assertThrows(GenericException.class, () -> provider.transferAchAccount(requestMW, map));
 
         assertNotNull(response);
     }

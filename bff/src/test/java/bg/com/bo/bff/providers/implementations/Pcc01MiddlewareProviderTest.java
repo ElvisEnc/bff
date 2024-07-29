@@ -4,8 +4,10 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.transfer.Pcc01Request;
 import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Data;
 import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Response;
+import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.response.transfer.Pcc01MWResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.mappings.providers.pcc01.Pcc01Mapper;
 import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
@@ -28,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,9 +61,19 @@ class Pcc01MiddlewareProviderTest {
     static String clientSecret;
     static String headerKeyToke;
 
+    private Map<String, String> map;
+
     @BeforeEach
     void setup() {
-        pcc01MiddlewareProvider = new TransferMiddlewareProvider(tokenMiddlewareProviderMock, httpClientFactoryMock, Pcc01Mapper.INSTANCE, middlewareConfigMock, TransferMWtMapper.INSTANCE);
+        this.map = Map.of(
+                DeviceMW.DEVICE_ID.getCode(), "1234",
+                DeviceMW.DEVICE_IP.getCode(), "12344",
+                DeviceMW.DEVICE_NAME.getCode(), "OS",
+                DeviceMW.GEO_POSITION_X.getCode(), "121.11",
+                DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
+                DeviceMW.APP_VERSION.getCode(), "1.0.0"
+        );
+        pcc01MiddlewareProvider = new TransferMiddlewareProvider(tokenMiddlewareProviderMock, middlewareConfigMock, httpClientFactoryMock);
         clientToken = new ClientToken();
         clientToken.setAccessToken("fglkjhdfg9d87fgd98f09gd");
         clientToken.setExpiresIn(1234);
@@ -88,7 +101,7 @@ class Pcc01MiddlewareProviderTest {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
 
         // Act
-        Pcc01Response response = pcc01MiddlewareProvider.validateControl(pcc01Request);
+        Pcc01MWResponse response = pcc01MiddlewareProvider.validateControl(pcc01Request, map);
 
         // Assert
         Assertions.assertNotNull(response.getData());
@@ -105,7 +118,7 @@ class Pcc01MiddlewareProviderTest {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(406);
 
         // Act
-        assertThrows(RuntimeException.class, () -> pcc01MiddlewareProvider.validateControl(pcc01Request));
+        assertThrows(RuntimeException.class, () -> pcc01MiddlewareProvider.validateControl(pcc01Request, map));
     }
 
     @Test
@@ -118,6 +131,6 @@ class Pcc01MiddlewareProviderTest {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(500);
 
         // Act
-        assertThrows(RuntimeException.class, () -> pcc01MiddlewareProvider.validateControl(pcc01Request));
+        assertThrows(RuntimeException.class, () -> pcc01MiddlewareProvider.validateControl(pcc01Request, map));
     }
 }

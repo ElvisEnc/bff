@@ -24,10 +24,10 @@ public class TransferMWResponse {
         private String status;
         @JsonProperty("idReceipt")
         private String idReceipt;
+        @JsonProperty("idMaeTransaction")
+        private String idMaeTransaction;
         @JsonProperty("accountingEntry")
         private String accountingEntry;
-        @JsonProperty("transferAchId")
-        private String transferAchId;
         @JsonProperty("accountingDate")
         private String accountingDate;
         @JsonProperty("accountingTime")
@@ -64,10 +64,6 @@ public class TransferMWResponse {
             this.status = (status != null) ? status : "APPROVED";
         }
 
-        @JsonSetter("transferAchId")
-        public void setTransferAchId(String transferAchId) {
-            this.transferAchId = (transferAchId != null) ? transferAchId : "0";
-        }
     }
 
     public static TransferMWResponse toFormat(TransferMWResponse response) {
@@ -75,7 +71,6 @@ public class TransferMWResponse {
                 .data(TransferMWData.builder()
                         .status(response.getData().getStatus() != null ? response.getData().getStatus() : "APPROVED")
                         .idReceipt(response.getData().getIdReceipt())
-                        .transferAchId(response.getData().getTransferAchId() != null ? response.getData().getTransferAchId() : "0")
                         .accountingEntry(response.getData().getAccountingEntry())
                         .accountingDate(response.getData().getAccountingDate())
                         .accountingTime(response.getData().getAccountingTime())

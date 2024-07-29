@@ -2,29 +2,22 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequestFixture;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
-import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Response;
+import bg.com.bo.bff.application.dtos.response.transfer.TransferResponse;
+import bg.com.bo.bff.application.dtos.response.transfer.TransferResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.services.interfaces.ITransferService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.io.IOException;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -43,9 +36,6 @@ class TransferControllerTest {
     @Mock
     private HttpServletRequest httpServletRequest;
     HttpHeaders headers = new HttpHeaders();
-    private final Integer personId = 123;
-    private final Integer accountId = 10213215;
-    private final Integer accountNumber = 121235468;
 
     @BeforeEach
     void setUp() {
@@ -60,7 +50,7 @@ class TransferControllerTest {
 
     @Test
     void transferOwnAccount() throws Exception {
-        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
+        TransferResponse expected = TransferResponseFixture.withDefault();
         TransferRequest request = TransferRequestFixture.withDefault();
         when(transferService.transferOwnAccount(any(), any(), any(), any())).thenReturn(expected);
 
@@ -78,7 +68,7 @@ class TransferControllerTest {
 
     @Test
     void transferThirdAccounts() throws Exception {
-        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
+        TransferResponse expected = TransferResponseFixture.withDefault();
         TransferRequest request = TransferRequestFixture.withDefault();
         when(transferService.transferThirdAccount(any(), any(), any(), any())).thenReturn(expected);
 
@@ -96,7 +86,7 @@ class TransferControllerTest {
 
     @Test
     void transferACHAccounts() throws Exception {
-        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
+        TransferResponse expected = TransferResponseFixture.withDefault();
         TransferRequest request = TransferRequestFixture.withDefault();
         when(transferService.transferAchAccount(any(), any(), any(), any())).thenReturn(expected);
 
@@ -115,12 +105,12 @@ class TransferControllerTest {
     @Test
     void givePersonCodeAndAccountWhenTransferYoloThenReturnSuccess() throws Exception {
         // Arrange
-        TransferMWResponse expected = TransferMWResponseFixture.withDefault();
+        TransferResponse expected = TransferResponseFixture.withDefault();
         TransferRequest request = TransferRequestFixture.withDefault();
-        when(transferService.transferWallet(any(), any(), any(), any(), any())).thenReturn(expected);
+        when(transferService.transferWallet(any(), any(), any(), any())).thenReturn(expected);
 
         // Act
-        mockMvc.perform(post("/api/v1/transfers/persons/{personId}/accountId/{accountId}/accountNumber/{accountNumber}/wallet", personId, accountId, accountNumber)
+        mockMvc.perform(post("/api/v1/transfers/persons/{personId}/accounts/{accountId}/wallet", "123456", "1234567", "12345678")
                         .headers(this.headers)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -130,20 +120,6 @@ class TransferControllerTest {
                 .andReturn();
 
         // Assert
-        verify(transferService).transferWallet(any(), any(), any(), any(), any());
-    }
-
-    @Test
-    void givenRequestWhenPcc01ControlThenResponseValidate() throws IOException {
-        // Arrange
-        Pcc01Response pcc01Response = new Pcc01Response();
-        Mockito.when(transferService.makeControl(any())).thenReturn(pcc01Response);
-
-        // Act
-        ResponseEntity<Pcc01Response> response = controller.control(any());
-
-        // Assert
-        assert response.getStatusCode().value() == HttpStatus.OK.value();
-        Assertions.assertNotNull(response.getBody());
+        verify(transferService).transferWallet(any(), any(), any(), any());
     }
 }

@@ -25,8 +25,8 @@ public class TransferAchMwResponse {
         @JsonProperty("status")
         private String status;
 
-        @JsonProperty("idReceipt")
-        private String idReceipt;
+        @JsonProperty("maeIdTransaction")
+        private String maeIdTransaction;
 
         @JsonProperty("transferAchId")
         private String transferAchId;
@@ -88,33 +88,6 @@ public class TransferAchMwResponse {
             @JsonProperty("toCurrency")
             private String toCurrency;
         }
-    }
-
-    public static TransferMWResponse toFormat(TransferAchMwResponse response) {
-        return TransferMWResponse.builder()
-                .data(TransferMWResponse.TransferMWData.builder()
-                        .status(response.getData().getStatus())
-                        .idReceipt(response.getData().getIdReceipt())
-                        .transferAchId(response.getData().getTransferAchId())
-                        .accountingEntry(response.getData().getReceiptDetail().getAccountingEntry())
-                        .accountingDate(response.getData().getReceiptDetail().getAccountingDate())
-                        .accountingTime(response.getData().getReceiptDetail().getAccountingTime())
-                        .amountDebited(response.getData().getReceiptDetail().getAmountDebited())
-                        .amountCredited(response.getData().getReceiptDetail().getAmountCredited())
-                        .exchangeRateDebit(response.getData().getReceiptDetail().getExchangeRateDebit())
-                        .exchangeRateCredit(response.getData().getReceiptDetail().getExchangeRateCredit())
-                        .amount(response.getData().getReceiptDetail().getAmount())
-                        .currency(response.getData().getReceiptDetail().getCurrency())
-                        .fromAccountNumber(response.getData().getReceiptDetail().getFromAccountNumber())
-                        .fromHolder(response.getData().getReceiptDetail().getFromHolder())
-                        .toAccountNumber(response.getData().getReceiptDetail().getToAccountNumber())
-                        .toHolder(response.getData().getReceiptDetail().getToHolder())
-                        .description(response.getData().getReceiptDetail().getDescription())
-                        .fromCurrency(response.getData().getReceiptDetail().getFromCurrency())
-                        .toCurrency(response.getData().getReceiptDetail().getToCurrency())
-                        .build())
-                .build();
-
     }
 }
 
