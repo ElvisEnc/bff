@@ -120,7 +120,7 @@ public class PaymentServiceRequestFixture {
 
     public static OrderRequest withDefaultOrderRequest() {
         return OrderRequest.builder()
-                .field("serviceName")
+                .field("SERVICE_NAME")
                 .desc(false)
                 .build();
     }

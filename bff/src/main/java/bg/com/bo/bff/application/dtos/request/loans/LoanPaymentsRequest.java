@@ -39,7 +39,7 @@ public class LoanPaymentsRequest {
         private PaginationRequest pagination;
 
         @Valid
-        private PeriodRequest paymentDate;
+        private PeriodRequest date;
 
         @Valid
         private OrderRequest order;

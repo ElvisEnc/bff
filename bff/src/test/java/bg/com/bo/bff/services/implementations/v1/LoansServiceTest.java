@@ -4,10 +4,13 @@ import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoansRequestFixture;
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoansResponseFixture;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.loans.LoansMapper;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoanPaymentsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoansMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
@@ -25,8 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -139,6 +141,7 @@ class LoansServiceTest {
         verify(provider).getListLoansByPerson(any(), any());
     }
 
+    // Loan Payment
     @Test
     void givenLoanPaymentsRequestWhenGetListLoanPaymentThenListLoanPaymentsResponse() throws IOException {
         //Arrange
@@ -224,7 +227,7 @@ class LoansServiceTest {
     @Test
     void givenLoanPaymentsRequestWhenGetLoanPaymentsThenListLoansPaymentsCache() throws IOException {
         //Arrange
-        ListLoanPaymentsMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultListLoanPaymentsMWResponse();
+        LoanPaymentsMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultListLoanPaymentsMWResponse();
         List<LoanPaymentsResponse> expectedResponse = LoansResponseFixture.withDataDefaultLoanPaymentsResponse();
         when(provider.getListLoanPayments(any(), any(), any())).thenReturn(mwResponseMock);
 
@@ -238,11 +241,10 @@ class LoansServiceTest {
         verify(mapper).convertResponse(mwResponseMock);
     }
 
-
     @Test
     void givenLoanPaymentsRequestWhenGetLoanPaymentsThenListLoansPaymentsCacheNull() throws IOException {
         //Arrange
-        ListLoanPaymentsMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultListLoanPaymentsMWResponseNull();
+        LoanPaymentsMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultListLoanPaymentsMWResponseNull();
         when(provider.getListLoanPayments(any(), any(), any())).thenReturn(mwResponseMock);
 
         //Act
@@ -265,5 +267,137 @@ class LoansServiceTest {
         //Assert
         assertNotNull(response);
         verify(provider).getListLoanPayments(any(), any(), any());
+    }
+
+    // Loan Insurance Payments
+    @Test
+    void givenLoanPaymentsRequestWhenGetListLoanInsurancePaymentThenListLoanInsurancePaymentsResponse() throws IOException {
+        //Arrange
+        LoanPaymentsRequest request = LoansRequestFixture.withDefaultLoanInsurancePaymentsRequest();
+        List<LoanInsurancePaymentsResponse> expectedResponse = new ArrayList<>(LoansResponseFixture.withDataDefaultLoanInsurancePaymentsResponse());
+        ReflectionTestUtils.setField(service, "self", self);
+        when(self.getLoanInsurancePaymentsCache(any(), any(), any(), any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        List<LoanInsurancePaymentsResponse> response = service.getLoanInsurancePayments("123", "123", request, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(self).getLoanInsurancePaymentsCache(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void givenDateOrderAndPaginationNullWhenGetListLoanInsurancePaymentThenListLoanInsurancePaymentsResponse() throws IOException {
+        //Arrange
+        LoanPaymentsRequest request = LoansRequestFixture.withDefaultLoanPaymentsRequestNull();
+        List<LoanInsurancePaymentsResponse> expectedResponse = new ArrayList<>(LoansResponseFixture.withDataDefaultLoanInsurancePaymentsResponse());
+        ReflectionTestUtils.setField(service, "self", self);
+        when(self.getLoanInsurancePaymentsCache(any(), any(), any(), any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        List<LoanInsurancePaymentsResponse> response = service.getLoanInsurancePayments("123", "123", request, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(self).getLoanInsurancePaymentsCache(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void givenOrderDateAndFalseWhenGetListLoanInsurancePaymentThenListLoanInsurancePaymentsResponse() throws IOException {
+        //Arrange
+        LoanPaymentsRequest request = LoansRequestFixture.withDefaultLoanInsurancePaymentsRequestOrderFilter();
+        List<LoanInsurancePaymentsResponse> expectedResponse = new ArrayList<>(LoansResponseFixture.withDataDefaultLoanInsurancePaymentsResponse());
+        ReflectionTestUtils.setField(service, "self", self);
+        when(self.getLoanInsurancePaymentsCache(any(), any(), any(), any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        List<LoanInsurancePaymentsResponse> response = service.getLoanInsurancePayments("123", "123", request, new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(self).getLoanInsurancePaymentsCache(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void givenLoanPaymentsRequestWhenGetLoanInsurancePaymentsThenListLoanInsurancePaymentsCache() throws IOException {
+        //Arrange
+        LoanInsurancePaymentsMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultLoanInsurancePaymentsMWResponse();
+        List<LoanInsurancePaymentsResponse> expectedResponse = LoansResponseFixture.withDataDefaultLoanInsurancePaymentsResponse();
+        when(provider.getListLoanInsurancePayments(any(), any(), any())).thenReturn(mwResponseMock);
+
+        //Act
+        List<LoanInsurancePaymentsResponse> response = service.getLoanInsurancePaymentsCache("123", "123", "123", new HashMap<>(), false);
+
+        //Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(provider).getListLoanInsurancePayments(any(), any(), any());
+        verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenLoanInsurancePaymentsRequestWhenGetLoanPaymentsThenListLoanInsurancePaymentsCacheNull() throws IOException {
+        //Arrange
+        LoanInsurancePaymentsMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultLoanInsurancePaymentsMWResponseNull();
+        when(provider.getListLoanInsurancePayments(any(), any(), any())).thenReturn(mwResponseMock);
+
+        //Act
+        List<LoanInsurancePaymentsResponse> response = service.getLoanInsurancePaymentsCache("123", "123", "123", new HashMap<>(), false);
+
+        //Assert
+        assertNotNull(response);
+        verify(provider).getListLoanInsurancePayments(any(), any(), any());
+        verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenLoanInsurancePaymentsRequestWhenGetLoanInsurancePaymentsThenNull() throws IOException {
+        //Arrange
+        when(provider.getListLoanInsurancePayments(any(), any(), any())).thenReturn(null);
+
+        //Act
+        List<LoanInsurancePaymentsResponse> response = service.getLoanInsurancePaymentsCache("123", "123", "123", new HashMap<>(), false);
+
+        //Assert
+        assertNotNull(response);
+        verify(provider).getListLoanInsurancePayments(any(), any(), any());
+    }
+
+    // Generic Exception
+    @Test
+    void givenOrderInvalidRequestWhenGetListLoanInsurancePaymentThenGenericException() throws IOException {
+        //Arrange
+        LoanPaymentsRequest request = LoansRequestFixture.withDefaultLoanPaymentsRequestOrderFilter();
+        List<LoanInsurancePaymentsResponse> expectedResponse = new ArrayList<>(LoansResponseFixture.withDataDefaultLoanInsurancePaymentsResponse());
+        ReflectionTestUtils.setField(service, "self", self);
+        when(self.getLoanInsurancePaymentsCache(any(), any(), any(), any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.getLoanInsurancePayments("123", "123", request, new HashMap<>())
+        );
+
+        //Assert
+        assertEquals("BAD_REQUEST", exception.getCode());
+    }
+
+    @Test
+    void givenDateInvalidRequestWhenGetListLoanInsurancePaymentThenGenericException() throws IOException {
+        //Arrange
+        LoanPaymentsRequest request = LoansRequestFixture.withDefaultLoanPaymentsRequestDateInvalid();
+        List<LoanInsurancePaymentsResponse> expectedResponse = new ArrayList<>(LoansResponseFixture.withDataDefaultLoanInsurancePaymentsResponse());
+        ReflectionTestUtils.setField(service, "self", self);
+        when(self.getLoanInsurancePaymentsCache(any(), any(), any(), any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.getLoanInsurancePayments("123", "123", request, new HashMap<>())
+        );
+
+        //Assert
+        assertEquals("BAD_REQUEST", exception.getCode());
     }
 }

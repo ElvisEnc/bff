@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.dtos.response.loans.mw;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 
 public class LoansMWResponseFixture {
@@ -41,14 +42,14 @@ public class LoansMWResponseFixture {
                 .build();
     }
 
-    public static ListLoanPaymentsMWResponse withDefaultListLoanPaymentsMWResponse() {
-        return ListLoanPaymentsMWResponse.builder()
+    public static LoanPaymentsMWResponse withDefaultListLoanPaymentsMWResponse() {
+        return LoanPaymentsMWResponse.builder()
                 .data(Collections.singletonList(withDefaultLoanPaymentMW()))
                 .build();
     }
 
-    public static ListLoanPaymentsMWResponse.LoanPaymentMW withDefaultLoanPaymentMW() {
-        return ListLoanPaymentsMWResponse.LoanPaymentMW.builder()
+    public static LoanPaymentsMWResponse.LoanPaymentMW withDefaultLoanPaymentMW() {
+        return LoanPaymentsMWResponse.LoanPaymentMW.builder()
                 .date("2024-07-11")
                 .accountEntry("entry123")
                 .advancedCapital("1000")
@@ -64,8 +65,33 @@ public class LoansMWResponseFixture {
                 .build();
     }
 
-    public static ListLoanPaymentsMWResponse withDefaultListLoanPaymentsMWResponseNull() {
-        return ListLoanPaymentsMWResponse.builder()
+    public static LoanPaymentsMWResponse withDefaultListLoanPaymentsMWResponseNull() {
+        return LoanPaymentsMWResponse.builder()
+                .data(null)
+                .build();
+    }
+
+    public static LoanInsurancePaymentsMWResponse withDefaultLoanInsurancePaymentsMWResponse() {
+        return LoanInsurancePaymentsMWResponse.builder()
+                .data(Collections.singletonList(withDefaultLoanInsurancePaymentMW()))
+                .build();
+    }
+
+    public static LoanInsurancePaymentsMWResponse.LoanInsurancePaymentMW withDefaultLoanInsurancePaymentMW() {
+        return LoanInsurancePaymentsMWResponse.LoanInsurancePaymentMW.builder()
+                .paymentNumber(1)
+                .paymentDate("2024-07-11")
+                .warrantyNumber(123456L)
+                .description("Seguro de Prestamo")
+                .currency("USD")
+                .currencyDescription("Dolar Americano")
+                .amount(new BigDecimal("100.00"))
+                .record(0)
+                .build();
+    }
+
+    public static LoanInsurancePaymentsMWResponse withDefaultLoanInsurancePaymentsMWResponseNull() {
+        return LoanInsurancePaymentsMWResponse.builder()
                 .data(null)
                 .build();
     }

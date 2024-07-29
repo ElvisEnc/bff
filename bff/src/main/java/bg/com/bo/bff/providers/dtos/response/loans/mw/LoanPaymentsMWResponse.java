@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListLoanPaymentsMWResponse {
+public class LoanPaymentsMWResponse {
     private List<LoanPaymentMW> data;
     @Getter
     @Builder

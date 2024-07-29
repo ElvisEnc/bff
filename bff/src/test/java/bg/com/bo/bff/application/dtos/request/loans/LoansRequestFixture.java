@@ -25,7 +25,7 @@ public class LoansRequestFixture {
 
     private static OrderRequest withDefaultOrderRequest() {
         return OrderRequest.builder()
-                .field("field")
+                .field("LOAN_NUMBER")
                 .desc(false)
                 .build();
     }
@@ -74,8 +74,8 @@ public class LoansRequestFixture {
     public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanPayment() {
         return LoanPaymentsRequest.FilterLoanPayment.builder()
                 .pagination(withDefaultPaginationRequest())
-                .order(withDefaultOrderRequest())
-                .paymentDate(withDefaultPeriodRequest())
+                .order(withDefaultOrderRequestInterestPaid())
+                .date(withDefaultPeriodRequest())
                 .build();
     }
     public static PeriodRequest withDefaultPeriodRequest() {
@@ -96,7 +96,7 @@ public class LoansRequestFixture {
         return LoanPaymentsRequest.FilterLoanPayment.builder()
                 .pagination(null)
                 .order(null)
-                .paymentDate(null)
+                .date(null)
                 .build();
     }
 
@@ -111,13 +111,13 @@ public class LoansRequestFixture {
         return LoanPaymentsRequest.FilterLoanPayment.builder()
                 .pagination(null)
                 .order(withDefaultOrderRequestInterestPaid())
-                .paymentDate(withDefaultPeriodRequestFilter())
+                .date(withDefaultPeriodRequestFilter())
                 .build();
     }
 
     private static OrderRequest withDefaultOrderRequestInterestPaid() {
         return OrderRequest.builder()
-                .field("INTEREST_PAID")
+                .field("INTEREST_PAID")///
                 .desc(true)
                 .build();
     }
@@ -140,14 +140,14 @@ public class LoansRequestFixture {
         return LoanPaymentsRequest.FilterLoanPayment.builder()
                 .pagination(null)
                 .order(withDefaultOrderRequestCapitalPaid())
-                .paymentDate(withDefaultPeriodRequestFilterCapitalPaid())
+                .date(withDefaultPeriodRequestFilterCapitalPaid())
                 .build();
     }
 
     private static OrderRequest withDefaultOrderRequestCapitalPaid() {
         return OrderRequest.builder()
                 .field("CAPITAL_PAID")
-                .desc(true)
+                .desc(false)
                 .build();
     }
 
@@ -169,7 +169,7 @@ public class LoansRequestFixture {
         return LoanPaymentsRequest.FilterLoanPayment.builder()
                 .pagination(null)
                 .order(withDefaultOrderRequestDate())
-                .paymentDate(withDefaultPeriodRequestFilterDate())
+                .date(withDefaultPeriodRequestFilterDate())
                 .build();
     }
 
@@ -184,6 +184,65 @@ public class LoansRequestFixture {
         return PeriodRequest.builder()
                 .start("2024-07-02")
                 .end("2024-07-30")
+                .build();
+    }
+
+    public static LoanPaymentsRequest withDefaultLoanInsurancePaymentsRequest() {
+        return LoanPaymentsRequest.builder()
+                .loanNumber("123")
+                .filters(withDefaultFilterLoanInsurancePayment())
+                .refreshData(false)
+                .build();
+    }
+    public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanInsurancePayment() {
+        return LoanPaymentsRequest.FilterLoanPayment.builder()
+                .pagination(withDefaultPaginationRequest())
+                .order(withDefaultOrderRequestDate())
+                .date(withDefaultPeriodRequest())
+                .build();
+    }
+
+    public static LoanPaymentsRequest withDefaultLoanInsurancePaymentsRequestOrderFilter() {
+        return LoanPaymentsRequest.builder()
+                .loanNumber("123")
+                .filters(withDefaultFilterLoanPaymentOrderAmountPaid())
+                .refreshData(true)
+                .build();
+    }
+    public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanPaymentOrderAmountPaid() {
+        return LoanPaymentsRequest.FilterLoanPayment.builder()
+                .pagination(null)
+                .order(withDefaultOrderRequestAmountPaidFalse())
+                .date(null)
+                .build();
+    }
+
+    private static OrderRequest withDefaultOrderRequestAmountPaidFalse() {
+        return OrderRequest.builder()
+                .field("AMOUNT_PAID")
+                .desc(false)
+                .build();
+    }
+
+    public static LoanPaymentsRequest withDefaultLoanPaymentsRequestDateInvalid() {
+        return LoanPaymentsRequest.builder()
+                .loanNumber("123")
+                .filters(withDefaultFilterLoanPaymentDateInvalid())
+                .refreshData(true)
+                .build();
+    }
+    public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanPaymentDateInvalid() {
+        return LoanPaymentsRequest.FilterLoanPayment.builder()
+                .pagination(null)
+                .order(null)
+                .date(withDefaultPeriodRequestDateInvalid())
+                .build();
+    }
+
+    public static PeriodRequest withDefaultPeriodRequestDateInvalid() {
+        return PeriodRequest.builder()
+                .start("2024-07-01")
+                .end("2024-06-01")
                 .build();
     }
 }

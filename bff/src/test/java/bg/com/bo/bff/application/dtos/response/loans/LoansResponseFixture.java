@@ -1,5 +1,6 @@
 package bg.com.bo.bff.application.dtos.response.loans;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,5 +54,22 @@ public class LoansResponseFixture {
 
     public static List<LoanPaymentsResponse> withDataDefaultLoanPaymentsResponse() {
         return new ArrayList<>(Collections.singletonList(withDefaultLoanPaymentsResponse()));
+    }
+
+    public static LoanInsurancePaymentsResponse withDefaultLoanInsurancePaymentsResponse() {
+        return LoanInsurancePaymentsResponse.builder()
+                .warrantyNumber(123456L)
+                .description("Seguro de Prestamo")
+                .currencyCode("USD")
+                .currencyDescription("Dolar Americano")
+                .paymentNumber(1)
+                .paymentDate("2024-07-11")
+                .amount(new BigDecimal("100.00"))
+                .index(0)
+                .build();
+    }
+
+    public static List<LoanInsurancePaymentsResponse> withDataDefaultLoanInsurancePaymentsResponse() {
+        return new ArrayList<>(Collections.singletonList(withDefaultLoanInsurancePaymentsResponse()));
     }
 }

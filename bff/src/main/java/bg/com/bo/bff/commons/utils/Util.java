@@ -312,4 +312,8 @@ public class Util {
         }
         return inputTime;
     }
+
+    public static DateTimeFormatter getDateFormatter() {
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    }
 }

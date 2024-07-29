@@ -3,14 +3,14 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
 import bg.com.bo.bff.commons.constants.CacheConstants;
-import bg.com.bo.bff.commons.filters.LoanPaymentsDateFilter;
-import bg.com.bo.bff.commons.filters.LoanPaymentsOrderFilter;
-import bg.com.bo.bff.commons.filters.LoansFilter;
-import bg.com.bo.bff.commons.filters.PageFilter;
+import bg.com.bo.bff.commons.filters.*;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.providers.loans.ILoansMapper;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoanPaymentsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
 import bg.com.bo.bff.services.interfaces.ILoansService;
@@ -23,15 +23,19 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class LoansService implements ILoansService {
     private final ILoansProvider provider;
     private final ILoansMapper mapper;
+
     @Autowired
     private LoansService self;
 
@@ -45,9 +49,12 @@ public class LoansService implements ILoansService {
         Boolean refreshData = request.getRefreshData();
         List<ListLoansResponse> list = self.getServiceCache(personId, parameters, refreshData);
 
-        if (request.getFilters().getOrder() != null) {
-            list = new LoansFilter(request.getFilters()).apply(list);
-        }
+        String field = (request.getFilters().getOrder() != null) ? request.getFilters().getOrder().getField() : "EXPIRATION_DATE";
+        boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
+        Map<String, Function<ListLoansResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
+        comparatorOptions.put("LOAN_NUMBER", ListLoansResponse::getLoanNumber);
+        comparatorOptions.put("EXPIRATION_DATE", response -> LocalDate.parse(response.getExpirationDate(), Util.getDateFormatter()));
+        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getPagination() != null) {
             int page = request.getFilters().getPagination().getPage();
@@ -70,11 +77,19 @@ public class LoansService implements ILoansService {
         Boolean refreshData = request.getRefreshData();
         List<LoanPaymentsResponse> list = new ArrayList<>(self.getLoanPaymentsCache(loanId, personId, request.getLoanNumber(), parameter, refreshData));
 
-        if (request.getFilters().getPaymentDate() != null) {
-            list = new LoanPaymentsDateFilter(request).apply(list);
+        if (request.getFilters().getDate() != null) {
+            String start = request.getFilters().getDate().getStart();
+            String end = request.getFilters().getDate().getEnd();
+            list = new DateFilter<>(start, end, LoanPaymentsResponse::getDate).apply(list);
         }
 
-        list = new LoanPaymentsOrderFilter(request).apply(list);
+        String field = (request.getFilters().getOrder() != null) ? request.getFilters().getOrder().getField() : "DATE";
+        boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
+        Map<String, Function<LoanPaymentsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
+        comparatorOptions.put("INTEREST_PAID", LoanPaymentsResponse::getInterestAmountPaid);
+        comparatorOptions.put("CAPITAL_PAID", LoanPaymentsResponse::getCapitalPaid);
+        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getDate(), Util.getDateFormatter()));
+        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getPagination() != null) {
             int page = request.getFilters().getPagination().getPage();
@@ -87,7 +102,40 @@ public class LoansService implements ILoansService {
     @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loan-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == false")},
             put = {@CachePut(value = CacheConstants.USER_DATA, key = "'loan-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == true")})
     protected List<LoanPaymentsResponse> getLoanPaymentsCache(String loanId, String personId, String loamNumber, Map<String, String> parameter, Boolean refreshData) throws IOException {
-        ListLoanPaymentsMWResponse mwResponse = provider.getListLoanPayments(loanId, loamNumber, parameter);
+        LoanPaymentsMWResponse mwResponse = provider.getListLoanPayments(loanId, loamNumber, parameter);
+        return new ArrayList<>(mapper.convertResponse(mwResponse));
+    }
+
+    @Override
+    public List<LoanInsurancePaymentsResponse> getLoanInsurancePayments(String loanId, String personId, LoanPaymentsRequest request, Map<String, String> parameter) throws IOException {
+        Boolean refreshData = request.getRefreshData();
+        List<LoanInsurancePaymentsResponse> list = new ArrayList<>(self.getLoanInsurancePaymentsCache(loanId, personId, request.getLoanNumber(), parameter, refreshData));
+
+        if (request.getFilters().getDate() != null) {
+            String start = request.getFilters().getDate().getStart();
+            String end = request.getFilters().getDate().getEnd();
+            list = new DateFilter<>(start, end, LoanInsurancePaymentsResponse::getPaymentDate).apply(list);
+        }
+
+        String field = (request.getFilters().getOrder() != null) ? request.getFilters().getOrder().getField() : "DATE";
+        boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
+        Map<String, Function<LoanInsurancePaymentsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
+        comparatorOptions.put("AMOUNT_PAID", LoanInsurancePaymentsResponse::getAmount);
+        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getPaymentDate(), Util.getDateFormatter()));
+        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
+
+        if (request.getFilters().getPagination() != null) {
+            int page = request.getFilters().getPagination().getPage();
+            int pageSize = request.getFilters().getPagination().getPageSize();
+            list = new PageFilter<LoanInsurancePaymentsResponse>(page, pageSize).apply(list);
+        }
+        return list;
+    }
+
+    @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == false")},
+            put = {@CachePut(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == true")})
+    protected List<LoanInsurancePaymentsResponse> getLoanInsurancePaymentsCache(String loanId, String personId, String loamNumber, Map<String, String> parameter, Boolean refreshData) throws IOException {
+        LoanInsurancePaymentsMWResponse mwResponse = provider.getListLoanInsurancePayments(loanId, loamNumber, parameter);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
 }

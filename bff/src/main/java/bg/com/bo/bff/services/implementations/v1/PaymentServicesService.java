@@ -10,9 +10,9 @@ import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.filters.OrderFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.commons.filters.ServiceNameFilter;
-import bg.com.bo.bff.commons.filters.ServiceOrderFilter;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
@@ -33,8 +33,10 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -128,9 +130,12 @@ public class PaymentServicesService implements IPaymentServicesService {
         Boolean isInitial = request.getFilters().getPagination() == null || request.getFilters().getPagination().getPage() == 1;
         List<ServiceResponse> list = self.getServiceCache(parameter, PAYMENT_SERVICE_KEY, isInitial);
 
-        if (request.getFilters().getOrder() != null) {
-            list = new ServiceOrderFilter(request.getFilters()).apply(list);
-        }
+        String field = (request.getFilters().getOrder() != null) ? request.getFilters().getOrder().getField() : "SERVICE_CODE";
+        boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
+        Map<String, Function<ServiceResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
+        comparatorOptions.put("SERVICE_NAME", ServiceResponse::getServiceName);
+        comparatorOptions.put("SERVICE_CODE", ServiceResponse::getServiceCode);
+        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getSearch() != null && !request.getFilters().getSearch().isEmpty()) {
             list = new ServiceNameFilter(request.getFilters().getSearch()).apply(list);
@@ -139,7 +144,7 @@ public class PaymentServicesService implements IPaymentServicesService {
         if (request.getFilters().getPagination() != null) {
             int page = request.getFilters().getPagination().getPage();
             int pageSize = request.getFilters().getPagination().getPageSize();
-            list = new PageFilter(page, pageSize).apply(list);
+            list = new PageFilter<ServiceResponse>(page, pageSize).apply(list);
         }
         return list;
     }

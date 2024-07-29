@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum LoansMiddlewareError implements IMiddlewareError {
-    MDWPRE_001(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWPRE-001", "No se encontraron registros"),
+    MDWPRE_001(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWPRE-001", "No se encontraron registros de pagos"),
+    MDWPRE_004(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWPRE-004", "No se encontraron registros de pagos de seguro"),
+    MDWPRE_007(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_DB_EXECUTION", "MDWPRE-007", "Ocurrio un error al obtener datos."),
     MDWPRE_008(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWPRE-008", "No se encontraron préstamos para el cliente");
 
     private final HttpStatus httpCode;

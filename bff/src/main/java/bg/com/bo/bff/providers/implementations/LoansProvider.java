@@ -3,7 +3,8 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoanPaymentsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
@@ -12,6 +13,7 @@ import bg.com.bo.bff.providers.models.enums.middleware.loans.LoansMiddlewareServ
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
 import bg.com.bo.bff.providers.models.middleware.response.handler.ByMwErrorResponseHandler;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,6 +21,8 @@ import java.util.Map;
 
 @Service
 public class LoansProvider extends MiddlewareProvider<LoansMiddlewareError> implements ILoansProvider {
+    @Value("${account.statement.total}")
+    private String totalRecords;
     private final String baseUrl;
 
     public LoansProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
@@ -33,9 +37,16 @@ public class LoansProvider extends MiddlewareProvider<LoansMiddlewareError> impl
     }
 
     @Override
-    public ListLoanPaymentsMWResponse getListLoanPayments(String loanId, String loamNumber, Map<String, String> parameters) throws IOException {
+    public LoanPaymentsMWResponse getListLoanPayments(String loanId, String loamNumber, Map<String, String> parameters) throws IOException {
         String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOAN_PAYMENTS.getServiceURL(), loanId, loamNumber);
-        ByMwErrorResponseHandler<ListLoanPaymentsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(LoansMiddlewareError.MDWPRE_001);
-        return get(url, HeadersMW.getDefaultHeaders(parameters), ListLoanPaymentsMWResponse.class, responseHandler);
+        ByMwErrorResponseHandler<LoanPaymentsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(LoansMiddlewareError.MDWPRE_001);
+        return get(url, HeadersMW.getDefaultHeaders(parameters), LoanPaymentsMWResponse.class, responseHandler);
+    }
+
+    @Override
+    public LoanInsurancePaymentsMWResponse getListLoanInsurancePayments(String loanId, String loamNumber, Map<String, String> parameters) throws IOException {
+        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOAN_INSURANCE_PAYMENTS.getServiceURL(), loanId, loamNumber, totalRecords);
+        ByMwErrorResponseHandler<LoanInsurancePaymentsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(LoansMiddlewareError.MDWPRE_004);
+        return get(url, HeadersMW.getDefaultHeaders(parameters), LoanInsurancePaymentsMWResponse.class, responseHandler);
     }
 }

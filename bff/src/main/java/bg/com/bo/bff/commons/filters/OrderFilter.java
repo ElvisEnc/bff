@@ -1,41 +1,42 @@
 package bg.com.bo.bff.commons.filters;
 
-import bg.com.bo.bff.application.dtos.request.qr.OrderRequest;
-import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.OrderFieldFilter;
+import bg.com.bo.bff.commons.filters.interfaces.IFilter;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
-public class OrderFilter {
+public class OrderFilter<T> implements IFilter<T> {
     private final String field;
     private final boolean desc;
+    private final Map<String, Function<T, ? extends Comparable<?>>> comparatorOptions;
 
-    public OrderFilter(OrderRequest request) {
-        this.field = request != null ? request.getField() : OrderFieldFilter.REGISTRATION_DATE.getCode();
-        this.desc = request == null || request.getDesc();
+    public OrderFilter(String field, boolean desc, Map<String, Function<T, ? extends Comparable<?>>> comparatorOptions) {
+        this.field = field;
+        this.desc = desc;
+        this.comparatorOptions = comparatorOptions;
     }
 
-    public List<QrGeneratedPaid> apply(List<QrGeneratedPaid> list) {
-        OrderFieldFilter orderField = OrderFieldFilter.findByDescription(field);
-        if (orderField == null)
-            throw new GenericException("Invalid field: " + field, AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
-
-        Comparator<QrGeneratedPaid> comparator = getComparatorForField(orderField);
-        list.sort(desc ? comparator.reversed() : comparator);
-        return list;
+    @Override
+    public List<T> apply(List<T> list) {
+        List<T> modifiableList = new ArrayList<>(list);
+        Comparator<T> comparator = getComparatorForField(field);
+        modifiableList.sort(desc ? comparator.reversed() : comparator);
+        return modifiableList;
     }
 
-    private Comparator<QrGeneratedPaid> getComparatorForField(OrderFieldFilter field) {
-        return switch (field) {
-            case REGISTRATION_DATE ->
-                    Comparator.comparing(QrGeneratedPaid::getRegistrationDate, Comparator.nullsLast(Comparator.naturalOrder()));
-            case EXPIRATION_DATE ->
-                    Comparator.comparing(QrGeneratedPaid::getExpiryDate, Comparator.nullsLast(Comparator.naturalOrder()));
-            case AMOUNT ->
-                    Comparator.comparing(QrGeneratedPaid::getAmount, Comparator.nullsLast(Comparator.naturalOrder()));
-        };
+    private Comparator<T> getComparatorForField(String field) {
+        Function<T, ? extends Comparable<?>> keyExtractor = comparatorOptions.get(field);
+        if (keyExtractor == null) {
+            throw new GenericException(field + " - El campo esperado no es correcto", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
+        }
+        return Comparator.comparing(
+                keyExtractor,
+                Comparator.nullsLast((Comparator) Comparator.naturalOrder())
+        );
     }
 }

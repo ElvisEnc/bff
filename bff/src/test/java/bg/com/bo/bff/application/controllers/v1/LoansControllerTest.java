@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoansRequestFixture;
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoansResponseFixture;
 import bg.com.bo.bff.commons.enums.DeviceMW;
@@ -117,7 +118,7 @@ class LoansControllerTest {
     }
 
     @Test
-    void givenLoansPaymentsRequestWhenGetLoanPaymentsThenResponseListLoanPayments() throws Exception {
+    void givenLoanPaymentsRequestWhenGetLoanPaymentsThenResponseListLoanPayments() throws Exception {
         //Arrange
         LoanPaymentsRequest requestMock = LoansRequestFixture.withDefaultLoanPaymentsRequest();
         List<LoanPaymentsResponse> expectedResponse = LoansResponseFixture.withDataDefaultLoanPaymentsResponse();
@@ -141,5 +142,31 @@ class LoansControllerTest {
         assertNotNull(result);
         assertEquals(response, actual);
         verify(service).getLoanPayments(any(), any(), any(), any());
+    }
+
+    @Test
+    void givenLoanInsurancePaymentsRequestWhenGetLoanPaymentsThenResponseListLoanInsurancePayments() throws Exception {
+        //Arrange
+        LoanPaymentsRequest requestMock = LoansRequestFixture.withDefaultLoanPaymentsRequest();
+        List<LoanInsurancePaymentsResponse> expectedResponse = LoansResponseFixture.withDataDefaultLoanInsurancePaymentsResponse();
+        when(service.getLoanInsurancePayments(any(), any(), any(), any())).thenReturn(expectedResponse);
+
+        // Act
+        String path = "/api/v1/loans/{loanId}/persons/{personId}/insurance-payments";
+        MvcResult result = mockMvc.perform(post(path, "123", "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(requestMock))
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(ApiDataResponse.of(expectedResponse));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).getLoanInsurancePayments(any(), any(), any(), any());
     }
 }

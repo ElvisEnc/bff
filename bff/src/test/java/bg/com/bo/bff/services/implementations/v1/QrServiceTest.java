@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -33,7 +34,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class QrServiceTest {
-    @Spy
     @InjectMocks
     private QrService service;
     @Mock
@@ -44,7 +44,8 @@ class QrServiceTest {
     private IQRProvider qrProvider;
     @Mock
     private IQrMapper iQrMapper;
-
+    @Mock
+    private QrService self;
     private Map<String, String> map;
 
     @BeforeEach
@@ -58,6 +59,25 @@ class QrServiceTest {
                 DeviceMW.APP_VERSION.getCode(), "1.0.0"
         );
         this.service = new QrService(achAccountProvider, iQrMapper, qrProvider, qrTransactionProvider);
+    }
+
+    @Test
+    void givenLoanPaymentsRequestWhenGetListLoanPaymentThenListLoanPaymentsResponse() throws IOException {
+        //Arrange
+        QrListRequest request = QrRequestFixture.withDefaultQrListRequest();
+//        List<QrGeneratedPaid>  expectedResponse = new ArrayList<>((Collection) QrResponseFixture.withDefaultQrGeneratedPaid());
+        List<QrGeneratedPaid> expectedList = new ArrayList<>();
+        expectedList.add(QrResponseFixture.withDefaultQrGeneratedPaid());
+        ReflectionTestUtils.setField(service, "self", self);
+        when(self.getListQrMW(any(), any(), any(), any(), any())).thenReturn(expectedList);
+
+        //Act
+        QrListResponse response = service.getQrGeneratedPaid(request, 123,new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+//        assertEquals(expectedResponse, response);
+        verify(self).getListQrMW(any(), any(), any(), any(), any());
     }
 
     @Test

@@ -1,9 +1,11 @@
 package bg.com.bo.bff.mappings.providers.loans;
 
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoanPaymentsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +45,7 @@ public class LoansMapper implements ILoansMapper {
     }
 
     @Override
-    public List<LoanPaymentsResponse> convertResponse(ListLoanPaymentsMWResponse mwResponse) {
+    public List<LoanPaymentsResponse> convertResponse(LoanPaymentsMWResponse mwResponse) {
         if (mwResponse == null || mwResponse.getData() == null)
             return Collections.emptyList();
         return mwResponse.getData().stream()
@@ -60,6 +62,24 @@ public class LoansMapper implements ILoansMapper {
                         .typeMovement(mw.getTypeMovement())
                         .totalInstallment(mw.getTotalInstallment())
                         .branch(mw.getBranch())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public List<LoanInsurancePaymentsResponse> convertResponse(LoanInsurancePaymentsMWResponse mwResponse) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return Collections.emptyList();
+        return mwResponse.getData().stream()
+                .map(mw -> LoanInsurancePaymentsResponse.builder()
+                        .warrantyNumber(mw.getWarrantyNumber())
+                        .description(mw.getDescription())
+                        .currencyCode(mw.getCurrency())
+                        .currencyDescription(mw.getCurrencyDescription())
+                        .paymentNumber(mw.getPaymentNumber())
+                        .paymentDate(Util.formatDate(mw.getPaymentDate()))
+                        .amount(mw.getAmount())
+                        .index(mw.getRecord())
                         .build())
                 .toList();
     }

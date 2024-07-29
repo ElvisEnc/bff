@@ -3,6 +3,7 @@ package bg.com.bo.bff.services.interfaces;
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
 import org.springframework.stereotype.Service;
 
@@ -16,4 +17,6 @@ public interface ILoansService {
     List<ListLoansResponse> getListLoansByPerson(String personId, ListLoansRequest request, Map<String, String> parameter) throws IOException;
 
     List<LoanPaymentsResponse> getLoanPayments(String loanId, String personId, LoanPaymentsRequest request, Map<String, String> parameter) throws IOException;
+
+    List<LoanInsurancePaymentsResponse> getLoanInsurancePayments(String loanId, String personId, LoanPaymentsRequest request, Map<String, String> parameter) throws IOException;
 }

@@ -10,7 +10,7 @@ import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
-import bg.com.bo.bff.commons.filters.OrderFilter;
+import bg.com.bo.bff.commons.filters.QrOrderFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.qr.mw.QRCodeGenerateMWRequest;
@@ -67,7 +67,7 @@ public class QrService implements IQrService {
         Boolean needAllRecords = request.getPagination() == null || request.getPagination().getPage() == 1;
         List<QrGeneratedPaid> result = self.getListQrMW(request, personId, parameters, key, needAllRecords);
 
-        result = new OrderFilter(request.getOrder()).apply(result);
+        result = new QrOrderFilter(request.getOrder()).apply(result);
 
         Map<Boolean, List<QrGeneratedPaid>> partitionedLists = result.stream()
                 .collect(Collectors.partitioningBy(q -> q.getOperationType().equals("1")));
