@@ -50,11 +50,11 @@ public enum AppError {
     MDWRLIB_0009(HttpStatus.FORBIDDEN, "FORBIDDEN", "MDWRLIB-0009", "Forbidden"),
 
     // Cuentas Terceros
-    MDWRACTM_002(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWRACTM-002", "No se encontraron cuentas"),
+    MDWACTM_002(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWACTM-002", "No se encontraron cuentas"),
     MDWRLIB_0012(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRLIB-0012", "Channel not implemented yet"),
-    MDWRACTM_015(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRACTM-015", "Params must be the same for CHANNEL 2"),
-    MDWRACTM_016(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRACTM-016", "Params must not be the same for CHANNEL 6"),
-    MDWRACTM_017(HttpStatus.NOT_FOUND, "NOT_ACCOUNT", "MDWRACTM-017", "No se encontró la cuenta con los datos otorgados."),
+    MDWACTM_015(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWACTM-015", "Params must be the same for CHANNEL 2"),
+    MDWACTM_016(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWACTM-016", "Params must not be the same for CHANNEL 6"),
+    MDWACTM_017(HttpStatus.NOT_FOUND, "NOT_ACCOUNT", "MDWACTM-017", "No se encontró la cuenta con los datos otorgados."),
 
 
     // Cuentas Ach

@@ -313,7 +313,7 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
                 }
                 AppError error = Util.mapProviderError(jsonResponse);
                 String empty = error.getCodeMiddleware();
-                if (Objects.equals(AppError.MDWRACTM_002.getCodeMiddleware(), empty)) {
+                if (Objects.equals(AppError.MDWACTM_002.getCodeMiddleware(), empty)) {
                     return new ThirdAccountListResponse(new ArrayList<>());
                 }
                 logger.error(jsonResponse);

@@ -9,7 +9,7 @@ public class ContainsLetterValidator extends Validator<String> {
 
     @Override
     public void validate(String value) {
-        if (!value.matches(".*[a-z].*"))
+        if (!value.matches(".*[a-zA-Z].*"))
             throw e;
         super.validate(value);
     }

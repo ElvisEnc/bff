@@ -69,7 +69,6 @@ public class LoginController {
         switch (loginResult.getStatusCode()) {
             case SUCCESS:
                 LoginResponse tokenDataResponse = loginMapper.convert(loginResult);
-                tokenDataResponse.getUserData().setDocumentNumber("5403164");
                 return ResponseEntity.ok(tokenDataResponse);
         }
 
