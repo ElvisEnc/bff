@@ -23,6 +23,7 @@ public class LoanPaymentsRequest {
     @Schema(description = "Número del prestamo", example = "101106790")
     private String loanNumber;
 
+    @Valid
     @NotNull
     private FilterLoanPayment filters;
 

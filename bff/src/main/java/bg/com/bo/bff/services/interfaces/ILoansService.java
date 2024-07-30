@@ -5,6 +5,7 @@ import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanPlanResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,4 +20,6 @@ public interface ILoansService {
     List<LoanPaymentsResponse> getLoanPayments(String loanId, String personId, LoanPaymentsRequest request, Map<String, String> parameter) throws IOException;
 
     List<LoanInsurancePaymentsResponse> getLoanInsurancePayments(String loanId, String personId, LoanPaymentsRequest request, Map<String, String> parameter) throws IOException;
+
+    List<LoanPlanResponse> getLoanPlans(String loanId, String personId, Map<String, String> parameter) throws IOException;
 }

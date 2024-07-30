@@ -3,16 +3,10 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoansRequestFixture;
-import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoansResponseFixture;
+import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.loans.LoansMapper;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoansMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,6 +38,7 @@ class LoansServiceTest {
     private LoansMapper mapper = new LoansMapper();
     @Mock
     private LoansService self;
+    Map<String, String> map = new HashMap<>();
 
     @Test
     void givenValidDataWhenGetListLoansByPersonIdThenListLoansResponse() throws IOException {
@@ -377,7 +373,7 @@ class LoansServiceTest {
 
         //Act
         GenericException exception = assertThrows(GenericException.class, () ->
-                service.getLoanInsurancePayments("123", "123", request, new HashMap<>())
+                service.getLoanInsurancePayments("123", "123", request, map)
         );
 
         //Assert
@@ -394,10 +390,56 @@ class LoansServiceTest {
 
         //Act
         GenericException exception = assertThrows(GenericException.class, () ->
-                service.getLoanInsurancePayments("123", "123", request, new HashMap<>())
+                service.getLoanInsurancePayments("123", "123", request, map)
         );
 
         //Assert
         assertEquals("BAD_REQUEST", exception.getCode());
+    }
+
+    // Loan Plans
+    @Test
+    void givenLoanPlanRequestWhenGetListLoanPlansThenListLoanPlansResponse() throws IOException {
+        //Arrange
+        LoanPlanMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultLoanPlanMWResponse();
+        List<LoanPlanResponse> expectedResponse = LoansResponseFixture.withDataDefaultLoanPlanResponse();
+        when(provider.getLoanPlansPayments(any(), any(), any())).thenReturn(mwResponseMock);
+
+        //Act
+        List<LoanPlanResponse> response = service.getLoanPlans("123", "123", map);
+
+        //Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(provider).getLoanPlansPayments(any(), any(), any());
+        verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenLoanPlanRequestWhenGetListLoanPlansThenListLoanPlansResponseNull() throws IOException {
+        //Arrange
+        LoanPlanMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultLoanPlanMWResponseNull();
+        when(provider.getLoanPlansPayments(any(), any(), any())).thenReturn(mwResponseMock);
+
+        //Act
+        List<LoanPlanResponse> response = service.getLoanPlans("123", "123", map);
+
+        //Assert
+        assertNotNull(response);
+        verify(provider).getLoanPlansPayments(any(), any(), any());
+        verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenLoanPlanRequestWhenGetListLoanPlansThenNull() throws IOException {
+        //Arrange
+        when(provider.getLoanPlansPayments(any(), any(), any())).thenReturn(null);
+
+        //Act
+        List<LoanPlanResponse> response = service.getLoanPlans("123", "123", map);
+
+        //Assert
+        assertNotNull(response);
+        verify(provider).getLoanPlansPayments(any(), any(), any());
     }
 }

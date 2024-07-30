@@ -13,7 +13,10 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DatePattern {
-    String message() default "Formato de fecha inválida. Debe ingresar una fecha válida y con el formato yyyy-MM-dd.";
+    String message() default "Formato de fecha inválida";
+    String invalidFormat() default "Formato incorrecto, se espera 'yyyy-MM-dd'";
+    String notNull() default "No puede ser nulo ni vacío";
+
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

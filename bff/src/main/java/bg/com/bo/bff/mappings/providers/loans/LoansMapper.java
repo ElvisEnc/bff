@@ -3,10 +3,12 @@ package bg.com.bo.bff.mappings.providers.loans;
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanPlanResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPlanMWResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -80,6 +82,51 @@ public class LoansMapper implements ILoansMapper {
                         .paymentDate(Util.formatDate(mw.getPaymentDate()))
                         .amount(mw.getAmount())
                         .index(mw.getRecord())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public List<LoanPlanResponse> convertResponse(LoanPlanMWResponse mwResponse) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return Collections.emptyList();
+        return mwResponse.getData().stream()
+                .map(mw -> LoanPlanResponse.builder()
+                        .identifier(mw.getIdentifier())
+                        .loanId(mw.getLoanId())
+                        .loanNumber(mw.getLoanNumber())
+                        .quotaNumber(mw.getQuotaNumber())
+                        .dateInit(Util.formatDate(mw.getDateInit()))
+                        .dateDue(Util.formatDate(mw.getDateDue()))
+                        .quotaType(mw.getQuotaType())
+                        .capital(mw.getCapital())
+                        .interest(mw.getInterest())
+                        .charge1(mw.getCharge1())
+                        .charge2(mw.getCharge2())
+                        .charge3(mw.getCharge3())
+                        .charge4(mw.getCharge4())
+                        .charge5(mw.getCharge5())
+                        .charge6(mw.getCharge6())
+                        .residual(mw.getRemanent())
+                        .dateRegister(Util.formatDate(mw.getDateRegister()))
+                        .clientCode(mw.getClientCode())
+                        .clientName(mw.getClientName())
+                        .product(mw.getProduct())
+                        .branchName(mw.getBranchName())
+                        .currency(mw.getCurrency())
+                        .disbursementDate(Util.formatDate(mw.getDisbursementDate()))
+                        .disbursementAmount(mw.getDisbursementAmount())
+                        .period(mw.getPeriod())
+                        .teac(mw.getTeac())
+                        .timeLimit(mw.getTimeLimit())
+                        .rateType(mw.getRateType())
+                        .nominalRate(mw.getNominalRate())
+                        .baseRate(mw.getBaseRate())
+                        .nameTypeRate(mw.getNameTypeRate())
+                        .dateReviewRate(Util.formatDate(mw.getDateReviewRate()))
+                        .baseRateReviewPoint(mw.getBaseRateReviewPoint())
+                        .paymentTypeInterest(mw.getPaymentTypeInterest())
+                        .quantityDues(mw.getQuantityDue())
                         .build())
                 .toList();
     }

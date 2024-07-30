@@ -78,6 +78,7 @@ public class LoansRequestFixture {
                 .date(withDefaultPeriodRequest())
                 .build();
     }
+
     public static PeriodRequest withDefaultPeriodRequest() {
         return PeriodRequest.builder()
                 .start("2024-07-11")
@@ -117,7 +118,7 @@ public class LoansRequestFixture {
 
     private static OrderRequest withDefaultOrderRequestInterestPaid() {
         return OrderRequest.builder()
-                .field("INTEREST_PAID")///
+                .field("INTEREST_PAID")
                 .desc(true)
                 .build();
     }

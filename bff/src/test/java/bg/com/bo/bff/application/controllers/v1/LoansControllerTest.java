@@ -3,10 +3,8 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoansRequestFixture;
-import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoansResponseFixture;
+import bg.com.bo.bff.application.dtos.request.qr.PeriodRequest;
+import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
@@ -38,8 +36,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 class LoansControllerTest {
@@ -124,7 +121,6 @@ class LoansControllerTest {
         List<LoanPaymentsResponse> expectedResponse = LoansResponseFixture.withDataDefaultLoanPaymentsResponse();
         when(service.getLoanPayments(any(), any(), any(), any())).thenReturn(expectedResponse);
 
-
         // Act
         String path = "/api/v1/loans/{loanId}/persons/{personId}/payments";
         MvcResult result = mockMvc.perform(post(path, "123", "123")
@@ -142,6 +138,44 @@ class LoansControllerTest {
         assertNotNull(result);
         assertEquals(response, actual);
         verify(service).getLoanPayments(any(), any(), any(), any());
+    }
+
+    @Test
+    void givenBadFormatPeriodDateRequestWhenGetLoanPaymentsThenResponseBadRequest() throws Exception {
+        //Arrange
+        LoanPaymentsRequest requestMock = LoanPaymentsRequest.builder()
+                .loanNumber("123456")
+                .filters(LoanPaymentsRequest.FilterLoanPayment.builder()
+                        .date(PeriodRequest.builder().start("2023/11/22").end("2024/04/30").build())
+                        .build())
+                .refreshData(false)
+                .build();
+        // Act
+        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments";
+        mockMvc.perform(post(path, "123", "123")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestMock))
+                        .headers(this.headers))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenNullPeriodDateRequestWhenGetLoanPaymentsThenResponseBadRequest() throws Exception {
+        //Arrange
+        LoanPaymentsRequest requestMock = LoanPaymentsRequest.builder()
+                .loanNumber("123456")
+                .filters(LoanPaymentsRequest.FilterLoanPayment.builder()
+                        .date(PeriodRequest.builder().start("").end(null).build())
+                        .build())
+                .refreshData(false)
+                .build();
+        // Act
+        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments";
+        mockMvc.perform(post(path, "123", "123")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestMock))
+                        .headers(this.headers))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -168,5 +202,29 @@ class LoansControllerTest {
         assertNotNull(result);
         assertEquals(response, actual);
         verify(service).getLoanInsurancePayments(any(), any(), any(), any());
+    }
+
+    @Test
+    void givenLoanPlanRequestWhenGetLoanPlansThenResponseListLoanPlans() throws Exception {
+        //Arrange
+        List<LoanPlanResponse> expectedResponse = LoansResponseFixture.withDataDefaultLoanPlanResponse();
+        when(service.getLoanPlans(any(), any(), any())).thenReturn(expectedResponse);
+
+        // Act
+        String path = "/api/v1/loans/{loanId}/persons/{personId}";
+        MvcResult result = mockMvc.perform(get(path, "123", "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(ApiDataResponse.of(expectedResponse));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).getLoanPlans(any(), any(), any());
     }
 }

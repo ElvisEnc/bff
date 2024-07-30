@@ -168,6 +168,8 @@ public class Util {
     }
 
     public static String formatDate(String dateString) {
+        if (dateString == null)
+            return null;
         List<DateTimeFormatter> formatters = Arrays.asList(
                 DateTimeFormatter.ofPattern("yyyy-MM-dd"),
                 DateTimeFormatter.ofPattern("yyyy/MM/dd"),

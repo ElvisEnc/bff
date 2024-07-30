@@ -72,4 +72,48 @@ public class LoansResponseFixture {
     public static List<LoanInsurancePaymentsResponse> withDataDefaultLoanInsurancePaymentsResponse() {
         return new ArrayList<>(Collections.singletonList(withDefaultLoanInsurancePaymentsResponse()));
     }
+
+    public static LoanPlanResponse withDefaultLoanPlanResponse() {
+        return LoanPlanResponse.builder()
+                .identifier(1L)
+                .loanId(101L)
+                .loanNumber(202L)
+                .quotaNumber(1L)
+                .dateInit("2024-01-01")
+                .dateDue("2024-12-31")
+                .quotaType("Mensual")
+                .capital(new BigDecimal("1000.00"))
+                .interest(new BigDecimal("50.00"))
+                .charge1(new BigDecimal("10.00"))
+                .charge2(new BigDecimal("5.00"))
+                .charge3(new BigDecimal("3.00"))
+                .charge4(new BigDecimal("2.00"))
+                .charge5(new BigDecimal("1.00"))
+                .charge6(new BigDecimal("0.50"))
+                .residual(new BigDecimal("500.00"))
+                .dateRegister("2024-01-01")
+                .clientCode(123456L)
+                .clientName("Juan Perez")
+                .product("Personal Loan")
+                .branchName("Main Branch")
+                .currency("USD")
+                .disbursementDate("2024-01-01")
+                .nominalRate(new BigDecimal("5.00"))
+                .period(12L)
+                .teac(new BigDecimal("5.50"))
+                .disbursementAmount(new BigDecimal("10000.00"))
+                .timeLimit(12L)
+                .rateType("Fixed")
+                .nameTypeRate("Fixed Rate")
+                .dateReviewRate("2024-01-01")
+                .baseRateReviewPoint(new BigDecimal("0.50"))
+                .baseRate(new BigDecimal("5.00"))
+                .paymentTypeInterest("Monthly")
+                .quantityDues(12L)
+                .build();
+    }
+
+    public static List<LoanPlanResponse> withDataDefaultLoanPlanResponse() {
+        return new ArrayList<>(Collections.singletonList(withDefaultLoanPlanResponse()));
+    }
 }

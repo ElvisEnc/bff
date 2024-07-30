@@ -9,10 +9,7 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoansMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -114,6 +111,25 @@ class LoansProviderTest {
 
         // Act
         LoanInsurancePaymentsMWResponse response = provider.getListLoanInsurancePayments("123","123", map);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Get list loan plan payments for a user given loanId")
+    void givenLoanPlanRequestWhenGetLoanPlanPaymentsThenExpectResponse() throws IOException {
+        // Arrange
+        LoanPlanMWResponse expectedResponse = LoansMWResponseFixture.withDefaultLoanPlanMWResponse();
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        LoanPlanMWResponse response = provider.getLoanPlansPayments("123","123", map);
 
         // Assert
         assertNotNull(response);

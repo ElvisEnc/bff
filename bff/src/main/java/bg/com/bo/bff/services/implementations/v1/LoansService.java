@@ -5,6 +5,7 @@ import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanPlanResponse;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.filters.*;
 import bg.com.bo.bff.commons.utils.Util;
@@ -12,6 +13,7 @@ import bg.com.bo.bff.mappings.providers.loans.ILoansMapper;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPlanMWResponse;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
 import bg.com.bo.bff.services.interfaces.ILoansService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,5 +139,11 @@ public class LoansService implements ILoansService {
     protected List<LoanInsurancePaymentsResponse> getLoanInsurancePaymentsCache(String loanId, String personId, String loamNumber, Map<String, String> parameter, Boolean refreshData) throws IOException {
         LoanInsurancePaymentsMWResponse mwResponse = provider.getListLoanInsurancePayments(loanId, loamNumber, parameter);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
+    }
+
+    @Override
+    public List<LoanPlanResponse> getLoanPlans(String loanId, String personId, Map<String, String> parameter) throws IOException {
+        LoanPlanMWResponse mwResponse = provider.getLoanPlansPayments(loanId,personId,parameter);
+        return mapper.convertResponse(mwResponse);
     }
 }
