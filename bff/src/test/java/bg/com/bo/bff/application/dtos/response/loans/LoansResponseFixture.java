@@ -116,4 +116,28 @@ public class LoansResponseFixture {
     public static List<LoanPlanResponse> withDataDefaultLoanPlanResponse() {
         return new ArrayList<>(Collections.singletonList(withDefaultLoanPlanResponse()));
     }
+
+    public static LoanDetailPaymentResponse withDefaultLoanDetailPaymentResponse() {
+        return LoanDetailPaymentResponse.builder()
+                .correlativeId(123456L)
+                .nroOperation(123456L)
+                .highDate("2024-07-11")
+                .totalFee(10)
+                .feePaid(5)
+                .expirationNextDate("2024-07-11")
+                .expirationLoanDate("2024-07-11")
+                .interestRate(0.1)
+                .dateValue("2024-07-11")
+                .currentBalance(100.0)
+                .status("Active")
+                .balanceSecure(100.0)
+                .accruedCharges(100.0)
+                .interestCurrent(100.0)
+                .capital(100.0)
+                .form(1)
+                .amount(100.0)
+                .secureCurrency(1)
+                .amountSecureMandatory(100.0)
+                .build();
+    }
 }

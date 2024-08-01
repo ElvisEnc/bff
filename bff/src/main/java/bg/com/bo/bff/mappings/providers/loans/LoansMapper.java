@@ -1,10 +1,12 @@
 package bg.com.bo.bff.mappings.providers.loans;
 
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanDetailPaymentResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPlanResponse;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanDetailPaymentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
@@ -129,5 +131,30 @@ public class LoansMapper implements ILoansMapper {
                         .quantityDues(mw.getQuantityDue())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public LoanDetailPaymentResponse convertResponse(LoanDetailPaymentMWResponse mwResponse) {
+        return LoanDetailPaymentResponse.builder()
+                .correlativeId(Long.parseLong(mwResponse.getIdentifier()))
+                .nroOperation(Long.parseLong(mwResponse.getLoanNumber()))
+                .highDate(Util.formatDate(mwResponse.getHighDate()))
+                .totalFee(Integer.parseInt(mwResponse.getTotalFee()))
+                .feePaid(Integer.parseInt(mwResponse.getFeePaid()))
+                .expirationNextDate(Util.formatDate(mwResponse.getExpirationNextDate()))
+                .expirationLoanDate(Util.formatDate(mwResponse.getExpirationLoanDate()))
+                .interestRate(Double.parseDouble(mwResponse.getInterestRate()))
+                .dateValue(Util.formatDate(mwResponse.getDateValue()))
+                .currentBalance(Double.parseDouble(mwResponse.getCurrentBalance()))
+                .status(mwResponse.getStatus())
+                .balanceSecure(Double.parseDouble(mwResponse.getBalanceSecure()))
+                .accruedCharges(Double.parseDouble(mwResponse.getAccruedCharges()))
+                .interestCurrent(Double.parseDouble(mwResponse.getInterestCurrent()))
+                .capital(Double.parseDouble(mwResponse.getCapital()))
+                .form(Integer.parseInt(mwResponse.getForm()))
+                .amount(Double.parseDouble(mwResponse.getAmount()))
+                .secureCurrency(Integer.parseInt(mwResponse.getSecureCurrency()))
+                .amountSecureMandatory(Double.parseDouble(mwResponse.getAmountSecureMandatory()))
+                .build();
     }
 }

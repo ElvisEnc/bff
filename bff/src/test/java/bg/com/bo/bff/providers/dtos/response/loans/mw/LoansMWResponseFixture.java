@@ -147,4 +147,30 @@ public class LoansMWResponseFixture {
                 .data(null)
                 .build();
     }
+
+    public static LoanDetailPaymentMWResponse withDefaultLoanDetailPaymentMWResponse() {
+        return LoanDetailPaymentMWResponse.builder()
+                .identifier("12345")
+                .loanNumber("12345")
+                .highDate("2021-08-01")
+                .totalFee("1000")
+                .feePaid("500")
+                .expirationNextDate("2022-08-01")
+                .expirationLoanDate("2021-09-01")
+                .interestRate("0.1")
+                .dateValue("2021-09-01")
+                .currentBalance("500")
+                .status("Active")
+                .balanceSecure("500")
+                .accruedCharges("100")
+                .interestCurrent("100")
+                .capital("100")
+                .penaltyInterest("100")
+                .form("0")
+                .amount("100")
+                .secureCurrency("840")
+                .amountSecureMandatory("100")
+                .errorCode("0")
+                .build();
+    }
 }

@@ -46,8 +46,8 @@ public enum ACHMiddlewareError implements IMiddlewareError {
     MDWACH_038(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWACH-038", "Transacción no procesada, error al obtener el registro principal"),
     MDWACH_039(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWACH-039", "Error en el procesamiento"),
     MDWACH_040(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWACH-040", "Parámetros inválidos"),
-    MDWACH_041(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWACH-041", "Canal inválido");
-
+    MDWACH_041(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWACH-041", "Canal inválido"),
+    MDWACH_043(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWACH-043", "La cuenta no pertenece al usuario");
     private final HttpStatus httpCode;
     private final String code;
     private final String codeMiddleware;

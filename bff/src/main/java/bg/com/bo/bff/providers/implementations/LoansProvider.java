@@ -3,6 +3,9 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanDetailPaymentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
@@ -55,5 +58,12 @@ public class LoansProvider extends MiddlewareProvider<LoansMiddlewareError> impl
     public LoanPlanMWResponse getLoanPlansPayments(String loanId, String personId, Map<String, String> parameters) throws IOException {
         String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOAN_PLANS.getServiceURL(), loanId, personId);
         return get(url, HeadersMW.getDefaultHeaders(parameters), LoanPlanMWResponse.class);
+    }
+
+    @Override
+    public LoanDetailPaymentMWResponse getLoanDetailPayment(String loanId, String personId, Map<String, String> parameters) throws IOException {
+        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LOAN_DETAIL_PAYMENT.getServiceURL(), loanId, personId);
+        ApiDataResponse<LoanDetailPaymentMWResponse> mwResponse = get(url, HeadersMW.getDefaultHeaders(parameters), ApiDataResponse.class);
+        return Util.stringToObject(Util.objectToString(mwResponse.getData()), LoanDetailPaymentMWResponse.class);
     }
 }

@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanDetailPaymentResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPlanResponse;
@@ -133,5 +134,29 @@ public class LoansController {
                 geoPositionX,
                 geoPositionY,
                 appVersion))));
+    }
+
+    @Operation(summary = "Solicitud de pago préstamo", description = "Obtiene la solicitud de un pago de préstamo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Solicitud de pago de préstamo", content = @Content(schema = @Schema(implementation = LoanDetailPaymentResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("{loanId}/persons/{personId}/payments")
+    public ResponseEntity<LoanDetailPaymentResponse> getLoanDetailPayment(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("loanId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String loanId,
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+    ) throws IOException {
+        return ResponseEntity.ok(service.getLoanDetailPayment(loanId, personId, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion)));
     }
 }

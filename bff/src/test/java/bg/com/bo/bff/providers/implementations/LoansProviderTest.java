@@ -8,6 +8,7 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -130,6 +131,25 @@ class LoansProviderTest {
 
         // Act
         LoanPlanMWResponse response = provider.getLoanPlansPayments("123","123", map);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Get loan payment for a user given loanId and personId")
+    void givenLoandIdAndPersonIdWhenGetLoanDetailPaymentThenExpectResponse() throws IOException {
+        // Arrange
+        LoanDetailPaymentMWResponse expectedResponse = LoansMWResponseFixture.withDefaultLoanDetailPaymentMWResponse();
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(ApiDataResponse.of(expectedResponse));
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        LoanDetailPaymentMWResponse response = provider.getLoanDetailPayment("123","123", map);
 
         // Assert
         assertNotNull(response);

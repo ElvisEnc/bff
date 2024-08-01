@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.interfaces;
 
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanDetailPaymentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
@@ -17,4 +18,6 @@ public interface ILoansProvider {
     LoanInsurancePaymentsMWResponse getListLoanInsurancePayments(String loanId, String loamNumber, Map<String, String> parameters) throws IOException;
 
     LoanPlanMWResponse getLoanPlansPayments(String loanId, String personId, Map<String, String> parameters) throws IOException;
+
+    LoanDetailPaymentMWResponse getLoanDetailPayment(String loanId, String personId, Map<String, String> parameters) throws IOException;
 }

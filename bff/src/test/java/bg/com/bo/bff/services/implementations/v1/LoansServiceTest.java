@@ -442,4 +442,22 @@ class LoansServiceTest {
         assertNotNull(response);
         verify(provider).getLoanPlansPayments(any(), any(), any());
     }
+
+    @Test
+    void givenLoanIdAndPersonIdWhenGetLoanDetailPaymentThenLoanDetailPaymentResponse() throws IOException {
+        //Arrange
+        LoanDetailPaymentMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultLoanDetailPaymentMWResponse();
+        LoanDetailPaymentResponse expectedResponse = LoansResponseFixture.withDefaultLoanDetailPaymentResponse();
+        when(provider.getLoanDetailPayment(any(), any(), any())).thenReturn(mwResponseMock);
+        when(mapper.convertResponse(mwResponseMock)).thenReturn(expectedResponse);
+
+        //Act
+        LoanDetailPaymentResponse response = service.getLoanDetailPayment("123", "123", new HashMap<>());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(provider).getLoanDetailPayment(any(), any(), any());
+        verify(mapper).convertResponse(mwResponseMock);
+    }
 }

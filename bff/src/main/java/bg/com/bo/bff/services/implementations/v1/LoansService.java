@@ -3,6 +3,7 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
+import bg.com.bo.bff.application.dtos.response.loans.LoanDetailPaymentResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
 import bg.com.bo.bff.application.dtos.response.loans.LoanPlanResponse;
@@ -10,6 +11,7 @@ import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.filters.*;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.providers.loans.ILoansMapper;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanDetailPaymentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
@@ -132,6 +134,12 @@ public class LoansService implements ILoansService {
             list = new PageFilter<LoanInsurancePaymentsResponse>(page, pageSize).apply(list);
         }
         return list;
+    }
+
+    @Override
+    public LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, Map<String, String> parameter) throws IOException {
+        LoanDetailPaymentMWResponse mwResponse = provider.getLoanDetailPayment(loanId, personId, parameter);
+        return mapper.convertResponse(mwResponse);
     }
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == false")},
