@@ -8,7 +8,7 @@ public class LoansRequestFixture {
 
     public static ListLoansRequest withDefaultListLoansRequest() {
         return ListLoansRequest.builder()
-                .filters(ListLoansRequest.LoanFilters.builder()
+                .filters(ListLoansRequest.LoansFilter.builder()
                         .pagination(withDefaultPaginationRequest())
                         .order(withDefaultOrderRequest())
                         .build())
@@ -32,7 +32,7 @@ public class LoansRequestFixture {
 
     public static ListLoansRequest withDefaultListLoansRequestNull() {
         return ListLoansRequest.builder()
-                .filters(ListLoansRequest.LoanFilters.builder()
+                .filters(ListLoansRequest.LoansFilter.builder()
                         .pagination(null)
                         .order(null)
                         .build())
@@ -42,7 +42,7 @@ public class LoansRequestFixture {
 
     public static ListLoansRequest withDefaultListLoansRequestLoanNumber() {
         return ListLoansRequest.builder()
-                .filters(ListLoansRequest.LoanFilters.builder()
+                .filters(ListLoansRequest.LoansFilter.builder()
                         .pagination(withDefaultPaginationRequestOne())
                         .order(withDefaultOrderRequestLoanNumber())
                         .build())
@@ -71,8 +71,8 @@ public class LoansRequestFixture {
                 .refreshData(false)
                 .build();
     }
-    public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanPayment() {
-        return LoanPaymentsRequest.FilterLoanPayment.builder()
+    public static LoanPaymentsRequest.LoanPaymentsFilter withDefaultFilterLoanPayment() {
+        return LoanPaymentsRequest.LoanPaymentsFilter.builder()
                 .pagination(withDefaultPaginationRequest())
                 .order(withDefaultOrderRequestInterestPaid())
                 .date(withDefaultPeriodRequest())
@@ -93,8 +93,8 @@ public class LoansRequestFixture {
                 .refreshData(true)
                 .build();
     }
-    public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanPaymentNull() {
-        return LoanPaymentsRequest.FilterLoanPayment.builder()
+    public static LoanPaymentsRequest.LoanPaymentsFilter withDefaultFilterLoanPaymentNull() {
+        return LoanPaymentsRequest.LoanPaymentsFilter.builder()
                 .pagination(null)
                 .order(null)
                 .date(null)
@@ -108,8 +108,8 @@ public class LoansRequestFixture {
                 .refreshData(true)
                 .build();
     }
-    public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanPaymentOrderInterestPaid() {
-        return LoanPaymentsRequest.FilterLoanPayment.builder()
+    public static LoanPaymentsRequest.LoanPaymentsFilter withDefaultFilterLoanPaymentOrderInterestPaid() {
+        return LoanPaymentsRequest.LoanPaymentsFilter.builder()
                 .pagination(null)
                 .order(withDefaultOrderRequestInterestPaid())
                 .date(withDefaultPeriodRequestFilter())
@@ -137,8 +137,8 @@ public class LoansRequestFixture {
                 .refreshData(true)
                 .build();
     }
-    public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanPaymentOrderCapitalPaid() {
-        return LoanPaymentsRequest.FilterLoanPayment.builder()
+    public static LoanPaymentsRequest.LoanPaymentsFilter withDefaultFilterLoanPaymentOrderCapitalPaid() {
+        return LoanPaymentsRequest.LoanPaymentsFilter.builder()
                 .pagination(null)
                 .order(withDefaultOrderRequestCapitalPaid())
                 .date(withDefaultPeriodRequestFilterCapitalPaid())
@@ -166,8 +166,8 @@ public class LoansRequestFixture {
                 .refreshData(true)
                 .build();
     }
-    public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanPaymentOrderDate() {
-        return LoanPaymentsRequest.FilterLoanPayment.builder()
+    public static LoanPaymentsRequest.LoanPaymentsFilter withDefaultFilterLoanPaymentOrderDate() {
+        return LoanPaymentsRequest.LoanPaymentsFilter.builder()
                 .pagination(null)
                 .order(withDefaultOrderRequestDate())
                 .date(withDefaultPeriodRequestFilterDate())
@@ -195,8 +195,8 @@ public class LoansRequestFixture {
                 .refreshData(false)
                 .build();
     }
-    public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanInsurancePayment() {
-        return LoanPaymentsRequest.FilterLoanPayment.builder()
+    public static LoanPaymentsRequest.LoanPaymentsFilter withDefaultFilterLoanInsurancePayment() {
+        return LoanPaymentsRequest.LoanPaymentsFilter.builder()
                 .pagination(withDefaultPaginationRequest())
                 .order(withDefaultOrderRequestDate())
                 .date(withDefaultPeriodRequest())
@@ -210,8 +210,8 @@ public class LoansRequestFixture {
                 .refreshData(true)
                 .build();
     }
-    public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanPaymentOrderAmountPaid() {
-        return LoanPaymentsRequest.FilterLoanPayment.builder()
+    public static LoanPaymentsRequest.LoanPaymentsFilter withDefaultFilterLoanPaymentOrderAmountPaid() {
+        return LoanPaymentsRequest.LoanPaymentsFilter.builder()
                 .pagination(null)
                 .order(withDefaultOrderRequestAmountPaidFalse())
                 .date(null)
@@ -232,8 +232,8 @@ public class LoansRequestFixture {
                 .refreshData(true)
                 .build();
     }
-    public static LoanPaymentsRequest.FilterLoanPayment withDefaultFilterLoanPaymentDateInvalid() {
-        return LoanPaymentsRequest.FilterLoanPayment.builder()
+    public static LoanPaymentsRequest.LoanPaymentsFilter withDefaultFilterLoanPaymentDateInvalid() {
+        return LoanPaymentsRequest.LoanPaymentsFilter.builder()
                 .pagination(null)
                 .order(null)
                 .date(withDefaultPeriodRequestDateInvalid())

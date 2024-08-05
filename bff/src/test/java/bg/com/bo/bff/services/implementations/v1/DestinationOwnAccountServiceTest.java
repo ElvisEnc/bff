@@ -36,7 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DestinationAccountServiceTest {
+class DestinationOwnAccountServiceTest {
     private DestinationAccountService service;
     @Mock
     private IThirdAccountProvider thirdAccountProvider;

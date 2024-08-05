@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class ListLoansRequest {
     @Valid
     @Schema(description = "Filtros para obtener la lista de préstamos")
-    private LoanFilters filters;
+    private ListLoansRequest.LoansFilter filters;
 
     @NotNull
     @Schema(description = "Indica si se debe refrescar la información")
@@ -29,7 +29,7 @@ public class ListLoansRequest {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class LoanFilters {
+    public static class LoansFilter {
 
         @Valid
         private PaginationRequest pagination;

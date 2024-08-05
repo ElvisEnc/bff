@@ -145,7 +145,7 @@ class LoansControllerTest {
         //Arrange
         LoanPaymentsRequest requestMock = LoanPaymentsRequest.builder()
                 .loanNumber("123456")
-                .filters(LoanPaymentsRequest.FilterLoanPayment.builder()
+                .filters(LoanPaymentsRequest.LoanPaymentsFilter.builder()
                         .date(PeriodRequest.builder().start("2023/11/22").end("2024/04/30").build())
                         .build())
                 .refreshData(false)
@@ -164,7 +164,7 @@ class LoansControllerTest {
         //Arrange
         LoanPaymentsRequest requestMock = LoanPaymentsRequest.builder()
                 .loanNumber("123456")
-                .filters(LoanPaymentsRequest.FilterLoanPayment.builder()
+                .filters(LoanPaymentsRequest.LoanPaymentsFilter.builder()
                         .date(PeriodRequest.builder().start("").end(null).build())
                         .build())
                 .refreshData(false)

@@ -1,14 +1,15 @@
 package bg.com.bo.bff.providers.dtos.response.own.account.mw;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 
 public class OwnAccountMWResponseFixture {
     public static TransactionLimitListMWResponse withDefaultTransactionLimitListMWResponse(){
         return new TransactionLimitListMWResponse(
-                TransactionLimit.builder()
+                TransactionLimitsMWResponse.builder()
                         .identifier("123445")
-                        .transactionPermitDay(10)
-                        .availableTransaction(1000)
+                        .transactionPermitDay(String.valueOf(10))
+                        .availableTransaction(String.valueOf(1000))
                         .availableTransactionGroup("2")
                         .currencyCod("13")
                         .type("I")
@@ -16,9 +17,9 @@ public class OwnAccountMWResponseFixture {
         );
     }
 
-    public static AccountReportBasicResponse withDefaultAccountReportBasicResponse() {
-        return AccountReportBasicResponse.builder()
-                .data(Collections.singletonList(AccountReportBasicResponse.AccountReportData.builder()
+    public static AccountStatementsMWResponse withDefaultAccountReportBasicResponse() {
+        return AccountStatementsMWResponse.builder()
+                .data(Collections.singletonList(AccountStatementsMWResponse.AccountStatementMW.builder()
                         .reportMoveType("reportMoveType")
                         .destinationAccount("destinationAccount")
                         .orderNumber("orderNumber")
@@ -29,20 +30,20 @@ public class OwnAccountMWResponseFixture {
                         .operation("operation")
                         .startDate("startDate")
                         .startTime("startTime")
-                        .amount(10.00)
+                        .amount(BigDecimal.valueOf(10.00))
                         .agency("agency")
                         .city("city")
                         .accountingDate("accountingDate")
                         .processDate("2024-01-01")
                         .accountingTime("accountingTime")
-                        .seatNumber(123465)
+                        .seatNumber(123465L)
                         .codBranchOffice("codBranchOffice")
                         .agencyCod("agencyCod")
                         .accountNumber("accountNumber")
                         .currencyCod("currencyCod")
                         .user("user")
                         .moveType("moveType")
-                        .currentBalance(500.55)
+                        .currentBalance(BigDecimal.valueOf(500.55))
                         .status("status")
                         .build()))
                 .build();

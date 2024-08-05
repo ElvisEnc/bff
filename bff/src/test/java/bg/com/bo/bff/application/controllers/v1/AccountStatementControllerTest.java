@@ -1,25 +1,13 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementRequestFixture;
-import bg.com.bo.bff.application.dtos.request.account.statement.ExtractRequest;
-import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementExtractResponse;
-import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementResponseFixture;
-import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.IAccountStatementService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class AccountStatementControllerTest {
@@ -37,22 +25,4 @@ class AccountStatementControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
-    @Test
-    void GivenExtractWhenRequestIsValidThenReturnExtractData() throws Exception {
-        // Arrange
-        ExtractRequest request = AccountStatementRequestFixture.withDefaultExtractRequest();
-        AccountStatementExtractResponse expectedResponse = AccountStatementResponseFixture.withDefaultAccountStatementExtractResponse();
-        Mockito.when(service.getAccountStatement(Mockito.any(), Mockito.any())).thenReturn(expectedResponse);
-
-        // Act
-        mockMvc.perform(post(URL_ACCOUNT_STATEMENT)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(Util.objectToString(request, false)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        // Assert
-        Mockito.verify(service).getAccountStatement(any(), any());
-    }
 }

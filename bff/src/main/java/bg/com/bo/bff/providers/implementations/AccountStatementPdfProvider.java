@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.ExportRequest;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementPdfProvider;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -31,7 +31,7 @@ public class AccountStatementPdfProvider implements IAccountStatementPdfProvider
     private static final Logger LOGGER = LogManager.getLogger(AccountStatementPdfProvider.class.getName());
 
     @Override
-    public byte[] generatePdf(List<AccountReportBasicResponse.AccountReportData> accountReportData, ExportRequest request, String accountId) throws IOException {
+    public byte[] generatePdf(List<AccountStatementsMWResponse.AccountStatementMW> accountReportData, ExportRequest request, String accountId) throws IOException {
         String range = " desde  " + request.getFilters().getStartDate() + "  hasta  " + request.getFilters().getEndDate();
 
         Document document = new Document(PageSize.A4.rotate());
@@ -88,7 +88,7 @@ public class AccountStatementPdfProvider implements IAccountStatementPdfProvider
                 for (String header : headers) {
                     table.addCell(createCell(header, fontHeader));
                 }
-                for (AccountReportBasicResponse.AccountReportData transaction : accountReportData) {
+                for (AccountStatementsMWResponse.AccountStatementMW transaction : accountReportData) {
                     table.addCell(createCell(String.valueOf(transaction.getSeatNumber()), fontData));
                     table.addCell(createCell(transaction.getBranchOffice(), fontData));
                     table.addCell(createCell(transaction.getProcessDate() + " " + transaction.getAccountingTime(), fontData));

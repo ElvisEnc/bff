@@ -6,14 +6,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AmountRange {
     @Schema(example = "0.5", description = "Monto mínimo")
-    private Double min;
+    private BigDecimal min;
 
     @Schema(example = "1000", description = "Monto máximo")
-    private Double max;
+    private BigDecimal max;
 }

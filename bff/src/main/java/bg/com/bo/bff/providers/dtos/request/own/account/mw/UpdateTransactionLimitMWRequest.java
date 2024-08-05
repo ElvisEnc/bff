@@ -1,18 +1,9 @@
 package bg.com.bo.bff.providers.dtos.request.own.account.mw;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class UpdateTransactionLimitMWRequest {
-    private String availableTransaction;
-    private String transactionPermitDay;
-
+public record UpdateTransactionLimitMWRequest(
+        String availableTransaction,
+        String transactionPermitDay
+) {
 }
 

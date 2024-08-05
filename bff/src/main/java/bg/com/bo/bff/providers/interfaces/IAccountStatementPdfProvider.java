@@ -1,11 +1,11 @@
 package bg.com.bo.bff.providers.interfaces;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.ExportRequest;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
 
 import java.io.IOException;
 import java.util.List;
 
 public interface IAccountStatementPdfProvider {
-    byte[] generatePdf(List<AccountReportBasicResponse.AccountReportData> accountReportData, ExportRequest request, String accountId) throws IOException;
+    byte[] generatePdf(List<AccountStatementsMWResponse.AccountStatementMW> accountReportData, ExportRequest request, String accountId) throws IOException;
 }

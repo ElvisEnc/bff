@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class TransactionLimit {
+public class TransactionLimitsMWResponse {
     private String identifier;
-    private Integer transactionPermitDay;
-    private Integer availableTransaction;
+    private String transactionPermitDay;
+    private String transactionsRegisteredInDay;
+    private String availableTransaction;
     private String availableTransactionGroup;
     private String currencyCod;
     private String type;

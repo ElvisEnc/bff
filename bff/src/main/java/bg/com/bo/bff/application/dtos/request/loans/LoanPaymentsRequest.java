@@ -25,7 +25,7 @@ public class LoanPaymentsRequest {
 
     @Valid
     @NotNull
-    private FilterLoanPayment filters;
+    private LoanPaymentsRequest.LoanPaymentsFilter filters;
 
     @NotNull
     @Schema(description = "Indica si se debe refrescar la información", example = "false")
@@ -35,7 +35,7 @@ public class LoanPaymentsRequest {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class FilterLoanPayment {
+    public static class LoanPaymentsFilter {
         @Valid
         private PaginationRequest pagination;
 

@@ -1,11 +1,15 @@
 package bg.com.bo.bff.providers.dtos.request.own.account.mw;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-public class AccountReportBasicRequest {
+@AllArgsConstructor
+@NoArgsConstructor
+public class AccountStatementsMWRequest {
     private String accountId;
     private String startDate;
     private String endDate;

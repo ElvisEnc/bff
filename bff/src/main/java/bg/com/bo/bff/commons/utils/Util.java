@@ -318,4 +318,19 @@ public class Util {
     public static DateTimeFormatter getDateFormatter() {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd");
     }
+
+    public static BigDecimal scaleToTwoDecimals(BigDecimal value) {
+        if (value == null)
+            return null;
+        return value.setScale(2, RoundingMode.DOWN);
+    }
+
+    public static Integer convertStringToInteger(String value) {
+        try {
+            return value != null ? Integer.parseInt(value) : null;
+        } catch (NumberFormatException e) {
+            LOGGER.debug("El valor otorgado no es numerico: %s".formatted(value), e);
+            return null;
+        }
+    }
 }

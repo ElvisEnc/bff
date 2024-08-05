@@ -1,6 +1,6 @@
 package bg.com.bo.bff.mappings.providers.statement;
 
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.Objects;
 
 @Component
 public class AccountStatementAdapter {
-    public List<AccountReportBasicResponse.AccountReportData> mapping(List<AccountReportBasicResponse.AccountReportData> reportData) {
+    public List<AccountStatementsMWResponse.AccountStatementMW> mapping(List<AccountStatementsMWResponse.AccountStatementMW> reportData) {
         Map<String, String> currencyMapping = new HashMap<>();
         currencyMapping.put("032", "ARS");
         currencyMapping.put("068", "BOB");
@@ -23,7 +23,7 @@ public class AccountStatementAdapter {
         statusMapping.put("ENPROC", "Pendiente");
         statusMapping.put("RECH", "Rechazada");
 
-        for (AccountReportBasicResponse.AccountReportData data : reportData) {
+        for (AccountStatementsMWResponse.AccountStatementMW data : reportData) {
             String status = data.getStatus();
             String currency = data.getCurrencyCod();
             data.setStatus(statusMapping.get(status));

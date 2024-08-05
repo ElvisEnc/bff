@@ -1,11 +1,11 @@
 package bg.com.bo.bff.commons.filters;
 
 import bg.com.bo.bff.commons.filters.interfaces.IFilter;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountReportBasicResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
 
 import java.util.List;
 
-public class TypeFilter implements IFilter<AccountReportBasicResponse.AccountReportData> {
+public class TypeFilter implements IFilter<AccountStatementsMWResponse.AccountStatementMW> {
 
     private final String tipeMovement;
 
@@ -14,7 +14,7 @@ public class TypeFilter implements IFilter<AccountReportBasicResponse.AccountRep
     }
 
     @Override
-    public List<AccountReportBasicResponse.AccountReportData> apply(List<AccountReportBasicResponse.AccountReportData> list) {
+    public List<AccountStatementsMWResponse.AccountStatementMW> apply(List<AccountStatementsMWResponse.AccountStatementMW> list) {
         return list.stream()
                 .filter(extract -> tipeMovement == null || tipeMovement.equals(extract.getMoveType()))
                 .toList();
