@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
+import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementCsvProvider;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -18,7 +18,7 @@ public class AccountStatementCsvProvider implements IAccountStatementCsvProvider
     private static final Logger LOGGER = LogManager.getLogger(AccountStatementCsvProvider.class.getName());
 
     @Override
-    public byte[] generateCsv(List<AccountStatementsMWResponse.AccountStatementMW> basicResponseData) {
+    public byte[] generateCsv(List<AccountStatementsResponse> basicResponseData) {
         try {
             StringWriter writer = new StringWriter();
 
@@ -26,8 +26,8 @@ public class AccountStatementCsvProvider implements IAccountStatementCsvProvider
             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(title).withDelimiter(';').withAutoFlush(true));
 
             if (!basicResponseData.isEmpty())
-                for (AccountStatementsMWResponse.AccountStatementMW data : basicResponseData) {
-                    csvPrinter.printRecord(data.getStatus(), data.getMoveType(), data.getAmount(), data.getCurrencyCod(), data.getBranchOffice(), data.getProcessDate(), data.getAccountingTime(), data.getCurrentBalance(), data.getSeatNumber(), data.getDescription().replace("\n", "").replace("\r", ""));
+                for (AccountStatementsResponse data : basicResponseData) {
+                    csvPrinter.printRecord(data.getStatus(), data.getMovementType(), data.getAmount(), data.getCurrencyCode(), data.getChannel(), data.getMovementDate(), data.getMovementTime(), data.getBalance(), data.getSeatNumber(), data.getDescription().replace("\n", "").replace("\r", ""));
                 }
             else {
                 String empty = "Sin registro";

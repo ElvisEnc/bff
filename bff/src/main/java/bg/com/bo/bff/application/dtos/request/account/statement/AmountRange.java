@@ -1,6 +1,8 @@
 package bg.com.bo.bff.application.dtos.request.account.statement;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,9 +15,13 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AmountRange {
-    @Schema(example = "0.5", description = "Monto mínimo")
+    @DecimalMin(value = "0.0", message = "El monto mínimo debe ser al menos 0")
+    @DecimalMax(value = "9999999.99", message = "El monto mínimo debe ser como máximo 9999999.99")
+    @Schema(example = "0.50", description = "Monto mínimo")
     private BigDecimal min;
 
-    @Schema(example = "1000", description = "Monto máximo")
+    @DecimalMin(value = "0.0", message = "El monto máximo debe ser al menos 0")
+    @DecimalMax(value = "9999999.99", message = "El monto máximo debe ser como máximo 9999999.99")
+    @Schema(example = "1000.00", description = "Monto máximo")
     private BigDecimal max;
 }

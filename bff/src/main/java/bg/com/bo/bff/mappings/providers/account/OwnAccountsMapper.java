@@ -77,8 +77,8 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
     public AccountStatementsMWRequest mapperRequest(String accountId, String init, String total, AccountStatementsRequest request) {
         return AccountStatementsMWRequest.builder()
                 .accountId(accountId)
-                .startDate(request.getFilters().getPagination().getStartDate())
-                .endDate(request.getFilters().getPagination().getEndDate())
+                .startDate(request.getFilters().getDate().getStart())
+                .endDate(request.getFilters().getDate().getEnd())
                 .initCount(init)
                 .totalCount(total)
                 .build();
@@ -88,24 +88,22 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
     public List<AccountStatementsResponse> convertResponse(AccountStatementsMWResponse mwResponse) {
         if (mwResponse == null || mwResponse.getData() == null)
             return Collections.emptyList();
-
         HashMap<String, Integer> hashMap = new HashMap<>();
         hashMap.put("ACEP", 1);
         hashMap.put("ENPROC", 2);
         hashMap.put("RECH", 3);
-
         return mwResponse.getData().stream()
                 .map(mw -> AccountStatementsResponse.builder()
                         .status(String.valueOf(hashMap.get(mw.getStatus())))
-                        .type(Objects.equals(mw.getMoveType(), "D") ? AccountStatementType.DEBITO.getCode() : AccountStatementType.CREDITO.getCode())
-                        .amount(mw.getAmount())
-                        .currency(mw.getCurrencyCod())
-                        .channel(mw.getBranchOffice())
-                        .dateMov(Util.formatDate(mw.getProcessDate()))
-                        .timeMov(mw.getAccountingTime())
-                        .movBalance(mw.getCurrentBalance())
-                        .seatNumber(String.valueOf(mw.getSeatNumber()))
+                        .movementType(Objects.equals(mw.getMoveType(), "D") ? AccountStatementType.DEBITO.getCode() : AccountStatementType.CREDITO.getCode())
+                        .amount(Util.scaleToTwoDecimals(mw.getAmount()))
+                        .currencyCode(mw.getCurrencyCod())
                         .description(mw.getDescription())
+                        .balance(Util.scaleToTwoDecimals(mw.getCurrentBalance()))
+                        .movementDate(Util.formatDate(mw.getProcessDate()))
+                        .movementTime(mw.getAccountingTime())
+                        .channel(mw.getBranchOffice())
+                        .seatNumber(String.valueOf(mw.getSeatNumber()))
                         .build())
                 .toList();
     }

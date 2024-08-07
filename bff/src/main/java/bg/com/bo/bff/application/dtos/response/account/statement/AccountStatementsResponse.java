@@ -13,13 +13,13 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class AccountStatementsResponse {
     private String status;
-    private String type;
+    private String movementType;
     private BigDecimal amount;
-    private String currency;
-    private String channel;
-    private String dateMov;
-    private String timeMov;
-    private BigDecimal movBalance;
-    private String seatNumber;
+    private String currencyCode;
     private String description;
+    private BigDecimal balance;
+    private String movementDate;
+    private String movementTime;
+    private String channel;
+    private String seatNumber;
 }

@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.ExportRequest;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementPdfProvider;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -31,8 +31,8 @@ public class AccountStatementPdfProvider implements IAccountStatementPdfProvider
     private static final Logger LOGGER = LogManager.getLogger(AccountStatementPdfProvider.class.getName());
 
     @Override
-    public byte[] generatePdf(List<AccountStatementsMWResponse.AccountStatementMW> accountReportData, ExportRequest request, String accountId) throws IOException {
-        String range = " desde  " + request.getFilters().getStartDate() + "  hasta  " + request.getFilters().getEndDate();
+    public byte[] generatePdf(List<AccountStatementsResponse> accountReportData, ExportRequest request, String accountId) throws IOException {
+        String range = " desde  " + request.getFilters().getDate().getStart() + "  hasta  " + request.getFilters().getDate().getEnd();
 
         Document document = new Document(PageSize.A4.rotate());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -88,14 +88,14 @@ public class AccountStatementPdfProvider implements IAccountStatementPdfProvider
                 for (String header : headers) {
                     table.addCell(createCell(header, fontHeader));
                 }
-                for (AccountStatementsMWResponse.AccountStatementMW transaction : accountReportData) {
-                    table.addCell(createCell(String.valueOf(transaction.getSeatNumber()), fontData));
-                    table.addCell(createCell(transaction.getBranchOffice(), fontData));
-                    table.addCell(createCell(transaction.getProcessDate() + " " + transaction.getAccountingTime(), fontData));
-                    table.addCell(createCell(String.valueOf(transaction.getAmount()), fontData));
-                    table.addCell(createCell(transaction.getMoveType(), fontData));
-                    table.addCell(createCell(String.valueOf(transaction.getCurrentBalance()), fontData));
-                    table.addCell(createCell(transaction.getDescription(), fontData));
+                for (AccountStatementsResponse statementsResponse : accountReportData) {
+                    table.addCell(createCell(String.valueOf(statementsResponse.getSeatNumber()), fontData));
+                    table.addCell(createCell(statementsResponse.getChannel(), fontData));
+                    table.addCell(createCell(statementsResponse.getMovementDate() + " " + statementsResponse.getMovementTime(), fontData));
+                    table.addCell(createCell(String.valueOf(statementsResponse.getAmount()), fontData));
+                    table.addCell(createCell(statementsResponse.getMovementType(), fontData));
+                    table.addCell(createCell(String.valueOf(statementsResponse.getBalance()), fontData));
+                    table.addCell(createCell(statementsResponse.getDescription(), fontData));
                 }
             }
             else {

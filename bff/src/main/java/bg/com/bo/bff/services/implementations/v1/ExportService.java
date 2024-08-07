@@ -1,27 +1,28 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementsRequest;
+import bg.com.bo.bff.application.dtos.request.account.statement.AmountRange;
 import bg.com.bo.bff.application.dtos.request.account.statement.ExportRequest;
-import bg.com.bo.bff.application.dtos.request.account.statement.ExtractPagination;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementExportResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
 import bg.com.bo.bff.commons.enums.AccountStatementType;
-import bg.com.bo.bff.commons.filters.AmountRangeFilter;
+import bg.com.bo.bff.commons.filters.OrderFilter;
+import bg.com.bo.bff.commons.filters.RangeFilter;
 import bg.com.bo.bff.commons.filters.TypeFilter;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
+import bg.com.bo.bff.mappings.providers.export.IExportMapper;
+import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementCsvProvider;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementPdfProvider;
-import bg.com.bo.bff.mappings.providers.statement.AccountStatementAdapter;
+import bg.com.bo.bff.mappings.providers.export.ExportMapper;
 import bg.com.bo.bff.services.interfaces.IExportService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.function.Function;
 
 @Service
 public class ExportService implements IExportService {
@@ -32,49 +33,47 @@ public class ExportService implements IExportService {
     private final AccountStatementService statementService;
     private final IAccountStatementPdfProvider pdfProvider;
     private final IAccountStatementCsvProvider csvProvider;
-    private final AccountStatementAdapter accountStatementAdapter;
+    private final IExportMapper mapper;
 
-    public ExportService(AccountStatementService statementService, IAccountStatementPdfProvider pdfProvider, IAccountStatementCsvProvider csvProvider, AccountStatementAdapter accountStatementAdapter) {
+    public ExportService(AccountStatementService statementService, IAccountStatementPdfProvider pdfProvider, IAccountStatementCsvProvider csvProvider, ExportMapper mapper) {
         this.statementService = statementService;
         this.pdfProvider = pdfProvider;
         this.csvProvider = csvProvider;
-        this.accountStatementAdapter = accountStatementAdapter;
+        this.mapper = mapper;
     }
 
     @Override
     public AccountStatementExportResponse generateReport(ExportRequest request, String accountId, Map<String, String> parameter) throws IOException {
-        String startDate = request.getFilters().getStartDate();
-        String endDate = request.getFilters().getEndDate();
-        String key = accountId + "|" + startDate + "|" + endDate;
+        String key = accountId + "|" + request.getFilters().getDate().getStart() + "|" + request.getFilters().getDate().getEnd();
+        AccountStatementsMWRequest mwRequest = mapper.mapperRequest(accountId, init, total, request);
 
-        AccountStatementsRequest statementsRequest = AccountStatementsRequest.builder()
-                .filters(AccountStatementsRequest.AccountStatementsFilter.builder()
-                        .pagination(ExtractPagination.builder()
-                                .startDate(request.getFilters().getStartDate())
-                                .endDate(request.getFilters().getEndDate())
-                                .build())
-                        .build())
-                .build();
-        AccountStatementsMWResponse basicResponse = statementService.getAccountStatementsCache(statementsRequest, accountId, init, total, parameter, key, true);
-        List<AccountStatementsMWResponse.AccountStatementMW> basicResponseData = basicResponse.getData();
+        List<AccountStatementsResponse> list = statementService.getAccountStatementsCache(mwRequest, parameter, key, true);
 
-        String extractType = request.getFilters().getType();
+        String field = (request.getFilters().getOrder() != null) ? request.getFilters().getOrder().getField() : "DATE";
+        boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
+        Map<String, Function<AccountStatementsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
+        comparatorOptions.put("AMOUNT", AccountStatementsResponse::getAmount);
+        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getMovementDate(), Util.getDateFormatter()));
+        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
-        BigDecimal min = request.getFilters().getAmount() != null ? request.getFilters().getAmount().getMin() : null;
-        BigDecimal max = request.getFilters().getAmount() != null ? request.getFilters().getAmount().getMax() : null;
+        if (request.getFilters().getAmount() != null) {
+            BigDecimal min = Optional.of(request.getFilters().getAmount())
+                    .map(AmountRange::getMin)
+                    .orElse(null);
+            BigDecimal max = Optional.of(request.getFilters().getAmount())
+                    .map(AmountRange::getMax)
+                    .orElse(null);
+            list = new RangeFilter<>(min, max, AccountStatementsResponse::getAmount).apply(list);
+        }
 
-        if (Boolean.FALSE.equals(request.getFilters().getIsAsc())) Collections.reverse(basicResponseData);
-
-        basicResponseData = new TypeFilter(AccountStatementType.getValueByCode(extractType)).apply(basicResponseData);
-        basicResponseData = new AmountRangeFilter(min, max).apply(basicResponseData);
-
-        basicResponseData = accountStatementAdapter.mapping(basicResponseData);
+        list = new TypeFilter(AccountStatementType.getValueByCode(request.getFilters().getMovementType())).apply(list);
+        list = mapper.mapping(list);
 
         String format = request.getFormat();
-        String base64 = Objects.equals(format, "PDF") ? Util.encodeByteArrayToBase64(pdfProvider.generatePdf(basicResponseData, request, accountId)) : Util.encodeByteArrayToBase64(csvProvider.generateCsv(basicResponseData));
+        String base64 = Objects.equals(format, "PDF")
+                ? Util.encodeByteArrayToBase64(pdfProvider.generatePdf(list, request, accountId))
+                : Util.encodeByteArrayToBase64(csvProvider.generateCsv(list));
 
-        AccountStatementExportResponse response = new AccountStatementExportResponse();
-        response.setData(base64);
-        return response;
+        return new AccountStatementExportResponse(base64);
     }
 }

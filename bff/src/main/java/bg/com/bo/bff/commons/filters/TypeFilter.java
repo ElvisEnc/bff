@@ -1,22 +1,22 @@
 package bg.com.bo.bff.commons.filters;
 
+import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
 import bg.com.bo.bff.commons.filters.interfaces.IFilter;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
 
 import java.util.List;
 
-public class TypeFilter implements IFilter<AccountStatementsMWResponse.AccountStatementMW> {
+public class TypeFilter implements IFilter<AccountStatementsResponse> {
 
-    private final String tipeMovement;
+    private final String movementType;
 
-    public TypeFilter(String tipeMovement) {
-        this.tipeMovement = tipeMovement;
+    public TypeFilter(String movementType) {
+        this.movementType = movementType;
     }
 
     @Override
-    public List<AccountStatementsMWResponse.AccountStatementMW> apply(List<AccountStatementsMWResponse.AccountStatementMW> list) {
+    public List<AccountStatementsResponse> apply(List<AccountStatementsResponse> list) {
         return list.stream()
-                .filter(extract -> tipeMovement == null || tipeMovement.equals(extract.getMoveType()))
+                .filter(extract -> movementType == null || movementType.equals(extract.getMovementType()))
                 .toList();
     }
 }
