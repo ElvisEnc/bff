@@ -17,7 +17,8 @@ public enum ProjectNameMW {
     DPF_MANAGER("/dpf-manager", "DPF MANAGER", "Secret"),
     DEBIT_CARD_MANAGER("/debitcard-manager-db", "DEBIT CARD MANAGER", "Secret"),
     PAYMENT_SERVICES("/payment-services-manager", "PAYMENT SERVICES MANAGER", "Secret"),
-    LOANS_SERVICES("/loans-manager", "LOANS MANAGER", "Secret");
+    LOANS_SERVICES("/loans-manager", "LOANS MANAGER", "Secret"),
+    LOANS_TRANSACTION("/loans-transaction-manager", "LOANS TRANSACTION MANAGER", "Secret");
 
     private final String name;
     private final String description;

@@ -17,9 +17,9 @@ public class TransferResponse {
         @JsonProperty("status")
         private String status;
         @JsonProperty("idTransaction")
-        private String idTransaction;
+        private String transactionId;
         @JsonProperty("idMAE")
-        private String idMAE;
+        private String maeId;
         @JsonProperty("accountingEntry")
         private String accountingEntry;
         @JsonProperty("accountingDate")

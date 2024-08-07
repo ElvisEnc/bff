@@ -3,11 +3,7 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
-import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanDetailPaymentResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanPlanResponse;
+import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
@@ -153,6 +149,32 @@ public class LoansController {
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {
         return ResponseEntity.ok(service.getLoanDetailPayment(loanId, personId, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion)));
+    }
+
+
+    @Operation(summary = "Pago de préstamo", description = "Pagar un préstamo con una cuenta propia")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = LoanPaymentResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @PutMapping("/persons/{personId}/accounts/{accountId}/payments/{correlativeId}")
+    public ResponseEntity<LoanPaymentResponse> payLoanInstallment(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("accountId") @OnlyNumber @Parameter(description = "Este es el accountId de la cuenta de la persona", example = "12345") String accountId,
+            @PathVariable("correlativeId") @OnlyNumber @Parameter(description = "Este es el correlativeId del préstamo", example = "12345") String correlativeId
+    ) throws IOException {
+        return ResponseEntity.ok(service.payLoanInstallment(personId, accountId, correlativeId, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,

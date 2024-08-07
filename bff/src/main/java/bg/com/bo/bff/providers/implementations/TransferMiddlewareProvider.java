@@ -2,10 +2,7 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.transfer.Pcc01Request;
-import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.*;
-import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequest;
 import bg.com.bo.bff.providers.dtos.response.transfer.Pcc01MWResponse;
@@ -17,13 +14,6 @@ import bg.com.bo.bff.providers.models.enums.middleware.transfer.TransferMiddlewa
 import bg.com.bo.bff.providers.models.enums.middleware.transfer.TransferMiddlewareServices;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

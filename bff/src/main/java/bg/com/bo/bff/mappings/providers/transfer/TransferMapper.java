@@ -17,8 +17,8 @@ public class TransferMapper implements ITransferMapper {
         TransferWalletMWResponse.TransferMWData response = responseMW.getData();
         return TransferResponse.builder()
                 .status(response.getStatus() != null ? response.getStatus() : "APPROVED")
-                .idTransaction(response.getNroTransaction())
-                .idMAE(response.getIdentifierMae())
+                .transactionId(response.getNroTransaction())
+                .maeId(response.getIdentifierMae())
                 .accountingEntry(response.getReceiptDetail().getAccountingEntry())
                 .accountingDate(Util.formatDate(response.getReceiptDetail().getAccountingDate()))
                 .accountingTime(response.getReceiptDetail().getAccountingTime())
@@ -43,8 +43,8 @@ public class TransferMapper implements ITransferMapper {
         TransferMWResponse.TransferMWData response = responseMW.getData();
         return TransferResponse.builder()
                 .status(response.getStatus() != null ? response.getStatus() : "APPROVED")
-                .idTransaction(response.getIdReceipt())
-                .idMAE(response.getIdMaeTransaction())
+                .transactionId(response.getIdReceipt())
+                .maeId(response.getIdMaeTransaction())
                 .accountingEntry(response.getAccountingEntry())
                 .accountingDate(Util.formatDate(response.getAccountingDate()))
                 .accountingTime(response.getAccountingTime())
@@ -69,8 +69,8 @@ public class TransferMapper implements ITransferMapper {
         TransferAchMwResponse.ResponseAch response = responseMW.getData();
         return TransferResponse.builder()
                 .status(response.getStatus() != null ? response.getStatus() : "APPROVED")
-                .idTransaction(response.getTransferAchId())
-                .idMAE(response.getMaeIdTransaction())
+                .transactionId(response.getTransferAchId())
+                .maeId(response.getMaeIdTransaction())
                 .accountingEntry(response.getReceiptDetail().getAccountingEntry())
                 .accountingDate(Util.formatDate(response.getReceiptDetail().getAccountingDate()))
                 .accountingTime(response.getReceiptDetail().getAccountingTime())

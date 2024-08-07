@@ -1,16 +1,9 @@
 package bg.com.bo.bff.mappings.providers.loans;
 
-import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanDetailPaymentResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanPlanResponse;
+import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanDetailPaymentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPlanMWResponse;
+import bg.com.bo.bff.providers.dtos.request.loans.mw.LoanPaymentMWRequest;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -155,6 +148,57 @@ public class LoansMapper implements ILoansMapper {
                 .amount(Double.parseDouble(mwResponse.getAmount()))
                 .secureCurrency(Integer.parseInt(mwResponse.getSecureCurrency()))
                 .amountSecureMandatory(Double.parseDouble(mwResponse.getAmountSecureMandatory()))
+                .build();
+    }
+
+    @Override
+    public LoanPaymentMWRequest mapperRequest(String personId, String accountId, String correlativeId) {
+        return LoanPaymentMWRequest.builder()
+                .ownerAccountRequest(LoanPaymentMWRequest.OwnAccount.builder()
+                        .schemaName("PersonId")
+                        .personId(personId)
+                        .companyId("0")
+                        .build())
+                .debtorAccountRequest(LoanPaymentMWRequest.DebtorAccount.builder()
+                        .schemaName("AccountId")
+                        .identification(accountId)
+                        .build())
+                .creditorAccountRequest(LoanPaymentMWRequest.CreditorAccount.builder()
+                        .schemaName("SessionId")
+                        .sessionId(correlativeId)
+                        .build())
+                .build();
+    }
+
+    @Override
+    public LoanPaymentResponse convertResponse(LoanPaymentMWResponse mwResponse) {
+        return LoanPaymentResponse.builder()
+                .status(mwResponse.getStatus())
+                .transactionId(mwResponse.getNroTransaction())
+                .maeId(mwResponse.getMaeId())
+                .accountingEntry(mwResponse.getLoanReceiptDetail().getAccountingEntry())
+                .accountingDate(mwResponse.getLoanReceiptDetail().getAccountingDate())
+                .accountingTime(mwResponse.getLoanReceiptDetail().getAccountingTime())
+                .originAccountNumber(mwResponse.getLoanReceiptDetail().getOriginAccountNumber())
+                .amount(mwResponse.getLoanReceiptDetail().getAmount())
+                .currencyCode(mwResponse.getLoanReceiptDetail().getCurrency())
+                .fromHolder(mwResponse.getLoanReceiptDetail().getFromHolder())
+                .fromCurrencyCode(mwResponse.getLoanReceiptDetail().getFromCurrency())
+                .amountDebited(mwResponse.getLoanReceiptDetail().getAmountDebited())
+                .exchangeRateDebit(mwResponse.getLoanReceiptDetail().getExchangeRateDebit())
+                .insuranceAmount(mwResponse.getLoanReceiptDetail().getInsuranceAmount())
+                .currencyCodeInsurance(mwResponse.getLoanReceiptDetail().getCurrencyInsurance())
+                .amountDebitInsurance(mwResponse.getLoanReceiptDetail().getAmountDebitInsurance())
+                .exchangeRateDebit(mwResponse.getLoanReceiptDetail().getExchangeRateDebit())
+                .loanId(mwResponse.getLoanReceiptDetail().getToLoanNumber())
+                .loanCapital(mwResponse.getLoanReceiptDetail().getLoanCapital())
+                .currentInterest(mwResponse.getLoanReceiptDetail().getCurrentInterest())
+                .penaltyInterest(mwResponse.getLoanReceiptDetail().getPenaltyInterest())
+                .accruedCharges(mwResponse.getLoanReceiptDetail().getAccruedCharges())
+                .formsAmount(mwResponse.getLoanReceiptDetail().getFormsAmount())
+                .nextDueDate(mwResponse.getLoanReceiptDetail().getNextDueDate())
+                .totalInstallments(mwResponse.getLoanReceiptDetail().getTotalInstallments())
+                .paidInstallments(mwResponse.getLoanReceiptDetail().getPaidInstallments())
                 .build();
     }
 }

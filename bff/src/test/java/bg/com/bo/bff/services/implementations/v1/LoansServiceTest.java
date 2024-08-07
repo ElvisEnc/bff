@@ -6,8 +6,11 @@ import bg.com.bo.bff.application.dtos.request.loans.LoansRequestFixture;
 import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.loans.LoansMapper;
+import bg.com.bo.bff.providers.dtos.request.loans.mw.LoanPaymentMWRequest;
+import bg.com.bo.bff.providers.dtos.request.loans.mw.LoansMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
+import bg.com.bo.bff.providers.interfaces.ILoansTransactionProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,6 +37,8 @@ class LoansServiceTest {
     private LoansService service;
     @Mock
     private ILoansProvider provider;
+    @Mock
+    private ILoansTransactionProvider transacionProvider;
     @Spy
     private LoansMapper mapper = new LoansMapper();
     @Mock
@@ -458,6 +463,26 @@ class LoansServiceTest {
         assertNotNull(response);
         assertEquals(expectedResponse, response);
         verify(provider).getLoanDetailPayment(any(), any(), any());
+        verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenPersonIdAccountWhenPayLoanRequestServicesThenLoanPaymentResponse() throws IOException {
+        //Arrange
+        LoanPaymentMWRequest mwRequest = LoansMWRequestFixture.withDefaultLoanPaymentMWRequest();
+        LoanPaymentMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultLoanPaymentMWResponse();
+        LoanPaymentResponse expectedResponse = LoansResponseFixture.withDataDefaultLoanPaymentResponse();
+        when(transacionProvider.payLoanInstallment(any(), any())).thenReturn(mwResponseMock);
+        when(mapper.convertResponse(mwResponseMock)).thenReturn(expectedResponse);
+        when(mapper.mapperRequest(any(), any(), any())).thenReturn(mwRequest);
+
+        //Act
+        LoanPaymentResponse response = service.payLoanInstallment("123", "123", "123", map);
+
+        //Assert
+        assertNotNull(response);
+        assertThat(response).isEqualTo(expectedResponse);
+        verify(transacionProvider).payLoanInstallment(any(), any());
         verify(mapper).convertResponse(mwResponseMock);
     }
 }

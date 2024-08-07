@@ -2,21 +2,15 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
-import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanDetailPaymentResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanPlanResponse;
+import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.filters.*;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.providers.loans.ILoansMapper;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanDetailPaymentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPlanMWResponse;
+import bg.com.bo.bff.providers.dtos.request.loans.mw.LoanPaymentMWRequest;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
+import bg.com.bo.bff.providers.interfaces.ILoansTransactionProvider;
 import bg.com.bo.bff.services.interfaces.ILoansService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
@@ -38,13 +32,15 @@ import java.util.function.Function;
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class LoansService implements ILoansService {
     private final ILoansProvider provider;
+    private final ILoansTransactionProvider transactionProvider;
     private final ILoansMapper mapper;
 
     @Autowired
     private LoansService self;
 
-    public LoansService(ILoansProvider idcProvider, ILoansMapper idcMapper) {
+    public LoansService(ILoansProvider idcProvider, ILoansTransactionProvider transactionProvider, ILoansMapper idcMapper) {
         this.provider = idcProvider;
+        this.transactionProvider = transactionProvider;
         this.mapper = idcMapper;
     }
 
@@ -151,7 +147,14 @@ public class LoansService implements ILoansService {
 
     @Override
     public List<LoanPlanResponse> getLoanPlans(String loanId, String personId, Map<String, String> parameter) throws IOException {
-        LoanPlanMWResponse mwResponse = provider.getLoanPlansPayments(loanId,personId,parameter);
+        LoanPlanMWResponse mwResponse = provider.getLoanPlansPayments(loanId, personId, parameter);
+        return mapper.convertResponse(mwResponse);
+    }
+
+    @Override
+    public LoanPaymentResponse payLoanInstallment(String personId, String accountId, String correlativeId, Map<String, String> parameter) throws IOException {
+        LoanPaymentMWRequest mwRequest = mapper.mapperRequest(personId, accountId, correlativeId);
+        LoanPaymentMWResponse mwResponse = transactionProvider.payLoanInstallment(mwRequest, parameter);
         return mapper.convertResponse(mwResponse);
     }
 }

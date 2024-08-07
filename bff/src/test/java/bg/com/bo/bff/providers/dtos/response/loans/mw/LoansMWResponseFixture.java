@@ -173,4 +173,37 @@ public class LoansMWResponseFixture {
                 .errorCode("0")
                 .build();
     }
+
+    public static LoanPaymentMWResponse withDefaultLoanPaymentMWResponse() {
+        return LoanPaymentMWResponse.builder()
+                .status("Success")
+                .nroTransaction("123")
+                .maeId("123")
+                .loanReceiptDetail(LoanPaymentMWResponse.LoanReceiptDetail.builder()
+                        .accountingEntry("entry123")
+                        .accountingDate("2024-07-11")
+                        .accountingTime("12:00:00")
+                        .originAccountNumber("123456")
+                        .amount(1000.00)
+                        .currency("068")
+                        .fromHolder("John Doe")
+                        .fromCurrency("068")
+                        .amountDebited(500.00)
+                        .exchangeRateDebit(0.1)
+                        .insuranceAmount(100.00)
+                        .currencyInsurance("068")
+                        .amountDebitInsurance(100.00)
+                        .exchangeRateDebitInsurance(0.1)
+                        .toLoanNumber("123")
+                        .loanCapital(1000.00)
+                        .currentInterest(100.00)
+                        .penaltyInterest(100.00)
+                        .accruedCharges(100.00)
+                        .formsAmount(100.00)
+                        .nextDueDate("2024-08-11")
+                        .totalInstallments(12)
+                        .paidInstallments(1)
+                        .build())
+                .build();
+    }
 }

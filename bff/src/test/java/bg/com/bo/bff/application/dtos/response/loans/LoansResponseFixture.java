@@ -140,4 +140,35 @@ public class LoansResponseFixture {
                 .amountSecureMandatory(100.0)
                 .build();
     }
+
+    public static LoanPaymentResponse withDataDefaultLoanPaymentResponse(){
+        return LoanPaymentResponse.builder()
+                .status("Success")
+                .transactionId("123")
+                .maeId("123")
+                .accountingEntry("entry123")
+                .accountingDate("2024-07-11")
+                .accountingTime("12:00:00")
+                .originAccountNumber("123456")
+                .amount(1000.0)
+                .currencyCode("068")
+                .fromHolder("John Doe")
+                .fromCurrencyCode("068")
+                .amountDebited(1000.0)
+                .exchangeRateDebit(1.0)
+                .insuranceAmount(100.0)
+                .currencyCodeInsurance("068")
+                .amountDebitInsurance(100.0)
+                .exchangeRateDebitInsurance(1.0)
+                .loanId("123")
+                .loanCapital(1000.0)
+                .currentInterest(100.0)
+                .penaltyInterest(100.0)
+                .accruedCharges(100.0)
+                .formsAmount(100.0)
+                .nextDueDate("2024-08-11")
+                .totalInstallments(12)
+                .paidInstallments(1)
+                .build();
+    }
 }

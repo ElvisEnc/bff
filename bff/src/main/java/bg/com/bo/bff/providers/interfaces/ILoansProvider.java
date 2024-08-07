@@ -1,10 +1,6 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanDetailPaymentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanInsurancePaymentsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPaymentsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoanPlanMWResponse;
+import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 
 import java.io.IOException;
 import java.util.Map;

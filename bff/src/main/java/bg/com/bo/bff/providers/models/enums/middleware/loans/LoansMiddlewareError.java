@@ -1,6 +1,5 @@
 package bg.com.bo.bff.providers.models.enums.middleware.loans;
 
-
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -6,8 +6,8 @@ public class TransferResponseFixture {
     public static TransferResponse withDefault() {
         return TransferResponse.builder()
                 .status("APPROVED")
-                .idTransaction("123")
-                .idMAE("123456")
+                .transactionId("123")
+                .maeId("123456")
                 .accountingEntry("123")
                 .accountingDate("2024-06-06")
                 .accountingTime("10:00:00")

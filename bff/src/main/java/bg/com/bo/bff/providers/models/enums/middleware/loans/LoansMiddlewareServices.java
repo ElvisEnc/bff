@@ -14,4 +14,3 @@ public enum LoansMiddlewareServices {
 
     private final String serviceURL;
 }
-

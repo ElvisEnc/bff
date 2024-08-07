@@ -48,6 +48,9 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.loans.manager}")
     private String clientLoansManager;
 
+    @Value("${client.secret.loans.transaction.manager}")
+    private String clientLoansTransactionManager;
+
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
@@ -65,6 +68,7 @@ public class MiddlewareConfigFactory {
                 .clientDebitCardManager(clientDebitCardManager)
                 .clientPaymentServicesManager(clientPaymentServicesManager)
                 .clientLoansManager(clientLoansManager)
+                .clientLoansTransactionManager(clientLoansTransactionManager)
                 .build();
     }
 }

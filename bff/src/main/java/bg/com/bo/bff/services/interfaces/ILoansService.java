@@ -2,11 +2,7 @@ package bg.com.bo.bff.services.interfaces;
 
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
-import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanDetailPaymentResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanInsurancePaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanPaymentsResponse;
-import bg.com.bo.bff.application.dtos.response.loans.LoanPlanResponse;
+import bg.com.bo.bff.application.dtos.response.loans.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,4 +21,6 @@ public interface ILoansService {
     List<LoanPlanResponse> getLoanPlans(String loanId, String personId, Map<String, String> parameter) throws IOException;
 
     LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, Map<String, String> parameter) throws IOException;
+
+    LoanPaymentResponse payLoanInstallment(String personId, String accountId, String correlativeId, Map<String, String> parameter) throws IOException;
 }
