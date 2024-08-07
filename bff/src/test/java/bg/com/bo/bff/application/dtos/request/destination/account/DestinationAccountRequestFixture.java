@@ -38,23 +38,6 @@ public class DestinationAccountRequestFixture {
                 .build();
     }
 
-    public static AddAchAccountBasicRequest withDefaultOKAddAchAccountBasicRequest() {
-        return AddAchAccountBasicRequest.builder()
-                .personId("12345")
-                .companyPersonId("12345")
-                .isFavorite("S")
-                .isEnabled("S")
-                .reference("Prueba")
-                .destinationAccountNumber("123456789")
-                .destinationBankCode("1234")
-                .destinationBranchOfficeCode("SCZ")
-                .destinationAccountTypeCode("CCAD")
-                .destinationHolderName("Prueba holder")
-                .destinationIDNumber("123456789")
-                .email("email@gmail.com")
-                .build();
-    }
-
     public static AddAchAccountRequest withDefaultAddAchAccountRequest() {
         return AddAchAccountRequest.builder()
                 .isFavorite("N")

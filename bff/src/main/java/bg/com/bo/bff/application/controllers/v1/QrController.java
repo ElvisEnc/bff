@@ -8,6 +8,7 @@ import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
 import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
+import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRPaymentMWResponse;
@@ -55,12 +56,12 @@ public class QrController {
     })
     @PostMapping("/persons/{personId}")
     public ResponseEntity<QrListResponse> getQrsGeneratedAndPaid(
-            @PathVariable("personId") @NotNull @Parameter(description = "Este es el código de persona", example = "1234567") Integer personId,
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el código de persona", example = "1234567") String personId,
             @Valid @RequestBody QrListRequest request
     ) throws IOException {
         return ResponseEntity.ok(iQrService.getQrGeneratedPaid(request, personId, Headers.getParameter(httpServletRequest)));

@@ -25,11 +25,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -181,18 +183,18 @@ class DestinationAccountControllerTest {
 
         GenericResponse expected = new GenericResponse();
 
-        when(service.deleteThirdAccount(personId, identifier, accountNumber, deviceId, ip)).thenReturn(expected);
+        when(service.deleteThirdAccount(any(), anyLong(), anyLong(), any(),any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(delete(DELETE_THIRD_ACCOUNT + accountNumber)
-                        .header("device-id", deviceId)
+                        .headers(this.headers)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
         // Assert
-        verify(service).deleteThirdAccount(personId, identifier, accountNumber, deviceId, ip);
+        verify(service).deleteThirdAccount( any(),anyLong(), anyLong(),any(), any());
     }
 
     @Test
@@ -245,18 +247,18 @@ class DestinationAccountControllerTest {
 
         GenericResponse expected = new GenericResponse();
 
-        when(service.deleteAchAccount(personId, identifier, deviceId, ip)).thenReturn(expected);
+        when(service.deleteAchAccount(any(),anyLong(),any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(delete(DELETE_ACH_ACCOUNT)
-                        .header("device-id", deviceId)
+                        .headers(this.headers)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
         // Assert
-        verify(service).deleteAchAccount(personId, identifier, deviceId, ip);
+        verify(service).deleteAchAccount(any(),anyLong(),any() );
     }
 
     @Test
@@ -276,7 +278,7 @@ class DestinationAccountControllerTest {
     void givenUrlGetBanksWhenGetBanksThenReturnList() throws Exception {
         // Arrange
         BanksResponse expected = DestinationAccountResponseFixture.withDefaultBanksResponse();
-        when(service.getBanks()).thenReturn(expected);
+        when(service.getBanks(any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc
@@ -292,7 +294,7 @@ class DestinationAccountControllerTest {
 
         // Assert
         assertEquals(response, actual);
-        verify(service).getBanks();
+        verify(service).getBanks(any());
     }
 
     @Test
@@ -300,10 +302,11 @@ class DestinationAccountControllerTest {
         // Arrange
         Integer bankCode = 1017;
         BranchOfficeResponse mockResponse = DestinationAccountResponseFixture.withDefaultBranchOfficeResponse();
-        when(service.getBranchOffice(bankCode)).thenReturn(mockResponse);
+        when(service.getBranchOffice(any(),any() )).thenReturn(mockResponse);
 
         // Act
         mockMvc.perform(get(GET_BRANCH_OFFICE, bankCode)
+                        .headers(this.headers)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -312,7 +315,7 @@ class DestinationAccountControllerTest {
                 .andExpect(jsonPath("$.data[0].description").value(mockResponse.getData().get(0).getDescription()));
 
         // Assert
-        verify(service).getBranchOffice(bankCode);
+        verify(service).getBranchOffice(any(),any());
     }
 
     @Test

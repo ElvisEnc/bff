@@ -22,6 +22,7 @@ import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.mappings.providers.account.ThirdAccountListMapper;
 import bg.com.bo.bff.providers.dtos.response.third.account.mw.ThirdAccountListMWResponse;
 import bg.com.bo.bff.mappings.providers.account.ThirdAccountMWtMapper;
+import bg.com.bo.bff.providers.models.enums.middleware.ach.account.AchMiddlewareError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -355,7 +356,7 @@ class ThirdAccountMiddlewareProviderTests {
         stubFor(get(anyUrl()).willReturn(okJson(jsonExpected)));
 
         // Act
-        ThirdAccountListResponse response = provider.getThirdAccounts(12345, "token", new HashMap<>());
+        ThirdAccountListResponse response = provider.getThirdAccounts("123", "token", new HashMap<>());
 
         // Assert
         assertNotNull(response);
@@ -371,7 +372,7 @@ class ThirdAccountMiddlewareProviderTests {
         stubFor(get(anyUrl()).willReturn(okJson(jsonExpected)));
 
         // Act
-        ThirdAccountListResponse response = provider.getWalletAccounts(12345, "token", new HashMap<>());
+        ThirdAccountListResponse response = provider.getWalletAccounts("123", "token", new HashMap<>());
 
         // Assert
         assertNotNull(response);
@@ -395,11 +396,11 @@ class ThirdAccountMiddlewareProviderTests {
 
         // Act
         Exception exception = assertThrows(Exception.class, () -> {
-            provider.getWalletAccounts(12345, "token", new HashMap<>());
+            provider.getWalletAccounts("123", "token", new HashMap<>());
         });
 
         // Assert
-        assertEquals(exception.getMessage(), AppError.MDWHDR_01.getMessage());
+        assertEquals(exception.getMessage(), AppError.DEFAULT.getMessage());
     }
 
     @Test
@@ -410,7 +411,7 @@ class ThirdAccountMiddlewareProviderTests {
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            provider.getWalletAccounts(12345, "token", new HashMap<>());
+            provider.getWalletAccounts("123", "token", new HashMap<>());
         });
 
         // Assert

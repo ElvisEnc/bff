@@ -15,8 +15,9 @@ import java.util.Map;
 
 
 public interface IQrService {
-    QrListResponse getQrGeneratedPaid(QrListRequest request, Integer personId, Map<String, String> parameters) throws IOException;
-    QRCodeGenerateResponse generateQR(QRCodeGenerateRequest request, Map<String, String> parameters) throws IOException ;
+    QrListResponse getQrGeneratedPaid(QrListRequest request, String personId, Map<String, String> parameters) throws IOException;
+
+    QRCodeGenerateResponse generateQR(QRCodeGenerateRequest request, Map<String, String> parameters) throws IOException;
 
     QRCodeGenerateResponse regenerateQR(QRCodeRegenerateRequest request, Map<String, String> parameter) throws IOException;
 

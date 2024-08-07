@@ -19,15 +19,26 @@ import java.util.Map;
 @Service
 public interface IDestinationAccountService {
     GenericResponse addThirdAccount(String personId, AddThirdAccountRequest addThirdAccountRequest, Map<String, String> parameters) throws IOException;
-    GenericResponse addWalletAccount(String personId, AddWalletAccountRequest addWalletAccountRequest, Map<String, String> parameter) throws IOException ;
+
+    GenericResponse addWalletAccount(String personId, AddWalletAccountRequest addWalletAccountRequest, Map<String, String> parameter) throws IOException;
+
     GenericResponse addAchAccount(String personId, AddAchAccountRequest addAchAccountRequest, Map<String, String> parameter) throws IOException;
+
     GenericResponse addQRAccount(String personId, String bankType, AddQRAccountRequest addQRAccountRequest, Map<String, String> parameter) throws IOException;
-    BanksResponse getBanks() throws IOException;
-    BranchOfficeResponse getBranchOffice(Integer bankCode) throws IOException;
+
+    BanksResponse getBanks(Map<String, String> parameter) throws IOException;
+
+    BranchOfficeResponse getBranchOffice(String bankCode, Map<String, String> parameter) throws IOException;
+
     AccountTypeListResponse accountTypes();
+
     GenericResponse deleteThirdAccount(String personId, long identifier, long accountNumber, String deviceId, String deviceIp) throws IOException;
-    GenericResponse deleteWalletAccount(String personId, long identifier, long accountNumber,String deviceId, String deviceIp) throws IOException;
-    GenericResponse deleteAchAccount(String personId, long identifier, String deviceId, String deviceIp) throws IOException;
-    DestinationAccountResponse getDestinationAccounts(Integer personId, DestinationAccountRequest request, Map<String, String> parameter) throws IOException;
+
+    GenericResponse deleteWalletAccount(String personId, long identifier, long accountNumber, String deviceId, String deviceIp) throws IOException;
+
+    GenericResponse deleteAchAccount(String personId, long identifier, Map<String, String> parameter) throws IOException;
+
+    DestinationAccountResponse getDestinationAccounts(String personId, DestinationAccountRequest request, Map<String, String> parameter) throws IOException;
+
     ValidateAccountResponse getValidateDestinationAccounts(String accountNumber, String clientName, Map<String, String> parameter) throws IOException;
 }

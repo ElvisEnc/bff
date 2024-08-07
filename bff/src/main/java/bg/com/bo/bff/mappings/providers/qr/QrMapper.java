@@ -1,23 +1,12 @@
 package bg.com.bo.bff.mappings.providers.qr;
 
-import bg.com.bo.bff.application.dtos.request.qr.QRCodeGenerateRequest;
-import bg.com.bo.bff.application.dtos.request.qr.QRCodeRegenerateRequest;
-import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
+import bg.com.bo.bff.application.dtos.request.qr.*;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
-import bg.com.bo.bff.application.dtos.request.qr.QRPaymentRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.request.qr.mw.QRCodeGenerateMWRequest;
-import bg.com.bo.bff.providers.dtos.request.qr.mw.QRCodeRegenerateMWRequest;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.*;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.QrGeneratedPaidMW;
-import bg.com.bo.bff.providers.dtos.request.qr.mw.CreditorAccount;
-import bg.com.bo.bff.providers.dtos.request.qr.mw.DebtorAccount;
-import bg.com.bo.bff.providers.dtos.request.qr.mw.InstructedAmount;
-import bg.com.bo.bff.providers.dtos.request.qr.mw.OwnerAccount;
-import bg.com.bo.bff.providers.dtos.request.qr.mw.QRPaymentMWRequest;
-import bg.com.bo.bff.providers.dtos.request.qr.mw.RiskMW;
-import bg.com.bo.bff.providers.dtos.request.qr.mw.SupplementaryMWData;
 
 import org.springframework.stereotype.Component;
 
@@ -28,6 +17,15 @@ public class QrMapper implements IQrMapper {
     private static final String SCHEME_NAME = "PersonId";
     private static final String SCHEME_NAME_ACCOUNT = "AccountId";
     private static final String SCHEME_NAME_ACH_ACCOUNT_NUMBER = "AchAccountNumber";
+
+    @Override
+    public QrListMWRequest mapperRequest(String personId, QrListRequest request) {
+        return QrListMWRequest.builder()
+                .personId(String.valueOf(personId))
+                .startDate(request.getFilters().getPeriod().getStart())
+                .endDate(request.getFilters().getPeriod().getEnd())
+                .build();
+    }
 
     @Override
     public QrGeneratedPaid convert(QrGeneratedPaidMW mw) {

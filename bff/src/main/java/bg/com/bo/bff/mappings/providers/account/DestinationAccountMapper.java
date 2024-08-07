@@ -1,12 +1,15 @@
 package bg.com.bo.bff.mappings.providers.account;
 
+import bg.com.bo.bff.application.dtos.request.destination.account.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.response.destination.account.BranchOfficeDataResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.BranchOfficeResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.commons.enums.DestinationAccountType;
 import bg.com.bo.bff.application.dtos.response.destination.account.ThirdAccount;
 import bg.com.bo.bff.providers.dtos.request.ach.account.mw.AddAchAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.ach.account.mw.DeleteAchAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddThirdAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddWalletAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.BranchOfficeMWResponse;
@@ -19,6 +22,33 @@ import java.util.List;
 
 @Component
 public class DestinationAccountMapper implements IDestinationAccountMapper {
+    @Override
+    public AddAchAccountBasicRequest mapperRequest(String personId, AddAchAccountRequest addAchAccountRequest) {
+        return AddAchAccountBasicRequest.builder()
+                .personId(personId)
+                .companyPersonId(personId)
+                .isFavorite(addAchAccountRequest.getIsFavorite())
+                .isEnabled(addAchAccountRequest.getIsEnabled())
+                .reference(addAchAccountRequest.getReference())
+                .destinationAccountNumber(addAchAccountRequest.getDestinationAccountNumber())
+                .destinationBankCode(addAchAccountRequest.getDestinationBankCode())
+                .destinationBranchOfficeCode(addAchAccountRequest.getDestinationBranchOfficeCode())
+                .destinationAccountTypeCode(addAchAccountRequest.getDestinationAccountTypeCode())
+                .destinationHolderName(addAchAccountRequest.getDestinationHolderName())
+                .destinationIDNumber(addAchAccountRequest.getDestinationIDNumber())
+                .email(addAchAccountRequest.getEmail())
+                .build();
+    }
+
+    @Override
+    public DeleteAchAccountMWRequest mapperRequest(String personId, long identifier) {
+        return  DeleteAchAccountMWRequest.builder()
+                .personId(personId)
+                .identifier(String.valueOf(identifier))
+                .build();
+    }
+
+    @Override
     public BranchOfficeResponse mapToBranchOfficeResponse(BranchOfficeMWResponse mwResponse) {
         List<BranchOfficeDataResponse> dataList = new ArrayList<>();
         if (mwResponse != null && mwResponse.getData() != null) {
@@ -35,6 +65,7 @@ public class DestinationAccountMapper implements IDestinationAccountMapper {
                 .build();
     }
 
+    @Override
     public DestinationAccount convertThirdAccountToDestinationAccount(ThirdAccount account, Integer type, String name) {
         return DestinationAccount.builder()
                 .id(Long.valueOf(account.getId()))
@@ -50,6 +81,7 @@ public class DestinationAccountMapper implements IDestinationAccountMapper {
                 .build();
     }
 
+    @Override
     public DestinationAccount convertAchAccountToDestinationAccount(AchAccountMW achAccount) {
         return DestinationAccount.builder()
                 .id(Long.valueOf(achAccount.getIdList()))

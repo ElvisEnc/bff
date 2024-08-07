@@ -17,7 +17,7 @@ public interface IThirdAccountProvider {
     GenericResponse addWalletAccount(String accessToken, AddWalletAccountBasicRequest addWalletAccountBasicRequest, Map<String, String> parameter) throws IOException;
     GenericResponse deleteThirdAccount(String personId, long identifier, long accountNumber, String deviceId, String deviceIp) throws IOException;
     GenericResponse deleteWalletAccount(String personId, long identifier, long accountNumber, String deviceId, String deviceIp) throws IOException;
-    ThirdAccountListResponse getThirdAccounts(Integer personId, String token, Map<String, String> parameters) throws IOException;
-    ThirdAccountListResponse getWalletAccounts(Integer personId, String token, Map<String, String> parameters);
+    ThirdAccountListResponse getThirdAccounts(String personId, String token, Map<String, String> parameters) throws IOException;
+    ThirdAccountListResponse getWalletAccounts(String personId, String token, Map<String, String> parameters);
     ValidateAccountResponse validateAccount(String accountNumber, String clientName, Map<String, String> parameter) throws IOException;
 }

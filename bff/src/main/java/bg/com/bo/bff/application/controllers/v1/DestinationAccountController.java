@@ -12,6 +12,7 @@ import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.ValidateAccountResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
+import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -158,8 +159,20 @@ public class DestinationAccountController {
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/banks")
-    public ResponseEntity<BanksResponse> getBanks() throws IOException {
-        return ResponseEntity.ok(service.getBanks());
+    public ResponseEntity<BanksResponse> getBanks(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion
+    ) throws IOException {
+        return ResponseEntity.ok(service.getBanks(Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
     }
 
     @Operation(summary = "Obtener el listado de Sucursales", description = "Este endpoint obtiene el listado de Sucursales de Otros Bancos.")
@@ -170,9 +183,20 @@ public class DestinationAccountController {
     })
     @GetMapping("/banks/{bankCode}/branch-offices")
     public ResponseEntity<BranchOfficeResponse> getListBranchOffice(
-            @Parameter(description = "Este es el código del banco", example = "1017") @PathVariable("bankCode") @NotNull Integer bankCode
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("bankCode") @OnlyNumber @Parameter(description = "Este es el código del banco", example = "1017") String bankCode
     ) throws IOException {
-        return ResponseEntity.ok(service.getBranchOffice(bankCode));
+        return ResponseEntity.ok(service.getBranchOffice(bankCode, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
     }
 
     @Operation(summary = "Obtiener lista de tipos de cuenta.", description = "Obtiene un listado de todos los tipos de cuentas.")
@@ -229,13 +253,21 @@ public class DestinationAccountController {
     })
     @DeleteMapping("/{personId}/ach-accounts/{identifier}")
     public ResponseEntity<GenericResponse> deleteAchAccount(
-            @Valid @RequestHeader("device-id") String deviceId,
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
-            HttpServletRequest servletRequest
+            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier
     ) throws IOException {
-        String ip = servletRequest.getRemoteAddr();
-        return ResponseEntity.ok(service.deleteAchAccount(personId, identifier, deviceId, ip));
+        return ResponseEntity.ok(service.deleteAchAccount(personId, identifier, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
     }
 
     @Operation(summary = "Destination Accounts", description = "Listado de todas las cuentas de Destino para el módulo de Transferencia")
@@ -246,12 +278,12 @@ public class DestinationAccountController {
     })
     @PostMapping("/persons/{personId}")
     public ResponseEntity<DestinationAccountResponse> getDestinationAccounts(
-            @PathVariable("personId") @NotNull @Parameter(description = "Este es el código de persona", example = "1234567") Integer personId,
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el código de persona", example = "1234567") String personId,
             @Valid @RequestBody DestinationAccountRequest request
     ) throws IOException {
         return ResponseEntity.ok(service.getDestinationAccounts(personId, request, Headers.getParameter(httpServletRequest,

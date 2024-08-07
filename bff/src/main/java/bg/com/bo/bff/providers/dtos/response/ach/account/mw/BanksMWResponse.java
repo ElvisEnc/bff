@@ -1,13 +1,11 @@
 package bg.com.bo.bff.providers.dtos.response.ach.account.mw;
 
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class BanksMWResponse {

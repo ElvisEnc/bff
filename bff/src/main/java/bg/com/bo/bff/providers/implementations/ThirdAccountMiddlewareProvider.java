@@ -254,13 +254,13 @@ public class ThirdAccountMiddlewareProvider implements IThirdAccountProvider {
     }
 
     @Override
-    public ThirdAccountListResponse getThirdAccounts(Integer personId, String token, Map<String, String> parameters) throws IOException {
+    public ThirdAccountListResponse getThirdAccounts(String personId, String token, Map<String, String> parameters) throws IOException {
         String path = middlewareConfig.getUrlBase() + ProjectNameMW.THIRD_ACCOUNTS.getName() + "/bs/v1/persons/" + personId + "/companies/" + personId + "/devices/" + PersonRol.PERSONA.getId() + "/roles/" + PersonRol.PERSONA.getId();
         return getThirdAndWalletAccounts(path, token, parameters);
     }
 
     @Override
-    public ThirdAccountListResponse getWalletAccounts(Integer personId, String token, Map<String, String> parameters) {
+    public ThirdAccountListResponse getWalletAccounts(String personId, String token, Map<String, String> parameters) {
         String path = middlewareConfig.getUrlBase() + ProjectNameMW.THIRD_ACCOUNTS.getName() + "/bs/v1/wallets/companies/" + personId + "/persons/" + personId;
         return getThirdAndWalletAccounts(path, token, parameters);
     }

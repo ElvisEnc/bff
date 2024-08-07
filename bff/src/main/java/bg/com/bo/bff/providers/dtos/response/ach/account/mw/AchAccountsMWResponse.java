@@ -2,13 +2,15 @@ package bg.com.bo.bff.providers.dtos.response.ach.account.mw;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+import java.util.List;
+
+@Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class AchAccountMWResponse {
-    private String identifier;
+@AllArgsConstructor
+public class AchAccountsMWResponse {
+    private List<AchAccountMW> data;
 }

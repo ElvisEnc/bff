@@ -8,7 +8,7 @@ import bg.com.bo.bff.providers.dtos.response.transfer.TransferAchMwResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferACHProvider;
 import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
-import bg.com.bo.bff.providers.models.enums.middleware.ACHMiddlewareError;
+import bg.com.bo.bff.providers.models.enums.middleware.AchTransactionMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.transfer.TransferMiddlewareServices;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
@@ -18,10 +18,10 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
-public class TransferACHMiddlewareProvider extends MiddlewareProvider<ACHMiddlewareError> implements ITransferACHProvider {
+public class TransferACHMiddlewareProvider extends MiddlewareProvider<AchTransactionMiddlewareError> implements ITransferACHProvider {
 
     public TransferACHMiddlewareProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory, TransferMWtMapper transferMapper) {
-        super(ProjectNameMW.ACH_TRANSFER_MANAGER, ACHMiddlewareError.class, tokenMiddlewareProvider, middlewareConfig, httpClientFactory, middlewareConfig.getClientTransferACH());
+        super(ProjectNameMW.ACH_TRANSFER_MANAGER, AchTransactionMiddlewareError.class, tokenMiddlewareProvider, middlewareConfig, httpClientFactory, middlewareConfig.getClientTransferACH());
     }
 
     @Override

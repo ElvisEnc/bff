@@ -1,18 +1,12 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.response.destination.account.Bank;
 import bg.com.bo.bff.application.dtos.request.destination.account.AddAchAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.AddThirdAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
-import bg.com.bo.bff.application.dtos.response.destination.account.AccountTypeListResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.BanksResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.BranchOfficeResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.ValidateAccountResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
-import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.AccountType;
 import bg.com.bo.bff.commons.enums.DestinationAccountBG;
@@ -20,15 +14,14 @@ import bg.com.bo.bff.commons.enums.DestinationAccountType;
 import bg.com.bo.bff.commons.filters.AccountNameFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.mappings.services.DestinationAccountServiceMapper;
-import bg.com.bo.bff.application.dtos.response.destination.account.ThirdAccount;
-import bg.com.bo.bff.application.dtos.response.destination.account.ThirdAccountListResponse;
-import bg.com.bo.bff.providers.dtos.response.ach.account.mw.BanksMWResponse;
 import bg.com.bo.bff.providers.dtos.request.ach.account.mw.AddAchAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.ach.account.mw.DeleteAchAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddThirdAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddWalletAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.response.ach.account.mw.BranchOfficeMWResponse;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AchAccountMW;
-import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AchAccountMWResponse;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AchAccountsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.BanksMWResponse;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.BranchOfficeMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
 import bg.com.bo.bff.mappings.providers.account.IDestinationAccountMapper;
@@ -49,16 +42,16 @@ import java.util.*;
 public class DestinationAccountService implements IDestinationAccountService {
     private final IThirdAccountProvider thirdAccountProvider;
     private final IAchAccountProvider achAccountProvider;
-    private final DestinationAccountServiceMapper mapper;
-    private final IDestinationAccountMapper iDestinationAccountMapper;
+    private final DestinationAccountServiceMapper serviceMapper;
+    private final IDestinationAccountMapper mapper;
     @Autowired
     private DestinationAccountService self;
 
-    public DestinationAccountService(IThirdAccountProvider thirdAccountProvider, IAchAccountProvider achAccountProvider, DestinationAccountServiceMapper mapper, IDestinationAccountMapper iDestinationAccountMapper) {
+    public DestinationAccountService(IThirdAccountProvider thirdAccountProvider, IAchAccountProvider achAccountProvider, DestinationAccountServiceMapper serviceMapper, IDestinationAccountMapper mapper) {
         this.thirdAccountProvider = thirdAccountProvider;
         this.achAccountProvider = achAccountProvider;
+        this.serviceMapper = serviceMapper;
         this.mapper = mapper;
-        this.iDestinationAccountMapper = iDestinationAccountMapper;
     }
 
     @Override
@@ -97,35 +90,15 @@ public class DestinationAccountService implements IDestinationAccountService {
 
     @Override
     public GenericResponse addAchAccount(String personId, AddAchAccountRequest addAchAccountRequest, Map<String, String> parameters) throws IOException {
-
-        AddAchAccountBasicRequest addAchAccountBasicRequest = AddAchAccountBasicRequest.builder()
-                .personId(personId)
-                .companyPersonId(personId)
-                .isFavorite(addAchAccountRequest.getIsFavorite())
-                .isEnabled(addAchAccountRequest.getIsEnabled())
-                .reference(addAchAccountRequest.getReference())
-                .destinationAccountNumber(addAchAccountRequest.getDestinationAccountNumber())
-                .destinationBankCode(addAchAccountRequest.getDestinationBankCode())
-                .destinationBranchOfficeCode(addAchAccountRequest.getDestinationBranchOfficeCode())
-                .destinationAccountTypeCode(addAchAccountRequest.getDestinationAccountTypeCode())
-                .destinationHolderName(addAchAccountRequest.getDestinationHolderName())
-                .destinationIDNumber(addAchAccountRequest.getDestinationIDNumber())
-                .email(addAchAccountRequest.getEmail())
-                .build();
-
-        return achAccountProvider
-                .addAchAccount(
-                        achAccountProvider.generateAccessToken().getAccessToken(),
-                        addAchAccountBasicRequest,
-                        parameters
-                );
+        AddAchAccountBasicRequest addAchAccountBasicRequest = mapper.mapperRequest(personId, addAchAccountRequest);
+        return achAccountProvider.addAchAccount(addAchAccountBasicRequest, parameters);
     }
 
     @Override
     public GenericResponse addQRAccount(String personId, String bankType, AddQRAccountRequest addQRAccountRequest, Map<String, String> parameters) throws IOException {
         return switch (DestinationAccountBG.valueOf(bankType.toUpperCase())) {
             case THIRD -> {
-                AddThirdAccountBasicRequest thirdRequest = iDestinationAccountMapper.mapToThirdRequest(personId, addQRAccountRequest);
+                AddThirdAccountBasicRequest thirdRequest = mapper.mapToThirdRequest(personId, addQRAccountRequest);
                 yield thirdAccountProvider.addThirdAccount(
                         thirdAccountProvider.generateAccessToken().getAccessToken(),
                         thirdRequest,
@@ -133,7 +106,7 @@ public class DestinationAccountService implements IDestinationAccountService {
                 );
             }
             case WALLET -> {
-                AddWalletAccountBasicRequest walletRequest = iDestinationAccountMapper.mapToWalletRequest(personId, addQRAccountRequest);
+                AddWalletAccountBasicRequest walletRequest = mapper.mapToWalletRequest(personId, addQRAccountRequest);
                 yield thirdAccountProvider.addWalletAccount(
                         thirdAccountProvider.generateAccessToken().getAccessToken(),
                         walletRequest,
@@ -141,34 +114,30 @@ public class DestinationAccountService implements IDestinationAccountService {
                 );
             }
             case ACH -> {
-                AddAchAccountBasicRequest achRequest = iDestinationAccountMapper.mapToAchRequest(personId, addQRAccountRequest);
-                yield achAccountProvider.addAchAccount(
-                        achAccountProvider.generateAccessToken().getAccessToken(),
-                        achRequest,
-                        parameters
-                );
+                AddAchAccountBasicRequest achRequest = mapper.mapToAchRequest(personId, addQRAccountRequest);
+                yield achAccountProvider.addAchAccount(achRequest, parameters);
             }
             default -> throw new IllegalArgumentException("Invalid bank type: " + bankType);
         };
     }
 
     @Override
-    public BanksResponse getBanks() throws IOException {
-        BanksMWResponse result = achAccountProvider.getBanks();
+    public BanksResponse getBanks(Map<String, String> parameter) throws IOException {
+        BanksMWResponse result = achAccountProvider.getBanks(parameter);
         return new BanksResponse(result.getData().stream().map(Bank::fromMWBank).toList());
     }
 
     @Override
-    public BranchOfficeResponse getBranchOffice(Integer bankCode) throws IOException {
-        BranchOfficeMWResponse mWResponse = achAccountProvider.getAllBranchOfficeBank(bankCode);
-        return iDestinationAccountMapper.mapToBranchOfficeResponse(mWResponse);
+    public BranchOfficeResponse getBranchOffice(String bankCode, Map<String, String> parameter) throws IOException {
+        BranchOfficeMWResponse mWResponse = achAccountProvider.getAllBranchOfficeBank(bankCode,parameter );
+        return mapper.mapToBranchOfficeResponse(mWResponse);
     }
 
     @Override
     public AccountTypeListResponse accountTypes() {
         List<AccountType> values = Arrays.stream(AccountType.values()).toList();
         return AccountTypeListResponse.builder()
-                .data(mapper.convert(values))
+                .data(serviceMapper.convert(values))
                 .build();
     }
 
@@ -184,12 +153,13 @@ public class DestinationAccountService implements IDestinationAccountService {
 
 
     @Override
-    public GenericResponse deleteAchAccount(String personId, long identifier, String deviceId, String deviceIp) throws IOException {
-        return achAccountProvider.deleteAchAccount(personId, identifier, deviceId, deviceIp);
+    public GenericResponse deleteAchAccount(String personId, long identifier, Map<String, String> parameter) throws IOException {
+        DeleteAchAccountMWRequest requestData = mapper.mapperRequest(personId, identifier);
+        return achAccountProvider.deleteAchAccount(requestData, parameter);
     }
 
     @Override
-    public DestinationAccountResponse getDestinationAccounts(Integer personId, DestinationAccountRequest request, Map<String, String> parameter) throws IOException {
+    public DestinationAccountResponse getDestinationAccounts(String personId, DestinationAccountRequest request, Map<String, String> parameter) throws IOException {
         Boolean needAllRecords = (request.getPagination() == null || request.getPagination().getPage() == 1) && (request.getName() == null || request.getName().isEmpty());
         List<DestinationAccount> allAccounts = self.getListDestinationAccount(personId, parameter, needAllRecords);
         DestinationAccountResponse response = DestinationAccountResponse.builder()
@@ -212,23 +182,23 @@ public class DestinationAccountService implements IDestinationAccountService {
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.DESTINATION_ACCOUNTS, key = "#personId", condition = "#isInitial == false")},
             put = {@CachePut(value = CacheConstants.DESTINATION_ACCOUNTS, key = "#personId", condition = "#isInitial == true")})
-    public List<DestinationAccount> getListDestinationAccount(Integer personId, Map<String, String> parameter, Boolean isInitial) throws IOException {
+    public List<DestinationAccount> getListDestinationAccount(String personId, Map<String, String> parameter, Boolean isInitial) throws IOException {
         String tokenThirdAccounts = thirdAccountProvider.generateAccessToken().getAccessToken();
         ThirdAccountListResponse thirdAccountsResponse = thirdAccountProvider.getThirdAccounts(personId, tokenThirdAccounts, parameter);
         ThirdAccountListResponse walletAccountsResponse = thirdAccountProvider.getWalletAccounts(personId, tokenThirdAccounts, parameter);
-        AchAccountMWResponse achAccountMWResponse = achAccountProvider.getAchAccounts(personId, parameter);
+        AchAccountsMWResponse achAccountsMWResponse = achAccountProvider.getAchAccounts(personId, parameter);
         List<DestinationAccount> allAccounts = new ArrayList<>();
 
         for (ThirdAccount thirdAccount : thirdAccountsResponse.getData()) {
-            allAccounts.add(iDestinationAccountMapper.convertThirdAccountToDestinationAccount(thirdAccount, DestinationAccountType.CUENTA_TERCERO.getCode(), DestinationAccountBG.BG.getName()));
+            allAccounts.add(mapper.convertThirdAccountToDestinationAccount(thirdAccount, DestinationAccountType.CUENTA_TERCERO.getCode(), DestinationAccountBG.BG.getName()));
         }
 
         for (ThirdAccount walletAccount : walletAccountsResponse.getData()) {
-            allAccounts.add(iDestinationAccountMapper.convertThirdAccountToDestinationAccount(walletAccount, DestinationAccountType.BILLETERA.getCode(), DestinationAccountBG.YOLO.getName()));
+            allAccounts.add(mapper.convertThirdAccountToDestinationAccount(walletAccount, DestinationAccountType.BILLETERA.getCode(), DestinationAccountBG.YOLO.getName()));
         }
 
-        for (AchAccountMW achAccount : achAccountMWResponse.getData()) {
-            allAccounts.add(iDestinationAccountMapper.convertAchAccountToDestinationAccount(achAccount));
+        for (AchAccountMW achAccount : achAccountsMWResponse.getData()) {
+            allAccounts.add(mapper.convertAchAccountToDestinationAccount(achAccount));
         }
 
         allAccounts.sort(Comparator.comparing(DestinationAccount::getClientName, String.CASE_INSENSITIVE_ORDER));

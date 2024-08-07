@@ -16,6 +16,7 @@ import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.qr.mw.QRCodeGenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.request.qr.mw.QRCodeRegenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.request.qr.mw.QRPaymentMWRequest;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.QrListMWRequest;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRPaymentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.QrGeneratedPaidMW;
@@ -60,7 +61,7 @@ public class QrService implements IQrService {
     }
 
     @Override
-    public QrListResponse getQrGeneratedPaid(QrListRequest request, Integer personId, Map<String, String> parameters) throws IOException {
+    public QrListResponse getQrGeneratedPaid(QrListRequest request, String personId, Map<String, String> parameters) throws IOException {
         String startDate = request.getFilters().getPeriod().getStart();
         String endDate = request.getFilters().getPeriod().getEnd();
         String key = personId + "|" + startDate + "|" + endDate;
@@ -93,8 +94,9 @@ public class QrService implements IQrService {
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.QR_GENERATED_PAID, key = "#key", condition = "#isInitial == false")},
             put = {@CachePut(value = CacheConstants.QR_GENERATED_PAID, key = "#key", condition = "#isInitial == true")})
-    public List<QrGeneratedPaid> getListQrMW(QrListRequest request, Integer personId, Map<String, String> parameters, String key, Boolean isInitial) throws IOException {
-        QrListMWResponse qrListMWResponse = iAchAccountProvider.getListQrGeneratePaidMW(request, personId, parameters);
+    public List<QrGeneratedPaid> getListQrMW(QrListRequest request, String personId, Map<String, String> parameters, String key, Boolean isInitial) throws IOException {
+        QrListMWRequest mwRequest = iQrMapper.mapperRequest(personId, request);
+        QrListMWResponse qrListMWResponse = iAchAccountProvider.getListQrGeneratePaidMW(mwRequest, personId, parameters);
         List<QrGeneratedPaid> list = new ArrayList<>();
         for (QrGeneratedPaidMW generatedPaidMW : qrListMWResponse.getData()) {
             list.add(iQrMapper.convert(generatedPaidMW));
@@ -120,7 +122,7 @@ public class QrService implements IQrService {
         QRCodeRegenerateMWRequest requestMW = this.iQrMapper.convertDecrypt(request);
         QRCodeGenerateResponse response = this.qrProvider.decrypt(requestMW, parameter);
         QrDecryptResponse result = iQrMapper.convertDecryptResponse(response);
-        if(UtilDate.isDateOutOfDate(result.getExpirationDate())){
+        if (UtilDate.isDateOutOfDate(result.getExpirationDate())) {
             throw new GenericException(QRMiddlewareError.QR_EXPIRED.getMessage(), QRMiddlewareError.QR_EXPIRED.getHttpCode(), QRMiddlewareError.QR_EXPIRED.getCode());
         }
         return result;

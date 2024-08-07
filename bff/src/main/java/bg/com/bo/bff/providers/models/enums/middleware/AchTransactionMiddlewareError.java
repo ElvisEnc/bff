@@ -1,11 +1,13 @@
 package bg.com.bo.bff.providers.models.enums.middleware;
 
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@lombok.Getter
-@lombok.AllArgsConstructor
-public enum ACHMiddlewareError implements IMiddlewareError {
+@Getter
+@AllArgsConstructor
+public enum AchTransactionMiddlewareError implements IMiddlewareError {
     MDWACH_001(HttpStatus.BAD_REQUEST, "INVALID_CURRENCY_001", "MDWACH-001", "Transacción no permitida para esta moneda"),
     MDWACH_002(HttpStatus.BAD_REQUEST, "TRANSFER_DUPLICATE_001", "MDWACH-002", "Esta transacción ya ha sido realizada anteriormente"),
     MDWACH_003(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWACH-003", "No se pudo verificar la transacción duplicada"),

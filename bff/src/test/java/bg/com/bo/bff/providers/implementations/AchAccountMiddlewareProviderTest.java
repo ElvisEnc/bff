@@ -3,18 +3,20 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
-import bg.com.bo.bff.application.dtos.request.qr.QrRequestFixture;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.response.DeleteThirdAccountResponse;
+import bg.com.bo.bff.commons.enums.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
+import bg.com.bo.bff.models.ClientTokenFixture;
+import bg.com.bo.bff.providers.dtos.request.ach.account.mw.AchAccountMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.ach.account.mw.AddAchAccountBasicRequest;
+import bg.com.bo.bff.providers.dtos.request.ach.account.mw.DeleteAchAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.request.qr.mw.QrListMWRequest;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.*;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QrMWResponseFixture;
-import bg.com.bo.bff.mappings.providers.account.AchAccountMWtMapper;
+import bg.com.bo.bff.providers.models.enums.middleware.ach.account.AchAccountMiddlewareResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -25,68 +27,121 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @WireMockTest(proxyMode = true, httpPort = 8080)
 @ExtendWith(WireMockExtension.class)
 @ExtendWith(MockitoExtension.class)
 class AchAccountMiddlewareProviderTest {
-    private TokenMiddlewareProvider tokenMiddlewareProviderMock;
-    private MiddlewareConfig middlewareConfig;
-    private IHttpClientFactory httpClientFactoryMock;
-    private AchAccountMiddlewareProvider achAccountMiddlewareProvider;
-    private ClientToken clientTokenMock;
-    private ErrorMiddlewareProvider errorMiddlewareProvider;
-    private AchAccountMWtMapper mapper;
+    private AchAccountMiddlewareProvider provider;
+    TokenMiddlewareProvider tokenMiddlewareProviderMock;
+    MiddlewareConfig middlewareConfig;
+    IHttpClientFactory httpClientFactoryMock;
+    private final ClientToken clientTokenMock = ClientTokenFixture.withDefault();
+    private Map<String, String> map;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
+        this.map = Map.of(
+                DeviceMW.DEVICE_ID.getCode(), "1234",
+                DeviceMW.DEVICE_IP.getCode(), "12344",
+                DeviceMW.DEVICE_NAME.getCode(), "OS",
+                DeviceMW.GEO_POSITION_X.getCode(), "121.11",
+                DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
+                DeviceMW.APP_VERSION.getCode(), "1.0.0"
+        );
         httpClientFactoryMock = Mockito.mock(HttpClientConfig.class);
         tokenMiddlewareProviderMock = Mockito.mock(TokenMiddlewareProvider.class);
-        middlewareConfig = Mockito.mock(MiddlewareConfig.class);
-        mapper = AchAccountMWtMapper.INSTANCE;
-        Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
-        achAccountMiddlewareProvider = new AchAccountMiddlewareProvider(tokenMiddlewareProviderMock, middlewareConfig, httpClientFactoryMock, mapper);
+        middlewareConfig = MiddlewareConfigFixture.withDefault();
+        when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
+        provider = new AchAccountMiddlewareProvider(tokenMiddlewareProviderMock, middlewareConfig, httpClientFactoryMock);
 
-        clientTokenMock = new ClientToken();
-        clientTokenMock.setAccessToken(UUID.randomUUID().toString());
-        setField(achAccountMiddlewareProvider, "middlewareConfig", MiddlewareConfigFixture.withDefault(), MiddlewareConfig.class);
+        setField(provider, "middlewareConfig", middlewareConfig);
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+    }
+
+    // Add Ach Accounts
+    @Test
+    void givenValidaDataWhenAddAchAccountThenReturnOk() throws IOException {
+        // Arrange
+        AddAchAccountBasicRequest requestMock = AchAccountMWRequestFixture.withDefaultOKAddAchAccountBasicRequest();
+        ApiDataResponse<AchAccountMWResponse> expectedResponse = AchAccountMWResponseFixture.withDefaultAddAchAccountMWResponse();
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = provider.addAchAccount(requestMock, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, GenericResponse.instance(AchAccountMiddlewareResponse.SUCCESS_ADD_ACCOUNT));
     }
 
     @Test
-    void givenValidaDataWhenDeleteAccountThenReturnOk() throws IOException {
+    void givenValidaDataWhenAddAchAccountThenReturnError() throws IOException {
         // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        GenericResponse expectedResponse = GenericResponse.instance(DeleteThirdAccountResponse.SUCCESS);
+        AddAchAccountBasicRequest requestMock = AchAccountMWRequestFixture.withDefaultOKAddAchAccountBasicRequest();
+        ApiDataResponse<AchAccountMWResponse> expectedResponse = ApiDataResponse.of(new AchAccountMWResponse());
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = provider.addAchAccount(requestMock, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, GenericResponse.instance(AchAccountMiddlewareResponse.ERROR_ADD_ACCOUNT));
+    }
+
+    // Delete Ach Accounts
+    @Test
+    void givenValidaDataWhenDeleteAchAccountThenReturnOk() throws IOException {
+        // Arrange
+        DeleteAchAccountMWRequest requestMock = AchAccountMWRequestFixture.withDefaultDeleteAchAccountMWRequest();
+        ApiDataResponse<AchAccountMWResponse> expectedResponse = AchAccountMWResponseFixture.withDefaultAddAchAccountMWResponse();
         String jsonResponse = Util.objectToString(expectedResponse);
         stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = achAccountMiddlewareProvider.deleteAchAccount("1", 1, "1", "127.0.0.1");
+        GenericResponse response = provider.deleteAchAccount(requestMock, map);
 
         // Assert
-        assertEquals(expectedResponse.getCode(), response.getCode());
-        assertEquals(expectedResponse.getMessage(), response.getMessage());
+        assertNotNull(response);
+        assertEquals(response, GenericResponse.instance(AchAccountMiddlewareResponse.SUCCESS_DELETE_ACCOUNT));
     }
 
+    @Test
+    void givenValidaDataWhenDeleteAchAccountThenReturnError() throws IOException {
+        // Arrange
+        DeleteAchAccountMWRequest requestMock = AchAccountMWRequestFixture.withDefaultDeleteAchAccountMWRequest();
+        ApiDataResponse<AchAccountMWResponse> expectedResponse = ApiDataResponse.of(new AchAccountMWResponse());
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        GenericResponse response = provider.deleteAchAccount(requestMock, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response, GenericResponse.instance(AchAccountMiddlewareResponse.ERROR_DELETE_ACCOUNT));
+    }
+
+    // Get Bank List and Office Branches
     @Test
     void givenValidBankCodeWhenGetBanksThenExpectResponse() throws IOException {
         // Arrange
         BanksMWResponse expectedResponse = AchAccountMWResponseFixture.withDefaultBanksMWResponse();
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = Util.objectToString(expectedResponse);
-        stubFor(get(anyUrl())
-                .willReturn(okJson(jsonResponse)));
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        BanksMWResponse actualResponse = achAccountMiddlewareProvider.getBanks();
+        BanksMWResponse actualResponse = provider.getBanks(map);
 
         // Assert
         assertNotNull(actualResponse);
@@ -96,218 +151,50 @@ class AchAccountMiddlewareProviderTest {
     }
 
     @Test
-    void givenValidDataWhenDeleteAchAccountThenReturnOk() throws IOException {
-        // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        GenericResponse expectedResponse = GenericResponse.instance(DeleteThirdAccountResponse.SUCCESS);
-        String jsonResponse = Util.objectToString(expectedResponse);
-        stubFor(delete(anyUrl())
-                .willReturn(okJson(jsonResponse)));
-
-        // Act
-        GenericResponse actualResponse = achAccountMiddlewareProvider.deleteAchAccount("1", 1, "1", "127.0.0.1");
-
-        // Assert
-        assertEquals(expectedResponse.getCode(), actualResponse.getCode());
-        assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
-    }
-
-    @Test
     void giveValidBankCodeWhenGetAllBranchOfficeBankThenExpectResponse() throws IOException {
         // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(AchAccountMWResponseFixture.withDefaultBranchOfficeMWResponse());
+        BranchOfficeMWResponse responseExpected = AchAccountMWResponseFixture.withDefaultBranchOfficeMWResponse();
+        String jsonResponse = Util.objectToString(responseExpected);
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        BranchOfficeMWResponse response = achAccountMiddlewareProvider.getAllBranchOfficeBank(123);
+        BranchOfficeMWResponse response = provider.getAllBranchOfficeBank("123", map);
 
         // Assert
         assertNotNull(response);
-        assertEquals(response.getData().getResponse(), AchAccountMWResponseFixture.withDefaultBranchOfficeMWResponse().getData().getResponse());
+        assertEquals(response.getData().getResponse(), responseExpected.getData().getResponse());
     }
 
-    @Test
-    void giveValidBankCodeWhenNoRecordsThenReturnEmptyData() throws IOException {
-        // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
-                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
-                        .code("MDWAAM-001")
-                        .description("MDWAAM_001")
-                        .build()))
-                .build();
-        stubFor(get(anyUrl()).willReturn(aResponse()
-                .withStatus(404)
-                .withBody(Util.objectToString(errorMiddlewareProvider))));
-
-        // Act
-        BranchOfficeMWResponse response = achAccountMiddlewareProvider.getAllBranchOfficeBank(123);
-
-        // Assert
-        assertTrue(response.getData().getResponse().isEmpty());
-    }
-
-
-    @Test
-    void giveValidBankCodeWhenUnexpectedErrorOccursThenGenericException() throws IOException {
-        // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        Mockito.when(httpClientFactoryMock.create()).thenThrow(new GenericException("Generic"));
-
-        // Act
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            achAccountMiddlewareProvider.getAllBranchOfficeBank(123);
-        });
-
-        // Assert
-        assertEquals("Generic", exception.getMessage());
-    }
-
-    @Test
-    void giveValidBankCodeWhenUnexpectedErrorOccursThenRuntimeException() throws IOException {
-        // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
-
-        // Act
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            achAccountMiddlewareProvider.getAllBranchOfficeBank(123);
-        });
-
-        // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
-    }
-
+    // Get Ach Accounts
     @Test
     void givePersonCodeWhenGetAchAccountsThenExpectResponse() throws IOException {
         // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(AchAccountMWResponseFixture.withDefaultAchAccountMWResponse());
+        AchAccountsMWResponse responseExpected = AchAccountMWResponseFixture.withDefaultAchAccountMWResponse();
+        String jsonResponse = Util.objectToString(responseExpected);
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        AchAccountMWResponse response = achAccountMiddlewareProvider.getAchAccounts(1233, new HashMap<>());
+        AchAccountsMWResponse response = provider.getAchAccounts("123", map);
 
         // Assert
         assertNotNull(response);
-        assertEquals(response.getData(), AchAccountMWResponseFixture.withDefaultAchAccountMWResponse().getData());
+        assertEquals(response.getData(), responseExpected.getData());
     }
 
-    @Test
-    void givePersonCodeWhenGetAchAccountsThenReturnEmptyData() throws IOException {
-        // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
-                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
-                        .code("MDWAAM-004")
-                        .description("MDWAAM_004")
-                        .build()))
-                .build();
-        stubFor(get(anyUrl()).willReturn(aResponse()
-                .withStatus(404)
-                .withBody(Util.objectToString(errorMiddlewareProvider))));
-
-        // Act
-        AchAccountMWResponse response = achAccountMiddlewareProvider.getAchAccounts(1233, new HashMap<>());
-
-        // Assert
-        assertTrue(response.getData().isEmpty());
-    }
-
-    @Test
-    void giveUnexpectedErrorOccursWhenGetAchAccountsThenGenericException() throws IOException {
-        // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        Mockito.when(httpClientFactoryMock.create()).thenThrow(new GenericException("Generic"));
-
-        // Act
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            achAccountMiddlewareProvider.getAchAccounts(1233, new HashMap<>());
-        });
-
-        // Assert
-        assertEquals("Generic", exception.getMessage());
-    }
-
-    @Test
-    void giveErrorWhenGetAchAccountsThenRuntimeException() throws IOException {
-        // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
-
-        // Act
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            achAccountMiddlewareProvider.getAchAccounts(1233, new HashMap<>());
-        });
-
-        // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
-    }
-
+    // Get History QR
     @Test
     void givePersonCodeWhenGetQrListThenExpectResponse() throws IOException {
         // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(QrMWResponseFixture.withDefaultQrListMWResponse());
+        QrListMWRequest requestMock= AchAccountMWRequestFixture.withDefaultQrListMWRequest();
+        QrListMWResponse responseExpected=QrMWResponseFixture.withDefaultQrListMWResponse();
+        String jsonResponse = Util.objectToString(responseExpected);
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        QrListMWResponse response = achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrRequestFixture.withDefaultQrListRequest(), 123, new HashMap<>());
+        QrListMWResponse response = provider.getListQrGeneratePaidMW(requestMock, "123", map);
 
         // Assert
         assertNotNull(response);
-        assertEquals(response.getData(), QrMWResponseFixture.withDefaultQrListMWResponse().getData());
-    }
-
-    @Test
-    void givePersonCodeWhenGetQrListThenReturnEmptyData() throws IOException {
-        // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
-                .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
-                        .code("MDWAAM-001")
-                        .description("MDWAAM-001")
-                        .build()))
-                .build();
-        stubFor(post(anyUrl()).willReturn(aResponse()
-                .withStatus(404)
-                .withBody(Util.objectToString(errorMiddlewareProvider))));
-
-        // Act
-        QrListMWResponse response = achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrRequestFixture.withDefaultQrListRequest(), 123, new HashMap<>());
-
-        // Assert
-        assertTrue(response.getData().isEmpty());
-    }
-
-    @Test
-    void giveUnexpectedErrorOccursWhenQrListThenGenericException() throws IOException {
-        // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        Mockito.when(httpClientFactoryMock.create()).thenThrow(new GenericException("Generic"));
-
-        // Act
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrRequestFixture.withDefaultQrListRequest(), 123, new HashMap<>());
-        });
-
-        // Assert
-        assertEquals("Generic", exception.getMessage());
-    }
-
-    @Test
-    void giveErrorWhenGetQrListThenRuntimeException() throws IOException {
-        // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException("Error al crear cliente HTTP"));
-
-        // Act
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            achAccountMiddlewareProvider.getListQrGeneratePaidMW(QrRequestFixture.withDefaultQrListRequest(), 123, new HashMap<>());
-        });
-
-        // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+        assertEquals(response.getData(), responseExpected.getData());
     }
 }

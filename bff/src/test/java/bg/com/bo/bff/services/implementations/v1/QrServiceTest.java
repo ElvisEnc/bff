@@ -72,7 +72,7 @@ class QrServiceTest {
         when(self.getListQrMW(any(), any(), any(), any(), any())).thenReturn(expectedList);
 
         //Act
-        QrListResponse response = service.getQrGeneratedPaid(request, 123,new HashMap<>());
+        QrListResponse response = service.getQrGeneratedPaid(request, "123",new HashMap<>());
 
         //Assert
         assertNotNull(response);
@@ -92,7 +92,7 @@ class QrServiceTest {
         Mockito.when(iQrMapper.convert(isA(QrGeneratedPaidMW.class))).thenReturn(QrResponseFixture.withDefaultQrGeneratedPaid());
 
         // Act
-        List<QrGeneratedPaid> response = service.getListQrMW(QrRequestFixture.withDefaultQrListRequest(), 123, new HashMap<>(), "key", false);
+        List<QrGeneratedPaid> response = service.getListQrMW(QrRequestFixture.withDefaultQrListRequest(), "123", new HashMap<>(), "key", false);
 
         // Assert
         Assertions.assertNotNull(response);

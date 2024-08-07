@@ -1,9 +1,17 @@
 package bg.com.bo.bff.providers.dtos.response.ach.account.mw;
 
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
+
 import java.util.Arrays;
 import java.util.List;
 
 public class AchAccountMWResponseFixture {
+
+    public static ApiDataResponse<AchAccountMWResponse> withDefaultAddAchAccountMWResponse() {
+        return ApiDataResponse.of(new AchAccountMWResponse("123"));
+    }
+
+
     public static BanksMWResponse withDefaultBanksMWResponse() {
         return new BanksMWResponse(
                 List.of(
@@ -13,8 +21,8 @@ public class AchAccountMWResponseFixture {
         );
     }
 
-    public static AchAccountMWResponse withDefaultAchAccountMWResponse() {
-        return AchAccountMWResponse.builder()
+    public static AchAccountsMWResponse withDefaultAchAccountMWResponse() {
+        return AchAccountsMWResponse.builder()
                 .data(Arrays.asList(
                         AchAccountMW.builder()
                                 .idList("987987654")
