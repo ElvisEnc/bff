@@ -17,6 +17,7 @@ import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakKeyResponse;
 import bg.com.bo.bff.providers.dtos.response.keycloak.CreateTokenKCResponse;
 import bg.com.bo.bff.commons.enums.UserRole;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.services.interfaces.ISessionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -43,11 +45,15 @@ import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @WireMockTest(proxyMode = true, httpPort = 8080)
 @ExtendWith(WireMockExtension.class)
 @ExtendWith(MockitoExtension.class)
 class JwtKeyCloakProviderTests {
+    @Mock
+    private ISessionService sessionManager;
     static IHttpClientFactory httpClientFactoryMock;
     static JwtKeyCloakProvider jwtKeyCloakProvider;
     private String url = "http://login.fake.api";
@@ -68,7 +74,8 @@ class JwtKeyCloakProviderTests {
     public void init() {
         KeyCloakMapper keyCloakMapper = new KeyCloakMapper(KeyCloakObjectMapper.INSTANCE, new KeyCloakJsonMapper());
         GenericsMapper genericsMapper = new GenericsMapper();
-        jwtKeyCloakProvider = new JwtKeyCloakProvider(httpClientFactoryMock, keyCloakMapper, genericsMapper);
+
+        jwtKeyCloakProvider = new JwtKeyCloakProvider(httpClientFactoryMock, keyCloakMapper, genericsMapper, sessionManager);
 
         //Propiedades cargadas por reflection dentro de JwtKeyCloakService.
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "urlBase", url);
@@ -321,10 +328,11 @@ class JwtKeyCloakProviderTests {
 
     @Disabled
     @Test
-    void givenValidTokenWhenValidateTokenThenSuccessfullValidation() throws IOException {
+    void givenValidTokenWhenValidateTokenThenSuccessfullyValidation() throws IOException {
         //Arrange
         String jsonResponse = IOUtils.toString(Objects.requireNonNull(this.getClass().getResourceAsStream("/files/KeyCloakCertsResponse.json")), StandardCharsets.UTF_8);
         stubFor(get(urlCertsComplement).willReturn(okJson(jsonResponse)));
+        when(sessionManager.isOnBlacklist(any())).thenReturn(false);
 
         //Act
         JwtAccess result = jwtKeyCloakProvider.parseJwtAccess("eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJRell4Y1N5U1h4bVFWVjhNX2oxRlVlRmJsb3h1UkZOdGRQRUVtNkVHN3hZIn0.eyJleHAiOjE3MDU1MDk5MjksImlhdCI6MTcwNTUwNjMyOSwianRpIjoiZDIzNWM2MzctOGQ5OC00YTY0LTljNGYtMmEwODI4YTg0ZjViIiwiaXNzIjoiaHR0cHM6Ly9iZy1nbm0tZGV2LmVhc3R1cy5jbG91ZGFwcC5henVyZS5jb20va2V5Y2xvYWsvcmVhbG1zL2tvbmciLCJhdWQiOiJnYW5hbW92aWwtYmZmIiwic3ViIjoiNjdkMzQyYTgtZGVjMy00OTM4LTliNmEtYjkzY2ZjOTk5YjE5IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiZ2FuYW1vdmlsLWJmZiIsInNlc3Npb25fc3RhdGUiOiJhMzRiYWZmZS1iMWYzLTQwODEtOWVjZC1iMDcwZDk0YTVjN2IiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIioiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLWtvbmciXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJhdXRob3JpemF0aW9uIjp7InBlcm1pc3Npb25zIjpbeyJjbGFpbXMiOnsicm9sZXMiOlsiTE9HR0VEX1VTRVIiXSwicGVyc29uSWQiOlsiMSJdfSwicnNpZCI6IjA1ZTQ0ZDA3LWUyNTEtNGYzZC05ZjAyLWFhMjFiZmQ0MWNhYyIsInJzbmFtZSI6IkRlZmF1bHQgUmVzb3VyY2UifV19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJzaWQiOiJhMzRiYWZmZS1iMWYzLTQwODEtOWVjZC1iMDcwZDk0YTVjN2IiLCJjbGllbnRIb3N0IjoiMTAuMjI0LjAuMTE0IiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtZ2FuYW1vdmlsLWJmZiIsImNsaWVudEFkZHJlc3MiOiIxMC4yMjQuMC4xMTQiLCJjbGllbnRfaWQiOiJnYW5hbW92aWwtYmZmIn0.Kb_3Hw5sYChsjPIQ7FUvNW-zf1jpxelwNmKz2Q9NEE9-Mr-9Ej8DBw-VAIQCQwcoTsVBKSi8CKZWV2wZFzsnNHRLCkGDXw-cOfmJfbfrI3lgw8rUxHgNVzrKNDpVqhuu2-1xEyzWv2FrwiP3jHhlj30t1NCsEM2Z3EA9RsUvWJLCJorP0rMn3PQ3-UdzGeVxf2G-sLmY3tNyhPIziA28_P2lHKtam_5qInO1-As5ELvx9n2yoMHeqcUrudutwGg0YKcpjJ_S9ssYBH5HGUC861uRxIQdds0NoYGONkW2g35c_jKp8gjwItzR__7SHoSw9sdKAfNGZZZzZjNGS9qifg");

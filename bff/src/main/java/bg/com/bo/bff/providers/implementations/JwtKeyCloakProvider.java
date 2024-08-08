@@ -17,6 +17,7 @@ import bg.com.bo.bff.commons.enums.UserRole;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakKeyResponse;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
+import bg.com.bo.bff.services.interfaces.ISessionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
@@ -78,6 +79,8 @@ public class JwtKeyCloakProvider implements IJwtProvider {
     @Value("${keycloak.revoke.url}")
     private String urlRevokeComplement;
 
+    private final ISessionService sessionManager;
+
     @Autowired
     private JwtKeyCloakProvider self;
 
@@ -86,10 +89,11 @@ public class JwtKeyCloakProvider implements IJwtProvider {
     private IGenericsMapper genericsMapper;
 
     @Autowired
-    public JwtKeyCloakProvider(IHttpClientFactory httpClientFactory, KeyCloakMapper keyCloakMapper, IGenericsMapper genericsMapper) {
+    public JwtKeyCloakProvider(IHttpClientFactory httpClientFactory, KeyCloakMapper keyCloakMapper, IGenericsMapper genericsMapper, ISessionService sessionManager) {
         this.httpClientFactory = httpClientFactory;
         this.keyCloakMapper = keyCloakMapper;
         this.genericsMapper = genericsMapper;
+        this.sessionManager = sessionManager;
     }
 
     /**
@@ -273,9 +277,12 @@ public class JwtKeyCloakProvider implements IJwtProvider {
      */
     @Override
     public JwtAccess parseJwtAccess(String token) throws JwtException, JwtValidationException {
+        if (sessionManager.isOnBlacklist(token))
+            throw new JwtValidationException("El Access Token esta en blacklist.");
+
         JwtAccess jwtAccess = getSignedToken(token);
 
-        if (!validateToken(jwtAccess)) throw new JwtValidationException();
+        if (!validateToken(jwtAccess)) throw new JwtValidationException("El Access Token no es válido.");
 
         return jwtAccess;
     }
@@ -290,7 +297,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
     public JwtRefresh parseJwtRefresh(String token) throws JwtException, JwtValidationException {
         JwtRefresh jwtRefresh = getRefreshSignedToken(token);
 
-        if (!validateToken(jwtRefresh)) throw new JwtValidationException();
+        if (!validateToken(jwtRefresh)) throw new JwtValidationException("El Refresh Token no es válido.");
 
         return jwtRefresh;
     }
@@ -369,10 +376,12 @@ public class JwtKeyCloakProvider implements IJwtProvider {
     }
 
     @Override
-    public boolean revokeAccessToken(String authorization) {
+    public boolean revokeAccessToken(String accessToken) {
+        sessionManager.blacklist(accessToken);
+
         List<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("token_type_hint", "access_token"));
-        params.add(new BasicNameValuePair("token", authorization));
+        params.add(new BasicNameValuePair("token", accessToken));
         params.add(new BasicNameValuePair("client_id", clientId));
         params.add(new BasicNameValuePair("client_secret", clientSecret));
 

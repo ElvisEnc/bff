@@ -1,7 +1,7 @@
 package bg.com.bo.bff.integrations;
 
 import bg.com.bo.bff.commons.constants.CacheConstants;
-import bg.com.bo.bff.integrations.embeddedRedis.EmbeddedRedisConfiguration;
+import bg.com.bo.bff.shared.cache.EmbeddedRedisConfiguration;
 import bg.com.bo.bff.integrations.embeddedRedis.TestCacheConfig;
 import bg.com.bo.bff.integrations.embeddedRedis.TestHttpClientConfig;
 import bg.com.bo.bff.mappings.providers.GenericsMapper;
@@ -13,6 +13,8 @@ import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakCertListResponse;
 import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakKeyResponse;
 import bg.com.bo.bff.providers.implementations.JwtKeyCloakProvider;
 import bg.com.bo.bff.mappings.providers.keycloak.KeyCloakObjectMapperImpl;
+import bg.com.bo.bff.services.interfaces.ISessionService;
+import bg.com.bo.bff.services.implementations.v1.SessionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -55,7 +57,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         KeyCloakJsonMapper.class,
         KeyCloakMapper.class,
         GenericsMapper.class,
-        JwtKeyCloakProvider.class})
+        JwtKeyCloakProvider.class,
+        SessionService.class})
 @WireMockTest(proxyMode = true, httpPort = 8080)
 @ExtendWith(WireMockExtension.class)
 @ExtendWith(SpringExtension.class)
@@ -63,6 +66,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @EnableCaching
 class JwtKeyCloakServiceWithCacheIntegrationTests {
     private KeyCloakObjectMapper keyCloakObjectMapper;
+
+    @Autowired
+    private ISessionService sessionManager;
 
     @Autowired
     private JwtKeyCloakProvider jwtKeyCloakProvider;

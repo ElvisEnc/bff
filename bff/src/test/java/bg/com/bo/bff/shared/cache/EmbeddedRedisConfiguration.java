@@ -1,4 +1,4 @@
-package bg.com.bo.bff.integrations.embeddedRedis;
+package bg.com.bo.bff.shared.cache;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import redis.embedded.RedisServer;

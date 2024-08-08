@@ -51,6 +51,9 @@ public class CacheConfig {
     @Value("${cache.generic.data.ttl}")
     private Integer genericDataTtl;
 
+    @Value("${token.blacklist.ttl}")
+    private Integer tokenBlacklistTtl;
+
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return builder -> builder
@@ -93,6 +96,12 @@ public class CacheConfig {
                 .withCacheConfiguration(CacheConstants.GENERIC_DATA,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(genericDataTtl))
+                                .disableCachingNullValues()
+                                .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                                .prefixCacheNameWith(cachePrefix))
+                .withCacheConfiguration(CacheConstants.TOKEN_BLACKLIST,
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofMinutes(tokenBlacklistTtl))
                                 .disableCachingNullValues()
                                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                                 .prefixCacheNameWith(cachePrefix));
