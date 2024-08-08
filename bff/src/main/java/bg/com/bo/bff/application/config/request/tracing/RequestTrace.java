@@ -23,10 +23,10 @@ public class RequestTrace {
     private Date in;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private Date out;
-    private Map<String, String> headersRequest;
-    private Map<String, String> headersResponse;
+    private String headersRequest;
+    private String headersResponse;
     private String bodyRequest;
     private String bodyResponse;
-    private UserData userData;
+    private String userData;
     private long elapsed;
 }
