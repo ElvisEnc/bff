@@ -54,6 +54,6 @@ public class LoanPlanMWResponse {
         private BigDecimal baseRateReviewPoint;
         private BigDecimal baseRate;
         private String paymentTypeInterest;
-        private Long quantityDue;
+        private Long quantityDues;
     }
 }

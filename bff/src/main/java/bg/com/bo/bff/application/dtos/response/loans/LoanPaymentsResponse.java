@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -18,31 +20,31 @@ public class LoanPaymentsResponse {
     private String accountEntry;
 
     @Schema(description = "Capital adelantado")
-    private String advancedCapital;
+    private BigDecimal advancedCapital;
 
     @Schema(description = "Capital original")
-    private String originalCapital;
+    private BigDecimal originalCapital;
 
     @Schema(description = "Capital pagado")
-    private String capitalPaid;
+    private BigDecimal capitalPaid;
 
     @Schema(description = "Gastos")
-    private String expenses;
+    private BigDecimal expenses;
 
     @Schema(description = "Interes pagado")
-    private String interestAmountPaid;
+    private BigDecimal interestAmountPaid;
 
     @Schema(description = "Mora pagada")
-    private String payLateFees;
+    private BigDecimal payLateFees;
 
     @Schema(description = "Saldo")
-    private String balance;
+    private BigDecimal balance;
 
     @Schema(description = "Tipo de movimiento")
     private String typeMovement;
 
     @Schema(description = "Total cuota")
-    private String totalInstallment;
+    private BigDecimal totalInstallment;
 
     @Schema(description = "Sucursal de movimiento")
     private String branch;

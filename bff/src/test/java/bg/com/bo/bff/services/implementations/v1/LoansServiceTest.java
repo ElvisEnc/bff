@@ -20,10 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -268,6 +266,23 @@ class LoansServiceTest {
         //Assert
         assertNotNull(response);
         verify(provider).getListLoanPayments(any(), any(), any());
+    }
+
+    @Test
+    void givenLoanPaymentsRequestBigDecimalNullWhenGetLoanPaymentsThenListLoansPaymentsCache() throws IOException {
+        //Arrange
+        LoanPaymentsMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultListLoanPaymentsMWResponseBigDecimalNull();
+        List<LoanPaymentsResponse> expectedResponse = LoansResponseFixture.withDataDefaultLoanPaymentsResponseBigDecimalNull();
+        when(provider.getListLoanPayments(any(), any(), any())).thenReturn(mwResponseMock);
+
+        //Act
+        List<LoanPaymentsResponse> response = service.getLoanPaymentsCache("123", "123", "123", new HashMap<>(), false);
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(provider).getListLoanPayments(any(), any(), any());
+        verify(mapper).convertResponse(mwResponseMock);
     }
 
     // Loan Insurance Payments

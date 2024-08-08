@@ -325,6 +325,19 @@ public class Util {
         return value.setScale(2, RoundingMode.DOWN);
     }
 
+    public static BigDecimal convertStringToBigDecimal(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            BigDecimal bigDecimalValue = new BigDecimal(value);
+            return scaleToTwoDecimals(bigDecimalValue);
+        } catch (NumberFormatException e) {
+            LOGGER.debug("El valor otorgado no es numerico: %s".formatted(value), e);
+            return null;
+        }
+    }
+
     public static Integer convertStringToInteger(String value) {
         try {
             return value != null ? Integer.parseInt(value) : null;

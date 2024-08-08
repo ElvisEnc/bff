@@ -138,7 +138,7 @@ public class LoansMWResponseFixture {
                 .baseRateReviewPoint(new BigDecimal("0.50"))
                 .baseRate(new BigDecimal("5.00"))
                 .paymentTypeInterest("Monthly")
-                .quantityDue(12L)
+                .quantityDues(12L)
                 .build();
     }
 
@@ -204,6 +204,29 @@ public class LoansMWResponseFixture {
                         .totalInstallments(12)
                         .paidInstallments(1)
                         .build())
+                .build();
+    }
+
+    public static LoanPaymentsMWResponse withDefaultListLoanPaymentsMWResponseBigDecimalNull() {
+        return LoanPaymentsMWResponse.builder()
+                .data(Collections.singletonList(withDefaultLoanPaymentMWBigDecimalNull()))
+                .build();
+    }
+
+    public static LoanPaymentsMWResponse.LoanPaymentMW withDefaultLoanPaymentMWBigDecimalNull() {
+        return LoanPaymentsMWResponse.LoanPaymentMW.builder()
+                .date("2024-07-11")
+                .accountEntry("entry123")
+                .advancedCapital(null)
+                .originalCapital("")
+                .capitalPaid("string")
+                .expenses("50")
+                .interesAmountPaid("100")
+                .payLateFees("10")
+                .balance("4500")
+                .typeMovement("payment")
+                .totalInstallment("650")
+                .branch("branch123")
                 .build();
     }
 }

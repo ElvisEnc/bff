@@ -55,12 +55,23 @@ public class AccountStatementService implements IAccountStatementService {
         AccountStatementsMWRequest mwRequest = mapper.mapperRequest(accountId, init, total, request);
         List<AccountStatementsResponse> list = self.getAccountStatementsCache(mwRequest, parameter, key, refreshData);
 
-        String field = (request.getFilters().getOrder() != null) ? request.getFilters().getOrder().getField() : "DATE";
-        boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
         Map<String, Function<AccountStatementsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("AMOUNT", AccountStatementsResponse::getAmount);
         comparatorOptions.put("DATE", response -> LocalDate.parse(response.getMovementDate(), Util.getDateFormatter()));
-        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
+        comparatorOptions.put("TIME", AccountStatementsResponse::getMovementTime);
+        if (request.getFilters().getOrder() == null || "DATE".equals(request.getFilters().getOrder().getField())) {
+            boolean desc = request.getFilters().getOrder() == null || request.getFilters().getOrder().getDesc();
+            list = list.stream()
+                    .sorted(Comparator.comparing(
+                                    (AccountStatementsResponse response) -> LocalDate.parse(response.getMovementDate(), Util.getDateFormatter()),
+                                    desc ? Comparator.reverseOrder() : Comparator.naturalOrder())
+                            .thenComparing(AccountStatementsResponse::getMovementTime, Comparator.reverseOrder())
+                    ).toList();
+        } else {
+            String field = request.getFilters().getOrder().getField();
+            boolean desc = request.getFilters().getOrder().getDesc();
+            list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
+        }
 
         if (request.getFilters().getAmount() != null) {
             BigDecimal min = Optional.of(request.getFilters().getAmount())
@@ -72,7 +83,7 @@ public class AccountStatementService implements IAccountStatementService {
             list = new RangeFilter<>(min, max, AccountStatementsResponse::getAmount).apply(list);
         }
 
-        list = new TypeFilter(AccountStatementType.getValueByCode(request.getFilters().getMovementType())).apply(list);
+        list = new TypeFilter(request.getFilters().getMovementType()).apply(list);
 
         int page = request.getFilters().getPagination().getPage();
         int pageSize = request.getFilters().getPagination().getPageSize();

@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.dtos.response.loans;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,21 +40,42 @@ public class LoansResponseFixture {
         return LoanPaymentsResponse.builder()
                 .date("2024-07-11")
                 .accountEntry("entry123")
-                .advancedCapital("1000")
-                .originalCapital("5000")
-                .capitalPaid("500")
-                .expenses("50")
-                .interestAmountPaid("100")
-                .payLateFees("10")
-                .balance("4500")
+                .advancedCapital(BigDecimal.valueOf(1000).setScale(2, RoundingMode.DOWN))
+                .originalCapital(BigDecimal.valueOf(5000).setScale(2, RoundingMode.DOWN))
+                .capitalPaid(BigDecimal.valueOf(500).setScale(2, RoundingMode.DOWN))
+                .expenses(BigDecimal.valueOf(50).setScale(2, RoundingMode.DOWN))
+                .interestAmountPaid(BigDecimal.valueOf(100).setScale(2, RoundingMode.DOWN))
+                .payLateFees(BigDecimal.valueOf(10).setScale(2, RoundingMode.DOWN))
+                .balance(BigDecimal.valueOf(4500).setScale(2, RoundingMode.DOWN))
                 .typeMovement("payment")
-                .totalInstallment("650")
+                .totalInstallment(BigDecimal.valueOf(650).setScale(2, RoundingMode.DOWN))
                 .branch("branch123")
                 .build();
     }
 
     public static List<LoanPaymentsResponse> withDataDefaultLoanPaymentsResponse() {
         return new ArrayList<>(Collections.singletonList(withDefaultLoanPaymentsResponse()));
+    }
+
+    public static List<LoanPaymentsResponse> withDataDefaultLoanPaymentsResponseBigDecimalNull() {
+        return new ArrayList<>(Collections.singletonList(withDefaultLoanPaymentsResponseBigDecimalNull()));
+    }
+
+    public static LoanPaymentsResponse withDefaultLoanPaymentsResponseBigDecimalNull() {
+        return LoanPaymentsResponse.builder()
+                .date("2024-07-11")
+                .accountEntry("entry123")
+                .advancedCapital(null)
+                .originalCapital(null)
+                .capitalPaid(null)
+                .expenses(BigDecimal.valueOf(50.00).setScale(2, RoundingMode.DOWN))
+                .interestAmountPaid(BigDecimal.valueOf(100.00).setScale(2, RoundingMode.DOWN))
+                .payLateFees(BigDecimal.valueOf(10.00).setScale(2, RoundingMode.DOWN))
+                .balance(BigDecimal.valueOf(4500.00).setScale(2, RoundingMode.DOWN))
+                .typeMovement("payment")
+                .totalInstallment(BigDecimal.valueOf(650.00).setScale(2, RoundingMode.DOWN))
+                .branch("branch123")
+                .build();
     }
 
     public static LoanInsurancePaymentsResponse withDefaultLoanInsurancePaymentsResponse() {
@@ -141,7 +163,7 @@ public class LoansResponseFixture {
                 .build();
     }
 
-    public static LoanPaymentResponse withDataDefaultLoanPaymentResponse(){
+    public static LoanPaymentResponse withDataDefaultLoanPaymentResponse() {
         return LoanPaymentResponse.builder()
                 .status("Success")
                 .transactionId("123")
