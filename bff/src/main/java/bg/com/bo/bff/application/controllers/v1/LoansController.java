@@ -138,7 +138,7 @@ public class LoansController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
-    @GetMapping("{loanId}/persons/{personId}/payments")
+    @GetMapping("{loanId}/persons/{personId}/payments/{clientId}")
     public ResponseEntity<LoanDetailPaymentResponse> getLoanDetailPayment(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
@@ -146,9 +146,10 @@ public class LoansController {
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("loanId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String loanId,
-            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("clientId") @OnlyNumber @Parameter(description = "Este es el clientId de la persona", example = "12345") String clientId
     ) throws IOException {
-        return ResponseEntity.ok(service.getLoanDetailPayment(loanId, personId, Headers.getParameter(httpServletRequest,
+        return ResponseEntity.ok(service.getLoanDetailPayment(loanId, personId, clientId, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,

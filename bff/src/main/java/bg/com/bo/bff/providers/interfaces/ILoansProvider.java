@@ -15,5 +15,5 @@ public interface ILoansProvider {
 
     LoanPlanMWResponse getLoanPlansPayments(String loanId, String personId, Map<String, String> parameters) throws IOException;
 
-    LoanDetailPaymentMWResponse getLoanDetailPayment(String loanId, String personId, Map<String, String> parameters) throws IOException;
+    LoanDetailPaymentMWResponse getLoanDetailPayment(String loanId, String clientId, Map<String, String> parameters) throws IOException;
 }

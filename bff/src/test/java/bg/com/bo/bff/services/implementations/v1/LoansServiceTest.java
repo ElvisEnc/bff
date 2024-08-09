@@ -466,13 +466,16 @@ class LoansServiceTest {
     @Test
     void givenLoanIdAndPersonIdWhenGetLoanDetailPaymentThenLoanDetailPaymentResponse() throws IOException {
         //Arrange
+        List<ListLoansResponse> listExpectedResponse = LoansResponseFixture.withDataDefaultListLoansResponse();
         LoanDetailPaymentMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultLoanDetailPaymentMWResponse();
         LoanDetailPaymentResponse expectedResponse = LoansResponseFixture.withDefaultLoanDetailPaymentResponse();
+        ReflectionTestUtils.setField(service, "self", self);
         when(provider.getLoanDetailPayment(any(), any(), any())).thenReturn(mwResponseMock);
         when(mapper.convertResponse(mwResponseMock)).thenReturn(expectedResponse);
+        when(self.getServiceCache(any(), any(), anyBoolean())).thenReturn(listExpectedResponse);
 
         //Act
-        LoanDetailPaymentResponse response = service.getLoanDetailPayment("123", "123", new HashMap<>());
+        LoanDetailPaymentResponse response = service.getLoanDetailPayment("12345", "12345", "12345", new HashMap<>());
 
         //Assert
         assertNotNull(response);

@@ -3,6 +3,7 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
 import bg.com.bo.bff.application.dtos.response.loans.*;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.filters.*;
 import bg.com.bo.bff.commons.utils.Util;
@@ -11,6 +12,8 @@ import bg.com.bo.bff.providers.dtos.request.loans.mw.LoanPaymentMWRequest;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
 import bg.com.bo.bff.providers.interfaces.ILoansTransactionProvider;
+import bg.com.bo.bff.providers.models.enums.middleware.transfer.TransferMiddlewareError;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import bg.com.bo.bff.services.interfaces.ILoansService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
@@ -133,8 +136,14 @@ public class LoansService implements ILoansService {
     }
 
     @Override
-    public LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, Map<String, String> parameter) throws IOException {
-        LoanDetailPaymentMWResponse mwResponse = provider.getLoanDetailPayment(loanId, personId, parameter);
+    public LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId, Map<String, String> parameter) throws IOException {
+        List<ListLoansResponse> list = self.getServiceCache(personId, parameter, false);
+        boolean existData = list.stream().anyMatch(response -> response.getLoanId().equals(loanId) && response.getClientId().equals(clientId));
+        if (!existData) {
+            DefaultMiddlewareError error = DefaultMiddlewareError.NOT_VALID_DATA;
+            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+        }
+        LoanDetailPaymentMWResponse mwResponse = provider.getLoanDetailPayment(loanId, clientId, parameter);
         return mapper.convertResponse(mwResponse);
     }
 

@@ -20,7 +20,7 @@ public interface ILoansService {
 
     List<LoanPlanResponse> getLoanPlans(String loanId, String personId, Map<String, String> parameter) throws IOException;
 
-    LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, Map<String, String> parameter) throws IOException;
+    LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId, Map<String, String> parameter) throws IOException;
 
     LoanPaymentResponse payLoanInstallment(String personId, String accountId, String correlativeId, Map<String, String> parameter) throws IOException;
 }

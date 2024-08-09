@@ -57,8 +57,8 @@ public class LoansProvider extends MiddlewareProvider<LoansMiddlewareError> impl
     }
 
     @Override
-    public LoanDetailPaymentMWResponse getLoanDetailPayment(String loanId, String personId, Map<String, String> parameters) throws IOException {
-        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LOAN_DETAIL_PAYMENT.getServiceURL(), loanId, personId);
+    public LoanDetailPaymentMWResponse getLoanDetailPayment(String loanId, String clientId, Map<String, String> parameters) throws IOException {
+        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LOAN_DETAIL_PAYMENT.getServiceURL(), loanId, clientId);
         ApiDataResponse<LoanDetailPaymentMWResponse> mwResponse = get(url, HeadersMW.getDefaultHeaders(parameters), ApiDataResponse.class);
         return Util.stringToObject(Util.objectToString(mwResponse.getData()), LoanDetailPaymentMWResponse.class);
     }
