@@ -135,6 +135,39 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
     }
 
     /**
+     * Execute a HttpDelete using HttpClientFactory and a token given by TokenMiddlewareProvider.
+     * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
+     * @param url       URL of the resource.
+     * @param headers   List of headers for the request.
+     * @param classType Type of the response class.
+     * @param <E>       The type of the response object.
+     * @return An object of the given response type.
+     * @throws IOException If an I/O error occurs.
+     */
+    protected <E> E delete(String url, Header[] headers, Class<E> classType) throws IOException {
+        return delete(url, headers, classType, DefaultResponseHandler.instance());
+    }
+
+    /**
+     * Execute a HttpDelete using HttpClientFactory and a token given by TokenMiddlewareProvider.
+     * In case of a response other than 200, it evaluates the response using the provided ResponseHandler.
+     * If the evaluation is successful, it resolves the response using the resolver from the ResponseHandler.
+     * Otherwise, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
+     *
+     * @param url             URL of the resource.
+     * @param headers         List of headers for the request.
+     * @param classType       Type of the response class.
+     * @param responseHandler Evaluator and resolver for handling specific response scenarios.
+     * @param <E>             The type of the response object.
+     * @return An object of the given response type.
+     * @throws IOException If an I/O error occurs.
+     */
+    protected <E> E delete(String url, Header[] headers, Class<E> classType, ResponseHandler<E> responseHandler) throws IOException {
+        return executeRequest(new HttpDelete(url), headers, null, classType, responseHandler);
+    }
+
+    /**
      * Execute a HttpDeleteWithBody using HttpClientFactory and a token given by TokenMiddlewareProvider.
      * In case of a response other than 200, it throws a GenericException mapped by the declared IMiddlewareError class or consequently by the DefaultMiddlewareError.
      *

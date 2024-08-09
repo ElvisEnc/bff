@@ -7,8 +7,8 @@ import java.util.List;
 
 public class AchAccountMWResponseFixture {
 
-    public static ApiDataResponse<AchAccountMWResponse> withDefaultAddAchAccountMWResponse() {
-        return ApiDataResponse.of(new AchAccountMWResponse("123"));
+    public static ApiDataResponse<AddAccountMWResponse> withDefaultAddAchAccountMWResponse() {
+        return ApiDataResponse.of(new AddAccountMWResponse("123"));
     }
 
 

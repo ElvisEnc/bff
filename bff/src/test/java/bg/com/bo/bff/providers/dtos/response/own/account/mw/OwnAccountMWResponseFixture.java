@@ -4,17 +4,58 @@ import java.math.BigDecimal;
 import java.util.Collections;
 
 public class OwnAccountMWResponseFixture {
-    public static TransactionLimitListMWResponse withDefaultTransactionLimitListMWResponse(){
-        return new TransactionLimitListMWResponse(
-                TransactionLimitsMWResponse.builder()
-                        .identifier("123445")
-                        .transactionPermitDay(String.valueOf(10))
-                        .availableTransaction(String.valueOf(1000))
-                        .availableTransactionGroup("2")
-                        .currencyCod("13")
-                        .type("I")
-                        .build()
-        );
+    public static OwnAccountsListMWResponse withDefaultOwnAccountsListMWResponse() {
+        return OwnAccountsListMWResponse.builder()
+                .data(Collections.singletonList(withDefaultAccountMW()))
+                .build();
+    }
+
+    public static OwnAccountsListMWResponse.AccountMW withDefaultAccountMW() {
+        return OwnAccountsListMWResponse.AccountMW.builder()
+                .accountId("123456789")
+                .accountNumber("987654321")
+                .clientName("Juan Perez")
+                .clientCode("C123456")
+                .accountHolderCode("AH123456")
+                .currencyCode("USD")
+                .currencyDescription("Dólares Americanos")
+                .productDescription("Cuenta Corriente")
+                .accountManagementCode("MGMT123")
+                .accountType("Corriente")
+                .availiableBalance(new BigDecimal("1500.00"))
+                .accountManagementDescription("Gestión Personal")
+                .openingDate("2024-01-01")
+                .dateOfLastMovement("2024-07-01")
+                .totalBalance(new BigDecimal("2000.00"))
+                .pledgeFounds(new BigDecimal("500.00"))
+                .pendingDeposits(new BigDecimal("300.00"))
+                .statusCode("ACTIVE")
+                .statusDescription("Activa")
+                .branchCode("001")
+                .branchDescription("Sucursal Principal")
+                .departamentCode("D01")
+                .departamentDescription("Departamento Central")
+                .accountUsage("Personal")
+                .accountUsageDescription("Uso Personal")
+                .migrate("NO")
+                .build();
+    }
+
+    public static UpdateLimitMWResponse withDefaultUpdateLimitMWResponse() {
+        return new UpdateLimitMWResponse(new UpdateLimitMWResponse.UpdateLimitMW("123"));
+    }
+
+
+    public static TransactionLimitsMWResponse withDefaultTransactionLimitsMWResponse() {
+        return TransactionLimitsMWResponse.builder()
+                .identifier("123")
+                .transactionPermitDay("10")
+                .transactionsRegisteredInDay("10")
+                .availableTransaction("10")
+                .availableTransactionGroup("10")
+                .currencyCod("068")
+                .type("I")
+                .build();
     }
 
     public static AccountStatementsMWResponse withDefaultAccountReportBasicResponse() {
@@ -47,6 +88,5 @@ public class OwnAccountMWResponseFixture {
                         .status("status")
                         .build()))
                 .build();
-
     }
 }

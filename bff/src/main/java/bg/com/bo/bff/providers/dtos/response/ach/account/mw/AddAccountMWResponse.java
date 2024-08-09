@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AchAccountMWResponse {
+public class AddAccountMWResponse {
     private String identifier;
 }

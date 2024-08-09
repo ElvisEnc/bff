@@ -217,14 +217,22 @@ public class DestinationAccountController {
     })
     @DeleteMapping("/{personId}/third-accounts/{identifier}/accounts/{accountNumber}")
     public ResponseEntity<GenericResponse> deleteThirdAccount(
-            @Valid @RequestHeader("device-id") String deviceId,
-            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
-            @PathVariable("accountNumber") @NotNull(message = "Invalid accountNumber") @Min(value = 1, message = "Invalid accountNumber") @Schema(example = "1234", description = "Account ID de la cuenta.") long accountNumber,
-            HttpServletRequest servletRequest
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId", example = "12345") String personId,
+            @PathVariable("identifier") @OnlyNumber @Parameter(description = "Este es el id de la cuenta", example = "12345") long identifier,
+            @PathVariable("accountNumber") @OnlyNumber @Schema(example = "1234", description = "Este es el número de la cuenta.") long accountNumber
     ) throws IOException {
-        String ip = servletRequest.getRemoteAddr();
-        return ResponseEntity.ok(service.deleteThirdAccount(personId, identifier, accountNumber, deviceId, ip));
+        return ResponseEntity.ok(service.deleteThirdAccount(personId, identifier, accountNumber, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
     }
 
     @Operation(summary = "Eliminación de cuenta billetera.", description = "Elimina cuenta de billetera.")
@@ -235,14 +243,22 @@ public class DestinationAccountController {
     })
     @DeleteMapping("/{personId}/wallets/{identifier}/wallet-accounts/{accountNumber}")
     public ResponseEntity<GenericResponse> deleteWalletAccount(
-            @Valid @RequestHeader("device-id") String deviceId,
-            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
-            @PathVariable("accountNumber") @NotNull @Parameter(description = "Este es el número de la cuenta", example = "12345") long accountNumber,
-            HttpServletRequest servletRequest
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId", example = "12345") String personId,
+            @PathVariable("identifier") @OnlyNumber @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
+            @PathVariable("accountNumber") @OnlyNumber @Parameter(description = "Este es el número de la cuenta", example = "12345") long accountNumber
     ) throws IOException {
-        String ip = servletRequest.getRemoteAddr();
-        return ResponseEntity.ok(service.deleteWalletAccount(personId, identifier, accountNumber, deviceId, ip));
+        return ResponseEntity.ok(service.deleteWalletAccount(personId, identifier, accountNumber, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
     }
 
     @Operation(summary = "Eliminación de cuenta ACH.", description = "Elimina cuenta ACH.")

@@ -71,7 +71,7 @@ class AchAccountMiddlewareProviderTest {
     void givenValidaDataWhenAddAchAccountThenReturnOk() throws IOException {
         // Arrange
         AddAchAccountBasicRequest requestMock = AchAccountMWRequestFixture.withDefaultOKAddAchAccountBasicRequest();
-        ApiDataResponse<AchAccountMWResponse> expectedResponse = AchAccountMWResponseFixture.withDefaultAddAchAccountMWResponse();
+        ApiDataResponse<AddAccountMWResponse> expectedResponse = AchAccountMWResponseFixture.withDefaultAddAchAccountMWResponse();
         String jsonResponse = Util.objectToString(expectedResponse);
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
@@ -87,7 +87,7 @@ class AchAccountMiddlewareProviderTest {
     void givenValidaDataWhenAddAchAccountThenReturnError() throws IOException {
         // Arrange
         AddAchAccountBasicRequest requestMock = AchAccountMWRequestFixture.withDefaultOKAddAchAccountBasicRequest();
-        ApiDataResponse<AchAccountMWResponse> expectedResponse = ApiDataResponse.of(new AchAccountMWResponse());
+        ApiDataResponse<AddAccountMWResponse> expectedResponse = ApiDataResponse.of(new AddAccountMWResponse());
         String jsonResponse = Util.objectToString(expectedResponse);
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
@@ -104,7 +104,7 @@ class AchAccountMiddlewareProviderTest {
     void givenValidaDataWhenDeleteAchAccountThenReturnOk() throws IOException {
         // Arrange
         DeleteAchAccountMWRequest requestMock = AchAccountMWRequestFixture.withDefaultDeleteAchAccountMWRequest();
-        ApiDataResponse<AchAccountMWResponse> expectedResponse = AchAccountMWResponseFixture.withDefaultAddAchAccountMWResponse();
+        ApiDataResponse<AddAccountMWResponse> expectedResponse = AchAccountMWResponseFixture.withDefaultAddAchAccountMWResponse();
         String jsonResponse = Util.objectToString(expectedResponse);
         stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
 
@@ -120,7 +120,7 @@ class AchAccountMiddlewareProviderTest {
     void givenValidaDataWhenDeleteAchAccountThenReturnError() throws IOException {
         // Arrange
         DeleteAchAccountMWRequest requestMock = AchAccountMWRequestFixture.withDefaultDeleteAchAccountMWRequest();
-        ApiDataResponse<AchAccountMWResponse> expectedResponse = ApiDataResponse.of(new AchAccountMWResponse());
+        ApiDataResponse<AddAccountMWResponse> expectedResponse = ApiDataResponse.of(new AddAccountMWResponse());
         String jsonResponse = Util.objectToString(expectedResponse);
         stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
 

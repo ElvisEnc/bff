@@ -1,10 +1,6 @@
 package bg.com.bo.bff.application.dtos.request.destination.account;
 
 
-import bg.com.bo.bff.providers.dtos.request.ach.account.mw.AddAchAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddThirdAccountBasicRequest;
-import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddWalletAccountBasicRequest;
-
 public class DestinationAccountRequestFixture {
     public static DestinationAccountRequest withDefault() {
         return DestinationAccountRequest.builder()
@@ -53,34 +49,12 @@ public class DestinationAccountRequestFixture {
                 .build();
     }
 
-    public static AddThirdAccountBasicRequest withDefaultOKAddThirdAccountBasicRequest() {
-        return AddThirdAccountBasicRequest.builder()
-                .personId("12345")
-                .companyPersonId("12345")
-                .toAccountNumber("123456789")
-                .reference("Prueba")
-                .isFavorite("S")
-                .build();
-
-    }
-
     public static AddThirdAccountRequest withDefaultAddThirdAccountRequest() {
         return AddThirdAccountRequest.builder()
                 .toAccountNumber("123456789")
                 .reference("Prueba")
                 .isFavorite("S")
                 .build();
-    }
-
-    public static AddWalletAccountBasicRequest withDefaultOKAddWalletAccountBasicRequest() {
-        return AddWalletAccountBasicRequest.builder()
-                .personId("12345")
-                .companyPersonId("12345")
-                .toAccountNumber("123456789")
-                .reference("Prueba")
-                .isFavorite("S")
-                .build();
-
     }
 
     public static AddWalletAccountRequest withDefaultAddWalletAccountRequest() {

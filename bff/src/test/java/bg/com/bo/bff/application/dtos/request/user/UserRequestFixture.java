@@ -230,7 +230,4 @@ public class UserRequestFixture {
                 .build();
     }
 
-    public static UpdateTransactionLimitMWRequest withDefaultUpdateTransactionLimitMWRequest(){
-        return new UpdateTransactionLimitMWRequest("1000","1");
-    }
 }

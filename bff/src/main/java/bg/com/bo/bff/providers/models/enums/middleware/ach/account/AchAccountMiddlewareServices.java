@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum AchMiddlewareServices {
+public enum AchAccountMiddlewareServices {
     ADD_ACCOUNT("/bs/v1/ach"),
     DELETE_ACCOUNT("/bs/v1/ach/delete"),
     GET_BANKS("/bs/v1/ach/others-bank-list"),

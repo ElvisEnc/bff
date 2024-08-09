@@ -32,9 +32,9 @@ public interface IDestinationAccountService {
 
     AccountTypeListResponse accountTypes();
 
-    GenericResponse deleteThirdAccount(String personId, long identifier, long accountNumber, String deviceId, String deviceIp) throws IOException;
+    GenericResponse deleteThirdAccount(String personId, long identifier, long accountNumber, Map<String, String> parameters) throws IOException;
 
-    GenericResponse deleteWalletAccount(String personId, long identifier, long accountNumber, String deviceId, String deviceIp) throws IOException;
+    GenericResponse deleteWalletAccount(String personId, long identifier, long accountNumber, Map<String, String> parameters) throws IOException;
 
     GenericResponse deleteAchAccount(String personId, long identifier, Map<String, String> parameter) throws IOException;
 

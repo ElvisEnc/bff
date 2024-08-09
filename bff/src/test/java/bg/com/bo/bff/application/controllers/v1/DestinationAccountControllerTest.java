@@ -25,7 +25,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
@@ -183,7 +182,7 @@ class DestinationAccountControllerTest {
 
         GenericResponse expected = new GenericResponse();
 
-        when(service.deleteThirdAccount(any(), anyLong(), anyLong(), any(),any())).thenReturn(expected);
+        when(service.deleteThirdAccount(any(), anyLong(), anyLong(), any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(delete(DELETE_THIRD_ACCOUNT + accountNumber)
@@ -194,7 +193,7 @@ class DestinationAccountControllerTest {
                 .andReturn();
 
         // Assert
-        verify(service).deleteThirdAccount( any(),anyLong(), anyLong(),any(), any());
+        verify(service).deleteThirdAccount(any(), anyLong(), anyLong(), any());
     }
 
     @Test
@@ -230,7 +229,7 @@ class DestinationAccountControllerTest {
 
         // Act and Assert
         MvcResult result = mockMvc.perform(delete(DELETE_WALLET_ACCOUNT)
-                        .header("device-id", deviceId)
+                        .headers(this.headers)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -247,7 +246,7 @@ class DestinationAccountControllerTest {
 
         GenericResponse expected = new GenericResponse();
 
-        when(service.deleteAchAccount(any(),anyLong(),any())).thenReturn(expected);
+        when(service.deleteAchAccount(any(), anyLong(), any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(delete(DELETE_ACH_ACCOUNT)
@@ -258,7 +257,7 @@ class DestinationAccountControllerTest {
                 .andReturn();
 
         // Assert
-        verify(service).deleteAchAccount(any(),anyLong(),any() );
+        verify(service).deleteAchAccount(any(), anyLong(), any());
     }
 
     @Test
@@ -302,7 +301,7 @@ class DestinationAccountControllerTest {
         // Arrange
         Integer bankCode = 1017;
         BranchOfficeResponse mockResponse = DestinationAccountResponseFixture.withDefaultBranchOfficeResponse();
-        when(service.getBranchOffice(any(),any() )).thenReturn(mockResponse);
+        when(service.getBranchOffice(any(), any())).thenReturn(mockResponse);
 
         // Act
         mockMvc.perform(get(GET_BRANCH_OFFICE, bankCode)
@@ -315,7 +314,7 @@ class DestinationAccountControllerTest {
                 .andExpect(jsonPath("$.data[0].description").value(mockResponse.getData().get(0).getDescription()));
 
         // Assert
-        verify(service).getBranchOffice(any(),any());
+        verify(service).getBranchOffice(any(), any());
     }
 
     @Test

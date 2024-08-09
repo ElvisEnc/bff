@@ -42,11 +42,7 @@ public enum AppError {
     MDWAAM_002(HttpStatus.BAD_REQUEST, "DATA_INVALID", "MDWAAM-002", "Datos Invalidos"),
 
     // Cuentas Terceros
-    MDWACTM_002(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWACTM-002", "No se encontraron cuentas"),
     MDWRLIB_0012(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWRLIB-0012", "Channel not implemented yet"),
-    MDWACTM_015(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWACTM-015", "Params must be the same for CHANNEL 2"),
-    MDWACTM_016(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWACTM-016", "Params must not be the same for CHANNEL 6"),
-    MDWACTM_017(HttpStatus.NOT_FOUND, "NOT_ACCOUNT", "MDWACTM-017", "No se encontró la cuenta con los datos otorgados."),
 
     //DPFs
     MDWDPF_002(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWDPF-002", "No se encontraron registros."),

@@ -12,14 +12,14 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DestinationAccount {
-            private Long id;
-            private Long accountId;
-            private BigInteger accountNumber;
-            private String currencyCode;
-            private String currencyAcronym;
-            private String clientName;
-            private String bankCode;
-            private String bankName;
-            private String accountAliases;
-            private Integer destinationAccountType;
+    private Long id;
+    private Long accountId;
+    private BigInteger accountNumber;
+    private String currencyCode;
+    private String currencyAcronym;
+    private String clientName;
+    private String bankCode;
+    private String bankName;
+    private String accountAliases;
+    private Integer destinationAccountType;
 }
