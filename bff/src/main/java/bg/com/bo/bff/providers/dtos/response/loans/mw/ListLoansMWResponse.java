@@ -29,6 +29,10 @@ public class ListLoansMWResponse {
         @JsonProperty("loanNumber")
         private String loanNumber;
 
+        @Schema(description = "Id del cliente")
+        @JsonProperty("clientCode")
+        private String clientCode;
+
         @Schema(description = "Nombre del cliente")
         @JsonProperty("customerName")
         private String customerName;

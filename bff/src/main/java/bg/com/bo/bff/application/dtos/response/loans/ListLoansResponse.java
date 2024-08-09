@@ -20,6 +20,10 @@ public class ListLoansResponse {
     @JsonProperty("loanNumber")
     private String loanNumber;
 
+    @Schema(description = "Id del cliente")
+    @JsonProperty("clientId")
+    private String clientId;
+
     @Schema(description = "Nombre del cliente")
     @JsonProperty("customerName")
     private String customerName;
@@ -37,8 +41,8 @@ public class ListLoansResponse {
     private Double balance;
 
     @Schema(description = "Moneda")
-    @JsonProperty("currency")
-    private String currency;
+    @JsonProperty("currencyCode")
+    private String currencyCode;
 
     @Schema(description = "Fecha de vencimiento")
     @JsonProperty("expirationDate")
@@ -51,6 +55,10 @@ public class ListLoansResponse {
     @Schema(description = "Producto")
     @JsonProperty("product")
     private String product;
+
+    @Schema(description = "Fecha del último pago")
+    @JsonProperty("lastPaymentDate")
+    private String lastPaymentDate;
 
     @Schema(description = "Código de estado")
     @JsonProperty("stateCode")

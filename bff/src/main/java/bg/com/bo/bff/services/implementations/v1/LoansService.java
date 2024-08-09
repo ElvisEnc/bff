@@ -50,7 +50,7 @@ public class LoansService implements ILoansService {
         List<ListLoansResponse> list = self.getServiceCache(personId, parameters, refreshData);
 
         String field = (request.getFilters().getOrder() != null) ? request.getFilters().getOrder().getField() : "EXPIRATION_DATE";
-        boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
+        boolean desc = (request.getFilters().getOrder() != null) && request.getFilters().getOrder().getDesc();
         Map<String, Function<ListLoansResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("LOAN_NUMBER", ListLoansResponse::getLoanNumber);
         comparatorOptions.put("EXPIRATION_DATE", response -> LocalDate.parse(response.getExpirationDate(), Util.getDateFormatter()));
