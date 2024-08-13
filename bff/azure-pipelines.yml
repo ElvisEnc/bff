@@ -1,6 +1,7 @@
 trigger:
   - develop
   - staging
+  - uat
   - release*
   - main
 
@@ -11,6 +12,7 @@ parameters:
     default:
       - refs/heads/develop
       - refs/heads/staging
+      - refs/heads/uat
       - refs/heads/release*
       - refs/heads/main
 
@@ -267,7 +269,7 @@ stages:
                 export portName="$(portName)"
                 export portNumber="$(portNumber)"
                 export chart="$(chart)"
-                export cluster="aks"
+                export cluster="ganamovil"
                 BRANCH_NAME="$(Build.SourceBranchName)"
                 projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
               workingDirectory: '$(Agent.TempDirectory)/gitops'
@@ -320,7 +322,60 @@ stages:
                 export portName="$(portName)"
                 export portNumber="$(portNumber)"
                 export chart="$(chart)"
-                export cluster="aks"
+                export cluster="ganamovil"
+                BRANCH_NAME="$(Build.SourceBranchName)"
+                projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
+              workingDirectory: '$(Agent.TempDirectory)/gitops'
+
+          - task: Bash@3
+            displayName: "Delete tmp files"
+            inputs:
+              targetType: 'inline'
+              script: |
+                [ -f /$(tmpPath) ] && rm -fv /$(tmpPath) || echo 'No existe /$(tmpPath)'
+                
+  - stage: Deploy_Uat
+    displayName: "Continuous Deployment UAT"
+    dependsOn: 'Build_Push_Container_Image'
+    condition: and(succeeded('Build_Push_Container_Image'), eq(variables['Build.SourceBranch'], 'refs/heads/uat'))
+    jobs:
+      - job: Deploy
+        displayName: "CD - Prepare"
+        variables:
+          tmpPath: 'tmp/env-data-$(productName).yaml'
+          scriptPath: './devsecops-bga-tpls/bash-scripts/new-project.sh'
+          PROJECT_PATH: $(Build.SourcesDirectory)/bff
+        steps:
+          - task: Bash@3
+            displayName: "Setting environment variables"
+            inputs:
+              targetType: 'inline'
+              script: |
+                [ -f $(PROJECT_PATH)/cicd/env-data.yaml ] && cp $(PROJECT_PATH)/cicd/env-data.yaml /$(tmpPath) || echo 'No existe $(PROJECT_PATH)/cicd/env-data.yaml'
+          
+          - script: |
+              git clone --branch main $(gitopsRepository)
+            displayName: "Get GitOps Infrastructure Repo"
+            workingDirectory: '$(Agent.TempDirectory)'
+            
+          - task: Bash@3
+            displayName: "ArgoCD Deployment"
+            inputs:
+              targetType: 'inline'
+              script: |
+                export team="$(team)"
+                export namespace="$(namespace)"
+                export appalias="$(appalias)"
+                export productName="$(productName)"
+                export registryCredential="$(registryCredential)"
+                export dockerUser="$(dockerUser)"
+                export dockerRepo="$(dockerRepo)"
+                export dockerImageTAG="$(dockerImageTAG)"
+                export helmChartsURL="$(helmChartsURL)"
+                export portName="$(portName)"
+                export portNumber="$(portNumber)"
+                export chart="$(chart)"
+                export cluster="ganamovil"
                 BRANCH_NAME="$(Build.SourceBranchName)"
                 projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
               workingDirectory: '$(Agent.TempDirectory)/gitops'
@@ -373,7 +428,7 @@ stages:
                 export portName="$(portName)"
                 export portNumber="$(portNumber)"
                 export chart="$(chart)"
-                export cluster="aks"
+                export cluster="ganamovil"
                 BRANCH_NAME="$(Build.SourceBranchName)"
                 projectBranch="${BRANCH_NAME%-*}" bash $(scriptPath)
               workingDirectory: '$(Agent.TempDirectory)/gitops'
