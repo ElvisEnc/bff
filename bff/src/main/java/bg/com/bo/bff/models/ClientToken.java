@@ -1,7 +1,5 @@
 package bg.com.bo.bff.models;
 
-import java.time.LocalDateTime;
-
 @lombok.Data
 public class ClientToken {
     String accessToken;

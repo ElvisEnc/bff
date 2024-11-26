@@ -2,9 +2,14 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.transfer.Pcc01Request;
-import bg.com.bo.bff.commons.enums.*;
+import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Response;
+import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.request.transfer.Pcc01MWRequest;
 import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequest;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AddAccountMWResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.transfer.Pcc01MWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfer.TransferWalletMWResponse;
@@ -25,9 +30,10 @@ public class TransferMiddlewareProvider extends MiddlewareProvider<TransferMiddl
         super(ProjectNameMW.TRANSFER_MANAGER, TransferMiddlewareError.class, tokenMiddlewareProvider, middlewareConfig, httpClientFactory, middlewareConfig.getClientTransfer());
     }
 
-    public Pcc01MWResponse validateControl(Pcc01Request request, Map<String, String> parameters) throws IOException {
+    public Pcc01Response validateControl(Pcc01MWRequest request, Map<String, String> parameters) throws IOException {
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + TransferMiddlewareServices.VALIDATE_PCC01.getServiceURL();
-        return post(url, HeadersMW.getDefaultHeaders(parameters), request, Pcc01MWResponse.class);
+        ApiDataResponse<Pcc01Response> mwResponse = post(url, HeadersMW.getDefaultHeaders(parameters), request, ApiDataResponse.class);
+        return Util.stringToObject(Util.objectToString(mwResponse.getData()), Pcc01Response.class);
     }
 
     @Override

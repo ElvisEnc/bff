@@ -1,16 +1,22 @@
 package bg.com.bo.bff.application.config;
 
+import bg.com.bo.bff.application.config.encryption.payload.EncryptionPayloadFilter;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.models.UserData;
+import bg.com.bo.bff.models.payload.encryption.RequestCompare;
 import bg.com.bo.bff.providers.dtos.response.jwt.JwtAccess;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
 import bg.com.bo.bff.mappings.services.auth.IAuthMapper;
-import io.jsonwebtoken.ExpiredJwtException;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,10 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Order(2)
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final IJwtProvider jwtService;
-    private IAuthMapper authMapper;
+    private final IAuthMapper authMapper;
 
     @Autowired
     public JwtAuthenticationFilter(IJwtProvider jwtService, IAuthMapper authMapper) {
@@ -59,12 +66,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (ExpiredJwtException ignored) {
+
+            chain.doFilter(request, response);
+        } catch (GenericException e) {
+            throw (e);
         } catch (Exception e) {
             logger.error("Hubo un error al obtener los datos del Access Token.");
             logger.error(e);
-        } finally {
-            chain.doFilter(request, response);
+            throw new GenericException(DefaultMiddlewareError.AUTHENTICATION_FILTER_FAILURE);
         }
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        for (RequestCompare requestCompare : JwtAuthenticationFilter.getNotFilter()) {
+            if (request.getMethod().equals(requestCompare.getMethod().name()) && path.matches(requestCompare.getPath()))
+                return true;
+        }
+        return false;
+    }
+
+    @Getter
+    private static final List<RequestCompare> notFilter;
+
+    static {
+        notFilter = List.of(
+                new RequestCompare(HttpMethod.POST, "/api/v.*/login/[0-9]+/refresh")
+        );
     }
 }

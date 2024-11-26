@@ -18,7 +18,7 @@ public enum LoansTransactionMiddlewareError implements IMiddlewareError {
     MDWLTM_011(HttpStatus.BAD_REQUEST, "NOT_FOUND_AVAILABLE", "MDWLTM-011", "No se pudo obtener los datos del préstamo"),
     MDWLTM_012(HttpStatus.BAD_REQUEST, "ERROR_ITF", "MDWLTM-012", "No se pudo realizar el cálculo del ITF"),
     MDWLTM_013(HttpStatus.BAD_REQUEST, "NO_FUNDS_AVAILABLE", "MDWLTM-013", "La cuenta no tiene fondos suficientes para realizar el pago"),
-    MDWLTM_014(HttpStatus.BAD_REQUEST, "LIMIT_KO", "MDWLTM-014", "No se pudo realizar el pago, límites superados"),
+    MDWLTM_014(HttpStatus.BAD_REQUEST, "AMOUNT_LIMIT_KO", "MDWLTM-014", "No se pudo realizar el pago, límites de monto superados"),
     MDWLTM_015(HttpStatus.BAD_REQUEST, "VALIDATE_ROLE_PERSON", "MDWLTM-015", "Validación del person rol fallida"),
     MDWLTM_016(HttpStatus.BAD_REQUEST, "NOT_FOUND_AVAILABLE", "MDWLTM-016", "No se pudo obtener los datos del préstamo"),
     MDWLTM_017(HttpStatus.BAD_REQUEST, "ERROR_MAE", "MDWLTM-017", "No se pudo registrar el pago"),

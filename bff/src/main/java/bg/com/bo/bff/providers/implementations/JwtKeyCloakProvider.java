@@ -1,26 +1,28 @@
 package bg.com.bo.bff.providers.implementations;
 
-import bg.com.bo.bff.application.dtos.request.login.LogoutRequest;
 import bg.com.bo.bff.application.exceptions.*;
 import bg.com.bo.bff.commons.constants.CacheConstants;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.providers.IGenericsMapper;
 import bg.com.bo.bff.mappings.providers.keycloak.KeyCloakMapper;
 import bg.com.bo.bff.providers.dtos.request.keycloak.CustomClaimsData;
 import bg.com.bo.bff.providers.dtos.response.jwt.JwtAccess;
 import bg.com.bo.bff.providers.dtos.response.jwt.JwtKey;
 import bg.com.bo.bff.providers.dtos.response.jwt.JwtRefresh;
-import bg.com.bo.bff.providers.dtos.response.keycloak.ErrorKCResponse;
+import bg.com.bo.bff.providers.dtos.response.keycloak.*;
 import bg.com.bo.bff.providers.dtos.response.jwt.keycloak.CreateTokenServiceResponse;
-import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakCertListResponse;
-import bg.com.bo.bff.providers.dtos.response.keycloak.CreateTokenKCResponse;
-import bg.com.bo.bff.commons.enums.UserRole;
+import bg.com.bo.bff.commons.enums.user.UserRole;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakKeyResponse;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
+import bg.com.bo.bff.providers.models.enums.keycloak.KeyCloakService;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import bg.com.bo.bff.services.interfaces.ISessionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.InvalidKeyException;
+import io.jsonwebtoken.security.SignatureException;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -52,9 +54,6 @@ public class JwtKeyCloakProvider implements IJwtProvider {
     @Value("${keycloak.base.url}")
     private String urlBase;
 
-    @Value("${keycloak.token.url}")
-    private String urlTokenComplement;
-
     @Value("${keycloak.client.secret}")
     private String clientSecret;
 
@@ -72,12 +71,6 @@ public class JwtKeyCloakProvider implements IJwtProvider {
 
     @Value("${keycloak.subject}")
     private String subject;
-
-    @Value("${keycloak.certs.url}")
-    private String urlCertsComplement;
-
-    @Value("${keycloak.revoke.url}")
-    private String urlRevokeComplement;
 
     private final ISessionService sessionManager;
 
@@ -119,7 +112,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
             customClaimsJson = mapper.writeValueAsString(customClaimsData);
         } catch (JsonProcessingException e) {
             logger.error(e);
-            throw new JwtServiceException();
+            throw new GenericException(e.getMessage());
         }
 
         String customClaimsEncoded = Base64.getEncoder().encodeToString(customClaimsJson.getBytes());
@@ -143,7 +136,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
     @Cacheable(value = CacheConstants.CERTS_CACHE_NAME, key = "#root.methodName")
     public Map<String, JwtKey> certs() {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
-            String pathPostToken = urlBase + urlCertsComplement;
+            String pathPostToken = urlBase + KeyCloakService.CERTS.getServiceUrl();
 
             HttpGet request = new HttpGet(pathPostToken);
 
@@ -156,13 +149,13 @@ public class JwtKeyCloakProvider implements IJwtProvider {
                 return genericsMapper.convert(certListResponse.getKeys(), func, conv);
             } catch (Exception e) {
                 logger.error(e);
-                throw new RequestException("Hubo un error no controlado al consultar los certificados.");
+                throw new GenericException("Hubo un error no controlado al consultar los certificados.");
             }
-        } catch (RequestException e) {
+        } catch (GenericException e) {
             throw e;
         } catch (Exception e) {
             logger.error(e);
-            throw new RequestException("Hubo un error no controlado al crear el cliente para la obtencion de certificados.");
+            throw new GenericException("Hubo un error no controlado al crear el cliente para la obtencion de certificados.");
         }
     }
 
@@ -194,7 +187,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
      */
     private CreateTokenServiceResponse createTokenKCEndpoint(List<BasicNameValuePair> params) {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
-            String pathPostToken = urlBase + urlTokenComplement;
+            String pathPostToken = urlBase + KeyCloakService.CREATE_TOKEN.getServiceUrl();
 
             HttpPost postCreateToken = new HttpPost(pathPostToken);
             postCreateToken.setHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -218,44 +211,44 @@ public class JwtKeyCloakProvider implements IJwtProvider {
                         ErrorKCResponse errorKCResponse = getErrorKCResponse(objectMapper, response);
 
                         if (errorKCResponse.getError().equals(ErrorKCResponse.Error.UNAUTHORIZED_CLIENT.getCode()))
-                            throw new CreateTokenServiceException(ErrorKCResponse.Error.UNAUTHORIZED_CLIENT.name(), String.format("Cliente no autorizado. Descripcion: %s", errorKCResponse.getErrorDescription()));
+                            throw new GenericException(String.format("Cliente no autorizado. Descripcion: %s", errorKCResponse.getErrorDescription()), HttpStatus.UNAUTHORIZED, ErrorKCResponse.Error.UNAUTHORIZED_CLIENT.name());
 
                         if (errorKCResponse.getError().equals(ErrorKCResponse.Error.INVALID_CLIENT.getCode()))
-                            throw new CreateTokenServiceException(ErrorKCResponse.Error.INVALID_CLIENT.name(), String.format("Cliente invalido. Descripcion: %s", errorKCResponse.getErrorDescription()));
+                            throw new GenericException(String.format("Cliente invalido. Descripcion: %s", errorKCResponse.getErrorDescription()), HttpStatus.UNAUTHORIZED, ErrorKCResponse.Error.INVALID_CLIENT.name());
 
                         if (errorKCResponse.getError().equals(ErrorKCResponse.Error.INVALID_REQUEST.getCode()))
-                            throw new CreateTokenServiceException(ErrorKCResponse.Error.INVALID_REQUEST.name(), String.format("Request invalido. Descripcion: %s", errorKCResponse.getErrorDescription()));
+                            throw new GenericException(String.format("Request invalido. Descripcion: %s", errorKCResponse.getErrorDescription()), HttpStatus.BAD_REQUEST, ErrorKCResponse.Error.INVALID_REQUEST.name());
 
                         if (errorKCResponse.getError().equals(ErrorKCResponse.Error.UNSUPPORTED_GRANT_TYPE.getCode()))
-                            throw new CreateTokenServiceException(ErrorKCResponse.Error.UNSUPPORTED_GRANT_TYPE.name(), String.format("Grant type invalido. Descripcion: %s", errorKCResponse.getErrorDescription()));
+                            throw new GenericException(String.format("Grant type invalido. Descripcion: %s", errorKCResponse.getErrorDescription()), HttpStatus.BAD_REQUEST, ErrorKCResponse.Error.UNSUPPORTED_GRANT_TYPE.name());
 
                         if (errorKCResponse.getError().equals(ErrorKCResponse.Error.INVALID_GRANT.getCode()))
                             createTokenResponse.setStatusCode(CreateTokenServiceResponse.StatusCode.INVALID_DATA);
-                        else throw new NotHandledResponseException(errorKCResponse.getError());
+                        else throw new GenericException(errorKCResponse.getError());
                         break;
                     case 404:
-                        throw new CreateTokenServiceException(ErrorKCResponse.Error.NOT_FOUND_404.name(), String.format("Error en el request. Respuesta: %s", response));
+                        throw new GenericException(String.format("Error en el request. Respuesta: %s", response), HttpStatus.NOT_FOUND, ErrorKCResponse.Error.NOT_FOUND_404.name());
                     case 503:
                         logger.error("Servicio de token NO Disponible.");
                         logger.error(response);
-                        throw new CreateTokenServiceException(ErrorKCResponse.Error.NOT_AVAILABLE.name(), "Internal Server Error");
+                        throw new GenericException("Servicio de token NO Disponible.", HttpStatus.SERVICE_UNAVAILABLE, ErrorKCResponse.Error.NOT_AVAILABLE.name());
                     default:
                         logger.error(response);
-                        throw new NotHandledResponseException(response);
+                        throw new GenericException(response);
                 }
 
                 return createTokenResponse;
-            } catch (CreateTokenServiceException | NotHandledResponseException e) {
+            } catch (GenericException e) {
                 throw e;
             } catch (Exception e) {
                 logger.error(e);
-                throw new RequestException("Hubo un error no controlado al realizar el createToken");
+                throw new GenericException(DefaultMiddlewareError.KC_FAILURE);
             }
-        } catch (CreateTokenServiceException | NotHandledResponseException | RequestException e) {
+        } catch (GenericException e) {
             throw e;
         } catch (Exception e) {
             logger.error(e);
-            throw new RequestException("Hubo un error no controlado al crear el clienteToken");
+            throw new GenericException(DefaultMiddlewareError.KC_FAILURE);
         }
     }
 
@@ -264,7 +257,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
         try {
             errorKCResponse = objectMapper.readValue(errorResponse, ErrorKCResponse.class);
         } catch (Exception e) {
-            throw new NotHandledResponseException(errorResponse);
+            throw new GenericException(errorResponse);
         }
         return errorKCResponse;
     }
@@ -276,13 +269,13 @@ public class JwtKeyCloakProvider implements IJwtProvider {
      * @return JwtAccess con los datos del token provisto.
      */
     @Override
-    public JwtAccess parseJwtAccess(String token) throws JwtException, JwtValidationException {
+    public JwtAccess parseJwtAccess(String token) throws JwtException, GenericException {
         if (sessionManager.isOnBlacklist(token))
-            throw new JwtValidationException("El Access Token esta en blacklist.");
+            throw new GenericException(DefaultMiddlewareError.BLACKLISTED_ACCESS_JWT);
 
         JwtAccess jwtAccess = getSignedToken(token);
 
-        if (!validateToken(jwtAccess)) throw new JwtValidationException("El Access Token no es válido.");
+        if (!validateToken(jwtAccess)) throw new GenericException(DefaultMiddlewareError.INVALID_ACCESS_JWT);
 
         return jwtAccess;
     }
@@ -294,10 +287,10 @@ public class JwtKeyCloakProvider implements IJwtProvider {
      * @return JwtAccess con los datos del token provisto.
      */
     @Override
-    public JwtRefresh parseJwtRefresh(String token) throws JwtException, JwtValidationException {
+    public JwtRefresh parseJwtRefresh(String token) throws JwtException, GenericException {
         JwtRefresh jwtRefresh = getRefreshSignedToken(token);
 
-        if (!validateToken(jwtRefresh)) throw new JwtValidationException("El Refresh Token no es válido.");
+        if (!validateToken(jwtRefresh)) throw new GenericException("El Refresh Token no es válido.");
 
         return jwtRefresh;
     }
@@ -349,12 +342,14 @@ public class JwtKeyCloakProvider implements IJwtProvider {
             Map<String, JwtKey> keyList = self.certs();
             return keyCloakMapper.getJsonMapper().convertToJwtAccess(token, keyList);
         } catch (ExpiredJwtException e) {
-            throw (e);
+            throw new GenericException(DefaultMiddlewareError.EXPIRED_ACCESS_JWT);
+        }catch(InvalidKeyException | SignatureException e){
+            throw new GenericException(DefaultMiddlewareError.INVALID_ACCESS_JWT);
         } catch (Exception e) {
             logger.error("Hubo un error al obtener el Access JWT.");
             logger.error(e);
             logger.error(token);
-            throw new JwtException("Hubo un error al obtener el Access JWT.");
+            throw new GenericException(DefaultMiddlewareError.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -376,12 +371,12 @@ public class JwtKeyCloakProvider implements IJwtProvider {
     }
 
     @Override
-    public boolean revokeAccessToken(String accessToken) {
-        sessionManager.blacklist(accessToken);
+    public boolean revokeAccessToken(String token) {
+        sessionManager.blacklist(token);
 
         List<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("token_type_hint", "access_token"));
-        params.add(new BasicNameValuePair("token", accessToken));
+        params.add(new BasicNameValuePair("token", token));
         params.add(new BasicNameValuePair("client_id", clientId));
         params.add(new BasicNameValuePair("client_secret", clientSecret));
 
@@ -389,10 +384,10 @@ public class JwtKeyCloakProvider implements IJwtProvider {
     }
 
     @Override
-    public boolean revokeRefreshToken(LogoutRequest request) {
+    public boolean revokeRefreshToken(String token) {
         List<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("token_type_hint", "refresh_token"));
-        params.add(new BasicNameValuePair("token", request.getRefreshToken()));
+        params.add(new BasicNameValuePair("token", token));
         params.add(new BasicNameValuePair("client_id", clientId));
         params.add(new BasicNameValuePair("client_secret", clientSecret));
 
@@ -402,7 +397,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
 
     private boolean revokeKeyCloak(List<BasicNameValuePair> params) {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
-            String pathPostToken = urlBase + urlRevokeComplement;
+            String pathPostToken = urlBase + KeyCloakService.REVOKE_TOKEN.getServiceUrl();
             HttpPost postRevoke = new HttpPost(pathPostToken);
             postRevoke.setHeader("Content-Type", "application/x-www-form-urlencoded");
             HttpEntity httpEntity = new UrlEncodedFormEntity(params, StandardCharsets.UTF_8);
@@ -420,6 +415,48 @@ public class JwtKeyCloakProvider implements IJwtProvider {
         } catch (Exception e) {
             logger.error(e);
             return false;
+        }
+    }
+
+    public IntrospectTokenKCResponse introspect(String token) {
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("token", token));
+        params.add(new BasicNameValuePair("client_id", clientId));
+        params.add(new BasicNameValuePair("client_secret", clientSecret));
+
+        try (CloseableHttpClient httpClient = httpClientFactory.create()) {
+            String pathPostToken = urlBase + KeyCloakService.INTROSPECT.getServiceUrl();
+            HttpPost request = new HttpPost(pathPostToken);
+            request.setHeader("Content-Type", "application/x-www-form-urlencoded");
+            HttpEntity httpEntity = new UrlEncodedFormEntity(params, StandardCharsets.UTF_8);
+            request.setEntity(httpEntity);
+
+            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                String stringResponse = EntityUtils.toString(httpResponse.getEntity());
+                if (statusCode == HttpStatus.OK.value()) {
+                    IntrospectTokenKCResponse response = Util.stringToObject(stringResponse, IntrospectTokenKCResponse.class);
+                    if (response.isActive())
+                        return IntrospectTokenKCResponse.instance(IntrospectTokenKCResponse.Result.SUCCESS);
+                    else
+                        return IntrospectTokenKCResponse.instance(IntrospectTokenKCResponse.Result.EXPIRED_TOKEN);
+                } else {
+                    ErrorKCResponse errorResponse = Util.stringToObject(stringResponse, ErrorKCResponse.class);
+                    if (Objects.equals(errorResponse.getError(), ErrorKCResponse.Error.INVALID_REQUEST.getCode()))
+                        return IntrospectTokenKCResponse.instance(IntrospectTokenKCResponse.Result.INVALID_TOKEN);
+                    else {
+                        logger.error(stringResponse);
+                        AppError error = AppError.KEY_CLOAK_ERROR;
+                        throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                    }
+                }
+            }
+        } catch (GenericException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error(e);
+            AppError error = AppError.KEY_CLOAK_ERROR;
+            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
         }
     }
 }

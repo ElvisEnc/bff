@@ -37,19 +37,19 @@ public class UserResponseFixture {
 
     public static EconomicActivityResponse withDefaultEconomicActivityResponse() {
         return EconomicActivityResponse.builder()
-                .economicActivity(Arrays.asList(withDefaultEconomicalActivity()))
-                .incomeLevel(Arrays.asList(withDefaultEconomicalActivity()))
-                .incomeSource(Arrays.asList(withDefaultEconomicalActivity()))
-                .jobTitle(Arrays.asList(withDefaultEconomicalActivity()))
+                .economicActivity(Collections.singletonList(withDefaultEconomicalActivity()))
+                .incomeLevel(Collections.singletonList(withDefaultEconomicalActivity()))
+                .incomeSource(Arrays.asList(anotherIncomeSourceEconomicalActivity(), incomeSourceEconomicalActivity())) // Set two objects here
+                .jobTitle(Collections.singletonList(withDefaultEconomicalActivity()))
                 .build();
     }
 
     public static EconomicActivityResponse withDefaultEconomicActivity() {
         return EconomicActivityResponse.builder()
-                .economicActivity(Arrays.asList(economicActivityEconomicalActivity()))
-                .incomeLevel(Arrays.asList(incomeLevelEconomicalActivity()))
-                .incomeSource(Arrays.asList(incomeSourceEconomicalActivity()))
-                .jobTitle(Arrays.asList(jobTitleEconomicalActivity()))
+                .economicActivity(Collections.singletonList(economicActivityEconomicalActivity()))
+                .incomeLevel(Collections.singletonList(incomeLevelEconomicalActivity()))
+                .incomeSource(Collections.singletonList(incomeSourceEconomicalActivity()))
+                .jobTitle(Collections.singletonList(jobTitleEconomicalActivity()))
                 .build();
     }
 
@@ -77,6 +77,13 @@ public class UserResponseFixture {
     public static EconomicalActivity incomeSourceEconomicalActivity() {
         return EconomicalActivity.builder()
                 .id("D")
+                .description("Dependiente")
+                .build();
+    }
+
+    public static EconomicalActivity anotherIncomeSourceEconomicalActivity() {
+        return EconomicalActivity.builder()
+                .id("123")
                 .description("Dependiente")
                 .build();
     }

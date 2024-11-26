@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.dtos.response.login;
 
-import bg.com.bo.bff.application.exceptions.NotValidValueForFactoryException;
+import bg.com.bo.bff.application.exceptions.GenericException;
 
 @lombok.Data
 @lombok.NoArgsConstructor
@@ -23,7 +23,7 @@ public class RefreshSessionResult {
                 result.setStatusCode(statusCode);
                 return result;
             default:
-                throw new NotValidValueForFactoryException("Valor no valido para la creación de RefreshSessionResult.");
+                throw new GenericException("Valor no valido para la creación de RefreshSessionResult.");
         }
     }
 }

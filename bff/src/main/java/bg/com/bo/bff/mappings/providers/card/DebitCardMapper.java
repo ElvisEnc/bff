@@ -7,6 +7,7 @@ import bg.com.bo.bff.application.dtos.response.debit.card.DCInternetAuthorizatio
 import bg.com.bo.bff.application.dtos.response.debit.card.InternetAuthorizationResponse;
 import bg.com.bo.bff.commons.enums.debit.card.StatusType;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.debit.card.mw.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.mw.DCInternetAuthorizationNWResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
@@ -72,18 +73,14 @@ public class DebitCardMapper implements IDebitCardMapper {
                 .map(ListDebitCardMWResponse::getData)
                 .orElseGet(List::of)
                 .stream()
-                .map(this::convertDebitCardMWToDebitCard)
+                .map(mw -> DebitCard.builder()
+                        .id(mw.getIdPci())
+                        .cardNumber(Util.obfuscateCardNumber(mw.getCardId()))
+                        .holderName(mw.getCardName())
+                        .expiryDate(UtilDate.formatDate(mw.getExpirationDate()))
+                        .status(mw.getStatusDescription())
+                        .build())
                 .toList();
-    }
-
-    private DebitCard convertDebitCardMWToDebitCard(ListDebitCardMWResponse.DebitCardMW debitCardMW) {
-        return DebitCard.builder()
-                .id(debitCardMW.getIdPci())
-                .cardNumber(Util.obfuscateCardNumber(debitCardMW.getCardId()))
-                .holderName(debitCardMW.getCardName())
-                .expiryDate(Util.formatDate(debitCardMW.getExpirationDate()))
-                .status(debitCardMW.getStatusDescription())
-                .build();
     }
 
     @Override
@@ -102,7 +99,7 @@ public class DebitCardMapper implements IDebitCardMapper {
         List<DCInternetAuthorization> result = response.getData().stream().map(x -> DCInternetAuthorization.builder()
                 .id(x.getInternetIdTjTD())
                 .amount(x.getAmount())
-                .period(new DCLimitsPeriod(Util.formatDate(x.getStartDate()), Util.formatDate(x.getEndDate())))
+                .period(new DCLimitsPeriod(UtilDate.formatDate(x.getStartDate()), UtilDate.formatDate(x.getEndDate())))
                 .build()
         ).toList();
         return InternetAuthorizationResponse.builder()
@@ -163,11 +160,11 @@ public class DebitCardMapper implements IDebitCardMapper {
         return DCDetailResponse.builder()
                 .cardNumber(Util.obfuscateCardNumber(response.getData().getCardNumber()))
                 .holderName(response.getData().getCardName())
-                .expirationDate(Util.formatDate(response.getData().getExpirationDate()))
+                .expirationDate(UtilDate.formatDate(response.getData().getExpirationDate()))
                 .status(response.getData().getStatus())
                 .statusDescription(response.getData().getStatusDescription())
                 .assured(Objects.equals(response.getData().getProtectionInsurance(), "S"))
-                .limitExpirationDate(Util.formatDate(response.getData().getLimitExpirationDate()))
+                .limitExpirationDate(UtilDate.formatDate(response.getData().getLimitExpirationDate()))
                 .limitAmount(response.getData().getLimitAmountME())
                 .limitNumber(response.getData().getLimitExtractions())
                 .build();

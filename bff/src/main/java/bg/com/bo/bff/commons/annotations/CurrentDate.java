@@ -1,6 +1,6 @@
 package bg.com.bo.bff.commons.annotations;
 
-import bg.com.bo.bff.commons.validators.CurrentDateValidator;
+import bg.com.bo.bff.commons.validators.generics.CurrentDateValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

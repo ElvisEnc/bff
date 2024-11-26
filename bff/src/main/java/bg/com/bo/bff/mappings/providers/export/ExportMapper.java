@@ -1,6 +1,6 @@
 package bg.com.bo.bff.mappings.providers.export;
 
-import bg.com.bo.bff.application.dtos.request.account.statement.ExportRequest;
+import bg.com.bo.bff.application.dtos.request.export.AccountStatementExportRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import java.util.Objects;
 @Component
 public class ExportMapper implements  IExportMapper{
     @Override
-    public AccountStatementsMWRequest mapperRequest(String accountId, String init, String total, ExportRequest request) {
+    public AccountStatementsMWRequest mapperRequest(String accountId, String init, String total, AccountStatementExportRequest request) {
         return AccountStatementsMWRequest.builder()
                 .accountId(accountId)
                 .startDate(request.getFilters().getDate().getStart())
@@ -24,7 +24,7 @@ public class ExportMapper implements  IExportMapper{
     }
 
     @Override
-    public List<AccountStatementsResponse> mapping(List<AccountStatementsResponse> reportData) {
+    public List<AccountStatementsResponse> convertResponse(List<AccountStatementsResponse> reportData) {
         Map<String, String> currencyMapping = new HashMap<>();
         currencyMapping.put("032", "ARS");
         currencyMapping.put("068", "BOB");

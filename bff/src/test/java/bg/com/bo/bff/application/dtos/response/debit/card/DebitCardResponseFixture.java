@@ -9,9 +9,9 @@ public class DebitCardResponseFixture {
     public static DebitCard withDefaultDebitCard() {
         return DebitCard.builder()
                 .id("123")
-                .cardNumber("123")
+                .cardNumber("**** **** **** 1234")
                 .holderName("123")
-                .expiryDate("123")
+                .expiryDate("12/12/2024")
                 .status("123")
                 .build();
     }

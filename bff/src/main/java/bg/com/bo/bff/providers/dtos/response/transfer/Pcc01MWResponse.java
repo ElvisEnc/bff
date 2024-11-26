@@ -1,10 +1,13 @@
 package bg.com.bo.bff.providers.dtos.response.transfer;
 
 import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Data;
-import lombok.ToString;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@lombok.Data
-@ToString
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Pcc01MWResponse {
     private Pcc01Data data;
 }

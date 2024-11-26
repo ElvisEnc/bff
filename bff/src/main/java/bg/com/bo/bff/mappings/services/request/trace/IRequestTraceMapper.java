@@ -5,7 +5,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import java.time.Instant;
 import java.util.Date;
 
 public interface IRequestTraceMapper {

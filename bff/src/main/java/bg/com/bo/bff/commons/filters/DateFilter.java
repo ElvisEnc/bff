@@ -1,8 +1,9 @@
 package bg.com.bo.bff.commons.filters;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.commons.filters.interfaces.IFilter;
+import bg.com.bo.bff.commons.utils.UtilDate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -28,7 +29,7 @@ public class DateFilter<T> implements IFilter<T> {
     public List<T> apply(List<T> list) {
         return list.stream()
                 .filter(item -> {
-                    String dateStr = dateExtractor.apply(item);
+                    String dateStr = UtilDate.getDateGenericFormat(dateExtractor.apply(item));
                     if (dateStr == null) {
                         return false;
                     }

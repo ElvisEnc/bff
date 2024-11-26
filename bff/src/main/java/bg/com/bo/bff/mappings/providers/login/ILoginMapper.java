@@ -12,7 +12,7 @@ import bg.com.bo.bff.providers.dtos.response.login.mw.LoginFactorData;
 public interface ILoginMapper {
     LoginCredentialMWRequest mapperRequest(LoginRequest loginRequest, LoginFactorData data);
 
-    LoginValidationServiceResponse converResponse(LoginFactorData data, LoginCredentialMWResponse mwResponse);
+    LoginValidationServiceResponse convertResponse(LoginFactorData data, LoginCredentialMWResponse mwResponse);
 
     UpdateBiometricsMWRequest mapperUpdateBiometricRequest(UpdateBiometricsRequest request);
 }

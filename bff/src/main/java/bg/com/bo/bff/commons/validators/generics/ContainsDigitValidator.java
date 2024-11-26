@@ -9,8 +9,17 @@ public class ContainsDigitValidator extends Validator<String> {
 
     @Override
     public void validate(String value) {
-        if (!value.matches(".*\\d.*"))
+        if (!containsDigit(value))
             throw e;
         super.validate(value);
+    }
+
+    private boolean containsDigit(String value) {
+        for (char c : value.toCharArray()) {
+            if (Character.isDigit(c)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

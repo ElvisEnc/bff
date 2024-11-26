@@ -1,18 +1,12 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.destination.account.AddAchAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddThirdAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddWalletAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
-import bg.com.bo.bff.application.dtos.response.destination.account.AccountTypeListResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.BanksResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.BranchOfficeResponse;
+import bg.com.bo.bff.application.dtos.request.destination.account.*;
+import bg.com.bo.bff.application.dtos.response.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.ValidateAccountResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
+import bg.com.bo.bff.commons.annotations.ValidText;
+import bg.com.bo.bff.commons.annotations.destination.account.ValidAccountType;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,12 +42,12 @@ public class DestinationAccountController {
 
     @Operation(summary = "Agendar nueva cuenta de destino terceros.", description = "Agendar nueva cuenta de destino terceros.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AddAccountResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PutMapping("/{personId}/third-accounts")
-    public ResponseEntity<GenericResponse> addThirdAccounts(
+    public ResponseEntity<AddAccountResponse> addThirdAccounts(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
@@ -75,12 +69,12 @@ public class DestinationAccountController {
 
     @Operation(summary = "Agendar nueva cuenta de destino Billetera.", description = "Agendar nueva cuenta de destino Billetera.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AddAccountResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PutMapping("/{personId}/wallets")
-    public ResponseEntity<GenericResponse> addWalletAccounts(
+    public ResponseEntity<AddAccountResponse> addWalletAccounts(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
@@ -102,12 +96,12 @@ public class DestinationAccountController {
 
     @Operation(summary = "Agendar nueva cuenta de destino ACH.", description = "Agendar nueva cuenta de destino ACH.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AddAccountResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @PutMapping("/{personId}/ach-accounts")
-    public ResponseEntity<GenericResponse> addAchAccounts(
+    public ResponseEntity<AddAccountResponse> addAchAccounts(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
@@ -223,8 +217,8 @@ public class DestinationAccountController {
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @OnlyNumber @Parameter(description = "Este es el id de la cuenta", example = "12345") long identifier,
-            @PathVariable("accountNumber") @OnlyNumber @Schema(example = "1234", description = "Este es el número de la cuenta.") long accountNumber
+            @PathVariable("identifier") @NotNull @Min(value = 1) @Parameter(description = "Este es el id de la cuenta", example = "12345") long identifier,
+            @PathVariable("accountNumber") @NotNull @Min(value = 1) @Schema(example = "1234", description = "Este es el número de la cuenta.") long accountNumber
     ) throws IOException {
         return ResponseEntity.ok(service.deleteThirdAccount(personId, identifier, accountNumber, Headers.getParameter(httpServletRequest,
                 deviceId,
@@ -249,8 +243,8 @@ public class DestinationAccountController {
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @OnlyNumber @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
-            @PathVariable("accountNumber") @OnlyNumber @Parameter(description = "Este es el número de la cuenta", example = "12345") long accountNumber
+            @PathVariable("identifier") @NotNull @Min(value = 1) @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
+            @PathVariable("accountNumber") @NotNull @Min(value = 1) @Parameter(description = "Este es el número de la cuenta", example = "12345") long accountNumber
     ) throws IOException {
         return ResponseEntity.ok(service.deleteWalletAccount(personId, identifier, accountNumber, Headers.getParameter(httpServletRequest,
                 deviceId,
@@ -275,7 +269,7 @@ public class DestinationAccountController {
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @NotNull @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier
+            @PathVariable("identifier") @NotNull @Min(value = 1) @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier
     ) throws IOException {
         return ResponseEntity.ok(service.deleteAchAccount(personId, identifier, Headers.getParameter(httpServletRequest,
                 deviceId,
@@ -320,17 +314,20 @@ public class DestinationAccountController {
     @GetMapping("")
     public ResponseEntity<ValidateAccountResponse> getValidationDestinationAccount(
             @Parameter(description = "Nro. de Cuenta", example = "1234567", required = true)
-            @RequestParam(name = "accountNumber", required = true)
+            @RequestParam(name = "accountNumber")
             @NotBlank(message = "No debe tener espacios en blanco")
             @NotNull(message = "No debe ser nulo")
-            @Size(min = 8, max = 15, message = "El campo accountNumber debe tener un minimo 8 y un maximo de 15 caracteres")
+            @OnlyNumber
+            @Size(min = 2, max = 15, message = "El campo accountNumber debe tener un mínimo 2 y un máximo de 15 caracteres")
             @Pattern(regexp = "\\d+", message = "El campo accountNumber solo debe tener números") final String accountNumber,
 
-            @Parameter(description = "Nombre de cliente", example = "Gutierrez", required = true)
-            @RequestParam(value = "clientName", required = true)
+            @Parameter(description = "Nombre de cliente", example = "Gutierrez")
+            @RequestParam(value = "clientName")
             @NotBlank(message = "No debe tener espacios en blanco")
             @NotNull(message = "No debe ser nulo")
-            @Size(min = 2, max = 100, message = "Debe tener un minimo 2 y un maximo de 100 caracteres") final String clientName,
+            @ValidText
+            @Size(min = 1, max = 100, message = "Debe tener un mínimo de 1 y un máximo de 100 caracteres") final String clientName,
+
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
             @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
@@ -345,5 +342,31 @@ public class DestinationAccountController {
                         geoPositionY,
                         appVersion
                 )));
+    }
+
+    @Operation(summary = "Obtener cuenta.", description = "Obtiene una cuenta destinataria del usuario.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = DestinationAccount.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+    })
+    @GetMapping("/persons/{personId}/account-types/{accountType}/account/{accountId}")
+    public ResponseEntity<DestinationAccount> getAccount(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el código de persona", example = "1234567") String personId,
+            @PathVariable("accountType") @ValidAccountType @Parameter(description = "Este es el tipo de la cuenta", example = "1") String accountType,
+            @PathVariable("accountId") @OnlyNumber @Parameter(description = "Este es identificador de la lista de contactos", example = "1017") String accountId
+    ) throws IOException {
+        return ResponseEntity.ok(service.getAccount(personId, accountType, accountId, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion
+        )));
     }
 }

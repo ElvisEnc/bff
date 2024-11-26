@@ -7,10 +7,12 @@ import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddWalletAccountBas
 import bg.com.bo.bff.providers.dtos.request.third.account.mw.DeleteThirdAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.response.third.account.mw.ThirdAccountsMWResponse;
 
+import java.util.List;
+
 public interface IThirdAccountsMapper {
     DeleteThirdAccountMWRequest mapperRequest(String personId, long identifier, long accountNumber);
 
-    DestinationAccount convertThirdAccountToDestinationAccount(ThirdAccountsMWResponse.ThirdAccountMW account, Integer type, String name);
+    List<DestinationAccount> convertThirdAccountToDestinationAccount(ThirdAccountsMWResponse mwResponse, Integer type, String name);
 
     AddThirdAccountBasicRequest mapToThirdRequest(String personId, AddQRAccountRequest request);
 

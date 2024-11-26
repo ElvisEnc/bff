@@ -10,4 +10,8 @@ public interface IErrorResponse {
     String getMwCode();
 
     String getMessage();
+
+    default String getTitle() {
+        return "";
+    }
 }

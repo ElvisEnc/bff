@@ -3,7 +3,7 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.qr.QrRequestFixture;
 import bg.com.bo.bff.application.dtos.response.qr.QrResponseFixture;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.qr.mw.QRPaymentMWRequest;

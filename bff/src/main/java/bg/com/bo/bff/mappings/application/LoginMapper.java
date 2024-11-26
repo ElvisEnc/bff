@@ -17,5 +17,7 @@ public interface LoginMapper {
     @Mapping(source = "personId", target = "userData.personId")
     @Mapping(source = "userDeviceId", target = "userData.userDeviceId")
     @Mapping(source = "rolePersonId", target = "userData.rolePersonId")
+    @Mapping(source = "name", target = "userData.name")
+    @Mapping(source = "fullName", target = "userData.fullName")
     LoginResponse convert(LoginResult loginRequest);
 }

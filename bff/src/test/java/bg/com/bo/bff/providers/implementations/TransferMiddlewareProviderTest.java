@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.mappings.providers.pcc01.Pcc01Mapper;
 import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
 import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequest;
@@ -40,7 +40,6 @@ import java.util.Map;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.application.dtos.request.transfer.TransferRequestFixture;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;

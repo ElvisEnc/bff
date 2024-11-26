@@ -1,9 +1,9 @@
 package bg.com.bo.bff.commons.utils;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.Currency;
-import bg.com.bo.bff.commons.enums.DestinationAccountBG;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.commons.enums.transfer.Currency;
+import bg.com.bo.bff.commons.enums.destination.account.DestinationAccountBG;
 import bg.com.bo.bff.providers.dtos.response.generic.DynamicAppError;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
 import bg.com.bo.bff.providers.dtos.response.personal.information.ApiNetErrorResponse;
@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -29,12 +30,9 @@ import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -46,8 +44,12 @@ public class Util {
     private static final Map<String, Currency> currencyMap = new HashMap<>();
     private static final Map<String, Map<String, String>> schemeNameMap = new HashMap<>();
     private static final Pattern EIF_PATTERN = Pattern.compile("^\\D*(\\d+)");
+    private static final Validator validator;
 
     static {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+
         currencyMap.put("068", Currency.BOB);
         currencyMap.put("978", Currency.EUR);
         currencyMap.put("840", Currency.USD);
@@ -165,26 +167,6 @@ public class Util {
             }
         }
         return stringBuilder.toString();
-    }
-
-    public static String formatDate(String dateString) {
-        if (dateString == null)
-            return null;
-        List<DateTimeFormatter> formatters = Arrays.asList(
-                DateTimeFormatter.ofPattern("yyyy-MM-dd"),
-                DateTimeFormatter.ofPattern("yyyy/MM/dd"),
-                DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        );
-
-        for (DateTimeFormatter formatter : formatters) {
-            try {
-                LocalDate date = LocalDate.parse(dateString, formatter);
-                return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            } catch (DateTimeParseException e) {
-                LOGGER.debug("Unable to parse date with format: %s".formatted(formatter.toString()), e);
-            }
-        }
-        return dateString;
     }
 
     public static AppError mapProviderError(String jsonResponse) throws IOException {
@@ -315,10 +297,6 @@ public class Util {
         return inputTime;
     }
 
-    public static DateTimeFormatter getDateFormatter() {
-        return DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    }
-
     public static BigDecimal scaleToTwoDecimals(BigDecimal value) {
         if (value == null)
             return null;
@@ -343,6 +321,25 @@ public class Util {
             return value != null ? Integer.parseInt(value) : null;
         } catch (NumberFormatException e) {
             LOGGER.debug("El valor otorgado no es numerico: %s".formatted(value), e);
+            return null;
+        }
+    }
+
+    public static <T> void validate(T object) throws ConstraintViolationException {
+        Set<ConstraintViolation<T>> violations = validator.validate(object);
+        if (!violations.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (ConstraintViolation<T> violation : violations) {
+                sb.append(violation.getPropertyPath()).append(": ").append(violation.getMessage()).append(", ");
+            }
+            throw new ConstraintViolationException(sb.toString(), violations);
+        }
+    }
+
+    public static Integer tryParse(Object input) {
+        try {
+            return Integer.parseInt(input.toString());
+        } catch (Exception e) {
             return null;
         }
     }

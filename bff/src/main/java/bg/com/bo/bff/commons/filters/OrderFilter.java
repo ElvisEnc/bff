@@ -1,7 +1,7 @@
 package bg.com.bo.bff.commons.filters;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.commons.filters.interfaces.IFilter;
 
 import java.util.ArrayList;

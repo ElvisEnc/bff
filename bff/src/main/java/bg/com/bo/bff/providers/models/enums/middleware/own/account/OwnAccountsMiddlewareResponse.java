@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.models.enums.middleware.own.account;
 
-import bg.com.bo.bff.commons.enums.response.IGenericControllerResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.response.IGenericControllerResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

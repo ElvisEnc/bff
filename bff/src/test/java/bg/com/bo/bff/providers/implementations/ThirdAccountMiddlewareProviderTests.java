@@ -3,10 +3,12 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
+import bg.com.bo.bff.application.dtos.response.destination.account.AddAccountResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponseFixture;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.ValidateAccountResponse;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.*;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
@@ -18,6 +20,7 @@ import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AddAccountMWResponse
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.third.account.mw.ThirdAccountMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.third.account.mw.ThirdAccountsMWResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.third.account.ThirdAccountMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.third.account.ThirdAccountMiddlewareResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -34,8 +37,7 @@ import java.util.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
@@ -97,11 +99,11 @@ class ThirdAccountMiddlewareProviderTests {
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = provider.addThirdAccount(request, new HashMap<>());
+        AddAccountResponse response = provider.addThirdAccount(request, new HashMap<>());
 
         // Assert
         assertNotNull(response);
-        assertEquals(response, GenericResponse.instance(ThirdAccountMiddlewareResponse.SUCCESS_ADD_ACCOUNT));
+        assertEquals(response.getId().toString(), expectedResponse.getData().getIdentifier());
     }
 
     @Test
@@ -113,11 +115,11 @@ class ThirdAccountMiddlewareProviderTests {
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = provider.addWalletAccount(request, new HashMap<>());
+        AddAccountResponse response = provider.addWalletAccount(request, new HashMap<>());
 
         // Assert
         assertNotNull(response);
-        assertEquals(response, GenericResponse.instance(ThirdAccountMiddlewareResponse.SUCCESS_ADD_ACCOUNT));
+        assertEquals(response.getId().toString(), expectedResponse.getData().getIdentifier());
     }
 
     @Test
@@ -129,11 +131,11 @@ class ThirdAccountMiddlewareProviderTests {
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = provider.addThirdAccount(request, new HashMap<>());
+        GenericException exception = assertThrows(GenericException.class, () -> provider.addThirdAccount(request, map));
 
         // Assert
-        assertNotNull(response);
-        assertEquals(response, GenericResponse.instance(ThirdAccountMiddlewareResponse.ERROR_ADD_ACCOUNT));
+        assertNotNull(exception);
+        assertEquals(exception.getCode(), ThirdAccountMiddlewareError.ERROR_ADD_ACCOUNT.getCode());
     }
 
     @Test
@@ -145,11 +147,11 @@ class ThirdAccountMiddlewareProviderTests {
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = provider.addWalletAccount(request, new HashMap<>());
+        GenericException exception = assertThrows(GenericException.class, () -> provider.addWalletAccount(request, map));
 
         // Assert
-        assertNotNull(response);
-        assertEquals(response, GenericResponse.instance(ThirdAccountMiddlewareResponse.ERROR_ADD_ACCOUNT));
+        assertNotNull(exception);
+        assertEquals(exception.getCode(), ThirdAccountMiddlewareError.ERROR_ADD_ACCOUNT.getCode());
     }
 
     // Delete Accounts

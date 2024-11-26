@@ -10,7 +10,7 @@ import java.util.List;
 public interface DestinationAccountServiceMapper {
     DestinationAccountServiceMapper INSTANCE = Mappers.getMapper(DestinationAccountServiceMapper.class);
 
-    List<AccountType> convert(List<bg.com.bo.bff.commons.enums.AccountType> list);
+    List<AccountType> convert(List<bg.com.bo.bff.commons.enums.destination.account.AccountType> list);
 
-    AccountType convert(bg.com.bo.bff.commons.enums.AccountType accountType);
+    AccountType convert(bg.com.bo.bff.commons.enums.destination.account.AccountType accountType);
 }

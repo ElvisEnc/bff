@@ -8,7 +8,6 @@ import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.Ser
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public interface IPaymentServicesProvider {

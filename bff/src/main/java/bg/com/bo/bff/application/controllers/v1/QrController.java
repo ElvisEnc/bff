@@ -64,7 +64,7 @@ public class QrController {
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el código de persona", example = "1234567") String personId,
             @Valid @RequestBody QrListRequest request
     ) throws IOException {
-        return ResponseEntity.ok(iQrService.getQrGeneratedPaid(request, personId, Headers.getParameter(httpServletRequest)));
+        return ResponseEntity.ok(iQrService.getQrGeneratedPaid(request, personId, Headers.getParameter(httpServletRequest, deviceId, deviceName, geoPositionX, geoPositionY, appVersion)));
     }
 
     @Operation(summary = "Generate QR", description = "Este es el Endpoint donde el usuario ganamovil hará su petición para generar QR de cobro")
@@ -84,7 +84,7 @@ public class QrController {
             @RequestBody final @Valid QRCodeGenerateRequest request
     ) throws IOException {
 
-        return ResponseEntity.ok(iQrService.generateQR(request, Headers.getParameter(httpServletRequest)));
+        return ResponseEntity.ok(iQrService.generateQR(request, Headers.getParameter(httpServletRequest, deviceId, deviceName, geoPositionX, geoPositionY, appVersion)));
     }
 
     @Operation(summary = "Regenerate QR", description = "Este es el Endpoint donde el usuario ganamovil hará su petición para regenerar QR de cobro")
@@ -104,7 +104,7 @@ public class QrController {
             @RequestBody final @Valid QRCodeRegenerateRequest request
     ) throws IOException {
 
-        return ResponseEntity.ok(iQrService.regenerateQR(request, Headers.getParameter(httpServletRequest)));
+        return ResponseEntity.ok(iQrService.regenerateQR(request, Headers.getParameter(httpServletRequest, deviceId, deviceName, geoPositionX, geoPositionY, appVersion)));
     }
 
     @Operation(summary = "Obtención de datos QR", description = "Este es el endpoint donde se podrá obtener los datos de un QR")
@@ -123,7 +123,7 @@ public class QrController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @RequestBody final @Valid QrDecryptRequest request
     ) throws IOException {
-        return ResponseEntity.ok(iQrService.decryptQR(request, Headers.getParameter(httpServletRequest)));
+        return ResponseEntity.ok(iQrService.decryptQR(request, Headers.getParameter(httpServletRequest, deviceId, deviceName, geoPositionX, geoPositionY, appVersion)));
     }
 
     @Operation(summary = "Pago QR", description = "Este es el endpoint donde se podrá hacer pagos QR")
@@ -146,6 +146,6 @@ public class QrController {
     ) throws IOException {
 
         return ResponseEntity.ok(iQrService.qrPayment(request, personId,
-                accountId, Headers.getParameter(httpServletRequest)));
+                accountId, Headers.getParameter(httpServletRequest, deviceId, deviceName, geoPositionX, geoPositionY, appVersion)));
     }
 }

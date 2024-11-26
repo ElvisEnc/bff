@@ -9,6 +9,7 @@ import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.Depend
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
@@ -197,13 +198,13 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                         .affiliationNumber(mwResponse.receiptDetail().affiliationNumber())
                         .servicePaymentCode(mwResponse.receiptDetail().servicePaymentCode())
                         .company(mwResponse.receiptDetail().company())
-                        .accountingDate(Util.formatDate(mwResponse.receiptDetail().accountingDate()))
+                        .accountingDate(UtilDate.formatDate(mwResponse.receiptDetail().accountingDate()))
                         .accountingTime(Util.formatterTime(mwResponse.receiptDetail().accountingTime()))
                         .accountingEntry(mwResponse.receiptDetail().accountingEntry())
                         .currency(mwResponse.receiptDetail().currency())
                         .amount(mwResponse.receiptDetail().amount())
                         .description(mwResponse.receiptDetail().description())
-                        .fromAccountNumber(Util.formatDate(mwResponse.receiptDetail().fromAccountNumber()))
+                        .fromAccountNumber(UtilDate.formatDate(mwResponse.receiptDetail().fromAccountNumber()))
                         .fromHolder(mwResponse.receiptDetail().fromHolder())
                         .exchangeAmount(mwResponse.receiptDetail().exchangeAmount())
                         .fromAccountCurrency(mwResponse.receiptDetail().fromAccountCurrency())

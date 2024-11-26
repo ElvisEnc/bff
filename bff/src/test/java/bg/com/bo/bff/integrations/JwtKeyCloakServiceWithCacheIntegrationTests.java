@@ -122,7 +122,6 @@ class JwtKeyCloakServiceWithCacheIntegrationTests {
 
         // Propiedades cargadas por reflection dentro de JwtKeyCloakService.
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "urlBase", url);
-        ReflectionTestUtils.setField(jwtKeyCloakProvider, "urlCertsComplement", urlCertsComplement);
 
         String jsonResponse = new ObjectMapper().writeValueAsString(keyCloakCertListResponse);
 

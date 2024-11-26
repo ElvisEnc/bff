@@ -1,21 +1,78 @@
 package bg.com.bo.bff.application.dtos.response.account.statement;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class AccountStatementResponseFixture {
-    public static AccountStatementsResponse withDefaultAccountStatementExtractResponse() {
-        return AccountStatementsResponse.builder()
-//                .data(Collections.singletonList(AccountStatementsResponse.AccountStatementExtract.builder()
-//                        .status("status")
-//                        .type("type")
-//                        .amount(100.00)
-//                        .currency("currency")
-//                        .channel("channel")
-//                        .dateMov("dateMov")
-//                        .timeMov("timeMov")
-//                        .movBalance(987.99)
-//                        .seatNumber("seatNumber")
-//                        .build()))
-                .build();
+    public static List<AccountStatementsResponse> getDefaultAccountStatementsResponse() {
+        return Collections.singletonList(AccountStatementsResponse.builder()
+                .status("SUCCESS")
+                .movementType("1")
+                .amount(new BigDecimal("150.75"))
+                .currencyCode("USD")
+                .description("Pago de servicios")
+                .balance(new BigDecimal("1200.00"))
+                .movementDate("2024-04-30")
+                .movementTime("14:41:13")
+                .channel("ONLINE")
+                .seatNumber("12345")
+                .build());
+    }
+
+    public static List<AccountStatementsResponse> getDefaultAccountStatementsResponseExport() {
+        return Arrays.asList(AccountStatementsResponse.builder()
+                        .status("1")
+                        .movementType("D")
+                        .amount(new BigDecimal("150.75"))
+                        .currencyCode("068")
+                        .description("Pago de servicios")
+                        .balance(new BigDecimal("1200.00"))
+                        .movementDate("2024-04-30")
+                        .movementTime("14:41:13")
+                        .channel("ONLINE")
+                        .seatNumber("12345")
+                        .build(),
+                AccountStatementsResponse.builder()
+                        .status("2")
+                        .movementType("C")
+                        .amount(new BigDecimal("150.75"))
+                        .currencyCode("840")
+                        .description("Pago de servicios")
+                        .balance(new BigDecimal("1200.00"))
+                        .movementDate("2024-04-30")
+                        .movementTime("14:41:13")
+                        .channel("ONLINE")
+                        .seatNumber("12345")
+                        .build());
+    }
+
+
+    public static List<AccountStatementsResponse> getDefaultAccountStatementsResponseExportCredit() {
+        return Arrays.asList(AccountStatementsResponse.builder()
+                        .status("1")
+                        .movementType("C")
+                        .amount(new BigDecimal("150.75"))
+                        .currencyCode("068")
+                        .description("Pago de servicios")
+                        .balance(new BigDecimal("1200.00"))
+                        .movementDate("2024-04-30")
+                        .movementTime("14:41:13")
+                        .channel("ONLINE")
+                        .seatNumber("12345")
+                        .build(),
+                AccountStatementsResponse.builder()
+                        .status("3")
+                        .movementType("D")
+                        .amount(new BigDecimal("150.75"))
+                        .currencyCode("840")
+                        .description("Pago de servicios")
+                        .balance(new BigDecimal("1200.00"))
+                        .movementDate("2024-04-30")
+                        .movementTime("14:41:13")
+                        .channel("ONLINE")
+                        .seatNumber("12345")
+                        .build());
     }
 }

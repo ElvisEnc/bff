@@ -5,12 +5,8 @@ import bg.com.bo.bff.application.dtos.request.destination.account.AddThirdAccoun
 import bg.com.bo.bff.application.dtos.request.destination.account.AddWalletAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
-import bg.com.bo.bff.application.dtos.response.destination.account.BanksResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.AccountTypeListResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.BranchOfficeResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.ValidateAccountResponse;
-import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccountResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,11 +14,11 @@ import java.util.Map;
 
 @Service
 public interface IDestinationAccountService {
-    GenericResponse addThirdAccount(String personId, AddThirdAccountRequest addThirdAccountRequest, Map<String, String> parameters) throws IOException;
+    AddAccountResponse addThirdAccount(String personId, AddThirdAccountRequest addThirdAccountRequest, Map<String, String> parameters) throws IOException;
 
-    GenericResponse addWalletAccount(String personId, AddWalletAccountRequest addWalletAccountRequest, Map<String, String> parameter) throws IOException;
+    AddAccountResponse addWalletAccount(String personId, AddWalletAccountRequest addWalletAccountRequest, Map<String, String> parameter) throws IOException;
 
-    GenericResponse addAchAccount(String personId, AddAchAccountRequest addAchAccountRequest, Map<String, String> parameter) throws IOException;
+    AddAccountResponse addAchAccount(String personId, AddAchAccountRequest addAchAccountRequest, Map<String, String> parameter) throws IOException;
 
     GenericResponse addQRAccount(String personId, String bankType, AddQRAccountRequest addQRAccountRequest, Map<String, String> parameter) throws IOException;
 
@@ -41,4 +37,6 @@ public interface IDestinationAccountService {
     DestinationAccountResponse getDestinationAccounts(String personId, DestinationAccountRequest request, Map<String, String> parameter) throws IOException;
 
     ValidateAccountResponse getValidateDestinationAccounts(String accountNumber, String clientName, Map<String, String> parameter) throws IOException;
+
+    DestinationAccount getAccount(String personId, String accountType, String accountId, Map<String, String> parameter) throws IOException;
 }

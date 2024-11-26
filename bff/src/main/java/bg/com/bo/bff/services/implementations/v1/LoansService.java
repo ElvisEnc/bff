@@ -6,13 +6,12 @@ import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.filters.*;
-import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.mappings.providers.loans.ILoansMapper;
 import bg.com.bo.bff.providers.dtos.request.loans.mw.LoanPaymentMWRequest;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
 import bg.com.bo.bff.providers.interfaces.ILoansTransactionProvider;
-import bg.com.bo.bff.providers.models.enums.middleware.transfer.TransferMiddlewareError;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import bg.com.bo.bff.services.interfaces.ILoansService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,15 +47,15 @@ public class LoansService implements ILoansService {
     }
 
     @Override
-    public List<ListLoansResponse> getListLoansByPerson(String personId, ListLoansRequest request, Map<String, String> parameters) throws IOException {
+    public List<ListLoansResponse> getListLoansByPerson(String personId, ListLoansRequest request) throws IOException {
         Boolean refreshData = request.getRefreshData();
-        List<ListLoansResponse> list = self.getServiceCache(personId, parameters, refreshData);
+        List<ListLoansResponse> list = self.getServiceCache(personId, refreshData);
 
         String field = (request.getFilters().getOrder() != null) ? request.getFilters().getOrder().getField() : "EXPIRATION_DATE";
         boolean desc = (request.getFilters().getOrder() != null) && request.getFilters().getOrder().getDesc();
         Map<String, Function<ListLoansResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("LOAN_NUMBER", ListLoansResponse::getLoanNumber);
-        comparatorOptions.put("EXPIRATION_DATE", response -> LocalDate.parse(response.getExpirationDate(), Util.getDateFormatter()));
+        comparatorOptions.put("EXPIRATION_DATE", response -> LocalDate.parse(response.getExpirationDate(), UtilDate.getDateFormatter()));
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getPagination() != null) {
@@ -70,15 +69,15 @@ public class LoansService implements ILoansService {
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loans:' + #personId", condition = "#refreshData == false")},
             put = {@CachePut(value = CacheConstants.USER_DATA, key = "'loans:' + #personId", condition = "#refreshData == true")})
-    protected List<ListLoansResponse> getServiceCache(String personId, Map<String, String> parameters, Boolean refreshData) throws IOException {
-        ListLoansMWResponse mwResponse = provider.getListLoansByPerson(personId, parameters);
+    protected List<ListLoansResponse> getServiceCache(String personId, Boolean refreshData) throws IOException {
+        ListLoansMWResponse mwResponse = provider.getListLoansByPerson(personId);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
 
     @Override
-    public List<LoanPaymentsResponse> getLoanPayments(String loanId, String personId, LoanPaymentsRequest request, Map<String, String> parameter) throws IOException {
+    public List<LoanPaymentsResponse> getLoanPayments(String loanId, String personId, LoanPaymentsRequest request) throws IOException {
         Boolean refreshData = request.getRefreshData();
-        List<LoanPaymentsResponse> list = new ArrayList<>(self.getLoanPaymentsCache(loanId, personId, request.getLoanNumber(), parameter, refreshData));
+        List<LoanPaymentsResponse> list = new ArrayList<>(self.getLoanPaymentsCache(loanId, personId, request.getLoanNumber(), refreshData));
 
         if (request.getFilters().getDate() != null) {
             String start = request.getFilters().getDate().getStart();
@@ -91,7 +90,7 @@ public class LoansService implements ILoansService {
         Map<String, Function<LoanPaymentsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("INTEREST_PAID", LoanPaymentsResponse::getInterestAmountPaid);
         comparatorOptions.put("CAPITAL_PAID", LoanPaymentsResponse::getCapitalPaid);
-        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getDate(), Util.getDateFormatter()));
+        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getDate(), UtilDate.getDateFormatter()));
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getPagination() != null) {
@@ -104,15 +103,15 @@ public class LoansService implements ILoansService {
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loan-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == false")},
             put = {@CachePut(value = CacheConstants.USER_DATA, key = "'loan-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == true")})
-    protected List<LoanPaymentsResponse> getLoanPaymentsCache(String loanId, String personId, String loamNumber, Map<String, String> parameter, Boolean refreshData) throws IOException {
-        LoanPaymentsMWResponse mwResponse = provider.getListLoanPayments(loanId, loamNumber, parameter);
+    protected List<LoanPaymentsResponse> getLoanPaymentsCache(String loanId, String personId, String loamNumber, Boolean refreshData) throws IOException {
+        LoanPaymentsMWResponse mwResponse = provider.getListLoanPayments(loanId, loamNumber);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
 
     @Override
-    public List<LoanInsurancePaymentsResponse> getLoanInsurancePayments(String loanId, String personId, LoanPaymentsRequest request, Map<String, String> parameter) throws IOException {
+    public List<LoanInsurancePaymentsResponse> getLoanInsurancePayments(String loanId, String personId, LoanPaymentsRequest request) throws IOException {
         Boolean refreshData = request.getRefreshData();
-        List<LoanInsurancePaymentsResponse> list = new ArrayList<>(self.getLoanInsurancePaymentsCache(loanId, personId, request.getLoanNumber(), parameter, refreshData));
+        List<LoanInsurancePaymentsResponse> list = new ArrayList<>(self.getLoanInsurancePaymentsCache(loanId, personId, request.getLoanNumber(), refreshData));
 
         if (request.getFilters().getDate() != null) {
             String start = request.getFilters().getDate().getStart();
@@ -124,7 +123,7 @@ public class LoansService implements ILoansService {
         boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
         Map<String, Function<LoanInsurancePaymentsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("AMOUNT_PAID", LoanInsurancePaymentsResponse::getAmount);
-        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getPaymentDate(), Util.getDateFormatter()));
+        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getPaymentDate(), UtilDate.getDateFormatter()));
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getPagination() != null) {
@@ -136,34 +135,34 @@ public class LoansService implements ILoansService {
     }
 
     @Override
-    public LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId, Map<String, String> parameter) throws IOException {
-        List<ListLoansResponse> list = self.getServiceCache(personId, parameter, false);
+    public LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId) throws IOException {
+        List<ListLoansResponse> list = self.getServiceCache(personId, false);
         boolean existData = list.stream().anyMatch(response -> response.getLoanId().equals(loanId) && response.getClientId().equals(clientId));
         if (!existData) {
             DefaultMiddlewareError error = DefaultMiddlewareError.NOT_VALID_DATA;
             throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
         }
-        LoanDetailPaymentMWResponse mwResponse = provider.getLoanDetailPayment(loanId, clientId, parameter);
+        LoanDetailPaymentMWResponse mwResponse = provider.getLoanDetailPayment(loanId, clientId);
         return mapper.convertResponse(mwResponse);
     }
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == false")},
             put = {@CachePut(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == true")})
-    protected List<LoanInsurancePaymentsResponse> getLoanInsurancePaymentsCache(String loanId, String personId, String loamNumber, Map<String, String> parameter, Boolean refreshData) throws IOException {
-        LoanInsurancePaymentsMWResponse mwResponse = provider.getListLoanInsurancePayments(loanId, loamNumber, parameter);
+    protected List<LoanInsurancePaymentsResponse> getLoanInsurancePaymentsCache(String loanId, String personId, String loamNumber, Boolean refreshData) throws IOException {
+        LoanInsurancePaymentsMWResponse mwResponse = provider.getListLoanInsurancePayments(loanId, loamNumber);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
 
     @Override
-    public List<LoanPlanResponse> getLoanPlans(String loanId, String personId, Map<String, String> parameter) throws IOException {
-        LoanPlanMWResponse mwResponse = provider.getLoanPlansPayments(loanId, personId, parameter);
+    public List<LoanPlanResponse> getLoanPlans(String loanId, String personId) throws IOException {
+        LoanPlanMWResponse mwResponse = provider.getLoanPlansPayments(loanId, personId);
         return mapper.convertResponse(mwResponse);
     }
 
     @Override
-    public LoanPaymentResponse payLoanInstallment(String personId, String accountId, String correlativeId, Map<String, String> parameter) throws IOException {
+    public LoanPaymentResponse payLoanInstallment(String personId, String accountId, String correlativeId) throws IOException {
         LoanPaymentMWRequest mwRequest = mapper.mapperRequest(personId, accountId, correlativeId);
-        LoanPaymentMWResponse mwResponse = transactionProvider.payLoanInstallment(mwRequest, parameter);
+        LoanPaymentMWResponse mwResponse = transactionProvider.payLoanInstallment(mwRequest);
         return mapper.convertResponse(mwResponse);
     }
 }

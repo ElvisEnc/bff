@@ -2,8 +2,8 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.qr.*;
 import bg.com.bo.bff.application.dtos.response.qr.*;
-import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.request.qr.mw.QrMWRequestFixture;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.mappings.providers.qr.QrMapper;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRPaymentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.QrGeneratedPaidMW;
@@ -14,7 +14,6 @@ import bg.com.bo.bff.providers.interfaces.IQRProvider;
 import bg.com.bo.bff.providers.interfaces.IQrTransactionProvider;
 import bg.com.bo.bff.mappings.providers.qr.IQrMapper;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,8 +28,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class QrServiceTest {
@@ -42,41 +40,27 @@ class QrServiceTest {
     private IQrTransactionProvider qrTransactionProvider;
     @Mock
     private IQRProvider qrProvider;
-    @Mock
-    private IQrMapper iQrMapper;
+    @Spy
+    private IQrMapper iQrMapper = new QrMapper();
     @Mock
     private QrService self;
-    private Map<String, String> map;
+    private final Map<String, String> map = new HashMap<>();
 
-    @BeforeEach
-    void setUp() {
-        this.map = Map.of(
-                DeviceMW.DEVICE_ID.getCode(), "1234",
-                DeviceMW.DEVICE_IP.getCode(), "12344",
-                DeviceMW.DEVICE_NAME.getCode(), "OS",
-                DeviceMW.GEO_POSITION_X.getCode(), "121.11",
-                DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
-                DeviceMW.APP_VERSION.getCode(), "1.0.0"
-        );
-        this.service = new QrService(achAccountProvider, iQrMapper, qrProvider, qrTransactionProvider);
-    }
 
     @Test
     void givenLoanPaymentsRequestWhenGetListLoanPaymentThenListLoanPaymentsResponse() throws IOException {
         //Arrange
         QrListRequest request = QrRequestFixture.withDefaultQrListRequest();
-//        List<QrGeneratedPaid>  expectedResponse = new ArrayList<>((Collection) QrResponseFixture.withDefaultQrGeneratedPaid());
         List<QrGeneratedPaid> expectedList = new ArrayList<>();
         expectedList.add(QrResponseFixture.withDefaultQrGeneratedPaid());
         ReflectionTestUtils.setField(service, "self", self);
         when(self.getListQrMW(any(), any(), any(), any(), any())).thenReturn(expectedList);
 
         //Act
-        QrListResponse response = service.getQrGeneratedPaid(request, "123",new HashMap<>());
+        QrListResponse response = service.getQrGeneratedPaid(request, "123", map);
 
         //Assert
         assertNotNull(response);
-//        assertEquals(expectedResponse, response);
         verify(self).getListQrMW(any(), any(), any(), any(), any());
     }
 
@@ -84,21 +68,17 @@ class QrServiceTest {
     void givePersonIdWhenGetQrListGeneratedAndPaidThenReturnSuccess() throws IOException {
         // Arrange
         QrListMWResponse mwResponseMock = QrMWResponseFixture.withDefaultQrListMWResponse();
-        QrListResponse expectedResponse = QrResponseFixture.withDefaultQrListResponse();
-        List<QrGeneratedPaid> expectedList = new ArrayList<>();
-        expectedList.add(QrResponseFixture.withDefaultQrGeneratedPaid());
-
+        List<QrGeneratedPaid> expectedResponse = Arrays.asList(QrResponseFixture.withDefaultQrGeneratedPaid(), QrResponseFixture.withDefaultQrGeneratedPaid2());
         Mockito.when(achAccountProvider.getListQrGeneratePaidMW(any(), any(), any())).thenReturn(mwResponseMock);
-        Mockito.when(iQrMapper.convert(isA(QrGeneratedPaidMW.class))).thenReturn(QrResponseFixture.withDefaultQrGeneratedPaid());
 
         // Act
-        List<QrGeneratedPaid> response = service.getListQrMW(QrRequestFixture.withDefaultQrListRequest(), "123", new HashMap<>(), "key", false);
+        List<QrGeneratedPaid> response = service.getListQrMW(QrRequestFixture.withDefaultQrListRequest(), "123", map, "key", false);
 
         // Assert
         Assertions.assertNotNull(response);
-        assertEquals(expectedResponse.getGenerated(), response);
+        assertEquals(expectedResponse, response);
         verify(achAccountProvider).getListQrGeneratePaidMW(any(), any(), any());
-        verify(iQrMapper).convert(isA(QrGeneratedPaidMW.class));
+        verify(iQrMapper, times(2)).convert(isA(QrGeneratedPaidMW.class));
     }
 
     @Test
@@ -109,7 +89,7 @@ class QrServiceTest {
         when(qrProvider.generate(any(), any())).thenReturn(expected);
 
         // Act
-        QRCodeGenerateResponse actual = service.generateQR(request, new HashMap<>());
+        QRCodeGenerateResponse actual = service.generateQR(request, map);
 
         // Assert
         Assertions.assertNotNull(actual);
@@ -125,7 +105,7 @@ class QrServiceTest {
         when(qrProvider.regenerate(any(), any())).thenReturn(expected);
 
         // Act
-        QRCodeGenerateResponse actual = service.regenerateQR(request, new HashMap<>());
+        QRCodeGenerateResponse actual = service.regenerateQR(request, map);
 
         // Assert
         Assertions.assertNotNull(actual);
@@ -136,22 +116,34 @@ class QrServiceTest {
     @Test
     void givenDataEncryptRequestWhenDecryptQRThenQRDecryptResponse() throws IOException {
         // Arrange
-        QRCodeGenerateResponse expected = QrResponseFixture.withDefaultQRCodeGenerateResponse();
         QrDecryptRequest request = QrRequestFixture.withDefaultQrDecryptRequest();
-
-        Mockito.when(iQrMapper.convertDecrypt(isA(QrDecryptRequest.class))).thenReturn(QrMWRequestFixture.withDefaultQRCodeRegenerateMWRequest());
-        Mockito.when(qrProvider.decrypt(any(), any())).thenReturn(expected);
-        Mockito.when(iQrMapper.convertDecryptResponse(isA(QRCodeGenerateResponse.class))).thenReturn(QrResponseFixture.withDefaultQrDecryptResponse());
-
+        QRCodeGenerateResponse expected = QrResponseFixture.withDefaultQRCodeGenerateResponse();
         when(qrProvider.decrypt(any(), any())).thenReturn(expected);
 
         // Act
         QrDecryptResponse actual = service.decryptQR(request, map);
 
         // Assert
-        Assertions.assertNotNull(actual);
-        assertEquals(iQrMapper.convertDecryptResponse(expected), actual);
+        assertNotNull(actual);
+        verify(iQrMapper).convertDecrypt(any());
         verify(qrProvider).decrypt(any(), any());
+        verify(iQrMapper).convertDecryptResponse(any());
+    }
+
+    @Test
+    void givenDataEncryptRequestWhenDecryptQRThenQRDecryptResponseExpired() throws IOException {
+        // Arrange
+        QrDecryptRequest request = QrRequestFixture.withDefaultQrDecryptRequest();
+        QRCodeGenerateResponse expected = QrResponseFixture.withDefaultQRCodeGenerateResponseExpired();
+        when(qrProvider.decrypt(any(), any())).thenReturn(expected);
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.decryptQR(request, map)
+        );
+
+        // Assert
+        assertEquals("QR_EXPIRED", exception.getCode());
     }
 
     @Test
@@ -169,5 +161,21 @@ class QrServiceTest {
         //Assert
         assertEquals(expected, actual);
         verify(qrTransactionProvider).qrPayment(any(), any());
+    }
+
+    @Test
+    void givenQRPaymentRequestWhenQrPaymentThenQRPaymentMWResponsePending() throws IOException {
+        // Arrange
+        QRPaymentRequest request = QrRequestFixture.withDefaultQRPaymentRequest();
+        QRPaymentMWResponse expected = QrResponseFixture.withDefaultQrPaymentMWResponsePending();
+        when(qrTransactionProvider.qrPayment(any(), any())).thenReturn(expected);
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.qrPayment(request, "123", "123", map)
+        );
+
+        //Assert
+        assertEquals("TRANSFER_PENDING", exception.getCode());
     }
 }

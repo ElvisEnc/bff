@@ -3,10 +3,11 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.dtos.response.user.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.mappings.providers.information.PersonalInformationMapper;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.PersonalInformationNetRequestFixture;
@@ -28,8 +29,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -49,8 +50,8 @@ import static org.mockito.Mockito.*;
 class PersonalInformationNetProviderTest {
     @InjectMocks
     private PersonalInformationNetProvider personalInformationNetProvider;
-    @Mock
-    private IPersonalInformationMapper mapper;
+    @Spy
+    private IPersonalInformationMapper mapper=new PersonalInformationMapper();
     private Map<String, String> map;
     private IHttpClientFactory httpClientFactoryMock;
 
@@ -93,25 +94,60 @@ class PersonalInformationNetProviderTest {
     void givenPersonIdWhenGetEconomicalActivityThenSuccess() throws IOException {
         // Arrange
         ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefaultApiPersonalInformationNetRequest();
-        EconomicActivityResponse responseMock = UserResponseFixture.withDefaultEconomicActivityResponse();
         when(mapper.mapperRequest(any())).thenReturn(requestMapperMock);
-        when(mapper.convertEconomicActivity(any())).thenReturn(responseMock);
 
-        String resultNet = "{\"CodigoError\":\"COD000\",\"Datos\":[{\"actividadEconomica\":[{\"id\":\"1401\",\"name\":\"Agricultura/Ganaderia\"},{\"id\":\"36990\",\"name\":\"Industriamanofacturera\"},{\"id\":\"45209\",\"name\":\"Construcción\"},{\"id\":\"52399\",\"name\":\"Ventaalpormayorymenor\"},{\"id\":\"70201\",\"name\":\"Serviciosinmobiliarios\"},{\"id\":\"99003\",\"name\":\"Salud,hoteleríayentretenimiento\"},{\"id\":\"60211\",\"name\":\"Transporteycomunicación\"},{\"id\":\"99002\",\"name\":\"Estudiantes\"},{\"id\":\"65191\",\"name\":\"Serviciosdelasentidadesfinancieras\"},{\"id\":\"99003\",\"name\":\"Amasdecasa\"},{\"id\":\"93099\",\"name\":\"Otros\"}]},{\"nivelIngreso\":[{\"OPCIONINTERNA\":\"1\",\"DESCRIPCION\":\"MENOSDE$600\"},{\"OPCIONINTERNA\":\"2\",\"DESCRIPCION\":\"$600-$1200\"},{\"OPCIONINTERNA\":\"3\",\"DESCRIPCION\":\"$1201-$2000\"},{\"OPCIONINTERNA\":\"4\",\"DESCRIPCION\":\"$2001-$5000\"},{\"OPCIONINTERNA\":\"5\",\"DESCRIPCION\":\"MASDE$5000\"}]},{\"fuenteIngreso\":[{\"OPCIONINTERNA\":\"R\",\"DESCRIPCION\":\"Rentista/jubilado\"},{\"OPCIONINTERNA\":\"U\",\"DESCRIPCION\":\"Unipersonal\"},{\"OPCIONINTERNA\":\"S\",\"DESCRIPCION\":\"Sinactividad\"},{\"OPCIONINTERNA\":\"P\",\"DESCRIPCION\":\"Amadecasa/estudiante\"},{\"OPCIONINTERNA\":\"D\",\"DESCRIPCION\":\"Asalariado\"},{\"OPCIONINTERNA\":\"I\",\"DESCRIPCION\":\"Independiente\"},{\"OPCIONINTERNA\":\"V\",\"DESCRIPCION\":\"Inversionista\"}]},{\"cargo\":[{\"CODIGO\":\"AR1\",\"CARGO\":\"GERENTE\"},{\"CODIGO\":\"AR2\",\"CARGO\":\"JEFE\"},{\"CODIGO\":\"AR3\",\"CARGO\":\"ADMINISTRATIVO\"},{\"CODIGO\":\"AR4\",\"CARGO\":\"OPERATIVO\"},{\"CODIGO\":\"AR5\",\"CARGO\":\"FUNCIONARIOPÚBLICO\"}]}],\"Mensaje\":\"ejecutado\"}";
+        String resultNet = "{\"CodigoError\":\"COD000\",\"Datos\":[{\"actividadEconomica\":[{\"id\":\"123\",\"name\":\"Agricultura/Ganaderia\"},{\"id\":\"36990\",\"name\":\"Industriamanofacturera\"},{\"id\":\"45209\",\"name\":\"Construcción\"},{\"id\":\"52399\",\"name\":\"Ventaalpormayorymenor\"},{\"id\":\"70201\",\"name\":\"Serviciosinmobiliarios\"},{\"id\":\"99003\",\"name\":\"Salud,hoteleríayentretenimiento\"},{\"id\":\"60211\",\"name\":\"Transporteycomunicación\"},{\"id\":\"99002\",\"name\":\"Estudiantes\"},{\"id\":\"65191\",\"name\":\"Serviciosdelasentidadesfinancieras\"},{\"id\":\"99003\",\"name\":\"Amasdecasa\"},{\"id\":\"93099\",\"name\":\"Otros\"}]},{\"nivelIngreso\":[{\"OPCIONINTERNA\":\"1\",\"DESCRIPCION\":\"MENOSDE$600\"},{\"OPCIONINTERNA\":\"2\",\"DESCRIPCION\":\"$600-$1200\"},{\"OPCIONINTERNA\":\"3\",\"DESCRIPCION\":\"$1201-$2000\"},{\"OPCIONINTERNA\":\"4\",\"DESCRIPCION\":\"$2001-$5000\"},{\"OPCIONINTERNA\":\"5\",\"DESCRIPCION\":\"MASDE$5000\"}]},{\"fuenteIngreso\":[{\"OPCIONINTERNA\":\"R\",\"DESCRIPCION\":\"Rentista/jubilado\"},{\"OPCIONINTERNA\":\"U\",\"DESCRIPCION\":\"Unipersonal\"},{\"OPCIONINTERNA\":\"S\",\"DESCRIPCION\":\"Sinactividad\"},{\"OPCIONINTERNA\":\"P\",\"DESCRIPCION\":\"Amadecasa/estudiante\"},{\"OPCIONINTERNA\":\"D\",\"DESCRIPCION\":\"Asalariado\"},{\"OPCIONINTERNA\":\"I\",\"DESCRIPCION\":\"Independiente\"},{\"OPCIONINTERNA\":\"V\",\"DESCRIPCION\":\"Inversionista\"}]},{\"cargo\":[{\"CODIGO\":\"AR1\",\"CARGO\":\"GERENTE\"},{\"CODIGO\":\"AR2\",\"CARGO\":\"JEFE\"},{\"CODIGO\":\"AR3\",\"CARGO\":\"ADMINISTRATIVO\"},{\"CODIGO\":\"AR4\",\"CARGO\":\"OPERATIVO\"},{\"CODIGO\":\"AR5\",\"CARGO\":\"FUNCIONARIOPÚBLICO\"}]}],\"Mensaje\":\"ejecutado\"}";
         ProviderNetResponse expectedResponse = Util.stringToObject(resultNet, ProviderNetResponse.class);
         String jsonResponse = Util.objectToString(expectedResponse);
-        stubFor(post(anyUrl())
-                .willReturn(okJson(jsonResponse)));
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
         EconomicActivityResponse response = personalInformationNetProvider.getEconomicalActivity(123);
 
         // Assert
         assertNotNull(response);
-        assertEquals(responseMock, response);
         verify(httpClientFactoryMock).create();
         verify(mapper).mapperRequest("123");
         verify(mapper).convertEconomicActivity(expectedResponse);
+    }
+
+    @Test
+    void givenPersonIdWhenGetEconomicalActivityThenEmpty() throws IOException {
+        // Arrange
+        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefaultApiPersonalInformationNetRequest();
+        when(mapper.mapperRequest(any())).thenReturn(requestMapperMock);
+
+        String resultNet = "{\"CodigoError\":\"COD000\",\"Datos\":[],\"Mensaje\":\"test\"}";
+        ProviderNetResponse expectedResponse = Util.stringToObject(resultNet, ProviderNetResponse.class);
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        EconomicActivityResponse response = personalInformationNetProvider.getEconomicalActivity(123);
+
+        // Assert
+        assertNotNull(response);
+        verify(httpClientFactoryMock).create();
+        verify(mapper).mapperRequest(any());
+        verify(mapper).convertEconomicActivity(any());
+    }
+
+    @Test
+    void givenPersonIdWhenGetEconomicalActivityThenNull() throws IOException {
+        // Arrange
+        String resultNet = "{\"CodigoError\":\"COD000\",\"Mensaje\":\"test\"}";
+        ProviderNetResponse expectedResponse = Util.stringToObject(resultNet, ProviderNetResponse.class);
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        EconomicActivityResponse response = personalInformationNetProvider.getEconomicalActivity(123);
+
+        // Assert
+        assertNotNull(response);
+        verify(httpClientFactoryMock).create();
+        verify(mapper).mapperRequest(any());
+        verify(mapper).convertEconomicActivity(any());
     }
 
     @Test

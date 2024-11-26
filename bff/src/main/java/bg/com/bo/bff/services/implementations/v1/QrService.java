@@ -10,8 +10,11 @@ import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.commons.enums.qr.ValidParametersFilter;
 import bg.com.bo.bff.commons.filters.QrOrderFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
+import bg.com.bo.bff.commons.filters.SearchCriteriaFilter;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.qr.mw.QRCodeGenerateMWRequest;
 import bg.com.bo.bff.providers.dtos.request.qr.mw.QRCodeRegenerateMWRequest;
@@ -47,9 +50,9 @@ import java.util.stream.Collectors;
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class QrService implements IQrService {
     private final IAchAccountProvider iAchAccountProvider;
-    private final IQrMapper iQrMapper;
-    private final IQRProvider qrProvider;
     private final IQrTransactionProvider qrTransactionProvider;
+    private final IQRProvider qrProvider;
+    private final IQrMapper iQrMapper;
     @Autowired
     private QrService self;
 
@@ -62,33 +65,41 @@ public class QrService implements IQrService {
 
     @Override
     public QrListResponse getQrGeneratedPaid(QrListRequest request, String personId, Map<String, String> parameters) throws IOException {
+        boolean hasSearchCriteria = request.getFilters().getSearchCriteria() != null && request.getFilters().getSearchCriteria().getParameters() != null;
+        if (hasSearchCriteria) {
+            if (request.getFilters().getSearchCriteria().getParameters().isEmpty() || !ValidParametersFilter.isValidParams(request.getFilters().getSearchCriteria().getParameters())) {
+                throw new GenericException("ParáAmmetros inválidos: BUSINESSNAME, AMOUNT y DESCRIPTION son aceptados.", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
+            }
+        } else {
+            request.getFilters().setSearchCriteria(null);
+        }
+
         String startDate = request.getFilters().getPeriod().getStart();
         String endDate = request.getFilters().getPeriod().getEnd();
         String key = personId + "|" + startDate + "|" + endDate;
         Boolean needAllRecords = request.getPagination() == null || request.getPagination().getPage() == 1;
         List<QrGeneratedPaid> result = self.getListQrMW(request, personId, parameters, key, needAllRecords);
 
+        result = result.stream().filter(qr -> qr.getOperationType().equals(request.getOperationType())).collect(Collectors.toList());
         result = new QrOrderFilter(request.getOrder()).apply(result);
-
-        Map<Boolean, List<QrGeneratedPaid>> partitionedLists = result.stream()
-                .collect(Collectors.partitioningBy(q -> q.getOperationType().equals("1")));
-        List<QrGeneratedPaid> operationTypeGeneratedList = partitionedLists.get(true);
-        List<QrGeneratedPaid> operationTypePaidList = partitionedLists.get(false);
+        if(request.getFilters().getSearchCriteria() != null && !request.getFilters().getSearchCriteria().getValue().trim().isEmpty()){
+            result = new SearchCriteriaFilter<QrGeneratedPaid>(request.getFilters().getSearchCriteria().getParameters(), request.getFilters().getSearchCriteria().getValue()).apply(result);
+        }
 
         QrListResponse response = QrListResponse.builder()
-                .totalGenerated(operationTypeGeneratedList.size())
-                .totalPaid(operationTypePaidList.size())
+                .totalRegistries(result.size())
+                .page(request.getPagination() != null ? request.getPagination().getPage() : 1)
+                .totalByPage(request.getPagination() != null ? request.getPagination().getPageSize() : result.size())
                 .build();
 
         if (request.getPagination() != null) {
             int page = request.getPagination().getPage();
             int pageSize = request.getPagination().getPageSize();
-            operationTypeGeneratedList = new PageFilter(page, pageSize).apply(operationTypeGeneratedList);
-            operationTypePaidList = new PageFilter(page, pageSize).apply(operationTypePaidList);
+            result = new PageFilter(page, pageSize).apply(result);
+            response.setTotalByPage(result.size());
         }
 
-        response.setGenerated(operationTypeGeneratedList);
-        response.setPaid(operationTypePaidList);
+        response.setData(result);
         return response;
     }
 
@@ -123,7 +134,7 @@ public class QrService implements IQrService {
         QRCodeGenerateResponse response = this.qrProvider.decrypt(requestMW, parameter);
         QrDecryptResponse result = iQrMapper.convertDecryptResponse(response);
         if (UtilDate.isDateOutOfDate(result.getExpirationDate())) {
-            throw new GenericException(QRMiddlewareError.QR_EXPIRED.getMessage(), QRMiddlewareError.QR_EXPIRED.getHttpCode(), QRMiddlewareError.QR_EXPIRED.getCode());
+            throw new GenericException(QRMiddlewareError.QR_EXPIRED);
         }
         return result;
     }
@@ -132,6 +143,7 @@ public class QrService implements IQrService {
     public QRPaymentMWResponse qrPayment(QRPaymentRequest request, String personId, String accountId, Map<String, String> parameter) throws IOException {
         QRPaymentMWRequest requestMW = iQrMapper.convert(request, personId, accountId);
         QRPaymentMWResponse result = this.qrTransactionProvider.qrPayment(requestMW, parameter);
+        result.getData().getReceiptDetail().setAccountingDate(UtilDate.formatDate(result.getData().getReceiptDetail().getAccountingDate()));
         if (!Objects.equals(result.getData().getStatus(), "PENDING")) {
             return result;
         } else {

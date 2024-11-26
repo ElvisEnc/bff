@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.commons.enums.ProjectNameMW;
+import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;

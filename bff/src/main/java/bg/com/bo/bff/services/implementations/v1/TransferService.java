@@ -8,6 +8,7 @@ import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.pcc01.Pcc01Mapper;
 import bg.com.bo.bff.mappings.providers.transfer.ITransferMapper;
 import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
+import bg.com.bo.bff.providers.dtos.request.transfer.Pcc01MWRequest;
 import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequest;
 import bg.com.bo.bff.providers.dtos.response.transfer.Pcc01MWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfer.TransferAchMwResponse;
@@ -83,8 +84,8 @@ public class TransferService implements ITransferService {
     }
 
     @Override
-    public Pcc01Response makeControl(Pcc01Request request, Map<String, String> parameter) throws IOException {
-        Pcc01MWResponse pcc01MWResponse = transferProvider.validateControl(request, parameter);
-        return pcc01Mapper.convert(pcc01MWResponse);
+    public Pcc01Response makeControl(String personId, String accountId, Pcc01Request request, Map<String, String> parameter) throws IOException {
+        Pcc01MWRequest mwRequest = mapper.mapperRequest(personId, accountId, request);
+        return transferProvider.validateControl(mwRequest, parameter);
     }
 }

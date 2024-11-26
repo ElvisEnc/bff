@@ -3,10 +3,10 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
-import bg.com.bo.bff.commons.enums.CanalMW;
-import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
-import bg.com.bo.bff.commons.enums.ProjectNameMW;
-import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
+import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
+import bg.com.bo.bff.commons.enums.config.provider.EncryptionAlgorithm;
+import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
+import bg.com.bo.bff.providers.models.enums.middleware.response.GenericControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
@@ -16,6 +16,7 @@ import bg.com.bo.bff.providers.interfaces.IEncryptionProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -38,13 +39,15 @@ public class EncryptionProvider implements IEncryptionProvider {
     ITokenMiddlewareProvider tokenMiddlewareProvider;
     private final MiddlewareConfig middlewareConfig;
     private IHttpClientFactory httpClientFactory;
+    private final HttpServletRequest httpServletRequest;
 
     private static final Logger logger = LogManager.getLogger(LoginMiddlewareProvider.class.getName());
 
-    public EncryptionProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
+    public EncryptionProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory, HttpServletRequest httpServletRequest) {
         this.tokenMiddlewareProvider = tokenMiddlewareProvider;
         this.middlewareConfig = middlewareConfig;
         this.httpClientFactory = httpClientFactory;
+        this.httpServletRequest = httpServletRequest;
     }
 
     @Cacheable(value = CacheConstants.ENCRYPTION_KEYS_CACHE_NAME)
@@ -65,7 +68,8 @@ public class EncryptionProvider implements IEncryptionProvider {
             request.setHeader("Authorization", "Bearer " + clientToken.getAccessToken());
             request.setHeader("middleware-channel", CanalMW.GANAMOVIL.getCanal());
             request.setHeader("application-id", CanalMW.GANAMOVIL.getCanal());
-            request.setHeader("deviceId", encodeInfo.getUniqueId());
+            request.setHeader("device-id", encodeInfo.getUniqueId());
+            request.setHeader("device-ip", httpServletRequest.getRemoteAddr());
 
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();

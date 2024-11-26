@@ -1,10 +1,9 @@
 package bg.com.bo.bff.commons.utils;
 
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.application.config.request.tracing.HeadersData;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpServletResponseWrapper;
-import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.util.Collection;
 import java.util.Enumeration;
@@ -35,6 +34,17 @@ public class Headers {
         }
         parameters.put(DeviceMW.DEVICE_IP.getCode(), request.getRemoteAddr());
 
+        return parameters;
+    }
+
+    public static Map<String, String> getParameter(HeadersData headers) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(DeviceMW.DEVICE_ID.getCode(), headers.getDeviceId());
+        parameters.put(DeviceMW.DEVICE_IP.getCode(), headers.getDeviceIp());
+        parameters.put(DeviceMW.DEVICE_NAME.getCode(), headers.getDeviceName());
+        parameters.put(DeviceMW.GEO_POSITION_X.getCode(), headers.getGeoPositionX());
+        parameters.put(DeviceMW.GEO_POSITION_Y.getCode(), headers.getGeoPositionY());
+        parameters.put(DeviceMW.APP_VERSION.getCode(), headers.getAppVersion());
         return parameters;
     }
 

@@ -7,19 +7,18 @@ import bg.com.bo.bff.application.dtos.response.login.*;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.commons.enums.LoginSchemaName;
-import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
-import bg.com.bo.bff.commons.enums.response.RefreshControllerErrorResponse;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
+import bg.com.bo.bff.commons.enums.login.LoginSchemaName;
+import bg.com.bo.bff.providers.models.enums.middleware.response.GenericControllerErrorResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.response.RefreshControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.services.LoginServiceMapper;
-import bg.com.bo.bff.commons.enums.UserRole;
-import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
-import bg.com.bo.bff.application.exceptions.NotValidStateException;
+import bg.com.bo.bff.commons.enums.user.UserRole;
 import bg.com.bo.bff.providers.dtos.response.jwt.JwtRefresh;
 import bg.com.bo.bff.providers.dtos.request.login.mw.LogoutMWRequest;
 import bg.com.bo.bff.providers.dtos.response.jwt.keycloak.CreateTokenServiceResponse;
+import bg.com.bo.bff.providers.dtos.response.keycloak.IntrospectTokenKCResponse;
 import bg.com.bo.bff.providers.dtos.response.login.mw.DeviceEnrollmentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.login.mw.LoginFactorData;
 import bg.com.bo.bff.providers.dtos.response.login.mw.LoginFactorMWResponse;
@@ -30,19 +29,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
 @Service
 public class LoginService implements ILoginServices {
-    private final ILoginMiddlewareProvider loginMiddlewareService;
+    private final ILoginMiddlewareProvider provider;
     private final IJwtProvider jwtService;
     private final LoginServiceMapper loginServiceMapper;
 
     @Autowired
-    public LoginService(ILoginMiddlewareProvider loginMiddlewareService, IJwtProvider jwtService, LoginServiceMapper loginMapper) {
-        this.loginMiddlewareService = loginMiddlewareService;
+    public LoginService(ILoginMiddlewareProvider provider, IJwtProvider jwtService, LoginServiceMapper loginMapper) {
+        this.provider = provider;
         this.jwtService = jwtService;
         this.loginServiceMapper = loginMapper;
     }
@@ -71,24 +71,22 @@ public class LoginService implements ILoginServices {
             validateNumber(user);
             LoginFactorData data = new LoginFactorData();
             data.setPersonId(user);
-            loginValidation = loginMiddlewareService.validateCredentials(loginRequest, data, parameters);
+            loginValidation = provider.validateCredentials(loginRequest, data, parameters);
         } else {
             if (Objects.equals(factorId, LoginSchemaName.DNI_LOGIN.getCode()))
                 validateNumber(user);
-            LoginFactorMWResponse loginMWFactorResponse = loginMiddlewareService.validateFactorUser(loginRequest, parameters);
-            loginValidation = loginMiddlewareService.validateCredentials(loginRequest, loginMWFactorResponse.getData(), parameters);
+            LoginFactorMWResponse loginMWFactorResponse = provider.validateFactorUser(loginRequest, parameters);
+            loginValidation = provider.validateCredentials(loginRequest, loginMWFactorResponse.getData(), parameters);
         }
 
         CreateTokenServiceResponse createToken = jwtService.generateToken(loginValidation.getPersonId(), sid, UserRole.LOGGED_USER);
 
-        switch (createToken.getStatusCode()) {
-            case SUCCESS:
-                return loginServiceMapper.convert(createToken, loginValidation, LoginResult.StatusCode.SUCCESS);
-            case INVALID_DATA:
-                throw new NotValidStateException(String.format("Estado no valido para Login. %s", createToken.getStatusCode()));
-            default:
-                throw new NotHandledResponseException();
-        }
+        return switch (createToken.getStatusCode()) {
+            case SUCCESS -> loginServiceMapper.convert(createToken, loginValidation, LoginResult.StatusCode.SUCCESS);
+            case INVALID_DATA ->
+                    throw new GenericException(String.format("Estado no valido para Login. %s", createToken.getStatusCode()), AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
+            default -> throw new GenericException();
+        };
     }
 
     private void decodeJsonData(Map<String, String> parameters) {
@@ -112,25 +110,28 @@ public class LoginService implements ILoginServices {
     }
 
     @Override
-    public TokenDataResponse refreshSession(String personId, RefreshSessionRequest refreshSessionRequest) {
+    public TokenDataResponse refreshSession(String personId, RefreshSessionRequest refreshSessionRequest, String accessJwt) {
         JwtRefresh jwtRefresh = jwtService.parseJwtRefresh(refreshSessionRequest.getRefreshToken());
 
         if (!jwtRefresh.getPayload().getPersonId().trim().equals(personId.trim()))
             throw new HandledException(RefreshControllerErrorResponse.INVALID_DATA);
 
+        String accessToken = accessJwt.substring(7);
+        if(!jwtService.revokeAccessToken(accessToken))
+            throw new HandledException(RefreshControllerErrorResponse.INVALID_DATA);
+
         try {
             CreateTokenServiceResponse createTokenResponse = jwtService.refreshToken(refreshSessionRequest.getRefreshToken());
 
-            switch (createTokenResponse.getStatusCode()) {
-                case SUCCESS:
+            return switch (createTokenResponse.getStatusCode()) {
+                case SUCCESS -> {
                     RefreshSessionResult refreshSessionResult = loginServiceMapper.convert(createTokenResponse.getTokenData(), RefreshSessionResult.StatusCode.SUCCESS);
-                    return loginServiceMapper.convert(refreshSessionResult);
-                case INVALID_DATA:
-                    throw new HandledException(RefreshControllerErrorResponse.INVALID_DATA);
-                default:
-                    throw new NotHandledResponseException();
-            }
-        } catch (HandledException | NotHandledResponseException e) {
+                    yield loginServiceMapper.convert(refreshSessionResult);
+                }
+                case INVALID_DATA -> throw new HandledException(RefreshControllerErrorResponse.INVALID_DATA);
+                default -> throw new GenericException();
+            };
+        } catch (HandledException e) {
             throw e;
         } catch (Exception e) {
             throw new HandledException(GenericControllerErrorResponse.INTERNAL_SERVER_ERROR, e);
@@ -151,7 +152,10 @@ public class LoginService implements ILoginServices {
                                   LogoutRequest request) throws IOException {
 
         String accessToken = authorization.substring(7);
-        if (!jwtService.revokeAccessToken(accessToken) || !jwtService.revokeRefreshToken(request)) {
+
+        validateRequestToken(request.getRefreshToken());
+
+        if (!jwtService.revokeAccessToken(accessToken) || !jwtService.revokeRefreshToken(request.getRefreshToken())) {
             AppError errorKetCloak = AppError.KEY_CLOAK_ERROR;
             throw new GenericException(errorKetCloak.getMessage(), errorKetCloak.getHttpCode(), errorKetCloak.getCode());
         }
@@ -172,13 +176,25 @@ public class LoginService implements ILoginServices {
                         .build())
                 .build();
 
-        return loginMiddlewareService.logout(deviceId, deviceIp, deviceName, geoPositionX, geoPositionY, appVersion, logoutMWRequest);
+        return provider.logout(deviceId, deviceIp, deviceName, geoPositionX, geoPositionY, appVersion, logoutMWRequest);
     }
 
+    private void validateRequestToken(String token) {
+        AppError errorKetCloak = AppError.KEY_CLOAK_ERROR;
+        IntrospectTokenKCResponse introspect = jwtService.introspect(token);
+        if (introspect.getResult() != IntrospectTokenKCResponse.Result.SUCCESS) {
+            if (Arrays.asList(IntrospectTokenKCResponse.Result.EXPIRED_TOKEN,
+                    IntrospectTokenKCResponse.Result.INVALID_TOKEN).contains(introspect.getResult())) {
+                AppError invalidRefreshTokenError = AppError.INVALID_REFRESH_TOKEN;
+                throw new GenericException(invalidRefreshTokenError.getMessage(), invalidRefreshTokenError.getHttpCode(), invalidRefreshTokenError.getCode());
+            } else
+                throw new GenericException(errorKetCloak.getMessage(), errorKetCloak.getHttpCode(), errorKetCloak.getCode());
+        }
+    }
+
+    @Override
     public DeviceEnrollmentResponse validation(Map<String, String> parameter) throws IOException {
-
-
-        DeviceEnrollmentMWResponse deviceEnrollmentResponse = loginMiddlewareService.makeValidateDevice(parameter);
+        DeviceEnrollmentMWResponse deviceEnrollmentResponse = provider.makeValidateDevice(parameter);
 
         String enrolled = deviceEnrollmentResponse.getStatusCode();
         DeviceEnrollmentResponse response = new DeviceEnrollmentResponse();

@@ -9,7 +9,7 @@ import bg.com.bo.bff.application.dtos.request.qr.QrRequestFixture;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrResponseFixture;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRPaymentMWResponse;
 import bg.com.bo.bff.services.interfaces.IQrService;
@@ -29,10 +29,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -77,27 +73,12 @@ class QrControllerTest {
                 .configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false)
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
 
-        Map<String, String> map = Map.of(
-                DeviceMW.DEVICE_ID.getCode(), DEVICE_ID,
-                DeviceMW.DEVICE_IP.getCode(), DEVICE_IP,
-                DeviceMW.DEVICE_NAME.getCode(), DEVICE_NAME,
-                DeviceMW.GEO_POSITION_X.getCode(), GEO_POSITION_X,
-                DeviceMW.GEO_POSITION_Y.getCode(), GEO_POSITION_Y,
-                DeviceMW.APP_VERSION.getCode(), APP_VERSION
-        );
-
-        Vector<String> lists = new Vector<>(map.keySet().stream().toList());
-        Enumeration<String> enumerations = lists.elements();
-
         headers.add(DeviceMW.DEVICE_ID.getCode(), DEVICE_ID);
         headers.add(DeviceMW.DEVICE_IP.getCode(), DEVICE_IP);
         headers.add(DeviceMW.DEVICE_NAME.getCode(), DEVICE_NAME);
         headers.add(DeviceMW.GEO_POSITION_X.getCode(), GEO_POSITION_X);
         headers.add(DeviceMW.GEO_POSITION_Y.getCode(), GEO_POSITION_Y);
         headers.add(DeviceMW.APP_VERSION.getCode(), APP_VERSION);
-
-        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
-        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
     }
 
     @Test
@@ -116,7 +97,7 @@ class QrControllerTest {
                         .headers(this.headers))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.totalGenerated").value(1))
+                .andExpect(jsonPath("$.totalRegistries").value(10))
                 .andReturn();
         String response = objectMapper.writeValueAsString(responseExpected);
         String actual = result.getResponse().getContentAsString();

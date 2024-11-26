@@ -3,8 +3,8 @@ package bg.com.bo.bff.commons.filters;
 import bg.com.bo.bff.application.dtos.request.qr.OrderRequest;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.OrderFieldFilter;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.commons.enums.qr.OrderFieldFilter;
 
 import java.util.Comparator;
 import java.util.List;

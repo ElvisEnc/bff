@@ -1,21 +1,26 @@
 package bg.com.bo.bff.application.exceptions;
 
-import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
-import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class GenericException extends RuntimeException {
-    private HttpStatus status;
+    private final HttpStatus status;
     private String method;
     private String source;
-    private String code;
+    private final String code;
+    private String title = "";
+
+    public GenericException() {
+        super(AppError.DEFAULT.getMessage());
+        this.status = HttpStatus.INTERNAL_SERVER_ERROR;
+        this.code = AppError.DEFAULT.getCode();
+        fillTrace();
+    }
 
     public GenericException(String description) {
         super(description);
@@ -38,10 +43,19 @@ public class GenericException extends RuntimeException {
         fillTrace();
     }
 
+    public GenericException(String description, HttpStatus status, String code, String title) {
+        super(description);
+        this.status = status;
+        this.code = code;
+        this.title = title;
+        fillTrace();
+    }
+
     public GenericException(IMiddlewareError error) {
         super(error.getMessage());
         this.status = error.getHttpCode();
         this.code = error.getCode();
+        this.title = error.getTitle();
         fillTrace();
     }
 

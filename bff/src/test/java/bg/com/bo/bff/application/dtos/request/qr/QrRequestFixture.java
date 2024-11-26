@@ -1,15 +1,26 @@
 package bg.com.bo.bff.application.dtos.request.qr;
 
+import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
+import bg.com.bo.bff.application.dtos.request.commons.SearchCriteriaRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.PaginationRequest;
 import bg.com.bo.bff.providers.dtos.request.qr.mw.*;
+
+import java.util.Arrays;
 
 public class QrRequestFixture {
     public static QrListRequest withDefaultQrListRequest() {
         return QrListRequest.builder()
+                .operationType("1")
                 .filters(QrListFilterRequest.builder()
                         .period(PeriodRequest.builder()
                                 .start("2023-11-22")
                                 .end("2024-04-30")
+                                .build())
+                        .searchCriteria(SearchCriteriaRequest.builder()
+                                .parameters(Arrays.asList(
+                                        "description"
+                                ))
+                                .value("UnitTest")
                                 .build())
                         .build())
                 .pagination(PaginationRequest.builder()
@@ -103,6 +114,7 @@ public class QrRequestFixture {
                 .serviceCode("0")
                 .fields("campo libre")
                 .serialNumber("1048DC9A668388944139515F6CFF04FE")
+                .allowsDuplicate("N")
                 .build();
         Risk risk = new Risk("QRPayment");
 

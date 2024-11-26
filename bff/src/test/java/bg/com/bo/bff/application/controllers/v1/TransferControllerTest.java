@@ -4,7 +4,7 @@ import bg.com.bo.bff.application.dtos.request.transfer.TransferRequestFixture;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.dtos.response.transfer.TransferResponse;
 import bg.com.bo.bff.application.dtos.response.transfer.TransferResponseFixture;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.ITransferService;
 import jakarta.servlet.http.HttpServletRequest;

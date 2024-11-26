@@ -2,12 +2,14 @@ package bg.com.bo.bff.application.config.encryption.payload;
 
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.constants.Constants;
-import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
+import bg.com.bo.bff.commons.enums.config.provider.EncryptionAlgorithm;
 import bg.com.bo.bff.commons.utils.CipherUtils;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.models.payload.encryption.AesPayloadResolver;
+import bg.com.bo.bff.models.payload.encryption.EncryptionPayload;
+import bg.com.bo.bff.models.payload.encryption.EncryptionPayloadResult;
+import bg.com.bo.bff.models.payload.encryption.PayloadKey;
 import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
-import bg.com.bo.bff.models.EncryptionPayload;
-import bg.com.bo.bff.models.PayloadKey;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
@@ -36,12 +38,14 @@ public class EncryptResponseWrapper extends HttpServletResponseWrapper {
     private final EncryptInfo encodeInfo;
     private SecretKey secretKey;
     private IvParameterSpec iv;
+    private final String payloadAlgorithm;
 
-    public EncryptResponseWrapper(HttpServletResponse response, IEncryptionService encryptionService, EncryptInfo encodeInfo) throws NoSuchAlgorithmException {
+    public EncryptResponseWrapper(HttpServletResponse response, IEncryptionService encryptionService, EncryptInfo encodeInfo, String payloadAlgorithm) {
         super(response);
         this.encodeInfo = encodeInfo;
         this.encryptionService = encryptionService;
         this.capture = new ByteArrayOutputStream(response.getBufferSize());
+        this.payloadAlgorithm = payloadAlgorithm;
     }
 
     @Override
@@ -98,7 +102,6 @@ public class EncryptResponseWrapper extends HttpServletResponseWrapper {
     @Override
     public void flushBuffer() {
         try {
-            setPayloadKeys();
             wrapContent();
             setEncryptionHeadersData();
 
@@ -125,16 +128,6 @@ public class EncryptResponseWrapper extends HttpServletResponseWrapper {
     }
 
     /**
-     * Genera los datos necesarios para la encriptacion del payload.
-     *
-     * @throws NoSuchAlgorithmException
-     */
-    private void setPayloadKeys() throws NoSuchAlgorithmException {
-        this.secretKey = CipherUtils.generateKey(EncryptionAlgorithm.AES_256_CBC_PKCS5_PADDING);
-        this.iv = CipherUtils.generateIv();
-    }
-
-    /**
      * Setea la clave de encriptacion AES del payload, encriptada a su vez con RSA. Modifica tambien el content type y el content length resultante de la encriptacion del body original.
      *
      * @throws IOException
@@ -145,14 +138,14 @@ public class EncryptResponseWrapper extends HttpServletResponseWrapper {
      * @throws BadPaddingException
      * @throws InvalidKeyException
      */
-    private void setEncryptionHeadersData() throws IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    private void setEncryptionHeadersData() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         this.setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         this.setHeader("Content-Length", String.valueOf(Util.getEncodedBytes(content).length));
         this.setHeader(Constants.SESSION_ENCRYPTED_KEY_HEADER, this.encryptKeyHeader());
     }
 
     /**
-     * Envuelve la respuesta en el formato de {@link bg.com.bo.bff.models.EncryptionPayload EncryptionPayload} con el body encriptado.
+     * Envuelve la respuesta en el formato de {@link EncryptionPayload EncryptionPayload} con el body encriptado.
      *
      * @throws IOException
      * @throws NoSuchPaddingException
@@ -167,14 +160,11 @@ public class EncryptResponseWrapper extends HttpServletResponseWrapper {
 
         String body = new String(getCaptureAsBytes(), getCharacterEncoding());
 
-        String encryptedBody = CipherUtils.encrypt(EncryptionAlgorithm.AES_256_CBC_PKCS5_PADDING, body, secretKey, iv);
+        EncryptionPayloadResult encryptionPayload = AesPayloadResolver.instance(payloadAlgorithm).encrypt(body, contentType);
+        this.secretKey = encryptionPayload.getSecretKey();
+        this.iv = encryptionPayload.getIv();
 
-        EncryptionPayload encryptionPayload = EncryptionPayload.builder()
-                .body(encryptedBody)
-                .contentType(contentType)
-                .build();
-
-        content = Util.objectToString(encryptionPayload);
+        content = Util.objectToString(encryptionPayload.getData());
     }
 
     /**

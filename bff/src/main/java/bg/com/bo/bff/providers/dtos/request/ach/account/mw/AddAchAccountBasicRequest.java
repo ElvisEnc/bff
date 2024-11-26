@@ -1,6 +1,8 @@
 
 package bg.com.bo.bff.providers.dtos.request.ach.account.mw;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +10,8 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AddAchAccountBasicRequest {
 
 

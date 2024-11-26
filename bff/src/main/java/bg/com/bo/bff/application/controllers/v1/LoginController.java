@@ -9,9 +9,9 @@ import bg.com.bo.bff.application.dtos.response.login.DeviceEnrollmentResponse;
 import bg.com.bo.bff.application.dtos.response.login.LoginResponse;
 import bg.com.bo.bff.application.dtos.response.login.LoginResult;
 import bg.com.bo.bff.application.dtos.response.login.TokenDataResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.application.LoginMapper;
 import bg.com.bo.bff.commons.utils.Headers;
-import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -72,7 +73,7 @@ public class LoginController {
                 return ResponseEntity.ok(tokenDataResponse);
         }
 
-        throw new NotHandledResponseException("Se recibio una respuesta no controlada.");
+        throw new GenericException("Se recibio una respuesta no controlada.");
     }
 
     @Operation(summary = "Refresh session", description = "Realiza una extension de la sesion, a través de realizar un refresh token.")
@@ -82,9 +83,10 @@ public class LoginController {
     })
     @PostMapping("/{personId}/refresh")
     public ResponseEntity<TokenDataResponse> refresh(
+            @RequestHeader("Authorization") @NotNull(message = "Access JWT must be not null.") @NotBlank(message = "Access JWT must be not empty.") String accessJwt,
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
             @Valid @RequestBody RefreshSessionRequest refreshSessionRequest) {
-        TokenDataResponse tokenDataResponse = iLoginServices.refreshSession(personId, refreshSessionRequest);
+        TokenDataResponse tokenDataResponse = iLoginServices.refreshSession(personId, refreshSessionRequest, accessJwt);
         return ResponseEntity.ok(tokenDataResponse);
     }
 

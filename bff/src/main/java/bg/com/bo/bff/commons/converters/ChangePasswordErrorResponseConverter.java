@@ -3,7 +3,7 @@ package bg.com.bo.bff.commons.converters;
 import org.springframework.http.HttpStatus;
 
 public class ChangePasswordErrorResponseConverter extends ErrorResponseConverter {
-    public static ErrorResponseConverter INSTANCE = new ChangePasswordErrorResponseConverter();
+    public static ErrorResponseConverter instance = new ChangePasswordErrorResponseConverter();
 
     private ChangePasswordErrorResponseConverter() {
         super();

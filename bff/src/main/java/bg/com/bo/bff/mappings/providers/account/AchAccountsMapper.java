@@ -5,15 +5,16 @@ import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRe
 import bg.com.bo.bff.application.dtos.response.destination.account.BranchOfficeDataResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.BranchOfficeResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
-import bg.com.bo.bff.commons.enums.DestinationAccountType;
+import bg.com.bo.bff.commons.enums.destination.account.DestinationAccountType;
 import bg.com.bo.bff.providers.dtos.request.ach.account.mw.AddAchAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.request.ach.account.mw.DeleteAchAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AchAccountsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.BranchOfficeMWResponse;
-import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AchAccountMW;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -48,7 +49,7 @@ public class AchAccountsMapper implements IAchAccountsMapper {
     public BranchOfficeResponse mapToBranchOfficeResponse(BranchOfficeMWResponse mwResponse) {
         List<BranchOfficeDataResponse> dataList = new ArrayList<>();
         if (mwResponse != null && mwResponse.getData() != null) {
-            for (BranchOfficeMWResponse.BranchOfficeMWData.BranchOfficeArray branchOfficeArray : mwResponse.getData().getResponse()) {
+            for (BranchOfficeMWResponse.BranchOfficeMW branchOfficeArray : mwResponse.getData()) {
                 BranchOfficeDataResponse data = BranchOfficeDataResponse.builder()
                         .id(branchOfficeArray.getBranchCode())
                         .description(branchOfficeArray.getDescription())
@@ -61,21 +62,24 @@ public class AchAccountsMapper implements IAchAccountsMapper {
                 .build();
     }
 
-
     @Override
-    public DestinationAccount convertAchAccountToDestinationAccount(AchAccountMW achAccount) {
-        return DestinationAccount.builder()
-                .id(Long.valueOf(achAccount.getIdList()))
-//                .accountId()  // null
-                .accountNumber(new BigInteger(achAccount.getAccountNumber()))
-//                .currencyCode("") // null
-//                .currencyAcronym("") // null
-                .clientName(achAccount.getHolderName())
-                .bankCode(achAccount.getBankCode())
-                .bankName(achAccount.getBankName())
-                .accountAliases(achAccount.getAccountNickname())
-                .destinationAccountType(DestinationAccountType.CUENTA_ACH.getCode())
-                .build();
+    public List<DestinationAccount> convertAchAccountToDestinationAccount(AchAccountsMWResponse mwResponse) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return Collections.emptyList();
+        return mwResponse.getData().stream()
+                .map(mw -> DestinationAccount.builder()
+                        .id(Long.valueOf(mw.getIdList()))
+//                        .accountId()  // null
+                        .accountNumber(new BigInteger(mw.getAccountNumber()))
+//                        .currencyCode("") // null
+//                        .currencyAcronym("") // null
+                        .clientName(mw.getHolderName())
+                        .bankCode(mw.getBankCode())
+                        .bankName(mw.getBankName())
+                        .accountAliases(mw.getAccountNickname())
+                        .destinationAccountType(DestinationAccountType.CUENTA_ACH.getCode())
+                        .build())
+                .toList();
     }
 
     @Override

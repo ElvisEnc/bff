@@ -1,8 +1,8 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
+import bg.com.bo.bff.commons.enums.config.provider.EncryptionAlgorithm;
 import bg.com.bo.bff.application.exceptions.HandledException;
-import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.response.GenericControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.CipherUtils;
 import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
 import bg.com.bo.bff.providers.dtos.response.encryption.UserEncryptionKeys;

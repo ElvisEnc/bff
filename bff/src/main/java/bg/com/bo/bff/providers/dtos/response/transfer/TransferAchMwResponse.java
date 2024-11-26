@@ -24,70 +24,42 @@ public class TransferAchMwResponse {
     public static class ResponseAch {
         @JsonProperty("status")
         private String status;
-
-        @JsonProperty("maeIdTransaction")
-        private String maeIdTransaction;
-
+        @JsonProperty("idReceipt")
+        private String idReceipt;
+        @JsonProperty("idMaeTransaction")
+        private String idMaeTransaction;
         @JsonProperty("transferAchId")
         private String transferAchId;
-
-        @JsonProperty("receiptDetail")
-        private ReceiptDetail receiptDetail;
-
-        @Data
-        @NoArgsConstructor
-        @AllArgsConstructor
-        @Builder
-        @JsonInclude(JsonInclude.Include.NON_EMPTY)
-        public static class ReceiptDetail {
-            @JsonProperty("accountingEntry")
-            private String accountingEntry;
-
-            @JsonProperty("accountingDate")
-            private String accountingDate;
-
-            @JsonProperty("accountingTime")
-            private String accountingTime;
-
-            @JsonProperty("amountDebited")
-            private BigDecimal amountDebited;
-
-            @JsonProperty("amountCredited")
-            private BigDecimal amountCredited;
-
-            @JsonProperty("exchangeRateDebit")
-            private BigDecimal exchangeRateDebit;
-
-            @JsonProperty("exchangeRateCredit")
-            private BigDecimal exchangeRateCredit;
-
-            @JsonProperty("amount")
-            private BigDecimal amount;
-
-            @JsonProperty("currency")
-            private String currency;
-
-            @JsonProperty("fromAccountNumber")
-            private String fromAccountNumber;
-
-            @JsonProperty("fromHolder")
-            private String fromHolder;
-
-            @JsonProperty("toAccountNumber")
-            private String toAccountNumber;
-
-            @JsonProperty("toHolder")
-            private String toHolder;
-
-            @JsonProperty("description")
-            private String description;
-
-            @JsonProperty("fromCurrency")
-            private String fromCurrency;
-
-            @JsonProperty("toCurrency")
-            private String toCurrency;
-        }
+        @JsonProperty("accountingDate")
+        private String accountingDate;
+        @JsonProperty("accountingTime")
+        private String accountingTime;
+        @JsonProperty("amountDebited")
+        private BigDecimal amountDebited;
+        @JsonProperty("amountCredited")
+        private BigDecimal amountCredited;
+        @JsonProperty("exchangeRateDebit")
+        private BigDecimal exchangeRateDebit;
+        @JsonProperty("exchangeRateCredit")
+        private BigDecimal exchangeRateCredit;
+        @JsonProperty("amount")
+        private BigDecimal amount;
+        @JsonProperty("currency")
+        private String currency;
+        @JsonProperty("fromAccountNumber")
+        private String fromAccountNumber;
+        @JsonProperty("fromHolder")
+        private String fromHolder;
+        @JsonProperty("toAccountNumber")
+        private String toAccountNumber;
+        @JsonProperty("toHolder")
+        private String toHolder;
+        @JsonProperty("description")
+        private String description;
+        @JsonProperty("fromCurrency")
+        private String fromCurrency;
+        @JsonProperty("toCurrency")
+        private String toCurrency;
     }
 }
 

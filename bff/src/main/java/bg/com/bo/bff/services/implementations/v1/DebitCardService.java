@@ -38,14 +38,14 @@ public class DebitCardService implements IDebitCardService {
     }
 
     @Override
-    public GenericResponse changeAmount(String personId, String cardId, DCLimitsRequest request, Map<String, String> parameters) throws IOException {
+    public GenericResponse changeAmount(String personId, String cardId, DCLimitsRequest request) throws IOException {
         DCLimitsMWRequest mwRequest = idcMapper.mapToLimitsRequest(request, personId, cardId);
-        return idcProvider.changeAmount(mwRequest, parameters);
+        return idcProvider.changeAmount(mwRequest);
     }
 
     @Override
-    public ListDebitCardResponse getListDebitCard(Integer personId, Map<String, String> parameter) throws IOException {
-        ListDebitCardMWResponse listDebitCardMWResponse = idcProvider.listDebitCard(personId, parameter);
+    public ListDebitCardResponse getListDebitCard(Integer personId) throws IOException {
+        ListDebitCardMWResponse listDebitCardMWResponse = idcProvider.listDebitCard(personId);
         List<DebitCard> list = idcMapper.convertResponseListDebitCard(listDebitCardMWResponse);
         return ListDebitCardResponse.builder()
                 .data(list)
@@ -53,8 +53,8 @@ public class DebitCardService implements IDebitCardService {
     }
 
     @Override
-    public ListAccountTDResponse getAccountsTD(Integer personId, Integer cardId, Map<String, String> parameter) throws IOException {
-        AccountsDebitCardMWResponse mwResponse = idcProvider.accountListDebitCard(personId, cardId, parameter);
+    public ListAccountTDResponse getAccountsTD(Integer personId, Integer cardId) throws IOException {
+        AccountsDebitCardMWResponse mwResponse = idcProvider.accountListDebitCard(personId, cardId);
         List<AccountTD> list = idcMapper.convertResponseAccountListTD(mwResponse);
         return ListAccountTDResponse.builder()
                 .data(list)
@@ -62,34 +62,33 @@ public class DebitCardService implements IDebitCardService {
     }
 
     @Override
-    public InternetAuthorizationResponse getListAuthorizations(String personId, String cardId, Map<String, String> parameter) throws IOException {
-        DCInternetAuthorizationNWResponse result = idcProvider.getListAuthorizations(personId, cardId, parameter);
+    public InternetAuthorizationResponse getListAuthorizations(String personId, String cardId) throws IOException {
+        DCInternetAuthorizationNWResponse result = idcProvider.getListAuthorizations(personId, cardId);
         return idcMapper.mapToInternetAuthorizationResponse(result);
     }
 
     @Override
-    public GenericResponse deleteAuthOnlinePurchases(Integer personId, Integer cardId, Integer authId, Map<String, String> parameters) throws IOException {
+    public GenericResponse deleteAuthOnlinePurchases(Integer personId, Integer cardId, Integer authId) throws IOException {
         DeleteAuthPurchaseMWRequest mwRequest = idcMapper.mapDeleteAuthRequest(personId, cardId, authId);
-        return idcProvider.deleteAuth(mwRequest, parameters);
+        return idcProvider.deleteAuth(mwRequest);
     }
 
     @Override
-    public GenericResponse activeDebitCardAssurance(Integer personId, Integer cardId, UpdateDebitCardAssuranceRequest request, Map<String, String> parameters) throws IOException {
+    public GenericResponse activeDebitCardAssurance(Integer personId, Integer cardId, UpdateDebitCardAssuranceRequest request) throws IOException {
         UpdateDebitCardSecureMWRequest mwRequest = idcMapper.mapActiveAssuranceRequest(personId, cardId, request);
-        return idcProvider.activeDebitCardSecure(mwRequest, parameters);
+        return idcProvider.activeDebitCardSecure(mwRequest);
     }
 
     @Override
-    public GenericResponse activateDebitCard(Integer personId, Integer cardId, ActivateDebitCardRequest request, Map<String, String> parameters) throws IOException {
+    public GenericResponse activateDebitCard(Integer personId, Integer cardId, ActivateDebitCardRequest request) throws IOException {
         ActivateDebitCardMWRequest mwRequest = idcMapper.mapActivateDebitCardRequest(personId, cardId);
-        return idcProvider.activateDebitCard(mwRequest, parameters);
+        return idcProvider.activateDebitCard(mwRequest);
     }
 
     @Override
     public GenericResponse createAuthorizationOnlinePurchase(String personId,
                                                              String cardId,
-                                                             CreateAuthorizationOnlinePurchaseRequest request,
-                                                             Map<String, String> parameter) throws IOException {
+                                                             CreateAuthorizationOnlinePurchaseRequest request) throws IOException {
         LocalDate startPeriod = LocalDate.parse(request.getPeriod().getStart());
         LocalDate endPeriod = LocalDate.parse(request.getPeriod().getEnd());
 
@@ -103,7 +102,7 @@ public class DebitCardService implements IDebitCardService {
                 endPeriod.getDayOfMonth(),
                 ACTION_CREATE_AUTHORIZATION_ONLINE_PURCHASE);
 
-        CreateAuthorizationOnlinePurchaseMWResponse result = idcProvider.createAuthorizationOnlinePurchase(requestMW, parameter);
+        CreateAuthorizationOnlinePurchaseMWResponse result = idcProvider.createAuthorizationOnlinePurchase(requestMW);
         if (result.getData().getIdPci() != null) {
             return GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.SUCCESS_CREATE);
         }
@@ -111,25 +110,25 @@ public class DebitCardService implements IDebitCardService {
     }
 
     @Override
-    public DCDetailResponse detail(String personId, String cardId, Map<String, String> parameters) throws IOException {
-        return idcMapper.mapToDetailResponse(idcProvider.detail(personId, cardId, parameters));
+    public DCDetailResponse detail(String personId, String cardId) throws IOException {
+        return idcMapper.mapToDetailResponse(idcProvider.detail(personId, cardId));
     }
 
     @Override
-    public GenericResponse lockStatus(String personId, String cardId, DCLockStatusRequest request, Map<String, String> parameters) throws IOException {
+    public GenericResponse lockStatus(String personId, String cardId, DCLockStatusRequest request) throws IOException {
         DCLockStatusMWRequest requestMW = idcMapper.mapToLockStatusRequest(personId, cardId, request);
-        return idcProvider.lockStatus(requestMW, parameters);
+        return idcProvider.lockStatus(requestMW);
     }
 
     @Override
-    public GenericResponse modifyAccountsOrder(String personId, String cardId, DCAccountsOrderRequest body, Map<String, String> parameters) throws IOException {
+    public GenericResponse modifyAccountsOrder(String personId, String cardId, DCAccountsOrderRequest body) throws IOException {
         DCAccountsOrderMWRequest requestMW = idcMapper.mapToAccountsOrderRequest(personId, cardId, body);
-        return idcProvider.modifyAccountsOrder(requestMW, parameters);
+        return idcProvider.modifyAccountsOrder(requestMW);
     }
 
     @Override
-    public GenericResponse changePinCard(String personId, String cardId, ChangePinRequest body, Map<String, String> parameters) throws IOException {
+    public GenericResponse changePinCard(String personId, String cardId, ChangePinRequest body) throws IOException {
         ChangePinMWRequest requestMW = idcMapper.mapToChangePinRequest(personId, cardId, body);
-        return idcProvider.changePinCard(requestMW, parameters);
+        return idcProvider.changePinCard(requestMW);
     }
 }

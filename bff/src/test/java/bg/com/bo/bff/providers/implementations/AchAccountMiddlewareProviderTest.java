@@ -3,8 +3,10 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
+import bg.com.bo.bff.application.dtos.response.destination.account.AddAccountResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
@@ -16,6 +18,7 @@ import bg.com.bo.bff.providers.dtos.response.ach.account.mw.*;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QrMWResponseFixture;
+import bg.com.bo.bff.providers.models.enums.middleware.ach.account.AchAccountMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.ach.account.AchAccountMiddlewareResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -76,11 +79,11 @@ class AchAccountMiddlewareProviderTest {
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = provider.addAchAccount(requestMock, map);
+        AddAccountResponse response = provider.addAchAccount(requestMock, map);
 
         // Assert
         assertNotNull(response);
-        assertEquals(response, GenericResponse.instance(AchAccountMiddlewareResponse.SUCCESS_ADD_ACCOUNT));
+        assertEquals(response.getId().toString(), expectedResponse.getData().getIdentifier());
     }
 
     @Test
@@ -92,11 +95,12 @@ class AchAccountMiddlewareProviderTest {
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = provider.addAchAccount(requestMock, map);
+        GenericException exception = assertThrows(GenericException.class, () -> provider.addAchAccount(requestMock, map));
 
         // Assert
-        assertNotNull(response);
-        assertEquals(response, GenericResponse.instance(AchAccountMiddlewareResponse.ERROR_ADD_ACCOUNT));
+        assertNotNull(exception);
+        assertEquals(exception.getCode(), AchAccountMiddlewareError.ERROR_ADD_ACCOUNT.getCode());
+        assertEquals(exception.getMessage(), AchAccountMiddlewareError.ERROR_ADD_ACCOUNT.getMessage());
     }
 
     // Delete Ach Accounts
@@ -162,7 +166,7 @@ class AchAccountMiddlewareProviderTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response.getData().getResponse(), responseExpected.getData().getResponse());
+        assertEquals(response.getData(), responseExpected.getData());
     }
 
     // Get Ach Accounts

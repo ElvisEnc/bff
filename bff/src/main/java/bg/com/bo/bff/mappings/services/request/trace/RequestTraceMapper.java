@@ -2,12 +2,12 @@ package bg.com.bo.bff.mappings.services.request.trace;
 
 import bg.com.bo.bff.application.config.request.tracing.RequestTrace;
 import bg.com.bo.bff.commons.utils.Headers;
+import bg.com.bo.bff.commons.utils.UtilAuthentication;
 import bg.com.bo.bff.models.UserData;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -27,7 +27,7 @@ public class RequestTraceMapper implements IRequestTraceMapper {
     public RequestTrace convert(ContentCachingRequestWrapper requestWrapper, ContentCachingResponseWrapper responseWrapper, Date in, Authentication authentication) {
         try {
             Date out = new Date();
-            UserData currentUser = getUserData(authentication);
+            UserData currentUser = UtilAuthentication.getUserData(authentication);
             Map<String, String> requestHeaders = Headers.getHeaders(requestWrapper);
             String traceId = getTraceId(requestHeaders);
             String requestBody = getRequestBody(requestWrapper);
@@ -60,13 +60,6 @@ public class RequestTraceMapper implements IRequestTraceMapper {
             return requestHeaders.get(HeadersMW.REQUEST_ID.getName());
         else
             return UUID.randomUUID().toString();
-    }
-
-    private static UserData getUserData(Authentication authentication) {
-        if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken))
-            return (UserData) authentication.getPrincipal();
-        else
-            return null;
     }
 
     private static long getElapsed(Date in, Date out) {

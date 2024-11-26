@@ -1,10 +1,7 @@
 package bg.com.bo.bff.application.config.encryption.payload;
 
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.Constants;
-import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;
 import jakarta.servlet.FilterChain;
@@ -22,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-@Order(1)
+@Order(3)
 public class EncryptionPayloadFilter extends OncePerRequestFilter {
 
     @Value("${encryption.url.exclude.pattern}")
@@ -30,6 +27,9 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
 
     @Value("${encryption.exclude.key}")
     private String encryptionExcludeKey;
+
+    @Value("${payload.algorithm}")
+    private String payloadAlgorithm;
 
     private IEncryptionService encryptionService;
 
@@ -43,39 +43,19 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            DecryptRequestWrapper decryptRequestWrapper = new DecryptRequestWrapper(request, encryptionService);
-            EncryptResponseWrapper responseWrapper = new EncryptResponseWrapper(response, encryptionService, decryptRequestWrapper.getEncodeInfo());
+            DecryptRequestWrapper decryptRequestWrapper = new DecryptRequestWrapper(request, encryptionService, payloadAlgorithm);
+            EncryptResponseWrapper responseWrapper = new EncryptResponseWrapper(response, encryptionService, decryptRequestWrapper.getEncodeInfo(), payloadAlgorithm);
 
             filterChain.doFilter(decryptRequestWrapper, responseWrapper);
 
             response.getWriter().write(responseWrapper.getContent());
         } catch (GenericException e) {
-            sendResponse(response, e);
+            throw e;
         } catch (Exception e) {
             logger.error("Error to process the request/response.");
             logger.error(e);
-            sendResponse(response, DefaultMiddlewareError.INTERNAL_SERVER_ERROR);
+            throw new GenericException(DefaultMiddlewareError.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private static void sendResponse(HttpServletResponse response, IMiddlewareError error) throws IOException {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(error.getCode())
-                .message(error.getMessage())
-                .build();
-        response.setStatus(error.getHttpCode().value());
-        response.setContentType("application/json");
-        response.getWriter().write(Util.objectToString(errorResponse));
-    }
-
-    private static void sendResponse(HttpServletResponse response, GenericException e) throws IOException {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(e.getCode())
-                .message(e.getMessage())
-                .build();
-        response.setStatus(e.getStatus().value());
-        response.setContentType("application/json");
-        response.getWriter().write(Util.objectToString(errorResponse));
     }
 
     @Override

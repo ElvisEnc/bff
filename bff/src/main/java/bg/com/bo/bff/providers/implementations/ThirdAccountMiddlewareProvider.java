@@ -1,9 +1,12 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.dtos.response.destination.account.AddAccountResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.ValidateAccountResponse;
-import bg.com.bo.bff.commons.enums.*;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.account.statement.PersonRol;
+import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddThirdAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.request.third.account.mw.AddWalletAccountBasicRequest;
@@ -41,23 +44,23 @@ public class ThirdAccountMiddlewareProvider extends MiddlewareProvider<ThirdAcco
     }
 
     @Override
-    public GenericResponse addThirdAccount(AddThirdAccountBasicRequest request, Map<String, String> parameters) throws IOException {
+    public AddAccountResponse addThirdAccount(AddThirdAccountBasicRequest request, Map<String, String> parameters) throws IOException {
         String url = baseUrl + ThirdAccountMiddlewareServices.ADD_THIRD_ACCOUNT.getServiceURL();
         ApiDataResponse<AddAccountMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(parameters), request, ApiDataResponse.class);
         AddAccountMWResponse response = Util.stringToObject(Util.objectToString(mwResponse.getData()), AddAccountMWResponse.class);
         if (response.getIdentifier() != null)
-            return GenericResponse.instance(ThirdAccountMiddlewareResponse.SUCCESS_ADD_ACCOUNT);
-        else return GenericResponse.instance(ThirdAccountMiddlewareResponse.ERROR_ADD_ACCOUNT);
+            return AddAccountResponse.builder().id(Long.valueOf(response.getIdentifier())).build();
+        else throw new GenericException(ThirdAccountMiddlewareError.ERROR_ADD_ACCOUNT);
     }
 
     @Override
-    public GenericResponse addWalletAccount(AddWalletAccountBasicRequest request, Map<String, String> parameters) throws IOException {
+    public AddAccountResponse addWalletAccount(AddWalletAccountBasicRequest request, Map<String, String> parameters) throws IOException {
         String url = baseUrl + ThirdAccountMiddlewareServices.ADD_WALLET_ACCOUNT.getServiceURL();
         ApiDataResponse<AddAccountMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(parameters), request, ApiDataResponse.class);
         AddAccountMWResponse response = Util.stringToObject(Util.objectToString(mwResponse.getData()), AddAccountMWResponse.class);
         if (response.getIdentifier() != null)
-            return GenericResponse.instance(ThirdAccountMiddlewareResponse.SUCCESS_ADD_ACCOUNT);
-        else return GenericResponse.instance(ThirdAccountMiddlewareResponse.ERROR_ADD_ACCOUNT);
+            return AddAccountResponse.builder().id(Long.valueOf(response.getIdentifier())).build();
+        else throw new GenericException(ThirdAccountMiddlewareError.ERROR_ADD_ACCOUNT);
     }
 
     @Override

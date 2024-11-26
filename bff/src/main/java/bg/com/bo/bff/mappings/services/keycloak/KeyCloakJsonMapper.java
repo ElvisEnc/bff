@@ -1,10 +1,13 @@
 package bg.com.bo.bff.mappings.services.keycloak;
 
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.providers.dtos.response.jwt.*;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.InvalidKeyException;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -39,6 +42,9 @@ public class KeyCloakJsonMapper {
     public JwtAccess convertToJwtAccess(String token, Map<String, JwtKey> keyList) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
         String[] chunks = token.split("\\.");
 
+        if (chunks.length != 3)
+            throw new InvalidKeyException("Sign Key not valid.");
+
         String headerEncoded = chunks[0];
         String payloadEncoded = chunks[1];
 
@@ -51,6 +57,8 @@ public class KeyCloakJsonMapper {
 
         //Se obtiene la key con la que se firmo el token.
         JwtKey key = keyList.get(jwtHeader.getId());
+        if (key == null)
+            throw new InvalidKeyException("Sign Key not valid.");
 
         BigInteger modulus = new BigInteger(1, Base64.getUrlDecoder().decode(key.getRsaPublicModulus()));
         BigInteger exponent = new BigInteger(1, Base64.getUrlDecoder().decode(key.getRsaPublicExponent()));

@@ -23,7 +23,8 @@ public interface TransferMWtMapper {
             @Mapping(target = "instructedAmount.amount", source = "transferRequest.amount.amount"),
             @Mapping(target = "supplementaryData.description", source = "transferRequest.data.description"),
             @Mapping(target = "supplementaryData.sourceOfFunds", source = "transferRequest.data.sourceOfFounds"),
-            @Mapping(target = "supplementaryData.destinationOfFunds", source = "transferRequest.data.destinationOfFounds")
+            @Mapping(target = "supplementaryData.destinationOfFunds", source = "transferRequest.data.destinationOfFounds"),
+            @Mapping(target = "supplementaryData.allowsDuplicate", source = "transferRequest.data.allowsDuplicate")
     })
     TransferMWRequest convert(@Context String typeTransfer, String personId, String accountId, TransferRequest transferRequest);
 }

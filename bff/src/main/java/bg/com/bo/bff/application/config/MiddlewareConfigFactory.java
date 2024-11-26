@@ -7,28 +7,28 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MiddlewareConfigFactory {
     @Value("${mw.token}")
-    private String token_path;
+    private String tokenPath;
 
     @Value("${middleware}")
-    private String url_base;
+    private String urlBase;
 
     @Value("${mw.client_transfer}")
-    private String client_secret_transfer;
+    private String clientSecretTransfer;
 
     @Value("${client.secret.tranfer-ach}")
     private String clientSecretTransferACH;
 
     @Value("${client.secret.login}")
-    private String client_secret_login;
+    private String clientSecretLogin;
 
     @Value("${client.secret.accounts}")
-    private String client_secret_own;
+    private String clientSecretOwn;
 
     @Value("${client.secret.third-accounts}")
     private String clientSecretThirdAccounts;
 
     @Value("${client.secret.ach-accounts}")
-    private String client_secret_ach_accounts;
+    private String clientSecretAchAccounts;
 
     @Value("${client.secret.dpf}")
     private String clientSecretDPFManager;
@@ -51,17 +51,26 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.loans.transaction.manager}")
     private String clientLoansTransactionManager;
 
+    @Value("${client.secret.credit.card.manager}")
+    private String clientCreditCardManager;
+
+    @Value("${client.secret.credit.card.transaction.manager}")
+    private String clientCreditCardTransactionManager;
+
+    @Value("${client.secret.point.attention.manager}")
+    private String clientPointAttentionManager;
+
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
-                .urlBase(url_base)
-                .tokenPath(token_path)
-                .clientLogin(client_secret_login)
-                .clientOwnManager(client_secret_own)
-                .clientTransfer(client_secret_transfer)
+                .urlBase(urlBase)
+                .tokenPath(tokenPath)
+                .clientLogin(clientSecretLogin)
+                .clientOwnManager(clientSecretOwn)
+                .clientTransfer(clientSecretTransfer)
                 .clientTransferACH(clientSecretTransferACH)
                 .clientThirdAccount(clientSecretThirdAccounts)
-                .clientAchAccount(client_secret_ach_accounts)
+                .clientAchAccount(clientSecretAchAccounts)
                 .dpfManager(clientSecretDPFManager)
                 .clientGenerateQrManager(clientSecretGenerateQrManager)
                 .clientQrTransactionManager(clientQrTransactionManager)
@@ -69,6 +78,9 @@ public class MiddlewareConfigFactory {
                 .clientPaymentServicesManager(clientPaymentServicesManager)
                 .clientLoansManager(clientLoansManager)
                 .clientLoansTransactionManager(clientLoansTransactionManager)
+                .clientCreditCardManager(clientCreditCardManager)
+                .clientCreditCardTransactionManager(clientCreditCardTransactionManager)
+                .clientPointAttentionManager(clientPointAttentionManager)
                 .build();
     }
 }

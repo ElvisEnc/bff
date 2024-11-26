@@ -18,9 +18,9 @@ import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.Gender;
-import bg.com.bo.bff.commons.enums.MaritalStatus;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.commons.enums.user.Gender;
+import bg.com.bo.bff.commons.enums.user.MaritalStatus;
 import bg.com.bo.bff.commons.validators.generics.*;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
@@ -47,7 +47,6 @@ import java.util.Optional;
 @Service
 public class UserService implements IUserService {
 
-    private static final String HAS_HUSBAND_LAST_NAME_YES = "S";
     private static final String HAS_HUSBAND_LAST_NAME_NO = "N";
     private static final String MARRIED_AND_COMMON_LAW_UNION = "CU";
     private static final String BANK_EMPLOYEE = "3";
@@ -227,7 +226,6 @@ public class UserService implements IUserService {
         }
         if (reference.getName().isBlank()) {
             throw new GenericException(AppError.REFERENCE_INVALID.getMessage(), AppError.REFERENCE_INVALID.getHttpCode(), AppError.REFERENCE_INVALID.getCode());
-
         }
 
         if (reference.getTelephone().isBlank()) {

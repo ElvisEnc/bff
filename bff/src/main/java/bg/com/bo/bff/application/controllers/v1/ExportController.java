@@ -1,8 +1,8 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.account.statement.ExportRequest;
+import bg.com.bo.bff.application.dtos.request.export.AccountStatementExportRequest;
 import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
-import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementExportResponse;
+import bg.com.bo.bff.application.dtos.response.export.AccountStatementExportResponse;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.services.interfaces.IExportService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,7 +49,7 @@ public class ExportController {
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("accountId") @NotBlank @Parameter(description = "id de la cuenta", example = "654654678") String accountId,
-            @Valid @RequestBody ExportRequest body
+            @Valid @RequestBody AccountStatementExportRequest body
     ) throws IOException {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(exportService.generateReport(body, accountId, Headers.getParameter(httpServletRequest,
                 deviceId,

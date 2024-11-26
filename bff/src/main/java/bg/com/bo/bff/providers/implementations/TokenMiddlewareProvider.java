@@ -1,7 +1,8 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -10,7 +11,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class TokenMiddlewareProvider implements ITokenMiddlewareProvider {
             throw ex;
         } catch (Exception e) {
             LOGGER.error(e);
-            throw new GenericException("Hubo un error no controlado al crear el clienteToken");
+            throw new GenericException(DefaultMiddlewareError.MW_TOKEN_FAILURE);
         }
     }
 

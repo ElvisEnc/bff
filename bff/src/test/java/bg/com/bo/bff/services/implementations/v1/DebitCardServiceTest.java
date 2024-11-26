@@ -7,6 +7,7 @@ import bg.com.bo.bff.application.dtos.response.debit.card.*;
 import bg.com.bo.bff.application.dtos.response.debit.card.InternetAuthorizationResponse;
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.mappings.providers.card.DebitCardMapper;
 import bg.com.bo.bff.providers.dtos.request.debit.card.mw.*;
 import bg.com.bo.bff.providers.dtos.response.debit.card.mw.*;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
@@ -15,6 +16,7 @@ import bg.com.bo.bff.providers.models.enums.middleware.debit.card.CreateAuthoriz
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,21 +29,19 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DebitCardServiceTest {
-    @Spy
     @InjectMocks
     private DebitCardService service;
-
     @Mock
     private IDebitCardProvider provider;
-
-    @Mock
-    private IDebitCardMapper mapper;
+    @Spy
+    private IDebitCardMapper mapper = new DebitCardMapper();
 
     @Test
     void givenValidDataWhenChangeAmountThenReturnSuccess() throws IOException {
@@ -52,16 +52,16 @@ class DebitCardServiceTest {
         DCLimitsMWRequest expectedRequest = DebitCardMWRequestFixture.withDefault();
         GenericResponse expected = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT);
 
-        when(provider.changeAmount(any(), any())).thenReturn(GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT));
+        when(provider.changeAmount(any())).thenReturn(GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT));
         when(mapper.mapToLimitsRequest(request, personId, cardId)).thenReturn(expectedRequest);
 
         // Act
-        GenericResponse response = service.changeAmount(personId, cardId, request, new HashMap<>());
+        GenericResponse response = service.changeAmount(personId, cardId, request);
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expected, response);
-        verify(provider).changeAmount(expectedRequest, new HashMap<>());
+        verify(provider).changeAmount(expectedRequest);
         verify(mapper).mapToLimitsRequest(request, personId, cardId);
     }
 
@@ -70,17 +70,16 @@ class DebitCardServiceTest {
         // Arrange
         ListDebitCardMWResponse mwResponseMock = DebitCardMWResponseFixture.withDefaultListDebitCardMWResponse();
         ListDebitCardResponse expectedResponse = DebitCardResponseFixture.withDefaultListDebitCardResponse();
-        when(provider.listDebitCard(any(), any())).thenReturn(mwResponseMock);
-        when(mapper.convertResponseListDebitCard(any())).thenReturn(List.of(DebitCardResponseFixture.withDefaultDebitCard(), DebitCardResponseFixture.withDefaultDebitCard()));
+        when(provider.listDebitCard(any())).thenReturn(mwResponseMock);
 
         // Act
-        ListDebitCardResponse response = service.getListDebitCard(123, new HashMap<>());
+        ListDebitCardResponse response = service.getListDebitCard(123);
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expectedResponse, response);
-        verify(provider).listDebitCard(123, new HashMap<>());
-        verify(mapper).convertResponseListDebitCard(mwResponseMock);
+        verify(provider).listDebitCard(any());
+        verify(mapper).convertResponseListDebitCard(any());
     }
 
     @Test
@@ -88,86 +87,100 @@ class DebitCardServiceTest {
         // Arrange
         AccountsDebitCardMWResponse mwResponseMock = DebitCardMWResponseFixture.withDefaultAccountsDebitCardMWResponse();
         ListAccountTDResponse expectedResponse = DebitCardResponseFixture.withDefaultListAccountTDResponse();
-        when(provider.accountListDebitCard(any(), any(), any())).thenReturn(mwResponseMock);
-        when(mapper.convertResponseAccountListTD(any())).thenReturn(List.of(DebitCardResponseFixture.withDefaultAccountTD(), DebitCardResponseFixture.withDefaultAccountTD()));
+        when(provider.accountListDebitCard(any(), any())).thenReturn(mwResponseMock);
 
         // Act
-        ListAccountTDResponse response = service.getAccountsTD(123, 123, new HashMap<>());
+        ListAccountTDResponse response = service.getAccountsTD(123, 123);
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expectedResponse, response);
-        verify(provider).accountListDebitCard(123, 123, new HashMap<>());
+        verify(provider).accountListDebitCard(123, 123);
         verify(mapper).convertResponseAccountListTD(mwResponseMock);
     }
 
     @Test
     void givenPersonIdAndCardIdWhenGetListAuthorizationsThenDCInternetAuthorizationNWResponse() throws IOException {
         // Arrange
-        String personId = "169494";
-        String cardId = "169494";
+        DCInternetAuthorizationNWResponse mwResponseMock = DebitCardMWResponseFixture.withDefaultDCInternetAuthorizationNWResponse();
         InternetAuthorizationResponse expected = DebitCardResponseFixture.withDefaultInternetAuthorizationResponse();
-
-        when(provider.getListAuthorizations(any(), any(), any())).thenReturn(DebitCardMWResponseFixture.withDefaultDCInternetAuthorizationNWResponse());
-        when(mapper.mapToInternetAuthorizationResponse(any())).thenReturn(expected);
+        when(provider.getListAuthorizations(any(), any())).thenReturn(mwResponseMock);
 
         // Act
-        InternetAuthorizationResponse response = service.getListAuthorizations(personId, cardId, new HashMap<>());
+        InternetAuthorizationResponse response = service.getListAuthorizations("169494", "169494");
 
         // Assert
         Assertions.assertNotNull(response);
-        assertEquals(expected, response);
-        verify(provider).getListAuthorizations(any(), any(), any());
+        assertThat(response).usingRecursiveComparison().isEqualTo(expected);
+        verify(provider).getListAuthorizations(any(), any());
+        verify(mapper).mapToInternetAuthorizationResponse(mwResponseMock);
     }
 
     @Test
     void givenPersonCodeAndCardIdAndAuthIdWhenDeleteAuthThenSuccess() throws IOException {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_DELETE_AUTH_PURCHASE);
-        when(provider.deleteAuth(any(), any())).thenReturn(expectedResponse);
+        when(provider.deleteAuth(any())).thenReturn(expectedResponse);
         when(mapper.mapDeleteAuthRequest(any(), any(), any())).thenReturn(DebitCardMWRequestFixture.withDefaultDeleteAuthPurchaseMWRequest());
 
         // Act
-        GenericResponse response = service.deleteAuthOnlinePurchases(123, 123, 123, new HashMap<>());
+        GenericResponse response = service.deleteAuthOnlinePurchases(123, 123, 123);
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expectedResponse, response);
-        verify(provider).deleteAuth(DebitCardMWRequestFixture.withDefaultDeleteAuthPurchaseMWRequest(), new HashMap<>());
+        verify(provider).deleteAuth(DebitCardMWRequestFixture.withDefaultDeleteAuthPurchaseMWRequest());
         verify(mapper).mapDeleteAuthRequest(123, 123, 123);
     }
 
     @Test
     void givenPersonCodeAndCardIdWhenActiveDebitCardAssuranceThenSuccess() throws IOException {
         // Arrange
+        UpdateDebitCardAssuranceRequest request = DebitCardRequestFixture.withDefaultUpdateDebitCardAssuranceRequest();
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVE_ASSURANCE);
-        when(provider.activeDebitCardSecure(any(), any())).thenReturn(expectedResponse);
-        when(mapper.mapActiveAssuranceRequest(any(), any(), any())).thenReturn(DebitCardMWRequestFixture.withDefaultUpdateDebitCardSecureMWRequest());
+        when(provider.activeDebitCardSecure(any())).thenReturn(expectedResponse);
 
         // Act
-        GenericResponse response = service.activeDebitCardAssurance(123, 123, DebitCardRequestFixture.withDefaultUpdateDebitCardAssuranceRequest(), new HashMap<>());
+        GenericResponse response = service.activeDebitCardAssurance(123, 123, request);
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expectedResponse, response);
-        verify(provider).activeDebitCardSecure(DebitCardMWRequestFixture.withDefaultUpdateDebitCardSecureMWRequest(), new HashMap<>());
-        verify(mapper).mapActiveAssuranceRequest(123, 123, DebitCardRequestFixture.withDefaultUpdateDebitCardAssuranceRequest());
+        verify(provider).activeDebitCardSecure(any());
+        verify(mapper).mapActiveAssuranceRequest(123, 123, request);
+    }
+
+    @Test
+    void givenPersonCodeAndCardIdWhenActiveDebitCardAssuranceThenSuccessN() throws IOException {
+        // Arrange
+        UpdateDebitCardAssuranceRequest request = DebitCardRequestFixture.withDefaultUpdateDebitCardAssuranceRequestTrue();
+        GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVE_ASSURANCE);
+        when(provider.activeDebitCardSecure(any())).thenReturn(expectedResponse);
+
+        // Act
+        GenericResponse response = service.activeDebitCardAssurance(123, 123, request);
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(provider).activeDebitCardSecure(any());
+        verify(mapper).mapActiveAssuranceRequest(any(), any(), any());
     }
 
     @Test
     void givenPersonCodeAndCardIdWhenActivateDebitCardThenSuccess() throws IOException {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_ACTIVATE_DEBIT_CARD);
-        when(provider.activateDebitCard(any(), any())).thenReturn(expectedResponse);
+        when(provider.activateDebitCard(any())).thenReturn(expectedResponse);
         when(mapper.mapActivateDebitCardRequest(any(), any())).thenReturn(DebitCardMWRequestFixture.withDefaultActivateDebitCardMWRequest());
 
         // Act
-        GenericResponse response = service.activateDebitCard(123, 123, DebitCardRequestFixture.withDefaultActivateDebitCardRequest(), new HashMap<>());
+        GenericResponse response = service.activateDebitCard(123, 123, DebitCardRequestFixture.withDefaultActivateDebitCardRequest());
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expectedResponse, response);
-        verify(provider).activateDebitCard(DebitCardMWRequestFixture.withDefaultActivateDebitCardMWRequest(), new HashMap<>());
+        verify(provider).activateDebitCard(DebitCardMWRequestFixture.withDefaultActivateDebitCardMWRequest());
         verify(mapper).mapActivateDebitCardRequest(123, 123);
     }
 
@@ -178,16 +191,16 @@ class DebitCardServiceTest {
         String cardId = "169494";
         DCDetailResponse expected = DebitCardResponseFixture.withDefaultDCDetailResponse();
 
-        Mockito.when(provider.detail(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(DebitCardMWResponseFixture.withDefaultDetail());
+        Mockito.when(provider.detail(Mockito.any(), Mockito.any())).thenReturn(DebitCardMWResponseFixture.withDefaultDetail());
         Mockito.when(mapper.mapToDetailResponse(DebitCardMWResponseFixture.withDefaultDetail())).thenReturn(expected);
 
         // Act
-        DCDetailResponse response = service.detail(personId, cardId, new HashMap<>());
+        DCDetailResponse response = service.detail(personId, cardId);
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expected, response);
-        verify(provider).detail(personId, cardId, new HashMap<>());
+        verify(provider).detail(personId, cardId);
         verify(mapper).mapToDetailResponse(DebitCardMWResponseFixture.withDefaultDetail());
     }
 
@@ -201,16 +214,16 @@ class DebitCardServiceTest {
 
         GenericResponse expected = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_UPDATE_STATUS_LOCK);
 
-        when(provider.lockStatus(Mockito.any(), Mockito.any())).thenReturn(expected);
+        when(provider.lockStatus(Mockito.any())).thenReturn(expected);
         when(mapper.mapToLockStatusRequest(personId, cardId, request)).thenReturn(expectedRequest);
 
         // Act
-        GenericResponse response = service.lockStatus(personId, cardId, request, new HashMap<>());
+        GenericResponse response = service.lockStatus(personId, cardId, request);
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expected, response);
-        verify(provider).lockStatus(expectedRequest, new HashMap<>());
+        verify(provider).lockStatus(expectedRequest);
         verify(mapper).mapToLockStatusRequest(personId, cardId, request);
     }
 
@@ -221,16 +234,14 @@ class DebitCardServiceTest {
         String cardId = "169494";
         GenericResponse expected = GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.SUCCESS_CREATE);
         CreateAuthorizationOnlinePurchaseRequest request = DebitCardRequestFixture.withDefaultCreateAuthOnlinePurchaseRequest();
-
-        Mockito.when(provider.createAuthorizationOnlinePurchase(Mockito.any(), Mockito.any())).thenReturn(DebitCardMWResponseFixture.withDefaultCreateAuthorizationOnlinePurchaseMWResponse());
-        Mockito.when(mapper.mapToCreateAuthorizationOnlinePurchaseMWRequest(any(), any(), any(), any(), any())).thenReturn(DebitCardMWRequestFixture.withDefaultCreateAuthorizationOnlinePurchaseMWRequest());
+        Mockito.when(provider.createAuthorizationOnlinePurchase(Mockito.any())).thenReturn(DebitCardMWResponseFixture.withDefaultCreateAuthorizationOnlinePurchaseMWResponse());
 
         // Act
-        GenericResponse actual = service.createAuthorizationOnlinePurchase(personId, cardId, request, new HashMap<>());
+        GenericResponse actual = service.createAuthorizationOnlinePurchase(personId, cardId, request);
 
         //Assert
         assertEquals(expected, actual);
-        Mockito.verify(provider).createAuthorizationOnlinePurchase(Mockito.any(), Mockito.any());
+        Mockito.verify(provider).createAuthorizationOnlinePurchase(any());
         Mockito.verify(mapper).mapToCreateAuthorizationOnlinePurchaseMWRequest(any(), any(), any(), any(), any());
     }
 
@@ -243,7 +254,7 @@ class DebitCardServiceTest {
 
         // Act
         try {
-            GenericResponse actual = service.createAuthorizationOnlinePurchase(personId, cardId, request, new HashMap<>());
+            GenericResponse actual = service.createAuthorizationOnlinePurchase(personId, cardId, request);
         } catch (GenericException ex) {
             //Assert
             assertEquals(ex.getCode(), DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getCode());
@@ -260,16 +271,14 @@ class DebitCardServiceTest {
         String cardId = "169494";
         GenericResponse expected = GenericResponse.instance(CreateAuthorizationOnlinePurchaseResponse.ERROR_CREATE);
         CreateAuthorizationOnlinePurchaseRequest request = DebitCardRequestFixture.withDefaultCreateAuthOnlinePurchaseRequest();
-
-        Mockito.when(provider.createAuthorizationOnlinePurchase(Mockito.any(), Mockito.any())).thenReturn(DebitCardMWResponseFixture.errorCreateAuthorizationOnlinePurchaseMWResponse());
-        Mockito.when(mapper.mapToCreateAuthorizationOnlinePurchaseMWRequest(any(), any(), any(), any(), any())).thenReturn(DebitCardMWRequestFixture.withDefaultCreateAuthorizationOnlinePurchaseMWRequest());
+        Mockito.when(provider.createAuthorizationOnlinePurchase(Mockito.any())).thenReturn(DebitCardMWResponseFixture.errorCreateAuthorizationOnlinePurchaseMWResponse());
 
         // Act
-        GenericResponse actual = service.createAuthorizationOnlinePurchase(personId, cardId, request, new HashMap<>());
+        GenericResponse actual = service.createAuthorizationOnlinePurchase(personId, cardId, request);
 
         //Assert
         assertEquals(expected, actual);
-        Mockito.verify(provider).createAuthorizationOnlinePurchase(Mockito.any(), Mockito.any());
+        Mockito.verify(provider).createAuthorizationOnlinePurchase(any());
         Mockito.verify(mapper).mapToCreateAuthorizationOnlinePurchaseMWRequest(any(), any(), any(), any(), any());
     }
 
@@ -283,16 +292,16 @@ class DebitCardServiceTest {
 
         GenericResponse expected = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_MODIFY_ACCOUNTS_ORDER);
 
-        when(provider.modifyAccountsOrder(Mockito.any(), Mockito.any())).thenReturn(expected);
+        when(provider.modifyAccountsOrder(Mockito.any())).thenReturn(expected);
         when(mapper.mapToAccountsOrderRequest(personId, cardId, request)).thenReturn(expectedRequest);
 
         // Act
-        GenericResponse response = service.modifyAccountsOrder(personId, cardId, request, new HashMap<>());
+        GenericResponse response = service.modifyAccountsOrder(personId, cardId, request);
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expected, response);
-        verify(provider).modifyAccountsOrder(expectedRequest, new HashMap<>());
+        verify(provider).modifyAccountsOrder(expectedRequest);
         verify(mapper).mapToAccountsOrderRequest(personId, cardId, request);
     }
 
@@ -306,16 +315,16 @@ class DebitCardServiceTest {
 
         GenericResponse expected = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_PIN_CARD);
 
-        when(provider.changePinCard(Mockito.any(), Mockito.any())).thenReturn(expected);
+        when(provider.changePinCard(Mockito.any())).thenReturn(expected);
         when(mapper.mapToChangePinRequest(personId, cardId, request)).thenReturn(expectedRequest);
 
         // Act
-        GenericResponse response = service.changePinCard(personId, cardId, request, new HashMap<>());
+        GenericResponse response = service.changePinCard(personId, cardId, request);
 
         // Assert
         Assertions.assertNotNull(response);
         assertEquals(expected, response);
-        verify(provider).changePinCard(expectedRequest, new HashMap<>());
+        verify(provider).changePinCard(expectedRequest);
         verify(mapper).mapToChangePinRequest(personId, cardId, request);
     }
 }

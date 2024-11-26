@@ -6,8 +6,10 @@ import bg.com.bo.bff.application.dtos.response.destination.account.BranchOfficeR
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.providers.dtos.request.ach.account.mw.AddAchAccountBasicRequest;
 import bg.com.bo.bff.providers.dtos.request.ach.account.mw.DeleteAchAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AchAccountsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.BranchOfficeMWResponse;
-import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AchAccountMW;
+
+import java.util.List;
 
 public interface IAchAccountsMapper {
     AddAchAccountBasicRequest mapperRequest(String personId, AddAchAccountRequest addAchAccountRequest);
@@ -16,7 +18,7 @@ public interface IAchAccountsMapper {
 
     BranchOfficeResponse mapToBranchOfficeResponse(BranchOfficeMWResponse mwResponse);
 
-    DestinationAccount convertAchAccountToDestinationAccount(AchAccountMW achAccount);
+    List<DestinationAccount> convertAchAccountToDestinationAccount(AchAccountsMWResponse mwResponse);
 
     AddAchAccountBasicRequest mapToAchRequest(String personId, AddQRAccountRequest request);
 }

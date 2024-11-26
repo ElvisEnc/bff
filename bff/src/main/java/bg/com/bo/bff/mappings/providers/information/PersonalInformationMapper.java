@@ -7,7 +7,7 @@ import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicalActivity;
 import bg.com.bo.bff.application.dtos.response.user.PersonalDetail;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
-import bg.com.bo.bff.commons.enums.CanalMW;
+import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.UpdateDataPerson;
@@ -28,7 +28,7 @@ import java.util.Map;
 @Component
 public class PersonalInformationMapper implements IPersonalInformationMapper {
 
-    private static String NUMBER_SESSION = "10052024151318af42ae6fe0fd0f72";
+    private static final String NUMBER_SESSION = "10052024151318af42ae6fe0fd0f72";
 
     @Override
     public ApiPersonalInformationNetRequest mapperRequest(String personId) {
@@ -169,8 +169,6 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
 
     @Override
     public UpdatePersonalInformationNetRequest convertRequest(String personId, UpdateDataUserRequest request, PersonalInformationNetResponse personalInformation) {
-
-
         List<ClientData> oldData = personalInformation.getDataContent().getClientDataList();
 
         UpdateDataPerson newData = UpdateDataPerson.builder()
@@ -183,7 +181,7 @@ public class PersonalInformationMapper implements IPersonalInformationMapper {
                 .husbandLastName(request.getMaritalStatus().getHusbandLastName())
                 .neighborhood(request.getPersonalData().getNeighborhood())
                 .city(request.getPersonalData().getDictrict())
-                .spouseName(request.getMaritalStatus().getSpouseName() != null ? request.getMaritalStatus().getSpouseName() : "") //TODO por confirmar con Kevin
+                .spouseName(request.getMaritalStatus().getSpouseName() != null ? request.getMaritalStatus().getSpouseName() : "")
                 .bankEmployee(request.getPersonalData().getBankEmployee())
                 .neighborhoodCode(request.getPersonalData().getNeighborhoodCode())
                 .apartment(request.getPersonalData().getApartmentDescription())

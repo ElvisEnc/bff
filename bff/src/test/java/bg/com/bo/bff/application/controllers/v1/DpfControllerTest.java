@@ -2,7 +2,7 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.response.dpf.DpfListResponse;
 import bg.com.bo.bff.application.dtos.response.dpf.DpfResponseFixture;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.services.interfaces.IDPFService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;

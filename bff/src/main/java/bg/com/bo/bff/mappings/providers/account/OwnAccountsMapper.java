@@ -5,8 +5,9 @@ import bg.com.bo.bff.application.dtos.request.own.account.UpdateTransactionLimit
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
 import bg.com.bo.bff.application.dtos.response.own.account.OwnAccountsResponse;
 import bg.com.bo.bff.application.dtos.response.own.account.TransactionLimitsResponse;
-import bg.com.bo.bff.commons.enums.AccountStatementType;
+import bg.com.bo.bff.commons.enums.account.statement.AccountStatementType;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.UpdateTransactionLimitMWRequest;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
@@ -39,8 +40,8 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
                         .accountType(mw.getAccountType())
                         .availiableBalance(Util.scaleToTwoDecimals(mw.getAvailiableBalance()))
                         .accountManagementDescription(mw.getAccountManagementDescription())
-                        .openingDate(Util.formatDate(mw.getOpeningDate()))
-                        .dateOfLastMovement(Util.formatDate(mw.getDateOfLastMovement()))
+                        .openingDate(UtilDate.formatDate(mw.getOpeningDate()))
+                        .dateOfLastMovement(UtilDate.formatDate(mw.getDateOfLastMovement()))
                         .totalBalance(Util.scaleToTwoDecimals(mw.getTotalBalance()))
                         .pledgeFounds(Util.scaleToTwoDecimals(mw.getPledgeFounds()))
                         .pendingDeposits(Util.scaleToTwoDecimals(mw.getPendingDeposits()))
@@ -100,7 +101,7 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
                         .currencyCode(mw.getCurrencyCod())
                         .description(mw.getDescription())
                         .balance(Util.scaleToTwoDecimals(mw.getCurrentBalance()))
-                        .movementDate(Util.formatDate(mw.getProcessDate()))
+                        .movementDate(UtilDate.formatDate(mw.getProcessDate()))
                         .movementTime(mw.getAccountingTime())
                         .channel(mw.getBranchOffice())
                         .seatNumber(String.valueOf(mw.getSeatNumber()))

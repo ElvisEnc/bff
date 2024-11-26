@@ -16,4 +16,5 @@ public class SupplementaryMWData {
     private String serviceCode;
     private String fields;
     private String serialNumber;
+    private String allowsDuplicate;
 }

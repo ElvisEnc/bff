@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.env.MockEnvironment;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -21,14 +22,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RequestTracingFilterTests {
+class RequestTracingFilterTests {
 
     @Test
-    public void givenRequestTracingFilterWhenExecuteRequestThenTraceAndAddTraceIdHeader() throws ServletException, IOException {
+    void givenRequestTracingFilterWhenExecuteRequestThenTraceAndAddTraceIdHeader() throws ServletException, IOException {
         // Arrange
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
         MockFilterChain chain = new MockFilterChain();
+        MockEnvironment env = new MockEnvironment();
 
         ArgumentCaptor<RequestTrace> captor = ArgumentCaptor.forClass(RequestTrace.class);
         Logger logger = mock(Logger.class);
@@ -37,7 +39,7 @@ public class RequestTracingFilterTests {
         mocked.when(() -> LogManager.getLogger(any(String.class))).thenReturn(logger);
 
         IRequestTraceMapper requestTraceMapper = new RequestTraceMapper();
-        RequestTracingFilter filter = new RequestTracingFilter(requestTraceMapper);
+        RequestTracingFilter filter = new RequestTracingFilter(requestTraceMapper, env);
 
         //Act
         filter.doFilter(req, res, chain);

@@ -35,6 +35,16 @@ public class PersonalInformationNetResponseFixture {
                 .build();
     }
 
+    public static DistrictsNetResponse withDefaultDistrictsNetResponseEmpty() {
+        return DistrictsNetResponse.builder().result(
+                        DistrictsNetResponse.DistrictData.builder()
+                                .data(null)
+                                .build())
+                .errorCode("0")
+                .message("OK")
+                .build();
+    }
+
     public static DepartmentsNetResponse withDefaultDepartmentsNetResponse() {
         return DepartmentsNetResponse.builder()
                 .data(Arrays.asList(DepartmentNetDetail.builder()

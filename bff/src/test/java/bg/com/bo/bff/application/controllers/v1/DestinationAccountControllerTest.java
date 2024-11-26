@@ -3,9 +3,8 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AddAccountResponse;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AddThirdAccountResponse;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
+import bg.com.bo.bff.providers.models.enums.middleware.third.account.ThirdAccountMiddlewareResponse;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -100,7 +99,7 @@ class DestinationAccountControllerTest {
     @Test
     void givenValidaDataWhenAddThirdAccountThenReturnOk() throws Exception {
         // Arrange
-        GenericResponse expected = GenericResponse.instance(AddThirdAccountResponse.SUCCESS);
+        AddAccountResponse expected = DestinationAccountResponseFixture.withDefaultAddAccountResponse();
         AddThirdAccountRequest request = DestinationAccountRequestFixture.withDefaultAddThirdAccountRequest();
         when(service.addThirdAccount(any(), any(), any())).thenReturn(expected);
 
@@ -125,7 +124,7 @@ class DestinationAccountControllerTest {
     @Test
     void givenValidaDataWhenAddQRAccountThenReturnOk() throws Exception {
         // Arrange
-        GenericResponse expected = GenericResponse.instance(AddAccountResponse.SUCCESS);
+        GenericResponse expected = GenericResponse.instance(ThirdAccountMiddlewareResponse.SUCCESS_ADD_ACCOUNT);
         AddQRAccountRequest request = DestinationAccountRequestFixture.withDefaultAddQRAccountRequest();
 
         when(service.addQRAccount(any(), any(), any(), any())).thenReturn(expected);
@@ -151,7 +150,7 @@ class DestinationAccountControllerTest {
     @Test
     void givenValidaDataWhenAddAchAccountThenReturnOk() throws Exception {
         // Arrange
-        GenericResponse expected = GenericResponse.instance(AddAccountResponse.SUCCESS);
+        AddAccountResponse expected = DestinationAccountResponseFixture.withDefaultAddAccountResponse();
         AddAchAccountRequest request = DestinationAccountRequestFixture.withDefaultAddAchAccountRequest();
         when(service.addAchAccount(any(), any(), any())).thenReturn(expected);
 
@@ -199,7 +198,7 @@ class DestinationAccountControllerTest {
     @Test
     void givenValidaDataWhenAddWalletdAccountThenReturnOk() throws Exception {
         // Arrange
-        GenericResponse expected = GenericResponse.instance(AddThirdAccountResponse.SUCCESS);
+        AddAccountResponse expected = DestinationAccountResponseFixture.withDefaultAddAccountResponse();
         AddWalletAccountRequest request = DestinationAccountRequestFixture.withDefaultAddWalletAccountRequest();
 
         when(service.addWalletAccount(any(), any(), any())).thenReturn(expected);
@@ -363,5 +362,29 @@ class DestinationAccountControllerTest {
         // Assert
         assertEquals(response, actual);
         verify(service).getValidateDestinationAccounts(any(), any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenGetAccountThenResponseExpected() throws Exception {
+        // Arrange
+        DestinationAccount responseExpected = DestinationAccountResponseFixture.withDefaultDestinationAccount();
+        when(service.getAccount(any(), any(), any(), any())).thenReturn(responseExpected);
+
+        // Act
+        String path = "/api/v1/destination-accounts/persons/{personId}/account-types/{accountType}/account/{accountId}";
+        MvcResult result = mockMvc.perform(get(path, "721","1","6378182")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .headers(this.headers)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String response = objectMapper.writeValueAsString(responseExpected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertEquals(response, actual);
+        verify(service).getAccount(any(), any(), any(), any());
     }
 }

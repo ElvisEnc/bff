@@ -27,7 +27,8 @@ public class LoginMWResponseFixture {
         dataResponse.setSecondFactor("defaultSecondFactor");
         dataResponse.setKeyChange("defaultKeyChange");
         dataResponse.setKeyChangeMessage("defaultKeyChangeMessage");
-        dataResponse.setUserDeviceId(123);
+        dataResponse.setUserEnrollmentId(123);
+        dataResponse.setHolderName("Jorge");
         dataResponse.setRoleList(Collections.singletonList(roleWithDefault()));
         dataResponse.setLastConnectionDate("2024-05-16");
         dataResponse.setCodError("0000");
@@ -46,6 +47,10 @@ public class LoginMWResponseFixture {
         role.setRoleCode(1);
         role.setUpdateUse(0);
         return role;
+    }
+
+    public static LoginFactorMWResponse withDefaultLoginFactorMWResponse(){
+        return new LoginFactorMWResponse(withDefaultLoginFactorData());
     }
 
     public static LoginFactorData withDefaultLoginFactorData() {

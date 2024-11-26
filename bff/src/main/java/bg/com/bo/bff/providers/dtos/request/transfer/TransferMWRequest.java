@@ -53,5 +53,6 @@ public class TransferMWRequest {
         private String description;
         private String sourceOfFunds;
         private String destinationOfFunds;
+        private String allowsDuplicate;
     }
 }

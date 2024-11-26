@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.implementations;
 
-import bg.com.bo.bff.application.dtos.request.account.statement.ExportRequest;
+import bg.com.bo.bff.application.dtos.request.export.AccountStatementExportRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementPdfProvider;
 import com.lowagie.text.Document;
@@ -31,7 +31,7 @@ public class AccountStatementPdfProvider implements IAccountStatementPdfProvider
     private static final Logger LOGGER = LogManager.getLogger(AccountStatementPdfProvider.class.getName());
 
     @Override
-    public byte[] generatePdf(List<AccountStatementsResponse> accountReportData, ExportRequest request, String accountId) throws IOException {
+    public byte[] generatePdf(List<AccountStatementsResponse> accountReportData, AccountStatementExportRequest request, String accountId) throws IOException {
         String range = " desde  " + request.getFilters().getDate().getStart() + "  hasta  " + request.getFilters().getDate().getEnd();
 
         Document document = new Document(PageSize.A4.rotate());
@@ -60,15 +60,10 @@ public class AccountStatementPdfProvider implements IAccountStatementPdfProvider
             canvas.roundRectangle(startX, startY, rectangleWidth, rectangleHeight, cornerRadius);
             canvas.fillStroke();
 
-            try {
-                Image image = Image.getInstance(getClass().getResourceAsStream("/logo.png").readAllBytes());
-                image.scaleAbsolute(150f, 30f);
-                image.setAbsolutePosition(startX + 10, startY + (rectangleHeight - 30) / 2);
-                canvas.addImage(image);
-            } catch (Exception e) {
-                e.printStackTrace();
-                LOGGER.error(e);
-            }
+            Image image = Image.getInstance(getClass().getResourceAsStream("/logo.png").readAllBytes());
+            image.scaleAbsolute(150f, 30f);
+            image.setAbsolutePosition(startX + 10, startY + (rectangleHeight - 30) / 2);
+            canvas.addImage(image);
 
             Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, white);
             Paragraph para = new Paragraph("Extracto " + range, font);
@@ -97,8 +92,7 @@ public class AccountStatementPdfProvider implements IAccountStatementPdfProvider
                     table.addCell(createCell(String.valueOf(statementsResponse.getBalance()), fontData));
                     table.addCell(createCell(statementsResponse.getDescription(), fontData));
                 }
-            }
-            else {
+            } else {
                 Font subtitleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
 
                 Paragraph accountSubtitle = new Paragraph("SIN REGISTROS", subtitleFont);
@@ -109,7 +103,6 @@ public class AccountStatementPdfProvider implements IAccountStatementPdfProvider
             document.add(table);
             document.close();
         } catch (DocumentException e) {
-            e.printStackTrace();
             LOGGER.error(e);
         }
         return out.toByteArray();

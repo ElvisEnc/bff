@@ -26,4 +26,10 @@ public class TransferResponseFixture {
                 .toCurrency("068")
                 .build();
     }
+
+    public static Pcc01Response withDefaultPcc01Response() {
+        return Pcc01Response.builder()
+                .requiresPcc01("S")
+                .build();
+    }
 }

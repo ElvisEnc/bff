@@ -1,5 +1,8 @@
 package bg.com.bo.bff.providers.dtos.request.transfer;
 
+import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Data;
+import bg.com.bo.bff.providers.dtos.response.transfer.Pcc01MWResponse;
+
 import java.math.BigDecimal;
 
 public class TransferMWRequestFixture {
@@ -32,5 +35,11 @@ public class TransferMWRequestFixture {
                         .build()
                 )
                 .build();
+    }
+
+    public static Pcc01MWResponse withDefaultPcc01MWResponse() {
+        Pcc01MWResponse response = new Pcc01MWResponse();
+        response.setData(new Pcc01Data("S"));
+        return response;
     }
 }

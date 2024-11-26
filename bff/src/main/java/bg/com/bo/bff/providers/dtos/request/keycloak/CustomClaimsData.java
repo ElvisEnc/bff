@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.dtos.request.keycloak;
 
-import bg.com.bo.bff.commons.enums.UserRole;
+import bg.com.bo.bff.commons.enums.user.UserRole;
 import lombok.Singular;
 
 import java.util.List;

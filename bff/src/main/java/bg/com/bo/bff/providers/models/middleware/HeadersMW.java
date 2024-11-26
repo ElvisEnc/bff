@@ -1,7 +1,10 @@
 package bg.com.bo.bff.providers.models.middleware;
 
-import bg.com.bo.bff.commons.enums.CanalMW;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.application.config.request.tracing.HeadersData;
+import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
+import bg.com.bo.bff.commons.utils.Headers;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.http.Header;
@@ -22,7 +25,8 @@ public enum HeadersMW {
     APP_JSON("application/json"),
     DEVICE_ID("device-id"),
     DEVICE_IP("device-ip"),
-    REQUEST_ID("X-Request-ID");
+    REQUEST_ID("X-Request-ID"),
+    KONG_REQUEST_ID("X-Kong-Request-Id");
 
     private final String name;
 
@@ -40,6 +44,15 @@ public enum HeadersMW {
                 new BasicHeader(DeviceMW.GEO_POSITION_X.getCode(), parameters.get(DeviceMW.GEO_POSITION_X.getCode())),
                 new BasicHeader(DeviceMW.GEO_POSITION_Y.getCode(), parameters.get(DeviceMW.GEO_POSITION_Y.getCode())),
                 new BasicHeader(DeviceMW.APP_VERSION.getCode(), parameters.get(DeviceMW.APP_VERSION.getCode()))};
+    }
+
+    public static Header[] getDefaultHeaders(HttpServletRequest request) {
+        HeadersData headersData = HeadersData.buildDeviceData(request);
+        String traceId = request.getHeader(REQUEST_ID.getName());
+        Map<String, String> parameters = Headers.getParameter(headersData);
+        if (traceId != null && !parameters.containsKey(REQUEST_ID.getName()))
+            parameters.put(REQUEST_ID.getName(), traceId);
+        return getDefaultHeaders(parameters);
     }
 
     public static Header[] getDefaultHeaders(Map<String, String> parameters) {

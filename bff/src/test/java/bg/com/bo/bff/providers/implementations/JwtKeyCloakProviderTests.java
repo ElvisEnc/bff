@@ -2,21 +2,19 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.dtos.request.login.LogoutRequest;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.mappings.providers.GenericsMapper;
 import bg.com.bo.bff.mappings.services.keycloak.KeyCloakJsonMapper;
 import bg.com.bo.bff.mappings.providers.keycloak.KeyCloakObjectMapper;
 import bg.com.bo.bff.mappings.providers.keycloak.KeyCloakMapper;
-import bg.com.bo.bff.providers.dtos.response.keycloak.ErrorKCResponse;
+import bg.com.bo.bff.providers.dtos.response.keycloak.*;
 import bg.com.bo.bff.providers.dtos.response.jwt.keycloak.CreateTokenServiceResponse;
-import bg.com.bo.bff.application.exceptions.CreateTokenServiceException;
-import bg.com.bo.bff.application.exceptions.NotHandledResponseException;
 import bg.com.bo.bff.providers.dtos.response.jwt.JwtAccess;
 import bg.com.bo.bff.providers.dtos.response.jwt.JwtKey;
-import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakCertListResponse;
-import bg.com.bo.bff.providers.dtos.response.keycloak.KeyCloakKeyResponse;
-import bg.com.bo.bff.providers.dtos.response.keycloak.CreateTokenKCResponse;
-import bg.com.bo.bff.commons.enums.UserRole;
+import bg.com.bo.bff.commons.enums.user.UserRole;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.models.enums.keycloak.KeyCloakService;
 import bg.com.bo.bff.services.interfaces.ISessionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +22,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -44,6 +41,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -57,37 +55,27 @@ class JwtKeyCloakProviderTests {
     static IHttpClientFactory httpClientFactoryMock;
     static JwtKeyCloakProvider jwtKeyCloakProvider;
     private String url = "http://login.fake.api";
-    private String urlTokenComplement = "/token";
-    private String urlCertsComplement = "/certs";
-    private String urlRevokeTokenComplement = "/revoke";
     private String issuerKCServiceParam = "https://bg-gnm-dev.eastus.cloudapp.azure.com/keycloak/realms/kong";
     private String audienceKCServiceParam = "ganamovil-bff";
     private String authorizedPartyKCServiceParam = "ganamovil-bff";
     private String subjectKCServiceParam = "67d342a8-dec3-4938-9b6a-b93cfc999b19";
-
-    @BeforeAll
-    public static void setup() {
-        httpClientFactoryMock = Mockito.mock(HttpClientConfig.class);
-    }
 
     @BeforeEach
     public void init() {
         KeyCloakMapper keyCloakMapper = new KeyCloakMapper(KeyCloakObjectMapper.INSTANCE, new KeyCloakJsonMapper());
         GenericsMapper genericsMapper = new GenericsMapper();
 
+        httpClientFactoryMock = Mockito.mock(HttpClientConfig.class);
         jwtKeyCloakProvider = new JwtKeyCloakProvider(httpClientFactoryMock, keyCloakMapper, genericsMapper, sessionManager);
 
         //Propiedades cargadas por reflection dentro de JwtKeyCloakService.
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "urlBase", url);
-        ReflectionTestUtils.setField(jwtKeyCloakProvider, "urlTokenComplement", urlTokenComplement);
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "clientId", "ganamovil-bff");
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "clientSecret", "");
-        ReflectionTestUtils.setField(jwtKeyCloakProvider, "urlCertsComplement", urlCertsComplement);
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "issuer", issuerKCServiceParam);
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "audience", audienceKCServiceParam);
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "authorizedParty", authorizedPartyKCServiceParam);
         ReflectionTestUtils.setField(jwtKeyCloakProvider, "subject", subjectKCServiceParam);
-        ReflectionTestUtils.setField(jwtKeyCloakProvider, "urlRevokeComplement", urlRevokeTokenComplement);
 
         Mockito.when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
     }
@@ -107,7 +95,7 @@ class JwtKeyCloakProviderTests {
 
         String jsonResponse = new ObjectMapper().writeValueAsString(createTokenKCResponse);
 
-        stubFor(post(urlTokenComplement).willReturn(okJson(jsonResponse)));
+        stubFor(post(KeyCloakService.CREATE_TOKEN.getServiceUrl()).willReturn(okJson(jsonResponse)));
 
         //Act
         CreateTokenServiceResponse tokenData = jwtKeyCloakProvider.generateToken(personId, sid, userRole);
@@ -137,7 +125,7 @@ class JwtKeyCloakProviderTests {
                 .build();
 
         String jsonResponse = new ObjectMapper().writeValueAsString(keyCloakCertList);
-        stubFor(get(urlCertsComplement).willReturn(okJson(jsonResponse)));
+        stubFor(get(KeyCloakService.CERTS.getServiceUrl()).willReturn(okJson(jsonResponse)));
 
         //Act
         Map<String, JwtKey> certs = jwtKeyCloakProvider.certs();
@@ -162,7 +150,7 @@ class JwtKeyCloakProviderTests {
         createTokenKCResponse.setRefreshToken(newRefreshToken);
 
         String jsonResponse = new ObjectMapper().writeValueAsString(createTokenKCResponse);
-        stubFor(post(urlTokenComplement).willReturn(okJson(jsonResponse)));
+        stubFor(post(KeyCloakService.CREATE_TOKEN.getServiceUrl()).willReturn(okJson(jsonResponse)));
 
         //Act
         CreateTokenServiceResponse createTokenServiceResponse = jwtKeyCloakProvider.refreshToken(refreshToken);
@@ -183,14 +171,14 @@ class JwtKeyCloakProviderTests {
 
         String jsonResponse = new ObjectMapper().writeValueAsString(errorKCResponse);
 
-        stubFor(post(urlTokenComplement)
+        stubFor(post(KeyCloakService.CREATE_TOKEN.getServiceUrl())
                 .willReturn(aResponse()
                         .withStatus(400)
                         .withHeader("Content-Type", "application/json")
                         .withBody(jsonResponse)));
 
         //Act
-        CreateTokenServiceException createTokenServiceException = assertThrows(CreateTokenServiceException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
+        GenericException createTokenServiceException = assertThrows(GenericException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
 
         //Assert
         assertEquals(ErrorKCResponse.Error.INVALID_CLIENT.name(), createTokenServiceException.getCode());
@@ -208,14 +196,14 @@ class JwtKeyCloakProviderTests {
 
         String jsonResponse = new ObjectMapper().writeValueAsString(errorKCResponse);
 
-        stubFor(post(urlTokenComplement)
+        stubFor(post(KeyCloakService.CREATE_TOKEN.getServiceUrl())
                 .willReturn(aResponse()
                         .withStatus(400)
                         .withHeader("Content-Type", "application/json")
                         .withBody(jsonResponse)));
 
         //Act
-        CreateTokenServiceException createTokenServiceException = assertThrows(CreateTokenServiceException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
+        GenericException createTokenServiceException = assertThrows(GenericException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
 
         //Assert
         assertEquals(error.name(), createTokenServiceException.getCode());
@@ -232,7 +220,7 @@ class JwtKeyCloakProviderTests {
 
         String jsonResponse = new ObjectMapper().writeValueAsString(errorKCResponse);
 
-        stubFor(post(urlTokenComplement)
+        stubFor(post(KeyCloakService.CREATE_TOKEN.getServiceUrl())
                 .willReturn(aResponse()
                         .withStatus(400)
                         .withHeader("Content-Type", "application/json")
@@ -251,13 +239,13 @@ class JwtKeyCloakProviderTests {
         String refreshToken = UUID.randomUUID().toString();
         String message = "NOT_VALID_STATE";
 
-        stubFor(post(urlTokenComplement)
+        stubFor(post(KeyCloakService.CREATE_TOKEN.getServiceUrl())
                 .willReturn(aResponse()
                         .withStatus(400)
                         .withBody(message)));
 
         //Act
-        NotHandledResponseException notHandledResponseException = assertThrows(NotHandledResponseException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
+        GenericException notHandledResponseException = assertThrows(GenericException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
 
         //Assert
         assertEquals(message, notHandledResponseException.getMessage());
@@ -275,14 +263,14 @@ class JwtKeyCloakProviderTests {
 
         String jsonResponse = new ObjectMapper().writeValueAsString(errorKCResponse);
 
-        stubFor(post(urlTokenComplement)
+        stubFor(post(KeyCloakService.CREATE_TOKEN.getServiceUrl())
                 .willReturn(aResponse()
                         .withStatus(400)
                         .withHeader("Content-Type", "application/json")
                         .withBody(jsonResponse)));
 
         //Act
-        NotHandledResponseException notHandledResponseException = assertThrows(NotHandledResponseException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
+        GenericException notHandledResponseException = assertThrows(GenericException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
 
         //Assert
         assertEquals(errorCode, notHandledResponseException.getMessage());
@@ -294,14 +282,14 @@ class JwtKeyCloakProviderTests {
         String refreshToken = UUID.randomUUID().toString();
         String message = "NOT_A_VALID_CONTENT";
 
-        stubFor(post(urlTokenComplement)
+        stubFor(post(KeyCloakService.CREATE_TOKEN.getServiceUrl())
                 .willReturn(aResponse()
                         .withStatus(404)
                         .withHeader("Content-Type", "application/json")
                         .withBody(message)));
 
         //Act
-        CreateTokenServiceException createTokenServiceException = assertThrows(CreateTokenServiceException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
+        GenericException createTokenServiceException = assertThrows(GenericException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
 
         //Assert
         assertEquals(ErrorKCResponse.Error.NOT_FOUND_404.name(), createTokenServiceException.getCode());
@@ -313,14 +301,14 @@ class JwtKeyCloakProviderTests {
         String refreshToken = UUID.randomUUID().toString();
         String message = "NOT_A_VALID_CONTENT";
 
-        stubFor(post(urlTokenComplement)
+        stubFor(post(KeyCloakService.CREATE_TOKEN.getServiceUrl())
                 .willReturn(aResponse()
                         .withStatus(500)
                         .withHeader("Content-Type", "application/json")
                         .withBody(message)));
 
         //Act
-        NotHandledResponseException notHandledResponseException = assertThrows(NotHandledResponseException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
+        GenericException notHandledResponseException = assertThrows(GenericException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
 
         //Assert
         assertEquals(message, notHandledResponseException.getMessage());
@@ -331,7 +319,7 @@ class JwtKeyCloakProviderTests {
     void givenValidTokenWhenValidateTokenThenSuccessfullyValidation() throws IOException {
         //Arrange
         String jsonResponse = IOUtils.toString(Objects.requireNonNull(this.getClass().getResourceAsStream("/files/KeyCloakCertsResponse.json")), StandardCharsets.UTF_8);
-        stubFor(get(urlCertsComplement).willReturn(okJson(jsonResponse)));
+        stubFor(get(KeyCloakService.CERTS.getServiceUrl()).willReturn(okJson(jsonResponse)));
         when(sessionManager.isOnBlacklist(any())).thenReturn(false);
 
         //Act
@@ -346,7 +334,7 @@ class JwtKeyCloakProviderTests {
     void revokeAccessTokenSuccessfully() {
         // Arrange
         String testToken = "testAccessToken";
-        stubFor(post(urlEqualTo(urlRevokeTokenComplement))
+        stubFor(post(urlEqualTo(KeyCloakService.REVOKE_TOKEN.getServiceUrl()))
                 .withRequestBody(containing("access_token"))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.OK.value())));
@@ -356,7 +344,7 @@ class JwtKeyCloakProviderTests {
 
         // Assert
         assertTrue(result, "Token should be successfully revoked.");
-        verify(postRequestedFor(urlPathEqualTo(urlRevokeTokenComplement))
+        verify(postRequestedFor(urlPathEqualTo(KeyCloakService.REVOKE_TOKEN.getServiceUrl()))
                 .withHeader("Content-Type", equalTo("application/x-www-form-urlencoded")));
     }
 
@@ -364,7 +352,7 @@ class JwtKeyCloakProviderTests {
     void revokeAccessTokenFailure() {
         // Arrange
         String testToken = "testAccessToken";
-        stubFor(post(urlEqualTo(urlRevokeTokenComplement))
+        stubFor(post(urlEqualTo(KeyCloakService.REVOKE_TOKEN.getServiceUrl()))
                 .withRequestBody(containing("access_token"))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
@@ -374,7 +362,7 @@ class JwtKeyCloakProviderTests {
 
         // Assert
         assertFalse(result, "Token revocation should fail.");
-        verify(postRequestedFor(urlPathEqualTo(urlRevokeTokenComplement))
+        verify(postRequestedFor(urlPathEqualTo(KeyCloakService.REVOKE_TOKEN.getServiceUrl()))
                 .withHeader("Content-Type", equalTo("application/x-www-form-urlencoded")));
     }
 
@@ -383,17 +371,17 @@ class JwtKeyCloakProviderTests {
         // Arrange
         LogoutRequest logoutRequest = new LogoutRequest();
         logoutRequest.setRefreshToken("testRefreshToken");
-        stubFor(post(urlEqualTo(urlRevokeTokenComplement))
+        stubFor(post(urlEqualTo(KeyCloakService.REVOKE_TOKEN.getServiceUrl()))
                 .withRequestBody(containing("refresh_token"))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.OK.value())));
 
         // Act
-        boolean result = jwtKeyCloakProvider.revokeRefreshToken(logoutRequest);
+        boolean result = jwtKeyCloakProvider.revokeRefreshToken(logoutRequest.getRefreshToken());
 
         // Assert
         assertTrue(result, "Refresh token should be successfully revoked.");
-        verify(postRequestedFor(urlPathEqualTo(urlRevokeTokenComplement))
+        verify(postRequestedFor(urlPathEqualTo(KeyCloakService.REVOKE_TOKEN.getServiceUrl()))
                 .withHeader("Content-Type", equalTo("application/x-www-form-urlencoded")));
     }
 
@@ -402,17 +390,107 @@ class JwtKeyCloakProviderTests {
         // Arrange
         LogoutRequest logoutRequest = new LogoutRequest();
         logoutRequest.setRefreshToken("testRefreshToken");
-        stubFor(post(urlEqualTo(urlRevokeTokenComplement))
+        stubFor(post(urlEqualTo(KeyCloakService.REVOKE_TOKEN.getServiceUrl()))
                 .withRequestBody(containing("refresh_token"))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
         // Act
-        boolean result = jwtKeyCloakProvider.revokeRefreshToken(logoutRequest);
+        boolean result = jwtKeyCloakProvider.revokeRefreshToken(logoutRequest.getRefreshToken());
 
         // Assert
         assertFalse(result, "Refresh token revocation should fail.");
-        verify(postRequestedFor(urlPathEqualTo(urlRevokeTokenComplement))
+        verify(postRequestedFor(urlPathEqualTo(KeyCloakService.REVOKE_TOKEN.getServiceUrl()))
                 .withHeader("Content-Type", equalTo("application/x-www-form-urlencoded")));
+    }
+
+    @Test
+    void givenValidTokenWhenIntrospectTokenThenReturnSuccess() throws JsonProcessingException {
+        // Arrange
+        String token = UUID.randomUUID().toString();
+        IntrospectTokenKCResponse introspectTokenKCResponse = KCResponseFixture.introspectWithActiveToken();
+        String jsonResponse = new ObjectMapper().writeValueAsString(introspectTokenKCResponse);
+
+        stubFor(post(urlEqualTo(KeyCloakService.INTROSPECT.getServiceUrl()))
+                .willReturn(okJson(jsonResponse)));
+
+        // Act
+        IntrospectTokenKCResponse introspect = jwtKeyCloakProvider.introspect(token);
+
+        // Assert
+        assertSame(IntrospectTokenKCResponse.Result.SUCCESS, introspect.getResult());
+    }
+
+    @Test
+    void givenExpiredTokenWhenIntrospectTokenThenReturnExpiredToken() throws JsonProcessingException {
+        // Arrange
+        String token = UUID.randomUUID().toString();
+        IntrospectTokenKCResponse introspectTokenKCResponse = KCResponseFixture.introspectWithInactiveToken();
+        String jsonResponse = new ObjectMapper().writeValueAsString(introspectTokenKCResponse);
+
+        stubFor(post(urlEqualTo(KeyCloakService.INTROSPECT.getServiceUrl()))
+                .willReturn(okJson(jsonResponse)));
+
+        // Act
+        IntrospectTokenKCResponse introspect = jwtKeyCloakProvider.introspect(token);
+
+        // Assert
+        assertSame(IntrospectTokenKCResponse.Result.EXPIRED_TOKEN, introspect.getResult());
+    }
+
+    @Test
+    void givenInvalidTokenWhenIntrospectTokenThenReturnInvalidToken() throws JsonProcessingException {
+        // Arrange
+        String token = UUID.randomUUID().toString();
+        ErrorKCResponse errorKCResponse = KCResponseFixture.errorWithInvalidRequest();
+        String jsonResponse = new ObjectMapper().writeValueAsString(errorKCResponse);
+
+        stubFor(post(urlEqualTo(KeyCloakService.INTROSPECT.getServiceUrl()))
+                .willReturn(aResponse()
+                        .withStatus(ErrorKCResponse.Error.INVALID_REQUEST.getStatusCode().value())
+                        .withBody(jsonResponse)));
+
+        // Act
+        IntrospectTokenKCResponse introspect = jwtKeyCloakProvider.introspect(token);
+
+        // Assert
+        assertSame(IntrospectTokenKCResponse.Result.INVALID_TOKEN, introspect.getResult());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = ErrorKCResponse.Error.class, names = {"INVALID_REQUEST"}, mode = EnumSource.Mode.EXCLUDE)
+    void givenErrorResponseWhenIntrospectTokenThenReturnKeyCloakException(ErrorKCResponse.Error error) throws JsonProcessingException {
+        // Arrange
+        String token = UUID.randomUUID().toString();
+        String jsonResponse = new ObjectMapper().writeValueAsString(
+                ErrorKCResponse.builder()
+                        .error(error.getCode())
+                        .build());
+
+        stubFor(post(urlEqualTo(KeyCloakService.INTROSPECT.getServiceUrl()))
+                .willReturn(aResponse()
+                        .withStatus(error.getStatusCode().value())
+                        .withBody(jsonResponse)));
+
+        // Act
+        GenericException genericException = assertThrows(GenericException.class, () -> jwtKeyCloakProvider.introspect(token));
+
+        // Assert
+        assertSame(genericException.getCode(), AppError.KEY_CLOAK_ERROR.getCode());
+        assertSame(genericException.getMessage(), AppError.KEY_CLOAK_ERROR.getMessage());
+    }
+
+    @Test
+    void givenRequestErrorWhenIntrospectTokenThenReturnKeyCloakException() throws JsonProcessingException {
+        // Arrange
+        String token = UUID.randomUUID().toString();
+        Mockito.when(httpClientFactoryMock.create()).thenThrow(new RuntimeException());
+
+        // Act
+        GenericException genericException = assertThrows(GenericException.class, () -> jwtKeyCloakProvider.introspect(token));
+
+        // Assert
+        assertSame(genericException.getCode(), AppError.KEY_CLOAK_ERROR.getCode());
+        assertSame(genericException.getMessage(), AppError.KEY_CLOAK_ERROR.getMessage());
     }
 }

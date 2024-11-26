@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
+import bg.com.bo.bff.application.dtos.response.destination.account.AddAccountResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.providers.dtos.request.ach.account.mw.DeleteAchAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.request.qr.mw.QrListMWRequest;
@@ -14,13 +14,13 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface IAchAccountProvider {
-    GenericResponse addAchAccount( AddAchAccountBasicRequest request, Map<String, String> parameters) throws IOException;
+    AddAccountResponse addAchAccount(AddAchAccountBasicRequest request, Map<String, String> parameters) throws IOException;
 
     GenericResponse deleteAchAccount(DeleteAchAccountMWRequest request, Map<String, String> parameters) throws IOException;
 
     BanksMWResponse getBanks(Map<String, String> parameters) throws IOException;
 
-    BranchOfficeMWResponse getAllBranchOfficeBank(String code,Map<String, String> parameters) throws IOException;
+    BranchOfficeMWResponse getAllBranchOfficeBank(String code, Map<String, String> parameters) throws IOException;
 
     AchAccountsMWResponse getAchAccounts(String personId, Map<String, String> parameters) throws IOException;
 

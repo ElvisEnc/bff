@@ -1,7 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;

@@ -4,12 +4,11 @@ import bg.com.bo.bff.application.dtos.request.account.statement.AmountRange;
 import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementsRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
 import bg.com.bo.bff.commons.constants.CacheConstants;
-import bg.com.bo.bff.commons.enums.AccountStatementType;
 import bg.com.bo.bff.commons.filters.OrderFilter;
 import bg.com.bo.bff.commons.filters.RangeFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.commons.filters.TypeFilter;
-import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.mappings.providers.account.IOwnAccountsMapper;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
 import bg.com.bo.bff.providers.interfaces.IOwnAccountsProvider;
@@ -57,13 +56,13 @@ public class AccountStatementService implements IAccountStatementService {
 
         Map<String, Function<AccountStatementsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("AMOUNT", AccountStatementsResponse::getAmount);
-        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getMovementDate(), Util.getDateFormatter()));
+        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getMovementDate(), UtilDate.getDateFormatter()));
         comparatorOptions.put("TIME", AccountStatementsResponse::getMovementTime);
         if (request.getFilters().getOrder() == null || "DATE".equals(request.getFilters().getOrder().getField())) {
             boolean desc = request.getFilters().getOrder() == null || request.getFilters().getOrder().getDesc();
             list = list.stream()
                     .sorted(Comparator.comparing(
-                                    (AccountStatementsResponse response) -> LocalDate.parse(response.getMovementDate(), Util.getDateFormatter()),
+                                    (AccountStatementsResponse response) -> LocalDate.parse(UtilDate.getDateGenericFormat(response.getMovementDate()), UtilDate.getDateFormatter()),
                                     desc ? Comparator.reverseOrder() : Comparator.naturalOrder())
                             .thenComparing(AccountStatementsResponse::getMovementTime, Comparator.reverseOrder())
                     ).toList();

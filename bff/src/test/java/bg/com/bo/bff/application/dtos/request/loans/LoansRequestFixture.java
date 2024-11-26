@@ -2,7 +2,7 @@ package bg.com.bo.bff.application.dtos.request.loans;
 
 import bg.com.bo.bff.application.dtos.request.destination.account.PaginationRequest;
 import bg.com.bo.bff.application.dtos.request.qr.OrderRequest;
-import bg.com.bo.bff.application.dtos.request.qr.PeriodRequest;
+import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
 
 public class LoansRequestFixture {
 

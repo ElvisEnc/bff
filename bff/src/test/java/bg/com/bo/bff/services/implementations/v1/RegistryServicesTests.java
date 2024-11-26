@@ -4,9 +4,9 @@ import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequestFixture;
 import bg.com.bo.bff.application.dtos.response.registry.RegistryResponse;
 import bg.com.bo.bff.application.exceptions.HandledException;
-import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
-import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
-import bg.com.bo.bff.commons.enums.response.RegistryControllerErrorResponse;
+import bg.com.bo.bff.commons.enums.config.provider.EncryptionAlgorithm;
+import bg.com.bo.bff.providers.models.enums.middleware.response.GenericControllerErrorResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.response.RegistryControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.CipherUtils;
 import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
 import bg.com.bo.bff.providers.interfaces.IEncryptionProvider;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class RegistryServicesTests {
+class RegistryServicesTests {
     @Mock
     private IEncryptionProvider encryptionProvider;
 
@@ -63,6 +63,33 @@ public class RegistryServicesTests {
         when(encryptionProvider.createKeys()).thenReturn(keyPair);
         Mockito.doNothing().when(cache).evict(any(EncryptInfo.class));
         when(cacheManager.getCache(any())).thenReturn(cache);
+        when(loginAGNProvider.registerDevice(eq(request), any())).thenReturn(true);
+
+        // Act
+        RegistryResponse response = service.registerByMigration(request);
+
+        // Assert
+        verify(loginAGNProvider).login(request);
+        verify(encryptionProvider).createKeys();
+        verify(loginAGNProvider).registerDevice(eq(request), any());
+
+        assertEquals(request.getCredentials().getPersonId(), response.getPersonId());
+        assertEquals(appPublicKey, response.getAppKey());
+    }
+
+    @Test
+    void givenCacheNullWhenRegisterByMigrationThenReturn() throws NoSuchAlgorithmException {
+        // Arrange
+        RegistryRequest request = RegistryRequestFixture.withDefault();
+
+        KeyPairGenerator generator = KeyPairGenerator.getInstance(EncryptionAlgorithm.RSA.getCode());
+        generator.initialize(EncryptionAlgorithm.RSA.getKeySize());
+        KeyPair keyPair = generator.generateKeyPair();
+        String appPublicKey = CipherUtils.encodeKeyToBase64(keyPair.getPublic());
+
+        when(loginAGNProvider.login(request)).thenReturn(true);
+        when(encryptionProvider.createKeys()).thenReturn(keyPair);
+        when(cacheManager.getCache(any())).thenReturn(null);
         when(loginAGNProvider.registerDevice(eq(request), any())).thenReturn(true);
 
         // Act

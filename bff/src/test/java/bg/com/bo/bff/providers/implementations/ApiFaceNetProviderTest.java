@@ -2,8 +2,8 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.HttpClientConfig;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;

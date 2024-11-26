@@ -1,11 +1,11 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.account.statement.ExportRequest;
-import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementExportResponse;
+import bg.com.bo.bff.application.dtos.request.export.AccountStatementExportRequest;
+import bg.com.bo.bff.application.dtos.response.export.AccountStatementExportResponse;
 
 import java.io.IOException;
 import java.util.Map;
 
 public interface IExportService {
-    AccountStatementExportResponse generateReport(ExportRequest request, String account, Map<String, String> parameter) throws IOException;
+    AccountStatementExportResponse generateReport(AccountStatementExportRequest request, String account, Map<String, String> parameter) throws IOException;
 }

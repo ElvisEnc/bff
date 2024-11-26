@@ -5,8 +5,8 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.config.MiddlewareConfigFixture;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
@@ -18,6 +18,7 @@ import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddl
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -42,30 +44,39 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 @ExtendWith(WireMockExtension.class)
 @ExtendWith(MockitoExtension.class)
 class DebitCardMiddlewareProviderTest {
+    private DebitCardMiddlewareProvider debitCardMiddlewareProvider;
     private TokenMiddlewareProvider tokenMiddlewareProviderMock;
+    HttpServletRequest httpServletRequest;
     MiddlewareConfig middlewareConfig;
     IHttpClientFactory httpClientFactoryMock;
-    private DebitCardMiddlewareProvider debitCardMiddlewareProvider;
     private final ClientToken clientTokenMock = ClientTokenFixture.withDefault();
+
     private ErrorMiddlewareProvider errorMiddlewareProvider;
-    private Map<String, String> map;
 
     @BeforeEach
     void setUp() {
-        this.map = Map.of(
-                DeviceMW.DEVICE_ID.getCode(), "1234",
-                DeviceMW.DEVICE_IP.getCode(), "12344",
-                DeviceMW.DEVICE_NAME.getCode(), "OS",
-                DeviceMW.GEO_POSITION_X.getCode(), "121.11",
-                DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
-                DeviceMW.APP_VERSION.getCode(), "1.0.0"
-        );
         httpClientFactoryMock = Mockito.mock(HttpClientConfig.class);
         tokenMiddlewareProviderMock = Mockito.mock(TokenMiddlewareProvider.class);
         middlewareConfig = Mockito.mock(MiddlewareConfig.class);
-        when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
-        debitCardMiddlewareProvider = new DebitCardMiddlewareProvider(tokenMiddlewareProviderMock, middlewareConfig, httpClientFactoryMock);
+        httpServletRequest = Mockito.mock(HttpServletRequest.class);
 
+        when(httpServletRequest.getHeader(DeviceMW.DEVICE_ID.getCode())).thenReturn("1234");
+        when(httpServletRequest.getHeader(DeviceMW.DEVICE_NAME.getCode())).thenReturn("Android");
+        when(httpServletRequest.getHeader(DeviceMW.GEO_POSITION_X.getCode())).thenReturn("12.2323232");
+        when(httpServletRequest.getHeader(DeviceMW.GEO_POSITION_Y.getCode())).thenReturn("12.2323232");
+        when(httpServletRequest.getHeader(DeviceMW.APP_VERSION.getCode())).thenReturn("1.0.0");
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");  // Mocking the remote IP address
+        when(httpServletRequest.getHeaderNames()).thenReturn(Collections.enumeration(Arrays.asList(
+                DeviceMW.DEVICE_ID.getCode(),
+                DeviceMW.DEVICE_IP.getCode(),
+                DeviceMW.DEVICE_NAME.getCode(),
+                DeviceMW.GEO_POSITION_X.getCode(),
+                DeviceMW.GEO_POSITION_Y.getCode(),
+                DeviceMW.APP_VERSION.getCode()
+        )));
+        when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
+
+        debitCardMiddlewareProvider = new DebitCardMiddlewareProvider(tokenMiddlewareProviderMock, middlewareConfig, httpClientFactoryMock, httpServletRequest);
         setField(debitCardMiddlewareProvider, "middlewareConfig", MiddlewareConfigFixture.withDefault(), MiddlewareConfig.class);
     }
 
@@ -77,9 +88,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.changeAmount(
-                DebitCardMWRequestFixture.withDefault(), map
-        );
+        GenericResponse response = debitCardMiddlewareProvider.changeAmount(DebitCardMWRequestFixture.withDefault());
 
         // Assert
         assertNotNull(response);
@@ -95,7 +104,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         Exception exception = assertThrows(Exception.class, () -> debitCardMiddlewareProvider.changeAmount(
-                DebitCardMWRequestFixture.withDefault(), map
+                DebitCardMWRequestFixture.withDefault()
         ));
 
         // Assert
@@ -114,7 +123,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        ListDebitCardMWResponse response = debitCardMiddlewareProvider.listDebitCard(123, map);
+        ListDebitCardMWResponse response = debitCardMiddlewareProvider.listDebitCard(123);
 
         // Assert
         assertNotNull(response);
@@ -132,7 +141,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(get(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
 
         // Act
-        ListDebitCardMWResponse response = debitCardMiddlewareProvider.listDebitCard(123, map);
+        ListDebitCardMWResponse response = debitCardMiddlewareProvider.listDebitCard(123);
 
         //Assert
         assertNull(response.getData());
@@ -154,7 +163,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            debitCardMiddlewareProvider.listDebitCard(123, map);
+            debitCardMiddlewareProvider.listDebitCard(123);
         });
 
         // Assert
@@ -171,7 +180,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            debitCardMiddlewareProvider.listDebitCard(123, map);
+            debitCardMiddlewareProvider.listDebitCard(123);
         });
 
         // Assert
@@ -187,7 +196,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        AccountsDebitCardMWResponse response = debitCardMiddlewareProvider.accountListDebitCard(123, 123, map);
+        AccountsDebitCardMWResponse response = debitCardMiddlewareProvider.accountListDebitCard(123, 123);
 
         // Assert
         assertNotNull(response);
@@ -212,7 +221,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            debitCardMiddlewareProvider.accountListDebitCard(123, 123, map);
+            debitCardMiddlewareProvider.accountListDebitCard(123, 123);
         });
 
         // Assert
@@ -229,7 +238,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            debitCardMiddlewareProvider.accountListDebitCard(123, 123, map);
+            debitCardMiddlewareProvider.accountListDebitCard(123, 123);
         });
 
         // Assert
@@ -248,7 +257,7 @@ class DebitCardMiddlewareProviderTest {
         String cardId = "123";
 
         // Act
-        DCInternetAuthorizationNWResponse actual = debitCardMiddlewareProvider.getListAuthorizations(personId, cardId, map);
+        DCInternetAuthorizationNWResponse actual = debitCardMiddlewareProvider.getListAuthorizations(personId, cardId);
 
         // Assert
         assertNotNull(actual);
@@ -266,7 +275,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         try {
-            DCInternetAuthorizationNWResponse actual = debitCardMiddlewareProvider.getListAuthorizations(personId, cardId, map);
+            DCInternetAuthorizationNWResponse actual = debitCardMiddlewareProvider.getListAuthorizations(personId, cardId);
         } catch (GenericException ex) {
             // Assert
             assertEquals(DebitCardMiddlewareError.MDWTJD_005.getCode(), ex.getCode());
@@ -285,7 +294,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.deleteAuth(DebitCardMWRequestFixture.withDefaultDeleteAuthPurchaseMWRequest(), map);
+        GenericResponse response = debitCardMiddlewareProvider.deleteAuth(DebitCardMWRequestFixture.withDefaultDeleteAuthPurchaseMWRequest());
 
         // Assert
         assertNotNull(response);
@@ -304,7 +313,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.deleteAuth(DebitCardMWRequestFixture.withDefaultDeleteAuthPurchaseMWRequest(), map);
+        GenericResponse response = debitCardMiddlewareProvider.deleteAuth(DebitCardMWRequestFixture.withDefaultDeleteAuthPurchaseMWRequest());
 
         // Assert
         assertNotNull(response);
@@ -321,7 +330,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        DCDetailMWResponse response = debitCardMiddlewareProvider.detail("123", "123", map);
+        DCDetailMWResponse response = debitCardMiddlewareProvider.detail("123", "123");
 
         // Assert
         assertNotNull(response);
@@ -337,7 +346,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         GenericResponse response = debitCardMiddlewareProvider.lockStatus(
-                DebitCardMWRequestFixture.withDefaultLockStatus(), map
+                DebitCardMWRequestFixture.withDefaultLockStatus()
         );
 
         // Assert
@@ -354,7 +363,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            debitCardMiddlewareProvider.lockStatus(request, map);
+            debitCardMiddlewareProvider.lockStatus(request);
         });
 
         // Assert
@@ -378,7 +387,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            debitCardMiddlewareProvider.lockStatus(request, map);
+            debitCardMiddlewareProvider.lockStatus(request);
         });
 
         // Assert
@@ -396,7 +405,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        CreateAuthorizationOnlinePurchaseMWResponse actual = debitCardMiddlewareProvider.createAuthorizationOnlinePurchase(request, map);
+        CreateAuthorizationOnlinePurchaseMWResponse actual = debitCardMiddlewareProvider.createAuthorizationOnlinePurchase(request);
 
         // Assert
         assertNotNull(actual);
@@ -411,7 +420,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         GenericResponse response = debitCardMiddlewareProvider.modifyAccountsOrder(
-                DebitCardMWRequestFixture.withDefaultAccountsOrder(), map
+                DebitCardMWRequestFixture.withDefaultAccountsOrder()
         );
 
         // Assert
@@ -428,7 +437,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            debitCardMiddlewareProvider.modifyAccountsOrder(request, map);
+            debitCardMiddlewareProvider.modifyAccountsOrder(request);
         });
 
         // Assert
@@ -452,7 +461,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            debitCardMiddlewareProvider.modifyAccountsOrder(request, map);
+            debitCardMiddlewareProvider.modifyAccountsOrder(request);
         });
 
         // Assert
@@ -470,7 +479,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.activateDebitCard(DebitCardMWRequestFixture.withDefaultActivateDebitCardMWRequest(), map);
+        GenericResponse response = debitCardMiddlewareProvider.activateDebitCard(DebitCardMWRequestFixture.withDefaultActivateDebitCardMWRequest());
 
         // Assert
         assertNotNull(response);
@@ -496,7 +505,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            debitCardMiddlewareProvider.activateDebitCard(request, map);
+            debitCardMiddlewareProvider.activateDebitCard(request);
         });
 
         // Assert
@@ -514,7 +523,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.activeDebitCardSecure(DebitCardMWRequestFixture.withDefaultUpdateDebitCardSecureMWRequest(), map);
+        GenericResponse response = debitCardMiddlewareProvider.activeDebitCardSecure(DebitCardMWRequestFixture.withDefaultUpdateDebitCardSecureMWRequest());
 
         // Assert
         assertNotNull(response);
@@ -532,7 +541,7 @@ class DebitCardMiddlewareProviderTest {
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.activeDebitCardSecure(DebitCardMWRequestFixture.withDefaultUpdateDebitCardSecureMWRequest(), map);
+        GenericResponse response = debitCardMiddlewareProvider.activeDebitCardSecure(DebitCardMWRequestFixture.withDefaultUpdateDebitCardSecureMWRequest());
 
         // Assert
         assertNotNull(response);
@@ -558,7 +567,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            debitCardMiddlewareProvider.activeDebitCardSecure(request, map);
+            debitCardMiddlewareProvider.activeDebitCardSecure(request);
         });
 
         // Assert
@@ -576,7 +585,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            debitCardMiddlewareProvider.activeDebitCardSecure(request, map);
+            debitCardMiddlewareProvider.activeDebitCardSecure(request);
         });
 
         // Assert
@@ -592,7 +601,7 @@ class DebitCardMiddlewareProviderTest {
 
         // Act
         GenericResponse response = debitCardMiddlewareProvider.changePinCard(
-                DebitCardMWRequestFixture.withDefaultChangePinCard(), map
+                DebitCardMWRequestFixture.withDefaultChangePinCard()
         );
 
         // Assert

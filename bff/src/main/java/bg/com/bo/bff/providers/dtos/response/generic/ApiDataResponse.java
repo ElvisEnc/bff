@@ -2,11 +2,11 @@ package bg.com.bo.bff.providers.dtos.response.generic;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@Getter
+@Data
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor

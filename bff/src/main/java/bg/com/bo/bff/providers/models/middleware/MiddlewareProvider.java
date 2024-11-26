@@ -3,7 +3,7 @@ package bg.com.bo.bff.providers.models.middleware;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.HttpDeleteWithBody;
-import bg.com.bo.bff.commons.enums.ProjectNameMW;
+import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
@@ -250,7 +250,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
                 if (error.equals(DefaultMiddlewareError.DEFAULT))
                     LOGGER.error(String.format("Not Mapped Error:%s", jsonResponse));
 
-                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode(), error.getTitle());
             }
         } catch (GenericException ex) {
             throw ex;

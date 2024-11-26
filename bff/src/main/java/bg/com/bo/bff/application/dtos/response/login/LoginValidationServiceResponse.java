@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 public class LoginValidationServiceResponse {
     private String statusCode;
     private String personId;
+    private String name;
+    private String fullName;
     private String userDeviceId;
     private String rolePersonId;
     private String lastConnectionDate;

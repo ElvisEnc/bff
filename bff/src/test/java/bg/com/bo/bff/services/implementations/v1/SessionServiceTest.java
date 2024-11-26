@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SpringExtension.class)
-public class SessionServiceTest {
+class SessionServiceTest {
     private Cache cache;
     private SessionService service;
 

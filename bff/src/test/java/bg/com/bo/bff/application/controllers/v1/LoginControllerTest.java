@@ -1,17 +1,13 @@
 package bg.com.bo.bff.application.controllers.v1;
 
-import bg.com.bo.bff.application.dtos.request.login.Device;
-import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
-import bg.com.bo.bff.application.dtos.request.login.LoginRequestFixture;
-import bg.com.bo.bff.application.dtos.request.login.LogoutRequest;
-import bg.com.bo.bff.application.dtos.response.login.DeviceEnrollmentResponse;
+import bg.com.bo.bff.application.dtos.request.login.*;
+import bg.com.bo.bff.application.dtos.response.login.*;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.login.LoginResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.application.LoginMapper;
-import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.application.exceptions.UnauthorizedException;
-import bg.com.bo.bff.application.dtos.response.login.LoginResult;
-import bg.com.bo.bff.application.dtos.response.login.TokenData;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
+import bg.com.bo.bff.providers.models.enums.middleware.GenericControllerResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.response.IGenericControllerResponse;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,7 +48,7 @@ class LoginControllerTest {
     @Mock
     DeviceEnrollmentResponse deviceEnrollmentResponse;
     private final LoginMapper loginMapper = LoginMapper.INSTANCE;
-    LoginRequest requestMock = LoginRequestFixture.withDefault();
+    LoginRequest requestMock = LoginRequestFixture.withDefaultLoginRequest();
     String personId = "123";
     String header = "123456";
     static Device device;
@@ -132,10 +129,10 @@ class LoginControllerTest {
         when(servletRequest.getHeaderNames()).thenReturn(enumerations);
         when(servletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
 
-        Mockito.when(iLoginServices.login(any(), any())).thenThrow(new UnauthorizedException(HttpStatus.UNAUTHORIZED.name()));
+        Mockito.when(iLoginServices.login(any(), any())).thenThrow(new GenericException(HttpStatus.UNAUTHORIZED.name()));
 
         // Act
-        UnauthorizedException exception = assertThrows(UnauthorizedException.class, () -> loginController.login(header, header, header, header, header, header, requestMock));
+        GenericException exception = assertThrows(GenericException.class, () -> loginController.login(header, header, header, header, header, header, requestMock));
 
         // Assert
         assertEquals(HttpStatus.UNAUTHORIZED.name(), exception.getMessage());
@@ -176,7 +173,7 @@ class LoginControllerTest {
         String generic = "546545432";
         LogoutRequest request = new LogoutRequest();
         request.setRefreshToken("refreshTokenValue");
-        GenericResponse expect = new GenericResponse("SUCCESS", "SUCCESS");
+        GenericResponse expect = GenericResponse.instance(GenericControllerResponse.SUCCESS);
 
         Mockito.when(iLoginServices.logout(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(expect);
 
@@ -196,6 +193,27 @@ class LoginControllerTest {
                 .andExpect(status().isOk());
 
         //Assert
-        Mockito.verify(iLoginServices).logout(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(LogoutRequest.class));
+        verify(iLoginServices).logout(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(LogoutRequest.class));
+    }
+
+    @Test
+    void givenValidDataWhenRefreshThenReturnSuccess() throws Exception {
+        // Arrange
+        TokenDataResponse response = new TokenDataResponse();
+        String accessJwt = UUID.randomUUID().toString();
+        String refreshJwt = UUID.randomUUID().toString();
+        RefreshSessionRequest refreshSessionRequest = new RefreshSessionRequest();
+        refreshSessionRequest.setRefreshToken(refreshJwt);
+        when(iLoginServices.refreshSession(any(), any(), any())).thenReturn(response);
+
+        // Act
+        mockMvc.perform(post("/api/v1/login/{personId}/refresh", 12345)
+                        .header("Authorization", accessJwt)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(refreshSessionRequest)))
+                .andExpect(status().isOk());
+
+        // Assert
+        verify(iLoginServices).refreshSession(any(), any(), any());
     }
 }

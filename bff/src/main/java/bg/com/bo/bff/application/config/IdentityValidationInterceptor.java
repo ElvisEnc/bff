@@ -1,7 +1,6 @@
 package bg.com.bo.bff.application.config;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.application.exceptions.UnauthorizedException;
 import bg.com.bo.bff.models.UserData;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import jakarta.servlet.http.HttpServletRequest;

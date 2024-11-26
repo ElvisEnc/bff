@@ -9,12 +9,14 @@ import bg.com.bo.bff.providers.dtos.response.third.account.mw.ThirdAccountsMWRes
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
+import java.util.Collections;
+import java.util.List;
 
 @Component
 public class ThirdAccountsMapper implements IThirdAccountsMapper {
     @Override
     public DeleteThirdAccountMWRequest mapperRequest(String personId, long identifier, long accountNumber) {
-        return  DeleteThirdAccountMWRequest.builder()
+        return DeleteThirdAccountMWRequest.builder()
                 .personId(personId)
                 .identifier(String.valueOf(identifier))
                 .accountNumber(String.valueOf(accountNumber))
@@ -22,19 +24,23 @@ public class ThirdAccountsMapper implements IThirdAccountsMapper {
     }
 
     @Override
-    public DestinationAccount convertThirdAccountToDestinationAccount(ThirdAccountsMWResponse.ThirdAccountMW account, Integer type, String name) {
-        return DestinationAccount.builder()
-                .id(Long.valueOf(account.getId()))
-                .accountId(Long.valueOf(account.getAccountId()))
-                .accountNumber(new BigInteger(account.getAccountNumber().trim()))
-                .currencyCode(account.getCurrencyCode())
-                .currencyAcronym(account.getCurrencyAcronym())
-                .clientName(account.getClientName())
-//                .bankCode("") // null
-                .bankName(name)
-                .accountAliases(account.getAccountAliases())
-                .destinationAccountType(type)
-                .build();
+    public List<DestinationAccount> convertThirdAccountToDestinationAccount(ThirdAccountsMWResponse mwResponse, Integer type, String name) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return Collections.emptyList();
+        return mwResponse.getData().stream()
+                .map(mw -> DestinationAccount.builder()
+                        .id(Long.valueOf(mw.getId()))
+                        .accountId(Long.valueOf(mw.getAccountId()))
+                        .accountNumber(new BigInteger(mw.getAccountNumber().trim()))
+                        .currencyCode(mw.getCurrencyCode())
+                        .currencyAcronym(mw.getCurrencyAcronym())
+                        .clientName(mw.getClientName())
+                        //.bankCode("") // null
+                        .bankName(name)
+                        .accountAliases(mw.getAccountAliases())
+                        .destinationAccountType(type)
+                        .build())
+                .toList();
     }
 
     @Override

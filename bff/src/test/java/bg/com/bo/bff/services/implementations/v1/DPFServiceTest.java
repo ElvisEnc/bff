@@ -2,6 +2,7 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.response.dpf.DpfListResponse;
 import bg.com.bo.bff.application.dtos.response.dpf.DpfResponseFixture;
+import bg.com.bo.bff.mappings.providers.dpf.DPFMapper;
 import bg.com.bo.bff.providers.dtos.response.dpf.mw.DpfMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.dpf.mw.DpfMWResponse;
 import bg.com.bo.bff.providers.interfaces.IDPFProvider;
@@ -16,22 +17,21 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class DPFServiceTest {
-    @Spy
     @InjectMocks
     private DPFService service;
-
     @Mock
     private IDPFProvider provider;
-
-    @Mock
-    private IDPFMapper iDPFMapper;
+    @Spy
+    private IDPFMapper iDPFMapper = new DPFMapper();
 
     @Test
     void giveValidPersonIdWhenGetListDPFsThenReturnSuccess() throws IOException {
@@ -50,5 +50,34 @@ class DPFServiceTest {
         assertEquals(expected, response);
         verify(provider).getDPFsList(personId, "123", new HashMap<>());
         verify(iDPFMapper).mapToDPFListResponse(expectedResponse);
+    }
+
+    @Test
+    void giveValidPersonIdWhenGetListDPFsThenReturnEmpty() throws IOException {
+        // Arrange
+        DpfMWResponse expectedResponse = DpfMWResponse.builder().data(null).build();
+        DpfListResponse expected = DpfListResponse.builder().data(new ArrayList<>()).build();
+        Mockito.when(provider.getDPFsList(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(expectedResponse);
+
+        // Act
+        DpfListResponse response = service.getDPFsList("123", "123", new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).getDPFsList(any(), any(), any());
+        verify(iDPFMapper).mapToDPFListResponse(expectedResponse);
+    }
+
+    @Test
+    void giveValidPersonIdWhenGetListDPFsThenReturnNull() throws IOException {
+        // Arrange
+        Mockito.when(provider.getDPFsList(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(null);
+
+        // Act
+        DpfListResponse response = service.getDPFsList("123", "123", new HashMap<>());
+
+        // Assert
+        Assertions.assertNotNull(response);
     }
 }

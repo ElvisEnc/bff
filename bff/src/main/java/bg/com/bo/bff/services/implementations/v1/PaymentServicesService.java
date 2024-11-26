@@ -9,7 +9,7 @@ import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
-import bg.com.bo.bff.commons.enums.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.commons.filters.OrderFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.commons.filters.ServiceNameFilter;

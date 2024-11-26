@@ -10,17 +10,17 @@ import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
-import bg.com.bo.bff.commons.converters.ErrorResponseConverter;
-import bg.com.bo.bff.commons.enums.*;
 import bg.com.bo.bff.commons.converters.IErrorResponse;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.CanalMW;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
+import bg.com.bo.bff.commons.enums.login.ApplicationId;
 import bg.com.bo.bff.providers.dtos.request.login.mw.*;
 import bg.com.bo.bff.providers.dtos.response.login.mw.*;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
-import bg.com.bo.bff.commons.enums.ProjectNameMW;
-import bg.com.bo.bff.commons.enums.response.user.UserControllerResponse;
+import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
+import bg.com.bo.bff.providers.models.enums.middleware.response.user.UserControllerResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.response.personal.information.UserContactResponse;
@@ -97,7 +97,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
                 } else {
                     logger.error(jsonResponse);
                     AppError error = Util.mapProviderError(jsonResponse);
-                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                    throw new GenericException(error);
                 }
             }
         } catch (GenericException ex) {
@@ -105,7 +105,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             throw ex;
         } catch (Exception e) {
             logger.error(e);
-            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+            throw new GenericException(DefaultMiddlewareError.DEFAULT);
         }
     }
 
@@ -124,11 +124,11 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.SC_OK) {
                     LoginCredentialMWResponse mwResponse = Util.stringToObject(jsonResponse, LoginCredentialMWResponse.class);
-                    return mapper.converResponse(data, mwResponse);
+                    return mapper.convertResponse(data, mwResponse);
                 } else {
                     logger.error(jsonResponse);
                     AppError error = Util.mapProviderError(jsonResponse);
-                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                    throw new GenericException(error);
                 }
             }
         } catch (GenericException ex) {
@@ -136,7 +136,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             throw ex;
         } catch (Exception e) {
             logger.error(e);
-            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+            throw new GenericException(DefaultMiddlewareError.DEFAULT);
         }
     }
 
@@ -189,7 +189,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
                 } else {
                     logger.error(jsonResponse);
                     AppError error = Util.mapProviderError(jsonResponse);
-                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                    throw new GenericException(error);
                 }
             }
         } catch (GenericException ex) {
@@ -197,7 +197,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             throw ex;
         } catch (Exception e) {
             logger.error(e);
-            throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
+            throw new GenericException(DefaultMiddlewareError.DEFAULT);
         }
     }
 
@@ -225,7 +225,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
                 if (statusCode == HttpStatus.SC_OK) return GenericResponse.instance(UserControllerResponse.SUCCESS);
                 else {
                     logger.error(jsonResponse);
-                    IErrorResponse errorResponse = ChangePasswordErrorResponseConverter.INSTANCE.convert(jsonResponse);
+                    IErrorResponse errorResponse = ChangePasswordErrorResponseConverter.instance.convert(jsonResponse);
                     throw new HandledException(errorResponse);
                 }
             }
@@ -233,7 +233,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             throw e;
         } catch (Exception e) {
             logger.error(e);
-            throw new HandledException(ErrorResponseConverter.GenericErrorResponse.DEFAULT, e);
+            throw new GenericException(DefaultMiddlewareError.DEFAULT);
         }
     }
 
@@ -247,8 +247,9 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             UserContactResponse userContact = objectMapper.readValue(jsonContact, UserContactResponse.class);
             String jsonResponse = Util.objectToString(userContact.getCompanyContactDetail());
             return Util.stringToObject(jsonResponse, ContactResponse.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            logger.error(e);
+            throw new GenericException(DefaultMiddlewareError.DEFAULT);
         }
     }
 
@@ -279,14 +280,14 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
                     notEnrolledReponse.setStatusCode("NOT_ENROLLED");
                     return notEnrolledReponse;
                 }
-                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                throw new GenericException(error);
             }
         } catch (GenericException ex) {
             logger.error(ex);
             throw ex;
         } catch (Exception e) {
             logger.error(e);
-            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+            throw new GenericException(DefaultMiddlewareError.DEFAULT);
         }
     }
 
@@ -304,7 +305,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
                 } else {
                     AppError error = Util.mapProviderError(jsonResponse);
                     logger.error(jsonResponse);
-                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                    throw new GenericException(error);
                 }
             }
         } catch (GenericException ex) {
@@ -312,7 +313,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             throw ex;
         } catch (Exception e) {
             logger.error(e);
-            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+            throw new GenericException(DefaultMiddlewareError.DEFAULT);
         }
     }
 
@@ -351,7 +352,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
                 } else {
                     logger.error(jsonResponse);
                     AppError error = Util.mapProviderError(jsonResponse);
-                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                    throw new GenericException(error);
                 }
             }
         } catch (GenericException ex) {
@@ -359,7 +360,7 @@ public class LoginMiddlewareProvider implements ILoginMiddlewareProvider {
             throw ex;
         } catch (Exception e) {
             logger.error(e);
-            throw new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+            throw new GenericException(DefaultMiddlewareError.DEFAULT);
         }
     }
 }

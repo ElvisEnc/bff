@@ -10,8 +10,8 @@ import bg.com.bo.bff.providers.models.enums.middleware.own.account.OwnAccountsMi
 import bg.com.bo.bff.providers.models.enums.middleware.own.account.OwnAccountsMiddlewareResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.own.account.OwnAccountsMiddlewareService;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
-import bg.com.bo.bff.commons.enums.PersonRol;
-import bg.com.bo.bff.commons.enums.ProjectNameMW;
+import bg.com.bo.bff.commons.enums.account.statement.PersonRol;
+import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.UpdateTransactionLimitMWRequest;
 import bg.com.bo.bff.providers.interfaces.IOwnAccountsProvider;

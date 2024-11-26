@@ -1,7 +1,9 @@
 package bg.com.bo.bff.application.dtos.response.destination.account;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class DestinationAccountResponseFixture {
@@ -25,9 +27,9 @@ public class DestinationAccountResponseFixture {
                 .build();
     }
 
-    public static DestinationAccount getDestinationAccountDefault() {
-        return DestinationAccount.builder()
-                .id(123456789L)
+    public static List<DestinationAccount> getDestinationAccountDefault() {
+        return Collections.singletonList(DestinationAccount.builder()
+                .id(1L)
                 .accountId(123456789L)
                 .accountNumber(BigInteger.valueOf(123456789L))
                 .currencyCode("UnitTest")
@@ -37,7 +39,7 @@ public class DestinationAccountResponseFixture {
                 .bankName("UnitTest")
                 .accountAliases("UnitTest")
                 .destinationAccountType(1)
-                .build();
+                .build());
     }
 
     public static BanksResponse withDefaultBanksResponse() {
@@ -75,4 +77,24 @@ public class DestinationAccountResponseFixture {
         );
     }
 
+    public static AddAccountResponse withDefaultAddAccountResponse() {
+        return AddAccountResponse.builder()
+                .id(123456789L)
+                .build();
+    }
+
+    public static DestinationAccount withDefaultDestinationAccount() {
+        return DestinationAccount.builder()
+                .id(123456789L)
+                .accountId(123456789L)
+                .accountNumber(BigInteger.valueOf(123456789L))
+                .currencyCode("068")
+                .currencyAcronym("UnitTest")
+                .clientName("UnitTest")
+                .bankCode("UnitTest")
+                .bankName("UnitTest")
+                .accountAliases("UnitTest")
+                .destinationAccountType(1)
+                .build();
+    }
 }

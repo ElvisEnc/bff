@@ -112,6 +112,7 @@ public class UserController {
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") Integer personId,
+            @RequestHeader("json-data") @NotNull(message = "json-data must be not null.") @NotBlank(message = "json-data must be not empty.") @Parameter(description = "Información genérica en formato json encodeado en base64.", example = "50") String jsonData,
             @RequestBody @Valid UpdateBiometricsRequest request
     ) throws IOException {
         return ResponseEntity.ok(userService.updateBiometrics(personId, request, Headers.getParameter(httpServletRequest)));

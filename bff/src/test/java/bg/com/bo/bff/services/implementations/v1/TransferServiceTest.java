@@ -1,25 +1,30 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.transfer.Pcc01Request;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequestFixture;
+import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Response;
 import bg.com.bo.bff.application.dtos.response.transfer.TransferResponse;
 import bg.com.bo.bff.application.dtos.response.transfer.TransferResponseFixture;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.mappings.providers.pcc01.Pcc01Mapper;
+import bg.com.bo.bff.mappings.providers.pcc01.Pcc01MapperImpl;
 import bg.com.bo.bff.mappings.providers.transfer.ITransferMapper;
 import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
+import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapperImpl;
+import bg.com.bo.bff.mappings.providers.transfer.TransferMapper;
 import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequest;
 import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequestFixture;
-import bg.com.bo.bff.providers.dtos.response.transfer.TransferAchMwResponse;
-import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
-import bg.com.bo.bff.providers.dtos.response.transfer.TransferWalletMWResponse;
+import bg.com.bo.bff.providers.dtos.response.transfer.*;
 import bg.com.bo.bff.providers.interfaces.ITransferACHProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
@@ -32,17 +37,18 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TransferServiceTest {
+    @InjectMocks
     private TransferService service;
     @Mock
     private ITransferProvider transferProvider;
     @Mock
     private ITransferACHProvider transferACHProvider;
-    @Mock
-    private TransferMWtMapper transferMapper;
-    @Mock
-    private Pcc01Mapper pcc01Mapper;
-    @Mock
-    private ITransferMapper mapper;
+    @Spy
+    private TransferMWtMapper transferMapper = new TransferMWtMapperImpl();
+    @Spy
+    private Pcc01Mapper pcc01Mapper = new Pcc01MapperImpl();
+    @Spy
+    private ITransferMapper mapper = new TransferMapper();
 
     private Map<String, String> map;
 
@@ -78,6 +84,45 @@ class TransferServiceTest {
     }
 
     @Test
+    void transferOwnAccountPending() throws IOException {
+        // Arrange
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+        TransferRequest transferRequest = TransferRequestFixture.withDefault();
+        TransferMWResponse expectedMW = TransferMWResponseFixture.withDefaultTransferMWResponsePending();
+        when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
+        when(transferProvider.transferOwnAccount((requestMW), (map))).thenReturn(expectedMW);
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+            service.transferOwnAccount("123456", "123", transferRequest, map)
+        );
+
+        // Assert
+        assertEquals("TRANSFER_PENDING", exception.getCode());
+    }
+
+    @Test
+    void transferOwnAccountStatusNull() throws IOException {
+        // Arrange
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+        TransferRequest transferRequest = TransferRequestFixture.withDefault();
+        TransferResponse expected = TransferResponseFixture.withDefault();
+        TransferMWResponse expectedMW = TransferMWResponseFixture.withDefaultTransferMWResponseStatusNull();
+
+        when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
+        when(transferProvider.transferOwnAccount((requestMW), (map))).thenReturn(expectedMW);
+        when(mapper.convert((expectedMW))).thenReturn(expected);
+
+        // Act
+        TransferResponse response = service.transferOwnAccount("123456", "123", transferRequest, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(transferProvider).transferOwnAccount(any(), any());
+    }
+
+    @Test
     void transferThirdAccount() throws IOException {
         TransferResponse expected = TransferResponseFixture.withDefault();
         TransferMWResponse expectedMW = TransferMWResponseFixture.withDefault();
@@ -90,6 +135,45 @@ class TransferServiceTest {
 
         TransferResponse response = service.transferThirdAccount("123456", "123", transferRequest, map);
 
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(transferProvider).transferThirdAccount(any(), any());
+    }
+
+    @Test
+    void transferThirdAccountPending() throws IOException {
+        // Arrange
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+        TransferRequest transferRequest = TransferRequestFixture.withDefault();
+        TransferMWResponse expectedMW = TransferMWResponseFixture.withDefaultTransferMWResponsePending();
+        when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
+        when(transferProvider.transferThirdAccount((requestMW), (map))).thenReturn(expectedMW);
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.transferThirdAccount("123456", "123", transferRequest, map);
+        });
+
+        // Assert
+        assertEquals("TRANSFER_PENDING", exception.getCode());
+    }
+
+    @Test
+    void transferThirdAccountStatusNull() throws IOException {
+        // Arrange
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+        TransferRequest transferRequest = TransferRequestFixture.withDefault();
+        TransferResponse expected = TransferResponseFixture.withDefault();
+        TransferMWResponse expectedMW = TransferMWResponseFixture.withDefaultTransferMWResponseStatusNull();
+
+        when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
+        when(transferProvider.transferThirdAccount((requestMW), (map))).thenReturn(expectedMW);
+        when(mapper.convert((expectedMW))).thenReturn(expected);
+
+        // Act
+        TransferResponse response = service.transferThirdAccount("123456", "123", transferRequest, map);
+
+        // Assert
         assertNotNull(response);
         assertEquals(expected, response);
         verify(transferProvider).transferThirdAccount(any(), any());
@@ -114,6 +198,27 @@ class TransferServiceTest {
     }
 
     @Test
+    void transferACHAccountStatusNull() throws IOException {
+        // Arrange
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+        TransferRequest transferRequest = TransferRequestFixture.withDefault();
+        TransferResponse expected = TransferResponseFixture.withDefault();
+        TransferAchMwResponse expectedMW = TransferMWResponseFixture.withDefaultACHStatusNull();
+
+        when(transferMapper.convert(("ach"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
+        when(transferACHProvider.transferAchAccount((requestMW), (map))).thenReturn(expectedMW);
+        when(mapper.convert((expectedMW))).thenReturn(expected);
+
+        // Act
+        TransferResponse response = service.transferAchAccount("123456", "123", transferRequest, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(transferACHProvider).transferAchAccount(any(), any());
+    }
+
+    @Test
     void givePersonCodeAndAccountWhenTransferWalletThenReturnSuccess() throws IOException {
         TransferResponse expected = TransferResponseFixture.withDefault();
         TransferWalletMWResponse expectedMW = TransferMWResponseFixture.withDefaultWallet();
@@ -129,5 +234,60 @@ class TransferServiceTest {
         assertNotNull(response);
         assertEquals(expected, response);
         verify(transferProvider).transferWalletAccount(any(), any());
+    }
+
+    @Test
+    void givePersonCodeAndAccountWhenTransferWalletThenReturnPending() throws IOException {
+        // Arrange
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+        TransferRequest transferRequest = TransferRequestFixture.withDefault();
+        TransferWalletMWResponse expectedMW = TransferMWResponseFixture.withDefaultWalletPending();
+        when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
+        when(transferProvider.transferWalletAccount((requestMW), (map))).thenReturn(expectedMW);
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.transferWallet("123456", "123", transferRequest, map);
+        });
+
+        // Assert
+        assertEquals("TRANSFER_PENDING", exception.getCode());
+    }
+
+    @Test
+    void givePersonCodeAndAccountWhenTransferWalletThenReturnNull() throws IOException {
+        // Arrange
+        TransferMWRequest requestMW = TransferMWRequestFixture.withDefault();
+        TransferRequest transferRequest = TransferRequestFixture.withDefault();
+        TransferResponse expected = TransferResponseFixture.withDefault();
+        TransferWalletMWResponse expectedMW = TransferMWResponseFixture.withDefaultWalletStatusNull();
+
+        when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
+        when(transferProvider.transferWalletAccount((requestMW), (map))).thenReturn(expectedMW);
+        when(mapper.convert((expectedMW))).thenReturn(expected);
+
+        // Act
+        TransferResponse response = service.transferWallet("123456", "123", transferRequest, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(expected, response);
+        verify(transferProvider).transferWalletAccount(any(), any());
+    }
+
+    @Test
+    void giveRequestWhenMakeControlReturnValidation() throws IOException {
+        // Arrange
+        Pcc01Request request = TransferRequestFixture.withDefaultPcc01Request();
+        Pcc01Response responseExpected = TransferResponseFixture.withDefaultPcc01Response();
+        when(transferProvider.validateControl(any(), any())).thenReturn(responseExpected);
+
+        // Act
+        Pcc01Response response = service.makeControl("123456","654321",request, map);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(responseExpected, response);
+        verify(transferProvider).validateControl(any(), any());
     }
 }

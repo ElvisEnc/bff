@@ -1,16 +1,13 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
-import bg.com.bo.bff.application.dtos.request.transfer.Pcc01Request;
-import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Data;
 import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Response;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.response.transfer.Pcc01MWResponse;
+import bg.com.bo.bff.providers.dtos.request.transfer.Pcc01MWRequest;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
-import bg.com.bo.bff.mappings.providers.pcc01.Pcc01Mapper;
-import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -55,7 +52,7 @@ class Pcc01MiddlewareProviderTest {
     HttpEntity httpEntityMock;
     @Mock
     StatusLine statusLineMock;
-    private static Pcc01Request pcc01Request;
+    private static Pcc01MWRequest pcc01MWRequest;
     private static ClientToken clientToken;
     static String project;
     static String clientSecret;
@@ -85,11 +82,10 @@ class Pcc01MiddlewareProviderTest {
     @Test
     void givenPersonIdWhenRequestGetAccountsThenListOwnAccounts() throws IOException {
         // Arrange
-        Pcc01Response pcc01Response = new Pcc01Response();
-        Pcc01Data pcc01Data = new Pcc01Data();
-        pcc01Response.setData(pcc01Data);
+        ApiDataResponse<Pcc01Response> mwResponse = new ApiDataResponse<Pcc01Response>();
+        mwResponse.setData(Pcc01Response.builder().requiresPcc01("S").build());
         ObjectMapper objectMapperMWResponse = new ObjectMapper();
-        String jsonAccountsResponseMock = objectMapperMWResponse.writeValueAsString(pcc01Response);
+        String jsonAccountsResponseMock = objectMapperMWResponse.writeValueAsString(mwResponse);
         InputStream accountsResponseMock = new ByteArrayInputStream(jsonAccountsResponseMock.getBytes());
 
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientToken);
@@ -101,10 +97,10 @@ class Pcc01MiddlewareProviderTest {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(200);
 
         // Act
-        Pcc01MWResponse response = pcc01MiddlewareProvider.validateControl(pcc01Request, map);
+        Pcc01Response response = pcc01MiddlewareProvider.validateControl(pcc01MWRequest, map);
 
         // Assert
-        Assertions.assertNotNull(response.getData());
+        Assertions.assertNotNull(response);
     }
 
 
@@ -118,7 +114,7 @@ class Pcc01MiddlewareProviderTest {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(406);
 
         // Act
-        assertThrows(RuntimeException.class, () -> pcc01MiddlewareProvider.validateControl(pcc01Request, map));
+        assertThrows(RuntimeException.class, () -> pcc01MiddlewareProvider.validateControl(pcc01MWRequest, map));
     }
 
     @Test
@@ -131,6 +127,6 @@ class Pcc01MiddlewareProviderTest {
         Mockito.when(statusLineMock.getStatusCode()).thenReturn(500);
 
         // Act
-        assertThrows(RuntimeException.class, () -> pcc01MiddlewareProvider.validateControl(pcc01Request, map));
+        assertThrows(RuntimeException.class, () -> pcc01MiddlewareProvider.validateControl(pcc01MWRequest, map));
     }
 }

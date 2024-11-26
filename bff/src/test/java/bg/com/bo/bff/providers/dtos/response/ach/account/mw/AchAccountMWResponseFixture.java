@@ -25,14 +25,14 @@ public class AchAccountMWResponseFixture {
         return AchAccountsMWResponse.builder()
                 .data(Arrays.asList(
                         AchAccountMW.builder()
-                                .idList("987987654")
-                                .personId("UnitTest")
-                                .bankCode("UnitTest")
+                                .idList("1")
+                                .personId("123")
+                                .bankCode("123")
                                 .bankName("UnitTest")
                                 .branchCode("UnitTest")
                                 .accountTypeCode("UnitTest")
-                                .accountNumber("UnitTest")
-                                .documentNumber("UnitTest")
+                                .accountNumber("123")
+                                .documentNumber("123")
                                 .holderName("UnitTest")
                                 .accountNickname("UnitTest")
                                 .isFavorite("UnitTest")
@@ -43,20 +43,18 @@ public class AchAccountMWResponseFixture {
 
     public static BranchOfficeMWResponse withDefaultBranchOfficeMWResponse() {
         return BranchOfficeMWResponse.builder()
-                .data(BranchOfficeMWResponse.BranchOfficeMWData.builder()
-                        .response(Arrays.asList(
-                                BranchOfficeMWResponse.BranchOfficeMWData.BranchOfficeArray.builder()
-                                        .description("Sucursal 1")
-                                        .branchCode("0001")
-                                        .entityCode("E001")
-                                        .build(),
-                                BranchOfficeMWResponse.BranchOfficeMWData.BranchOfficeArray.builder()
-                                        .description("Sucursal 2")
-                                        .branchCode("0002")
-                                        .entityCode("E002")
-                                        .build()
-                        ))
-                        .build())
+                .data(Arrays.asList(
+                        BranchOfficeMWResponse.BranchOfficeMW.builder()
+                                .description("Sucursal 1")
+                                .branchCode("0001")
+                                .entityCode("E001")
+                                .build(),
+                        BranchOfficeMWResponse.BranchOfficeMW.builder()
+                                .description("Sucursal 2")
+                                .branchCode("0002")
+                                .entityCode("E002")
+                                .build()
+                ))
                 .build();
     }
 }

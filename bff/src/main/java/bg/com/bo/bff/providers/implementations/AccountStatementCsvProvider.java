@@ -38,7 +38,6 @@ public class AccountStatementCsvProvider implements IAccountStatementCsvProvider
             byte[] csvBytes = writer.toString().getBytes();
             return csvBytes;
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error(e);
             throw new GenericException();
         }

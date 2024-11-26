@@ -9,8 +9,17 @@ public class ContainsLetterValidator extends Validator<String> {
 
     @Override
     public void validate(String value) {
-        if (!value.matches(".*[a-zA-Z].*"))
+        if (!containsLetter(value))
             throw e;
         super.validate(value);
+    }
+
+    private boolean containsLetter(String value) {
+        for (char c : value.toCharArray()) {
+            if (Character.isLetter(c)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

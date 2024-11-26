@@ -4,7 +4,6 @@ import bg.com.bo.bff.commons.annotations.debit.card.ValidType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
 import java.util.List;

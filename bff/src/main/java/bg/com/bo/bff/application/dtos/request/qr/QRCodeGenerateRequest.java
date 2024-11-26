@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.dtos.request.qr;
 
 
+import bg.com.bo.bff.commons.annotations.generics.DescriptionChars;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class QRCodeGenerateRequest {
 
 
     @Schema(example = "Gastos Generales", description = "Esta es la referencia")
+    @DescriptionChars
     private String reference;
 
     @NotBlank(message = "El periodo de finalizacion no puede estar vacío")

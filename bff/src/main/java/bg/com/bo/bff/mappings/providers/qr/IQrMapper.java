@@ -12,6 +12,7 @@ import bg.com.bo.bff.providers.dtos.response.ach.account.mw.QrGeneratedPaidMW;
 
 public interface IQrMapper {
     QrListMWRequest mapperRequest(String personId, QrListRequest request);
+
     QrGeneratedPaid convert(QrGeneratedPaidMW mw);
 
     QRCodeGenerateMWRequest convert(QRCodeGenerateRequest request);

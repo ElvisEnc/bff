@@ -1,7 +1,7 @@
 package bg.com.bo.bff.application.exceptions;
 
 import bg.com.bo.bff.commons.converters.IErrorResponse;
-import bg.com.bo.bff.commons.enums.response.IErrorControllerResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.response.IErrorControllerResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,19 +16,23 @@ public class HandledException extends RuntimeException {
     private String code;
     private String method;
     private String source;
+    private String title;
 
     public HandledException(IErrorControllerResponse controllerResponse) {
         super(controllerResponse.getDescription());
         this.message = controllerResponse.getDescription();
         this.status = controllerResponse.getHttpCode();
         this.code = controllerResponse.getCode();
+        this.title = controllerResponse.getTitle();
         fillTrace();
     }
+
     public HandledException(IErrorControllerResponse controllerResponse, Exception e) {
         super(e);
         this.message = controllerResponse.getDescription();
         this.status = controllerResponse.getHttpCode();
         this.code = controllerResponse.getCode();
+        this.title = controllerResponse.getTitle();
     }
 
     public HandledException(IErrorResponse response) {
@@ -36,6 +40,7 @@ public class HandledException extends RuntimeException {
         this.message = response.getMessage();
         this.status = response.getHttpCode();
         this.code = response.getCode();
+        this.title = response.getTitle();
         fillTrace();
     }
 
@@ -44,6 +49,7 @@ public class HandledException extends RuntimeException {
         this.message = response.getMessage();
         this.status = response.getHttpCode();
         this.code = response.getCode();
+        this.title = response.getTitle();
     }
 
     private void fillTrace() {

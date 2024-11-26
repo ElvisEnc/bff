@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.request.qr.*;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrGeneratedPaid;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.qr.mw.*;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.QrGeneratedPaidMW;
@@ -39,7 +40,7 @@ public class QrMapper implements IQrMapper {
                 .bank(mw.getDescription())
                 .currencyCode(mw.getCurrency())
                 .currencyDescription(mw.getCurrencyDescription())
-                .expiryDate(Util.formatDate(mw.getExpiryDate()))
+                .expiryDate(UtilDate.formatDate(mw.getExpiryDate()))
                 .amount(mw.getMonto())
                 .description(mw.getReference())
                 .singleUse(Objects.equals(mw.getSingleUse(), "1"))
@@ -48,7 +49,7 @@ public class QrMapper implements IQrMapper {
                 .operationType(mw.getOperationTypeId())
                 .destinationAccountNumber(Long.valueOf(mw.getAccountNumber()))
                 .status(mw.getStatus())
-                .registrationDate(Util.formatDate(mw.getRegistrationDate()))
+                .registrationDate(UtilDate.formatDate(mw.getRegistrationDate()))
                 .build();
     }
 
@@ -144,6 +145,7 @@ public class QrMapper implements IQrMapper {
                         .serviceCode(request.getSupplementaryData().getServiceCode())
                         .fields(request.getSupplementaryData().getFields())
                         .serialNumber(request.getSupplementaryData().getSerialNumber())
+                        .allowsDuplicate(request.getSupplementaryData().getAllowsDuplicate() != null ? request.getSupplementaryData().getAllowsDuplicate() : String.valueOf('N'))
                         .build())
                 .risk(new RiskMW(request.getRisk().getPaymentContextCode()))
                 .build();

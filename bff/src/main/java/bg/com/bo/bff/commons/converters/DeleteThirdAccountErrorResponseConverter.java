@@ -3,7 +3,7 @@ package bg.com.bo.bff.commons.converters;
 import org.springframework.http.HttpStatus;
 
 public class DeleteThirdAccountErrorResponseConverter extends ErrorResponseConverter {
-    public static ErrorResponseConverter INSTANCE = new DeleteThirdAccountErrorResponseConverter();
+    public static ErrorResponseConverter instance = new DeleteThirdAccountErrorResponseConverter();
 
     private DeleteThirdAccountErrorResponseConverter() {
         super();

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,34 +23,41 @@ public class TransferWalletMWResponse {
     public static class TransferMWData {
         @JsonProperty("status")
         private String status;
-        @JsonProperty("nroTransaction")
-        private String nroTransaction;
-        @JsonProperty("identifierMae")
-        private String identifierMae;
-        @JsonProperty("receiptDetail")
-        private ReceiptDetail receiptDetail;
-
-        @Data
-        @Builder
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class ReceiptDetail {
-            private String accountingEntry;
-            private String accountingDate;
-            private String accountingTime;
-            private double amountDebited;
-            private double amountCredited;
-            private double exchangeRateDebit;
-            private double exchangeRateCredit;
-            private double amount;
-            private String currency;
-            private String fromAccountNumber;
-            private String fromHolder;
-            private String toAccountNumber;
-            private String toHolder;
-            private String description;
-            private String fromCurrency;
-            private String toCurrency;
-        }
+        @JsonProperty("idReceipt")
+        private String idReceipt;
+        @JsonProperty("idMaeTransaction")
+        private String idMaeTransaction;
+        @JsonProperty("accountingEntry")
+        private String accountingEntry;
+        @JsonProperty("accountingDate")
+        private String accountingDate;
+        @JsonProperty("accountingTime")
+        private String accountingTime;
+        @JsonProperty("amountDebited")
+        private BigDecimal amountDebited;
+        @JsonProperty("amountCredited")
+        private BigDecimal amountCredited;
+        @JsonProperty("exchangeRateDebit")
+        private BigDecimal exchangeRateDebit;
+        @JsonProperty("exchangeRateCredit")
+        private BigDecimal exchangeRateCredit;
+        @JsonProperty("amount")
+        private BigDecimal amount;
+        @JsonProperty("currency")
+        private String currency;
+        @JsonProperty("fromAccountNumber")
+        private String fromAccountNumber;
+        @JsonProperty("fromHolder")
+        private String fromHolder;
+        @JsonProperty("toAccountNumber")
+        private String toAccountNumber;
+        @JsonProperty("toHolder")
+        private String toHolder;
+        @JsonProperty("description")
+        private String description;
+        @JsonProperty("fromCurrency")
+        private String fromCurrency;
+        @JsonProperty("toCurrency")
+        private String toCurrency;
     }
 }

@@ -1,11 +1,10 @@
 package bg.com.bo.bff.commons.utils;
 
-import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
+import bg.com.bo.bff.commons.enums.config.provider.EncryptionAlgorithm;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -19,21 +18,6 @@ public class CipherUtils {
         byte[] dataDecoded = Base64.getDecoder().decode(data);
         byte[] decryptedData = cipher.doFinal(dataDecoded);
         return Util.getStringFromEncodedBytes(decryptedData);
-    }
-
-    public static String decrypt(EncryptionAlgorithm encryptionAlgorithm, String data, SecretKey secretKey, IvParameterSpec iv) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-        Cipher cipher = Cipher.getInstance(encryptionAlgorithm.getCode());
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
-        byte[] dataDecoded = Base64.getDecoder().decode(data);
-        byte[] dataDecrypted = cipher.doFinal(dataDecoded);
-        return Util.getStringFromEncodedBytes(dataDecrypted);
-    }
-
-    public static String encrypt(EncryptionAlgorithm encryptionAlgorithm, String data, SecretKey secretKey, IvParameterSpec iv) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        Cipher cipher = Cipher.getInstance(encryptionAlgorithm.getCode());
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-        byte[] dataEncrypted = cipher.doFinal(Util.getEncodedBytes(data));
-        return Base64.getEncoder().encodeToString(dataEncrypted);
     }
 
     public static PublicKey createPublicKey(EncryptionAlgorithm alg, String publicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {

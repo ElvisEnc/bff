@@ -1,11 +1,8 @@
 package bg.com.bo.bff.application.config.request.tracing;
 
-import bg.com.bo.bff.models.UserData;
 import com.fasterxml.jackson.annotation.*;
 
-import java.time.Instant;
 import java.util.Date;
-import java.util.Map;
 
 @lombok.Builder
 @lombok.Getter

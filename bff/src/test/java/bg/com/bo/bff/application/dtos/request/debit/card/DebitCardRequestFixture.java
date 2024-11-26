@@ -70,6 +70,14 @@ public class DebitCardRequestFixture {
                 .build();
     }
 
+    public static UpdateDebitCardAssuranceRequest withDefaultUpdateDebitCardAssuranceRequestTrue() {
+        return UpdateDebitCardAssuranceRequest.builder()
+                .email("123@dominio.io")
+                .openingRequestFlow(true)
+                .openingRequestNumber("123")
+                .build();
+    }
+
     public static ChangePinRequest withDefaultChangePinRequest() {
         return ChangePinRequest.builder()
                 .pin("1234")

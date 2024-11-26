@@ -9,7 +9,8 @@ public class LoginCredentialData {
     private String secondFactor;
     private String keyChange;
     private String keyChangeMessage;
-    private Integer userDeviceId;
+    private Integer userEnrollmentId;
+    private String holderName;
     private List<Role> roleList;
     private String lastConnectionDate;
     private String codError;

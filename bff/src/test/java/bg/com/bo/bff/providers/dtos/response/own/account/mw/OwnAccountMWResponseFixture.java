@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.dtos.response.own.account.mw;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class OwnAccountMWResponseFixture {
@@ -41,6 +42,12 @@ public class OwnAccountMWResponseFixture {
                 .build();
     }
 
+    public static OwnAccountsListMWResponse withDefaultOwnAccountsListMWResponseNull() {
+        return OwnAccountsListMWResponse.builder()
+                .data(null)
+                .build();
+    }
+
     public static UpdateLimitMWResponse withDefaultUpdateLimitMWResponse() {
         return new UpdateLimitMWResponse(new UpdateLimitMWResponse.UpdateLimitMW("123"));
     }
@@ -60,33 +67,67 @@ public class OwnAccountMWResponseFixture {
 
     public static AccountStatementsMWResponse withDefaultAccountReportBasicResponse() {
         return AccountStatementsMWResponse.builder()
-                .data(Collections.singletonList(AccountStatementsMWResponse.AccountStatementMW.builder()
-                        .reportMoveType("reportMoveType")
-                        .destinationAccount("destinationAccount")
-                        .orderNumber("orderNumber")
-                        .branchOffice("branchOffice")
-                        .cityCode("cityCode")
-                        .description("description")
-                        .operationDescription("operationDescription")
-                        .operation("operation")
-                        .startDate("startDate")
-                        .startTime("startTime")
-                        .amount(BigDecimal.valueOf(10.00))
-                        .agency("agency")
-                        .city("city")
-                        .accountingDate("accountingDate")
-                        .processDate("2024-01-01")
-                        .accountingTime("accountingTime")
-                        .seatNumber(123465L)
-                        .codBranchOffice("codBranchOffice")
-                        .agencyCod("agencyCod")
-                        .accountNumber("accountNumber")
-                        .currencyCod("currencyCod")
-                        .user("user")
-                        .moveType("moveType")
-                        .currentBalance(BigDecimal.valueOf(500.55))
-                        .status("status")
-                        .build()))
+                .data(Arrays.asList(AccountStatementsMWResponse.AccountStatementMW.builder()
+                                .reportMoveType("reportMoveType")
+                                .destinationAccount("destinationAccount")
+                                .orderNumber("orderNumber")
+                                .branchOffice("branchOffice")
+                                .cityCode("cityCode")
+                                .description("description")
+                                .operationDescription("operationDescription")
+                                .operation("operation")
+                                .startDate("startDate")
+                                .startTime("startTime")
+                                .amount(BigDecimal.valueOf(10.00))
+                                .agency("agency")
+                                .city("city")
+                                .accountingDate("accountingDate")
+                                .processDate("2024-01-01")
+                                .accountingTime("accountingTime")
+                                .seatNumber(123465L)
+                                .codBranchOffice("codBranchOffice")
+                                .agencyCod("agencyCod")
+                                .accountNumber("accountNumber")
+                                .currencyCod("currencyCod")
+                                .user("user")
+                                .moveType("C")
+                                .currentBalance(BigDecimal.valueOf(500.55))
+                                .status("status")
+                                .build(),
+                        AccountStatementsMWResponse.AccountStatementMW.builder()
+                                .reportMoveType("reportMoveType")
+                                .destinationAccount("destinationAccount")
+                                .orderNumber("orderNumber")
+                                .branchOffice("branchOffice")
+                                .cityCode("cityCode")
+                                .description("description")
+                                .operationDescription("operationDescription")
+                                .operation("operation")
+                                .startDate("startDate")
+                                .startTime("startTime")
+                                .amount(BigDecimal.valueOf(10.00))
+                                .agency("agency")
+                                .city("city")
+                                .accountingDate("accountingDate")
+                                .processDate("2024-01-01")
+                                .accountingTime("accountingTime")
+                                .seatNumber(123465L)
+                                .codBranchOffice("codBranchOffice")
+                                .agencyCod("agencyCod")
+                                .accountNumber("accountNumber")
+                                .currencyCod("currencyCod")
+                                .user("user")
+                                .moveType("D")
+                                .currentBalance(BigDecimal.valueOf(500.55))
+                                .status("status")
+                                .build()
+                ))
+                .build();
+    }
+
+    public static AccountStatementsMWResponse withDefaultAccountReportBasicResponseNull() {
+        return AccountStatementsMWResponse.builder()
+                .data(null)
                 .build();
     }
 }

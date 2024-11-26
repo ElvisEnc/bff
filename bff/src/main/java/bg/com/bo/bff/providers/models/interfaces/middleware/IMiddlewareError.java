@@ -10,4 +10,8 @@ public interface IMiddlewareError {
     String getCodeMiddleware();
 
     String getMessage();
+
+    default String getTitle() {
+        return "";
+    }
 }

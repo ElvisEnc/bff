@@ -4,17 +4,14 @@ import bg.com.bo.bff.application.dtos.request.registry.RegistryCredentialsReques
 import bg.com.bo.bff.application.dtos.request.registry.RegistryDeviceIdentificatorRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryOldDeviceIdentificatorRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
-import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.CredentialsType;
-import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
-import bg.com.bo.bff.commons.enums.response.RegistryControllerErrorResponse;
+import bg.com.bo.bff.commons.enums.login.CredentialsType;
+import bg.com.bo.bff.providers.models.enums.middleware.response.GenericControllerErrorResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.response.RegistryControllerErrorResponse;
 import bg.com.bo.bff.providers.dtos.request.login.agm.*;
 import bg.com.bo.bff.providers.dtos.response.encryption.UserEncryptionKeys;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.response.login.agm.RegistryDataResponse;
-import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.providers.interfaces.ILoginAGNProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -48,6 +45,10 @@ public class LoginAGNProvider implements ILoginAGNProvider {
     public static final String VALID_REGISTRATION_VALUE = "REGISTERED";
     public static final String BIOMETRICS_ENABLED = "S";
     public static final String BIOMETRICS_DISABLED = "N";
+    static final String DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
+    static final String EXTERNAL_GENERAL_ENTITIES = "http://xml.org/sax/features/external-general-entities";
+    static final String EXTERNAL_PARAMETER_ENTITIES = "http://xml.org/sax/features/external-parameter-entities";
+    static final String LOAD_EXTERNAL_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
     private final IHttpClientFactory httpClientFactory;
 
     @Value("${agm.login.server.url}")
@@ -93,6 +94,12 @@ public class LoginAGNProvider implements ILoginAGNProvider {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 if (statusCode == HttpStatus.OK.value()) {
                     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    factory.setFeature(DISALLOW_DOCTYPE_DECL, true);
+                    factory.setFeature(EXTERNAL_GENERAL_ENTITIES, false);
+                    factory.setFeature(EXTERNAL_PARAMETER_ENTITIES, false);
+                    factory.setFeature(LOAD_EXTERNAL_DTD, false);
+                    factory.setXIncludeAware(false);
+                    factory.setExpandEntityReferences(false);
                     DocumentBuilder builder = factory.newDocumentBuilder();
                     InputStream inputStream = httpResponse.getEntity().getContent();
                     Document doc = builder.parse(inputStream);

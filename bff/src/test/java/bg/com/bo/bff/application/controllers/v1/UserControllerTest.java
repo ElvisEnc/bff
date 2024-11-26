@@ -15,7 +15,7 @@ import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
 import bg.com.bo.bff.application.dtos.response.user.UpdateDataUserResponse;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -64,6 +64,7 @@ class UserControllerTest {
     private static final String URL_CHANGE_PASSWORD = "/api/v1/users/999/change-password";
     private static final String URL_BIOMETRICS = "/api/v1/users/{personId}/biometric";
     private static final String URL_UPDATE_DATA_USER = "/api/v1/users/{personId}/info";
+    private static final String JSON_DATA = "eyJkYXRvcyI6ImRzYWRhcyJ9";
     Enumeration<String> enumerations;
 
     @BeforeEach
@@ -196,7 +197,11 @@ class UserControllerTest {
 
     @Test
     void givenPersonIdWhenUpdateBiometricThenResponseExpected() throws Exception {
-        // Assert
+        // Arrange
+        HttpHeaders localHeaders = new HttpHeaders();
+        localHeaders.add("json-data", JSON_DATA);
+        localHeaders.addAll(headers);
+
         when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
         when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
 
@@ -206,7 +211,7 @@ class UserControllerTest {
 
         // Act
         MvcResult result = mockMvc.perform(put(URL_BIOMETRICS, "123")
-                        .headers(this.headers)
+                        .headers(localHeaders)
                         .content(Util.objectToString(request))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -215,7 +220,7 @@ class UserControllerTest {
         String responseExpected = Util.objectToString(expected);
         String response = result.getResponse().getContentAsString();
 
-        // Arrange
+        // Assert
         assertEquals(response, responseExpected);
         verify(userService).updateBiometrics(any(), any(), any());
     }

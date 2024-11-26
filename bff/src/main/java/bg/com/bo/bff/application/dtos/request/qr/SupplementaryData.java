@@ -18,4 +18,5 @@ public class SupplementaryData {
     private String serviceCode;
     private String fields;
     private String serialNumber;
+    private String allowsDuplicate;
 }

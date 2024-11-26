@@ -23,10 +23,12 @@ public class LoginMapper implements ILoginMapper {
                 .build();
     }
 
-    public LoginValidationServiceResponse converResponse(LoginFactorData data, LoginCredentialMWResponse mwResponse) {
+    public LoginValidationServiceResponse convertResponse(LoginFactorData data, LoginCredentialMWResponse mwResponse) {
         LoginValidationServiceResponse response = new LoginValidationServiceResponse();
         response.setPersonId(data.getPersonId());
-        response.setUserDeviceId(String.valueOf(mwResponse.getData().getUserDeviceId()));
+        response.setName(mwResponse.getData().getHolderName());
+        response.setFullName(mwResponse.getData().getRoleList().get(0).getName());
+        response.setUserDeviceId(String.valueOf(mwResponse.getData().getUserEnrollmentId()));
         response.setRolePersonId(String.valueOf(mwResponse.getData().getRoleList().get(0).getRolePersonId()));
         response.setStatusCode("SUCCESS");
         response.setLastConnectionDate(mwResponse.getData().getLastConnectionDate());

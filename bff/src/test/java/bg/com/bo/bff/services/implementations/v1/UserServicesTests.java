@@ -11,9 +11,11 @@ import bg.com.bo.bff.application.dtos.response.user.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
-import bg.com.bo.bff.commons.enums.AppError;
-import bg.com.bo.bff.commons.enums.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.mappings.providers.apiface.ApiFaceMapper;
+import bg.com.bo.bff.mappings.providers.information.PersonalInformationMapper;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.PersonalInformationNetRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
@@ -34,6 +36,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
@@ -47,18 +50,18 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServicesTests {
+    @InjectMocks
+    private UserService service;
     @Mock
     private ILoginMiddlewareProvider provider;
     @Mock
     private IPersonalInformationNetProvider personalInformationNetProvider;
     @Mock
-    private IPersonalInformationMapper iPersonalInformationMapper;
-    @Mock
     private IApiFaceNetProvider apiFaceNetProvider;
-    @Mock
-    private IApiFaceMapper iApiFaceMapper;
-    @InjectMocks
-    private UserService service;
+    @Spy
+    private IPersonalInformationMapper iPersonalInformationMapper = new PersonalInformationMapper();
+    @Spy
+    private IApiFaceMapper iApiFaceMapper = new ApiFaceMapper();
     private Map<String, String> map;
 
     @BeforeEach
@@ -233,6 +236,43 @@ class UserServicesTests {
     }
 
     @Test
+    void givenValidDataWhenGetPersonalInformationEmpty() throws IOException {
+        // Arrange
+        String result = "{\n  \"CodigoError\": \"COD000\",\n  \"Datos\": {\n    \"cur_datosClienteGanasueldo\": [],\n    \"cur_referenciasPersonaFisica\": [],\n    \"cur_actividadEconomica\": []\n  },\n  \"Mensaje\": \"Ejecución Correcta\"\n}";
+        PersonalInformationNetResponse expectedResponse = Util.stringToObject(result, PersonalInformationNetResponse.class);
+        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefaultApiPersonalInformationNetRequest();
+
+        when(iPersonalInformationMapper.mapperRequest(any())).thenReturn(requestMapperMock);
+        when(personalInformationNetProvider.getPersonalInformation(requestMapperMock, map)).thenReturn(expectedResponse);
+
+        // Act
+        PersonalResponse response = service.getPersonalInformation("123", map);
+
+        // Assert
+        verify(personalInformationNetProvider).getPersonalInformation(requestMapperMock, map);
+        assertNotNull(response);
+    }
+
+
+    @Test
+    void givenValidDataWhenGetPersonalInformationClientDataEmpty() throws IOException {
+        // Arrange
+        String result = "{\n  \"CodigoError\": \"COD000\",\n  \"Datos\": {\n    \"cur_datosClienteGanasueldo\": [],\n    \"cur_referenciasPersonaFisica\": [\n      {\n        \"NOMBRE\": \"INGRID CAROLA SAAVEDRA MEDIN\",\n        \"TELEFONOS\": \"78529352\",\n        \"RELACION\": 1,\n        \"TIPOREFERENCIA\": \"P\",\n        \"TIPO_PERSONA\": \"F\",\n        \"ORDINAL\": 0\n      }\n    ],\n    \"cur_actividadEconomica\": [\n      {\n        \"EMPRESA\": \" \",\n        \"CARGO\": \" \",\n        \"FUENTE_INGRESO\": \"P\"\n      }\n    ]\n  },\n  \"Mensaje\": \"Ejecución Correcta\"\n}";
+        PersonalInformationNetResponse expectedResponse = Util.stringToObject(result, PersonalInformationNetResponse.class);
+        ApiPersonalInformationNetRequest requestMapperMock = PersonalInformationNetRequestFixture.withDefaultApiPersonalInformationNetRequest();
+
+        when(iPersonalInformationMapper.mapperRequest(any())).thenReturn(requestMapperMock);
+        when(personalInformationNetProvider.getPersonalInformation(requestMapperMock, map)).thenReturn(expectedResponse);
+
+        // Act
+        PersonalResponse response = service.getPersonalInformation("123", map);
+
+        // Assert
+        verify(personalInformationNetProvider).getPersonalInformation(requestMapperMock, map);
+        assertNotNull(response);
+    }
+
+    @Test
     void givenValidPersonIdWhenGetBiometricStatus() throws IOException {
         // Arrange
         BiometricStatusMWResponse responseExpected = LoginMWResponseFixture.withDefaultBiometricStatusMWResponse();
@@ -308,6 +348,33 @@ class UserServicesTests {
     }
 
     @Test
+    void givenValidDataWhenGetDepartmentsEmpty() throws IOException {
+        // Arrange
+        DepartmentsNetResponse expectedNet = DepartmentsNetResponse.builder().data(null).build();
+        Mockito.when(apiFaceNetProvider.getDepartments(Mockito.any())).thenReturn(expectedNet);
+
+        // Act
+        DepartmentsResponse response = service.getDepartments(map);
+
+        // Assert
+        assertNotNull(response);
+        verify(apiFaceNetProvider).getDepartments(map);
+    }
+
+    @Test
+    void givenValidDataWhenGetDepartmentsNull() throws IOException {
+        // Arrange
+        Mockito.when(apiFaceNetProvider.getDepartments(Mockito.any())).thenReturn(null);
+
+        // Act
+        DepartmentsResponse response = service.getDepartments(map);
+
+        // Assert
+        assertNotNull(response);
+        verify(apiFaceNetProvider).getDepartments(map);
+    }
+
+    @Test
     void givenDepartmentIdWhenGetDistrictsThenReturnSuccess() throws IOException {
         // Arrange
         String departmentId = "5";
@@ -324,6 +391,32 @@ class UserServicesTests {
         Assertions.assertNotNull(response);
         assertEquals(expectedResponse, response);
     }
+
+    @Test
+    void givenDepartmentIdWhenGetDistrictsThenReturnEmpty() throws IOException {
+        // Arrange
+        DistrictsNetResponse expectedNetResponse = PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponseEmpty();
+        Mockito.when(personalInformationNetProvider.getDistricts(Mockito.any(), Mockito.any())).thenReturn(expectedNetResponse);
+
+        // Act
+        DistrictsResponse response = service.getDistricts("5", map);
+
+        // Assert
+        Assertions.assertNotNull(response);
+    }
+
+    @Test
+    void givenDepartmentIdWhenGetDistrictsThenReturnNull() throws IOException {
+        // Arrange
+        Mockito.when(personalInformationNetProvider.getDistricts(Mockito.any(), Mockito.any())).thenReturn(null);
+
+        // Act
+        DistrictsResponse response = service.getDistricts("5", map);
+
+        // Assert
+        Assertions.assertNotNull(response);
+    }
+
 
     @Test
     void whenGetMaritalStatusThenResponseExpected() {
@@ -353,6 +446,32 @@ class UserServicesTests {
         when(personalInformationNetProvider.getDistricts(Mockito.any(), Mockito.any())).thenReturn(expectedNetResponse);
         // Act
         GenericResponse actual = service.updateDataUser(personId, request, map);
+
+        //Assert
+        assertEquals(expected, actual);
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+        verify(personalInformationNetProvider).updatePersonalInformation(any(), any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestWhenUpdateDataUserThenUpdateDataUserResponseSpouseMaritalNull() throws IOException {
+        // Assert
+        GenericResponse expected = GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
+        request.setMaritalStatus(UpdatePersonalDetail.MaritalStatus.builder()
+                .status("S")
+                .husbandLastName("LOPEZ")
+                .hasHusbandLastName("N")
+                .build());
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"M\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":null,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+        DistrictsNetResponse expectedNetResponse = PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponse();
+        when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(UserResponseFixture.withDefaultEconomicActivity());
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+        when(personalInformationNetProvider.updatePersonalInformation(any(), any())).thenReturn(PersonalInformationNetResponseFixture.withDefaultPersonalUpdateNetResponse());
+        when(personalInformationNetProvider.getDistricts(Mockito.any(), Mockito.any())).thenReturn(expectedNetResponse);
+
+        // Act
+        GenericResponse actual = service.updateDataUser("123", request, map);
 
         //Assert
         assertEquals(expected, actual);
@@ -449,5 +568,280 @@ class UserServicesTests {
             assertEquals(e.getStatus(), AppError.VALIDATE_MARRIED_AND_USE_HUSBAND_LAST_NAME_PERSON.getHttpCode());
             verify(personalInformationNetProvider).getPersonalInformation(any(), any());
         }
+    }
+
+    @Test
+    void givenUpdateDataUserRequestAndIsBankEmployeeWhenUpdateDataUserThenValidateBankEmployee() throws IOException {
+        // Assert
+        UpdateDataUserRequest request = UserRequestFixture.validateMarriedPersonWhenAsHusbandLastNameIsS();
+        request.getPersonalData().setBankEmployee("3");
+        request.getMaritalStatus().setHasHusbandLastName("N");
+        request.getPersonalData().setCityCode(3);
+
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":1,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+        when(personalInformationNetProvider.getDistricts(any(), any())).thenReturn(PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponse());
+        // Act
+        GenericResponse actual = service.updateDataUser("123", request, map);
+
+        //Assert
+        assertNotNull(actual);
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+        verify(personalInformationNetProvider).updatePersonalInformation(any(), any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestAndIncomeSourceNotMatchWhenUpdateDataUserThenValidateIncomeSource() throws IOException {
+        // Assert
+        UpdateDataUserRequest request = UserRequestFixture.validateMarriedPersonWhenAsHusbandLastNameIsS();
+        request.getMaritalStatus().setHasHusbandLastName("N");
+        request.getPersonalData().setCityCode(3);
+        request.setReference(null);
+        request.getEconomicalActivity().setType("123");
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":1,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+        when(personalInformationNetProvider.getDistricts(any(), any())).thenReturn(PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponse());
+        when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(UserResponseFixture.withDefaultEconomicActivity());
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.updateDataUser("123", request, map);
+        });
+
+        //Assert
+        assertNotNull(exception);
+        assertEquals(exception.getMessage(), AppError.INCOME_SOURCE_NOT_EXIST.getMessage());
+        assertEquals(exception.getCode(), AppError.INCOME_SOURCE_NOT_EXIST.getCode());
+        assertEquals(exception.getStatus(), AppError.INCOME_SOURCE_NOT_EXIST.getHttpCode());
+        verify(personalInformationNetProvider).getDistricts(any(), any());
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestAndIncomeLevelNotMatchWhenUpdateDataUserThenValidateIncomeLevel() throws IOException {
+        // Assert
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
+        request.getPersonalData().setCityCode(3);
+        request.getEconomicalActivity().setType("123");
+        request.getMaritalStatus().setHasHusbandLastName(null);
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":1,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+        when(personalInformationNetProvider.getDistricts(any(), any())).thenReturn(PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponse());
+        when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(UserResponseFixture.withDefaultEconomicActivityResponse());
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.updateDataUser("123", request, map);
+        });
+
+        //Assert
+        assertNotNull(exception);
+        assertEquals(exception.getMessage(), AppError.INCOME_LEVEL_NOT_EXIST.getMessage());
+        assertEquals(exception.getCode(), AppError.INCOME_LEVEL_NOT_EXIST.getCode());
+        assertEquals(exception.getStatus(), AppError.INCOME_LEVEL_NOT_EXIST.getHttpCode());
+        verify(personalInformationNetProvider).getDistricts(any(), any());
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+        verify(personalInformationNetProvider).getEconomicalActivity(any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestAndDependIncomeSourceNotMatchWhenUpdateDataUserThenValidateDependIncomeSource() throws IOException {
+        // Assert
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
+        request.getPersonalData().setCityCode(3);
+        request.getEconomicalActivity().setType("123");
+        request.getEconomicalActivity().setIncomeLevel(123);
+        request.getMaritalStatus().setStatus("U");
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":1,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+        when(personalInformationNetProvider.getDistricts(any(), any())).thenReturn(PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponse());
+        when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(UserResponseFixture.withDefaultEconomicActivityResponse());
+
+        // Act
+        GenericResponse response = service.updateDataUser("123", request, map);
+
+        //Assert
+        assertNotNull(response);
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+        verify(personalInformationNetProvider).getDistricts(any(), any());
+        verify(personalInformationNetProvider).getEconomicalActivity(any());
+        verify(personalInformationNetProvider).updatePersonalInformation(any(), any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestAndJobTitleNotMatchWhenUpdateDataUserThenValidateJobTitle() throws IOException {
+        // Assert
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
+        request.getPersonalData().setCityCode(3);
+        request.getEconomicalActivity().setIncomeLevel(123);
+        request.getMaritalStatus().setStatus("CU");
+
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"M\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":1,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"},{\"EMPRESA\":\"Empresa\",\"CARGO\":\"Cargo\",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+        when(personalInformationNetProvider.getDistricts(any(), any())).thenReturn(PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponse());
+        when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(UserResponseFixture.withDefaultEconomicActivityResponse());
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.updateDataUser("123", request, map);
+        });
+
+        //Assert
+        assertNotNull(exception);
+        assertEquals(exception.getMessage(), AppError.POSITION_NOT_EXIST.getMessage());
+        assertEquals(exception.getCode(), AppError.POSITION_NOT_EXIST.getCode());
+        assertEquals(exception.getStatus(), AppError.POSITION_NOT_EXIST.getHttpCode());
+        verify(personalInformationNetProvider).getDistricts(any(), any());
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+        verify(personalInformationNetProvider).getEconomicalActivity(any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestAndEconomicActivityNotMatchWhenUpdateDataUserThenValidateEconomicActivity() throws IOException {
+        // Assert
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
+        request.getPersonalData().setCityCode(3);
+        request.getEconomicalActivity().setIncomeLevel(123);
+        request.getEconomicalActivity().setPosition("123");
+        request.getMaritalStatus().setStatus("CU");
+        request.getMaritalStatus().setHasHusbandLastName("S");
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":1,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"},{\"EMPRESA\":\"Empresa\",\"CARGO\":\"Cargo\",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+        when(personalInformationNetProvider.getDistricts(any(), any())).thenReturn(PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponse());
+        when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(UserResponseFixture.withDefaultEconomicActivityResponse());
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.updateDataUser("123", request, map);
+        });
+
+        //Assert
+        assertNotNull(exception);
+        assertEquals(exception.getMessage(), AppError.ECONOMIC_ACTIVITY_NOT_EXIST.getMessage());
+        assertEquals(exception.getCode(), AppError.ECONOMIC_ACTIVITY_NOT_EXIST.getCode());
+        assertEquals(exception.getStatus(), AppError.ECONOMIC_ACTIVITY_NOT_EXIST.getHttpCode());
+        verify(personalInformationNetProvider).getDistricts(any(), any());
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+        verify(personalInformationNetProvider).getEconomicalActivity(any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestAndCompanyNullNotMatchWhenUpdateDataUserThenValidateCompanyNull() throws IOException {
+        // Assert
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
+        request.getPersonalData().setCityCode(3);
+        request.getEconomicalActivity().setIncomeLevel(123);
+        request.getEconomicalActivity().setPosition("123");
+        request.getEconomicalActivity().setEconomicActivity(123);
+        request.getEconomicalActivity().setCompany(null);
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":1,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"},{\"EMPRESA\":\"Empresa\",\"CARGO\":\"Cargo\",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+        when(personalInformationNetProvider.getDistricts(any(), any())).thenReturn(PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponse());
+        when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(UserResponseFixture.withDefaultEconomicActivityResponse());
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.updateDataUser("123", request, map);
+        });
+
+        //Assert
+        assertNotNull(exception);
+        assertEquals(exception.getMessage(), AppError.COMPANY_NAME_NOT_NULL.getMessage());
+        assertEquals(exception.getCode(), AppError.COMPANY_NAME_NOT_NULL.getCode());
+        assertEquals(exception.getStatus(), AppError.COMPANY_NAME_NOT_NULL.getHttpCode());
+        verify(personalInformationNetProvider).getDistricts(any(), any());
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+        verify(personalInformationNetProvider).getEconomicalActivity(any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestAndReferenceNullNotMatchWhenUpdateDataUserThenValidateReferenceNull() throws IOException {
+        // Assert
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
+        request.getReference().setName(null);
+        request.getReference().setTelephone(null);
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":1,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"},{\"EMPRESA\":\"Empresa\",\"CARGO\":\"Cargo\",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.updateDataUser("123", request, map);
+        });
+
+        //Assert
+        assertNotNull(exception);
+        assertEquals(exception.getMessage(), AppError.REFERENCE_INVALID.getMessage());
+        assertEquals(exception.getCode(), AppError.REFERENCE_INVALID.getCode());
+        assertEquals(exception.getStatus(), AppError.REFERENCE_INVALID.getHttpCode());
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestAndReferenceNameBlankNotMatchWhenUpdateDataUserThenValidateReferenceNameBlank() throws IOException {
+        // Assert
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
+        request.getReference().setName("");
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":1,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"},{\"EMPRESA\":\"Empresa\",\"CARGO\":\"Cargo\",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.updateDataUser("123", request, map);
+        });
+
+        //Assert
+        assertNotNull(exception);
+        assertEquals(exception.getMessage(), AppError.REFERENCE_INVALID.getMessage());
+        assertEquals(exception.getCode(), AppError.REFERENCE_INVALID.getCode());
+        assertEquals(exception.getStatus(), AppError.REFERENCE_INVALID.getHttpCode());
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestAndReferencePhoneBlankNotMatchWhenUpdateDataUserThenValidateReferencePhoneBlank() throws IOException {
+        // Assert
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
+        request.getReference().setTelephone("");
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":1,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"},{\"EMPRESA\":\"Empresa\",\"CARGO\":\"Cargo\",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.updateDataUser("123", request, map);
+        });
+
+        //Assert
+        assertNotNull(exception);
+        assertEquals(exception.getMessage(), AppError.REFERENCE_INVALID.getMessage());
+        assertEquals(exception.getCode(), AppError.REFERENCE_INVALID.getCode());
+        assertEquals(exception.getStatus(), AppError.REFERENCE_INVALID.getHttpCode());
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
+    }
+
+    @Test
+    void givenUpdateDataUserRequestAndCodeDistrictNotMatchWhenUpdateDataUserThenValidateCodeDistrict() throws IOException {
+        // Assert
+        UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
+        request.getPersonalData().setCityCode(4);
+        String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"F\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":1,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"},{\"EMPRESA\":\"Empresa\",\"CARGO\":\"Cargo\",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
+        when(personalInformationNetProvider.getPersonalInformation(any(), any())).thenReturn(Util.stringToObject(jsonPersonalInformation, PersonalInformationNetResponse.class));
+        when(personalInformationNetProvider.getDistricts(any(), any())).thenReturn(PersonalInformationNetResponseFixture.withDefaultDistrictsNetResponse());
+
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            service.updateDataUser("123", request, map);
+        });
+
+        //Assert
+        assertNotNull(exception);
+        assertEquals(exception.getMessage(), AppError.CITY_CODE_NOT_EXIST.getMessage());
+        assertEquals(exception.getCode(), AppError.CITY_CODE_NOT_EXIST.getCode());
+        assertEquals(exception.getStatus(), AppError.CITY_CODE_NOT_EXIST.getHttpCode());
+        verify(personalInformationNetProvider).getDistricts(any(), any());
+        verify(personalInformationNetProvider).getPersonalInformation(any(), any());
     }
 }

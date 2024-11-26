@@ -1,14 +1,15 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.AmountRange;
-import bg.com.bo.bff.application.dtos.request.account.statement.ExportRequest;
-import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementExportResponse;
+import bg.com.bo.bff.application.dtos.request.export.AccountStatementExportRequest;
+import bg.com.bo.bff.application.dtos.response.export.AccountStatementExportResponse;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
-import bg.com.bo.bff.commons.enums.AccountStatementType;
+import bg.com.bo.bff.commons.enums.account.statement.AccountStatementType;
 import bg.com.bo.bff.commons.filters.OrderFilter;
 import bg.com.bo.bff.commons.filters.RangeFilter;
 import bg.com.bo.bff.commons.filters.TypeFilter;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.mappings.providers.export.IExportMapper;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementCsvProvider;
@@ -43,7 +44,7 @@ public class ExportService implements IExportService {
     }
 
     @Override
-    public AccountStatementExportResponse generateReport(ExportRequest request, String accountId, Map<String, String> parameter) throws IOException {
+    public AccountStatementExportResponse generateReport(AccountStatementExportRequest request, String accountId, Map<String, String> parameter) throws IOException {
         String key = accountId + "|" + request.getFilters().getDate().getStart() + "|" + request.getFilters().getDate().getEnd();
         AccountStatementsMWRequest mwRequest = mapper.mapperRequest(accountId, init, total, request);
 
@@ -53,7 +54,7 @@ public class ExportService implements IExportService {
         boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
         Map<String, Function<AccountStatementsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("AMOUNT", AccountStatementsResponse::getAmount);
-        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getMovementDate(), Util.getDateFormatter()));
+        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getMovementDate(), UtilDate.getDateFormatter()));
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getAmount() != null) {
@@ -67,7 +68,7 @@ public class ExportService implements IExportService {
         }
 
         list = new TypeFilter(AccountStatementType.getValueByCode(request.getFilters().getMovementType())).apply(list);
-        list = mapper.mapping(list);
+        list = mapper.convertResponse(list);
 
         String format = request.getFormat();
         String base64 = Objects.equals(format, "PDF")

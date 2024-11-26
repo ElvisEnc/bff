@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.config;
 
-import bg.com.bo.bff.commons.enums.UserRole;
+import bg.com.bo.bff.commons.enums.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +39,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/api/v*/login/validate-device").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v*/users/{personId:[0-9]+}/biometric").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v*/users/contact").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v*/attention-points/points").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v*/attention-points/points/{pointId:[0-9]+}").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v*/attention-points/points/{pointId:[0-9]+}/tickets").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v*/registry/device/handshake").permitAll()
                         .anyRequest().hasAuthority(UserRole.LOGGED_USER.toString())
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

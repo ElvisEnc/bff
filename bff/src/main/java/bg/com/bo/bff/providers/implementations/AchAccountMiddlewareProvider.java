@@ -1,8 +1,10 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.application.dtos.response.destination.account.AddAccountResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.commons.enums.*;
+import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.request.ach.account.mw.AddAchAccountBasicRequest;
@@ -34,13 +36,13 @@ public class AchAccountMiddlewareProvider extends MiddlewareProvider<AchAccountM
 
 
     @Override
-    public GenericResponse addAchAccount(AddAchAccountBasicRequest request, Map<String, String> parameters) throws IOException {
+    public AddAccountResponse addAchAccount(AddAchAccountBasicRequest request, Map<String, String> parameters) throws IOException {
         String url = baseUrl + AchAccountMiddlewareServices.ADD_ACCOUNT.getServiceURL();
         ApiDataResponse<AddAccountMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(parameters), request, ApiDataResponse.class);
         AddAccountMWResponse response = Util.stringToObject(Util.objectToString(mwResponse.getData()), AddAccountMWResponse.class);
         if (response.getIdentifier() != null)
-            return GenericResponse.instance(AchAccountMiddlewareResponse.SUCCESS_ADD_ACCOUNT);
-        else return GenericResponse.instance(AchAccountMiddlewareResponse.ERROR_ADD_ACCOUNT);
+            return AddAccountResponse.builder().id(Long.valueOf(response.getIdentifier())).build();
+        else throw new GenericException(AchAccountMiddlewareError.ERROR_ADD_ACCOUNT);
     }
 
     @Override
@@ -75,7 +77,7 @@ public class AchAccountMiddlewareProvider extends MiddlewareProvider<AchAccountM
     @Override
     public QrListMWResponse getListQrGeneratePaidMW(QrListMWRequest request, String personId, Map<String, String> parameters) throws IOException {
         String url = baseUrl + AchAccountMiddlewareServices.GET_TRANSACTION_HISTORY.getServiceURL();
-        ByMwErrorResponseHandler<QrListMWResponse> responseHandler = ByMwErrorResponseHandler.instance(AchAccountMiddlewareError.MDWAAM_001);
+        ByMwErrorResponseHandler<QrListMWResponse> responseHandler = ByMwErrorResponseHandler.instance(AchAccountMiddlewareError.MDWAAM_0001);
         return post(url, HeadersMW.getDefaultHeaders(parameters), request, QrListMWResponse.class, responseHandler);
     }
 }

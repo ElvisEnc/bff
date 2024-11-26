@@ -1,13 +1,13 @@
 package bg.com.bo.bff.application.config.encryption.payload;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.enums.EncryptionAlgorithm;
+import bg.com.bo.bff.commons.enums.config.provider.EncryptionAlgorithm;
 import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.utils.CipherUtils;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.models.payload.encryption.AesPayloadResolver;
 import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
-import bg.com.bo.bff.models.EncryptionPayload;
-import bg.com.bo.bff.models.PayloadKey;
+import bg.com.bo.bff.models.payload.encryption.EncryptionPayload;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;
 import jakarta.servlet.ReadListener;
@@ -18,10 +18,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.crypto.*;
-import javax.crypto.spec.IvParameterSpec;
 import java.io.*;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 
 public class DecryptRequestWrapper extends HttpServletRequestWrapper {
@@ -30,14 +28,14 @@ public class DecryptRequestWrapper extends HttpServletRequestWrapper {
 
     @lombok.Getter
     private EncryptInfo encodeInfo;
-    private SecretKey payloadSecretKey;
-    private IvParameterSpec iv;
     private EncryptionPayload encryptionPayloadDecrypted;
+    private final String payloadAlgorithm;
 
     private static final Logger logger = LogManager.getLogger(DecryptRequestWrapper.class.getName());
 
-    public DecryptRequestWrapper(HttpServletRequest request, IEncryptionService encryptionService) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeySpecException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
+    public DecryptRequestWrapper(HttpServletRequest request, IEncryptionService encryptionService, String payloadAlgorithm) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException {
         super(request);
+        this.payloadAlgorithm = payloadAlgorithm;
         this.encryptionService = encryptionService;
         this.processPayload(request);
         this.body = this.encryptionPayloadDecrypted.getBody();
@@ -88,15 +86,16 @@ public class DecryptRequestWrapper extends HttpServletRequestWrapper {
 
         parseEncryptInfo(encodeInfoHeader);
 
-        getPayloadKey(sessionEncryptedKeyHeader);
+        String payloadKeys = getPayloadKey(sessionEncryptedKeyHeader);
 
         EncryptionPayload encryptedPayload = getRawPayload(request);
 
-        getDecryptedPayload(encryptedPayload, payloadSecretKey, iv);
+        this.encryptionPayloadDecrypted = AesPayloadResolver.instance(payloadAlgorithm).decrypt(payloadKeys, encryptedPayload);
     }
 
     /**
      * Obtiene los datos de desencriptacion para payload.
+     *
      * @param sessionEncryptedKeyHeader
      * @throws NoSuchPaddingException
      * @throws NoSuchAlgorithmException
@@ -105,49 +104,14 @@ public class DecryptRequestWrapper extends HttpServletRequestWrapper {
      * @throws BadPaddingException
      * @throws IOException
      */
-    private void getPayloadKey(String sessionEncryptedKeyHeader) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
+    private String getPayloadKey(String sessionEncryptedKeyHeader) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         PrivateKey appPrivateKey = this.encryptionService.getAppPrivateKey(encodeInfo);
-        String payloadKeyString = CipherUtils.decrypt(EncryptionAlgorithm.RSA, sessionEncryptedKeyHeader, appPrivateKey);
-        PayloadKey payloadKey = Util.stringToObject(payloadKeyString, PayloadKey.class);
-
-        payloadSecretKey = CipherUtils.getSecretKey(EncryptionAlgorithm.AES_256_CBC_PKCS5_PADDING, payloadKey.getSecret());
-        iv = new IvParameterSpec(Base64.getDecoder().decode(Util.getEncodedBytes(payloadKey.getIv())));
+        return CipherUtils.decrypt(EncryptionAlgorithm.RSA, sessionEncryptedKeyHeader, appPrivateKey);
     }
 
     /**
-     * Arma el request original para parsearlo a la clase {@link bg.com.bo.bff.models.EncryptionPayload EncryptionPayload}, desencriptando el payload y obteniendo el content type.
-     * @param encryptedPayload
-     * @param payloadSecretKey
-     * @param iv
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
-     * @throws InvalidAlgorithmParameterException
-     */
-    private void getDecryptedPayload(EncryptionPayload encryptedPayload, SecretKey payloadSecretKey, IvParameterSpec iv) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-        String decryptedPayload = "";
-        String contentType = null;
-
-        if (encryptedPayload != null){
-            decryptedPayload = encryptedPayload.getBody();
-            if (decryptedPayload != null && !decryptedPayload.isEmpty())
-                decryptedPayload = CipherUtils.decrypt(EncryptionAlgorithm.AES_256_CBC_PKCS5_PADDING, encryptedPayload.getBody(), payloadSecretKey, iv);
-
-            contentType = encryptedPayload.getContentType();
-        }
-
-        this.encryptionPayloadDecrypted = EncryptionPayload.builder()
-                .body(decryptedPayload)
-                .build();
-
-        if (contentType != null)
-            this.encryptionPayloadDecrypted.setContentType(contentType);
-    }
-
-    /**
-     * Obtiene el payload del request en el formato de la clase {@link bg.com.bo.bff.models.EncryptionPayload EncryptionPayload} con los datos raw.
+     * Obtiene el payload del request en el formato de la clase {@link EncryptionPayload EncryptionPayload} con los datos raw.
+     *
      * @param request
      * @return
      * @throws IOException
@@ -161,6 +125,7 @@ public class DecryptRequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * Obtiene los datos necesarios del usuario para con los cuales poder obtener los datos necesarios para encriptar.
+     *
      * @param encodeInfoHeader
      * @throws IOException
      */

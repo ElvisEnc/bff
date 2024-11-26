@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DestinationOwnAccountServiceMapperTests {
+class DestinationOwnAccountServiceMapperTests {
     private final DestinationAccountServiceMapper mapper = DestinationAccountServiceMapper.INSTANCE;
 
     @Test
     void givenAccountTypeWhenConvertToAccountTypeResponseThenReturnValidAccountType() {
         //Arrange
-        bg.com.bo.bff.commons.enums.AccountType accountType = bg.com.bo.bff.commons.enums.AccountType.MOBILE;
+        bg.com.bo.bff.commons.enums.destination.account.AccountType accountType = bg.com.bo.bff.commons.enums.destination.account.AccountType.MOBILE;
 
         //Act
         AccountType accountTypeResponse = mapper.convert(accountType);

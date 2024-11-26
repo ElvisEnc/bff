@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QrListResponse {
-    private List<QrGeneratedPaid> generated;
-    private List<QrGeneratedPaid> paid;
-    private Integer totalGenerated;
-    private Integer totalPaid;
+    private List<QrGeneratedPaid> data;
+    private Integer page;
+    private Integer totalByPage;
+    private Integer totalRegistries;
 }

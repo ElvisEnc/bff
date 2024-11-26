@@ -1,6 +1,8 @@
 package bg.com.bo.bff.application.config.request.tracing;
 
+import bg.com.bo.bff.commons.enums.EnvProfile;
 import bg.com.bo.bff.commons.utils.Headers;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.services.request.trace.IRequestTraceMapper;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import jakarta.servlet.FilterChain;
@@ -11,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,14 +24,16 @@ import java.io.IOException;
 import java.util.*;
 
 @Component
-@Order(2)
+@Order(4)
 public class RequestTracingFilter extends OncePerRequestFilter {
     private final IRequestTraceMapper requestTraceMapper;
     private static final Logger logger = LogManager.getLogger(RequestTracingFilter.class.getName());
+    private final Environment env;
 
     @Autowired
-    public RequestTracingFilter(IRequestTraceMapper requestTraceMapper) {
+    public RequestTracingFilter(IRequestTraceMapper requestTraceMapper, Environment env) {
         this.requestTraceMapper = requestTraceMapper;
+        this.env = env;
     }
 
     @Override
@@ -38,24 +43,34 @@ public class RequestTracingFilter extends OncePerRequestFilter {
 
         Date in = new Date();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String traceId = UUID.randomUUID().toString();
 
-        resolveRequestTraceId(requestWrapper, traceId);
+        String traceId = resolveRequestTraceId(requestWrapper);
 
         filterChain.doFilter(requestWrapper, responseWrapper);
 
-        RequestTrace requestTrace = requestTraceMapper.convert(requestWrapper, responseWrapper, in,  authentication);
+        RequestTrace requestTrace = requestTraceMapper.convert(requestWrapper, responseWrapper, in, authentication);
 
         resolverResponseTraceId(responseWrapper, traceId);
         responseWrapper.copyBodyToResponse();
 
-        logger.trace(requestTrace);
+        if (Arrays.stream(env.getActiveProfiles()).toList().contains(EnvProfile.dev.name()))
+            logger.trace(Util.objectToString(requestTrace, true));
+        else
+            logger.trace(requestTrace);
     }
 
-    private static void resolveRequestTraceId(CustomHeadersRequestWrapper requestWrapper, String traceId) {
+    private static String resolveRequestTraceId(CustomHeadersRequestWrapper requestWrapper) {
+        String traceId;
         Map<String, String> requestHeaders = Headers.getHeaders(requestWrapper);
+        if (requestHeaders.containsKey(HeadersMW.KONG_REQUEST_ID.getName().toLowerCase()))
+            traceId = requestWrapper.getHeader(HeadersMW.KONG_REQUEST_ID.getName());
+        else
+            traceId = UUID.randomUUID().toString();
+
         if (!requestHeaders.containsKey(HeadersMW.REQUEST_ID.getName()))
             requestWrapper.addHeader(HeadersMW.REQUEST_ID.getName(), traceId);
+
+        return traceId;
     }
 
     private static void resolverResponseTraceId(ContentCachingResponseWrapper responseWrapper, String traceId) {

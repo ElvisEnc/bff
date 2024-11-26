@@ -123,7 +123,7 @@ public class CacheConfig {
                 .expireAfter(new Expiry<String, ClientToken>() {
                     @Override
                     public long expireAfterCreate(String key, ClientToken value, long currentTime) {
-                        return TimeUnit.SECONDS.toNanos(value.getExpiresIn() - cacheTokenExpirationLimitRangeTtl);
+                        return TimeUnit.SECONDS.toNanos((long) value.getExpiresIn() - cacheTokenExpirationLimitRangeTtl);
                     }
 
                     @Override

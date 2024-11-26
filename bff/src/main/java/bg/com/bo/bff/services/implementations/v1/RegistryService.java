@@ -4,8 +4,8 @@ import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
 import bg.com.bo.bff.application.dtos.response.registry.RegistryResponse;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
-import bg.com.bo.bff.commons.enums.response.GenericControllerErrorResponse;
-import bg.com.bo.bff.commons.enums.response.RegistryControllerErrorResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.response.GenericControllerErrorResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.response.RegistryControllerErrorResponse;
 import bg.com.bo.bff.commons.utils.CipherUtils;
 import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
 import bg.com.bo.bff.providers.dtos.response.encryption.UserEncryptionKeys;
@@ -13,6 +13,7 @@ import bg.com.bo.bff.providers.interfaces.IEncryptionProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginAGNProvider;
 import bg.com.bo.bff.services.interfaces.IRegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +49,9 @@ public class RegistryService implements IRegistryService {
                 EncryptInfo encryptInfo = new EncryptInfo();
                 encryptInfo.setPersonId(registryRequest.getCredentials().getPersonId());
                 encryptInfo.setUniqueId(registryRequest.getDeviceIdentificator().getUniqueId());
-                cacheManager.getCache(CacheConstants.ENCRYPTION_KEYS_CACHE_NAME).evict(encryptInfo);
+                Cache cache = cacheManager.getCache(CacheConstants.ENCRYPTION_KEYS_CACHE_NAME);
+                if (cache != null)
+                    cache.evict(encryptInfo);
 
                 RegistryResponse response = new RegistryResponse();
                 response.setAppKey(userEncryptionKeys.getAppPublicKey());

@@ -12,23 +12,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BranchOfficeMWResponse {
-    private BranchOfficeMWData data;
+    private List<BranchOfficeMW> data;
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BranchOfficeMWData {
-        private List<BranchOfficeArray> response;
-
-        @Data
-        @Builder
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class BranchOfficeArray {
-            private String description;
-            private String branchCode;
-            private String entityCode;
-        }
+    public static class BranchOfficeMW {
+        private String description;
+        private String branchCode;
+        private String entityCode;
     }
 }

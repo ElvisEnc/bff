@@ -5,15 +5,14 @@ import bg.com.bo.bff.application.dtos.request.own.account.AccountRequestFixture;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.own.account.AccountResponseFixture;
 import bg.com.bo.bff.application.dtos.response.own.account.TransactionLimitsResponse;
-import bg.com.bo.bff.commons.enums.DeviceMW;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AddAccountResponse;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.AddAccountMWResponse;
 import bg.com.bo.bff.services.interfaces.IAccountService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,9 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -39,7 +36,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -168,7 +164,7 @@ class OwnAccountControllerTest {
         // Arrange
         String personId = "123456";
         String accountId = "123456";
-        GenericResponse expected = GenericResponse.instance(AddAccountResponse.SUCCESS);
+        GenericResponse expected = GenericResponse.instance(AddAccountMWResponse.SUCCESS);
         UpdateTransactionLimitRequest request = AccountRequestFixture.withDefaultUpdateTransactionLimitRequest();
         when(service.updateTransactionLimit(any(), any(), any(), any())).thenReturn(expected);
         String json = objectMapper.writeValueAsString(request);

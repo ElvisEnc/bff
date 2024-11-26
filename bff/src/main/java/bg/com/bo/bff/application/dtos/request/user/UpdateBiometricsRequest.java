@@ -13,20 +13,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateBiometricsRequest {
+    @NotNull
     @Schema(example = "true", description = "nuevo estado de la biometría")
     private Boolean status;
 
-    @NotBlank
+    @NotNull
+    @Pattern(regexp = "^\\S*$")
+    @Size(min = 1, max = 1000)
     @Schema(example = "dfkjdsfg65454dgdsgs", description = "Token de la biometría")
-    @Pattern(regexp="^\\S*$" , message = "The tokenBiometric is invalid")
-    @Size(min = 1, max = 1000,  message = "Token biometric length must be between 1 and 1000 characters")
     private String tokenBiometric;
 
     @NotBlank
-    @Max(value = 5)
-    @Min(value = 1, message = "El tipo debe ser mayor a 0")
-    @Pattern(regexp = "\\d+", message = "Tipo de Autenticación debe ser solo número")
-    @Schema(example = "5", description = "Tipo de Autenticación, 4=finger 5=facial")
+    @Pattern(regexp = "[1-5]", message = "El tipo de autenticación debe ser un número entre 1 y 5")
+    @Schema(example = "5", description = "Tipo de Autenticación, 2=contraseña 4=finger 5=facial")
     private String typeAuthentication;
 }
-

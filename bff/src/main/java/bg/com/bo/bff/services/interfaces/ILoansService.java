@@ -7,20 +7,19 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public interface ILoansService {
 
-    List<ListLoansResponse> getListLoansByPerson(String personId, ListLoansRequest request, Map<String, String> parameter) throws IOException;
+    List<ListLoansResponse> getListLoansByPerson(String personId, ListLoansRequest request) throws IOException;
 
-    List<LoanPaymentsResponse> getLoanPayments(String loanId, String personId, LoanPaymentsRequest request, Map<String, String> parameter) throws IOException;
+    List<LoanPaymentsResponse> getLoanPayments(String loanId, String personId, LoanPaymentsRequest request) throws IOException;
 
-    List<LoanInsurancePaymentsResponse> getLoanInsurancePayments(String loanId, String personId, LoanPaymentsRequest request, Map<String, String> parameter) throws IOException;
+    List<LoanInsurancePaymentsResponse> getLoanInsurancePayments(String loanId, String personId, LoanPaymentsRequest request) throws IOException;
 
-    List<LoanPlanResponse> getLoanPlans(String loanId, String personId, Map<String, String> parameter) throws IOException;
+    List<LoanPlanResponse> getLoanPlans(String loanId, String personId) throws IOException;
 
-    LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId, Map<String, String> parameter) throws IOException;
+    LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId) throws IOException;
 
-    LoanPaymentResponse payLoanInstallment(String personId, String accountId, String correlativeId, Map<String, String> parameter) throws IOException;
+    LoanPaymentResponse payLoanInstallment(String personId, String accountId, String correlativeId) throws IOException;
 }

@@ -6,19 +6,19 @@ import bg.com.bo.bff.providers.dtos.response.qr.mw.QRPaymentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.ReceiptDetailQrPayment;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 public class QrResponseFixture {
     public static QrListResponse withDefaultQrListResponse() {
         return QrListResponse.builder()
-                .generated(Collections.singletonList(
+                .page(1)
+                .totalByPage(10)
+                .totalRegistries(10)
+                .data(Collections.singletonList(
                         withDefaultQrGeneratedPaid()
                 ))
-                .totalGenerated(1)
-                .paid(Collections.singletonList(
-                        withDefaultQrGeneratedPaid()
-                ))
-                .totalPaid(1)
                 .build();
     }
 
@@ -60,7 +60,31 @@ public class QrResponseFixture {
                 .operationType("1")
                 .destinationAccountNumber(1310771861L)
                 .status("2")
-                .registrationDate("2024-04-19")
+                .registrationDate("19/04/2024")
+                .currencyDescription("UnitTest")
+                .build();
+    }
+
+    public static QrGeneratedPaid withDefaultQrGeneratedPaid2() {
+        return QrGeneratedPaid.builder()
+                .customField("1")
+                .qrId("24041901018000000159")
+                .masterQrId("74305283")
+                .identificationNumber("2920504")
+                .businessName("UnitTest")
+                .bankCode("1018")
+                .bank("Banco")
+                .currencyCode("068")
+                .expiryDate("26/04/2024")
+                .amount(BigDecimal.valueOf(100.50))
+                .description("UnitTest")
+                .singleUse(false)
+                .serviceCode("1")
+                .serialNumber("1")
+                .operationType("2")
+                .destinationAccountNumber(1310771861L)
+                .status("2")
+                .registrationDate("19/04/2024")
                 .currencyDescription("UnitTest")
                 .build();
     }
@@ -91,9 +115,23 @@ public class QrResponseFixture {
                 .build();
     }
 
-    public static QRCodeGenerateResponse withDefaultQRCodeGenerateResponse(){
-        return   QRCodeGenerateResponse.builder()
-                .data(new QRCDataResponse("12121212121"))
+    public static QRPaymentMWResponse withDefaultQrPaymentMWResponsePending() {
+        QRPaymentMWResponse.MWResponse response = new QRPaymentMWResponse.MWResponse("PENDING", "89771419", "30565123", ReceiptDetailQrPayment.builder().build());
+        return QRPaymentMWResponse.builder()
+                .data(response)
+                .build();
+    }
+
+    public static QRCodeGenerateResponse withDefaultQRCodeGenerateResponse() {
+        String futureDate = LocalDate.now().plusDays(7).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return QRCodeGenerateResponse.builder()
+                .data(new QRCDataResponse("123|123|123|123|123|123|123|123|" + futureDate + "|123|123|123|123|123"))
+                .build();
+    }
+
+    public static QRCodeGenerateResponse withDefaultQRCodeGenerateResponseExpired() {
+        return QRCodeGenerateResponse.builder()
+                .data(new QRCDataResponse("123|123|123|123|123|123|123|123|2024-08-01|123|123|123|123|123"))
                 .build();
     }
 }
