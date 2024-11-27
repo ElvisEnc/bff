@@ -30,9 +30,9 @@ public class OrderFilter<T> implements IFilter<T> {
     }
 
     private Comparator<T> getComparatorForField(String field) {
-        Function<T, ? extends Comparable<?>> keyExtractor = comparatorOptions.get(field);
+        Function<T, ? extends Comparable<?>> keyExtractor = comparatorOptions.get(field.toUpperCase());
         if (keyExtractor == null) {
-            throw new GenericException(field + " - El campo esperado no es correcto", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
+            throw new GenericException(field + " - El campo esperado no es correcto.", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode(), "Datos inválidos");
         }
         return Comparator.comparing(
                 keyExtractor,

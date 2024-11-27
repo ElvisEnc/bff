@@ -54,7 +54,7 @@ public class ExportService implements IExportService {
         boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
         Map<String, Function<AccountStatementsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("AMOUNT", AccountStatementsResponse::getAmount);
-        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getMovementDate(), UtilDate.getDateFormatter()));
+        comparatorOptions.put("DATE", response -> LocalDate.parse(UtilDate.getDateGenericFormat(response.getMovementDate()), UtilDate.getDateFormatter()));
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getAmount() != null) {

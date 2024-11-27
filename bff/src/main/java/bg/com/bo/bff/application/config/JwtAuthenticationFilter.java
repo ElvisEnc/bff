@@ -66,8 +66,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            chain.doFilter(request, response);
         } catch (GenericException e) {
             throw (e);
         } catch (Exception e) {
@@ -75,6 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.error(e);
             throw new GenericException(DefaultMiddlewareError.AUTHENTICATION_FILTER_FAILURE);
         }
+        chain.doFilter(request, response);
     }
 
     @Override
