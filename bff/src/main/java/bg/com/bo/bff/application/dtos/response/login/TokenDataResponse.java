@@ -1,8 +1,10 @@
 package bg.com.bo.bff.application.dtos.response.login;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 
 @lombok.Data
+@Builder
 public class TokenDataResponse {
     @Schema(description = "Access Token generado.")
     private String accessToken;

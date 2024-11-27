@@ -18,11 +18,11 @@ import lombok.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DataTransfer {
 
-    @DescriptionChars
     @NotBlank(message = "La descripción no puede estar vacía")
     @NotNull(message = "Descripción no válida")
     @Size(min = 3, max = 50, message = "La descripción debe tener entre 3 y 50 caracteres.")
     @Schema(description = "Descripción de la transferencia", example = "Pago de servicios")
+    @DescriptionChars
     private String description;
 
     @DescriptionChars
@@ -35,6 +35,7 @@ public class DataTransfer {
     @Schema(description = "Destino de los fondos para la transferencia", example = "Destino de los fondos para la transferencia")
     private String destinationOfFounds;
 
+    @Builder.Default
     @ValidYoNParameter
     @Schema(description = "Autorizar transferencia duplicada. (S/N)", example = "S")
     private String allowsDuplicate = "N";

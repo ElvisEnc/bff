@@ -2,6 +2,7 @@ package bg.com.bo.bff.application.exceptions;
 
 import bg.com.bo.bff.commons.converters.IErrorResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.response.IErrorControllerResponse;
+import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,15 @@ public class HandledException extends RuntimeException {
     public HandledException(IErrorControllerResponse controllerResponse) {
         super(controllerResponse.getDescription());
         this.message = controllerResponse.getDescription();
+        this.status = controllerResponse.getHttpCode();
+        this.code = controllerResponse.getCode();
+        this.title = controllerResponse.getTitle();
+        fillTrace();
+    }
+
+    public HandledException(IMiddlewareError controllerResponse) {
+        super(controllerResponse.getMessage());
+        this.message = controllerResponse.getMessage();
         this.status = controllerResponse.getHttpCode();
         this.code = controllerResponse.getCode();
         this.title = controllerResponse.getTitle();

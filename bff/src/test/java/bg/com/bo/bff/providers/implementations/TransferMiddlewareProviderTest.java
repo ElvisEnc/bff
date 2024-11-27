@@ -7,8 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
-import bg.com.bo.bff.mappings.providers.pcc01.Pcc01Mapper;
-import bg.com.bo.bff.mappings.providers.transfer.TransferMWtMapper;
 import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequest;
 import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
@@ -73,8 +71,6 @@ class TransferMiddlewareProviderTest {
     StatusLine statusLineMock;
 
     private Map<String, String> map;
-    private final TransferMWtMapper transferMapper = TransferMWtMapper.INSTANCE;
-    private final Pcc01Mapper pcc01Mapper = Pcc01Mapper.INSTANCE;
 
     @BeforeEach
     void setUp() {

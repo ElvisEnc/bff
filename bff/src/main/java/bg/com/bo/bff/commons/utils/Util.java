@@ -21,12 +21,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -336,11 +334,27 @@ public class Util {
         }
     }
 
+    public static Long minutesToMillis(Long minutes) {
+        return minutes * 60L * 1000L;
+    }
+
+    public static Long minutesToMillis(Integer minutes) {
+        return minutesToMillis(Long.valueOf(minutes));
+    }
+
     public static Integer tryParse(Object input) {
         try {
             return Integer.parseInt(input.toString());
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static String encodeUrl(String url) {
+        try {
+            return URLEncoder.encode(url, "UTF-8").replaceAll("\\+", "%20"); // Replaces spaces with %20 instead of "+"
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Encoding failed", e);
         }
     }
 }

@@ -6,20 +6,23 @@ import bg.com.bo.bff.application.dtos.request.login.RefreshSessionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.login.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.mappings.application.LoginMapper;
+import bg.com.bo.bff.mappings.providers.login.ILoginMapper;
 import bg.com.bo.bff.mappings.services.LoginServiceMapper;
 import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
+import bg.com.bo.bff.providers.dtos.request.login.mw.LoginCredentialMWRequest;
+import bg.com.bo.bff.providers.dtos.request.login.mw.LoginMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.login.mw.LogoutMWRequest;
 import bg.com.bo.bff.providers.dtos.response.jwt.JwtPayload;
 import bg.com.bo.bff.providers.dtos.response.jwt.JwtRefresh;
 import bg.com.bo.bff.providers.dtos.response.jwt.keycloak.CreateTokenServiceResponse;
 import bg.com.bo.bff.providers.dtos.response.keycloak.IntrospectTokenKCResponse;
-import bg.com.bo.bff.providers.dtos.response.login.mw.DeviceEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.login.mw.LoginFactorMWResponse;
-import bg.com.bo.bff.providers.dtos.response.login.mw.LoginMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.login.mw.*;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
-import bg.com.bo.bff.providers.models.enums.middleware.response.RefreshControllerErrorResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.login.LoginMiddlewareError;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,8 +36,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,31 +45,34 @@ class LoginServicesTests {
     @Mock
     private ILoginMiddlewareProvider provider;
     @Mock
+    private ILoginMapper mapper;
+    @Mock
+    private LoginMapper loginMapper;
+    @Mock
     private IJwtProvider jwtService;
     @Mock
     private LoginServiceMapper loginServiceMapper;
-    Map<String, String> parameters;
-    String personId = "123456";
-
-    @BeforeEach
-    void setUp() {
-        parameters = new HashMap<>();
-        parameters.put("json-data", "IntcIm5hbWVcIjpcIlwiLFwicGFnaW5hdGlvblwiOntcInBhZ2VcIjoxLFwicGFnZVNpemVcIjoxMH19Ig==");
-    }
 
     // login
     @Test
     void shouldLoginSuccessfully() throws IOException {
         // Arrange
         LoginRequest loginRequest = LoginRequestFixture.withDefaultLoginRequest();
+        LoginResult loginResult = LoginResponseFixture.withDefaultLoginResult();
+        LoginResponse loginResponse = LoginResponseFixture.withDefaultLoginResponse();
+        LoginCredentialMWResponse resultExpected = LoginMWResponseFixture.withDefaultLoginCredentialMWResponse();
+        LoginCredentialMWRequest mwRequest = LoginMWRequestFixture.withDefaultLoginCredentialMWRequest();
         LoginValidationServiceResponse loginValidationResponse = LoginResponseFixture.withDefaultLoginValidationServiceResponse();
         CreateTokenServiceResponse tokenResponse = LoginResponseFixture.withDefaultCreateTokenServiceResponse();
-        when(provider.validateCredentials(any(), any(), any())).thenReturn(loginValidationResponse);
+        when(provider.validateCredentials(any())).thenReturn(resultExpected);
         when(jwtService.generateToken(anyString(), anyString(), any())).thenReturn(tokenResponse);
-        when(loginServiceMapper.convert(any(), any(), any())).thenReturn(new LoginResult());
+        when(loginServiceMapper.convert(any(), any(), any())).thenReturn(loginResult);
+        when(mapper.convertResponse(any(), any())).thenReturn(loginValidationResponse);
+        when(mapper.mapperRequest((LoginRequest) any(), any())).thenReturn(mwRequest);
+        when(loginMapper.convert(any())).thenReturn(loginResponse);
 
         // Act
-        LoginResult result = loginService.login(loginRequest, parameters);
+        LoginResponse result = loginService.login(loginRequest);
 
         // Assert
         assertNotNull(result);
@@ -86,29 +90,33 @@ class LoginServicesTests {
 
         // Act & Assert
         GenericException exception = assertThrows(GenericException.class, () -> {
-            loginService.login(loginRequest, parameters);
+            loginService.login(loginRequest);
         });
 
-        assertEquals("Password no debe estar vacío", exception.getMessage());
+        assertEquals(LoginMiddlewareError.PASSWORD_BLANK.getMessage(), exception.getMessage());
     }
 
     @Test
     void shouldThrowExceptionWhenTokenBiometric() throws IOException {
         // Arrange
-        LoginRequest loginRequest = LoginRequest.builder()
-                .type("5")
-                .user("123456")
-                .password("")
-                .tokenBiometric("1234")
-                .build();
+        LoginCredentialMWResponse resultExpected = LoginMWResponseFixture.withDefaultLoginCredentialMWResponse();
+        LoginRequest loginRequest = LoginRequestFixture.withDefaultLoginRequestBiometric();
         LoginValidationServiceResponse loginValidationResponse = LoginResponseFixture.withDefaultLoginValidationServiceResponse();
         CreateTokenServiceResponse tokenResponse = LoginResponseFixture.withDefaultCreateTokenServiceResponse();
-        when(provider.validateCredentials(any(), any(), any())).thenReturn(loginValidationResponse);
+        LoginCredentialMWRequest mwRequest = LoginMWRequestFixture.withDefaultLoginCredentialMWRequest();
+        LoginResult loginResult = LoginResponseFixture.withDefaultLoginResult();
+        LoginResponse loginResponse = LoginResponseFixture.withDefaultLoginResponse();
+
+        when(provider.validateCredentials(any())).thenReturn(resultExpected);
         when(jwtService.generateToken(anyString(), anyString(), any())).thenReturn(tokenResponse);
         when(loginServiceMapper.convert(any(), any(), any())).thenReturn(new LoginResult());
+        when(mapper.convertResponse(any(), any())).thenReturn(loginValidationResponse);
+        when(mapper.mapperRequest((LoginRequest) any(), any())).thenReturn(mwRequest);
+        when(loginServiceMapper.convert(any(), any(), any())).thenReturn(loginResult);
+        when(loginMapper.convert(any())).thenReturn(loginResponse);
 
         // Act
-        LoginResult result = loginService.login(loginRequest, parameters);
+        LoginResponse result = loginService.login(loginRequest);
 
         // Assert
         assertNotNull(result);
@@ -118,39 +126,41 @@ class LoginServicesTests {
     @Test
     void shouldThrowExceptionWhenTokenBiometricIsEmpty() {
         // Arrange
-        LoginRequest loginRequest = LoginRequest.builder()
-                .type("4")
-                .user("123456")
-                .tokenBiometric("")
-                .build();
+        LoginRequest loginRequest = LoginRequestFixture.withDefaultLoginRequestBiometric();
+        loginRequest.setTokenBiometric("");
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            loginService.login(loginRequest, parameters);
+            loginService.login(loginRequest);
         });
 
         // Assert
-        assertEquals("Token Biometrico no debe estar vacío", exception.getMessage());
+        assertEquals(LoginMiddlewareError.BIOMETRIC_TOKEN.getMessage(), exception.getMessage());
     }
 
     @Test
     void shouldLoginSuccessfullyDNI() throws IOException {
         // Arrange
-        LoginRequest loginRequest = LoginRequest.builder()
-                .type("3")
-                .user("123456")
-                .password("1234")
-                .build();
+        LoginCredentialMWResponse mwResponse = LoginMWResponseFixture.withDefaultLoginCredentialMWResponse();
+        LoginRequest loginRequest = LoginRequestFixture.withDefaultLoginRequest();
+        loginRequest.setType("3");
+
         LoginValidationServiceResponse loginValidationResponse = LoginResponseFixture.withDefaultLoginValidationServiceResponse();
         LoginFactorMWResponse loginFactorMWResponse = LoginMWResponseFixture.withDefaultLoginFactorMWResponse();
         CreateTokenServiceResponse tokenResponse = LoginResponseFixture.withDefaultCreateTokenServiceResponse();
-        when(provider.validateFactorUser(any(), any())).thenReturn(loginFactorMWResponse);
-        when(provider.validateCredentials(any(), any(), any())).thenReturn(loginValidationResponse);
-        when(jwtService.generateToken(anyString(), anyString(), any())).thenReturn(tokenResponse);
-        when(loginServiceMapper.convert(any(), any(), any())).thenReturn(new LoginResult());
+        LoginCredentialMWRequest mwRequest = LoginMWRequestFixture.withDefaultLoginCredentialMWRequest();
+        LoginResult loginResult = LoginResponseFixture.withDefaultLoginResult();
+        LoginResponse loginResponse = LoginResponseFixture.withDefaultLoginResponse();
 
+        when(provider.validateFactorUser(any())).thenReturn(loginFactorMWResponse);
+        when(provider.validateCredentials(any())).thenReturn(mwResponse);
+        when(jwtService.generateToken(anyString(), anyString(), any())).thenReturn(tokenResponse);
+        when(mapper.convertResponse(any(), any())).thenReturn(loginValidationResponse);
+        when(mapper.mapperRequest((LoginRequest) any(), any())).thenReturn(mwRequest);
+        when(loginServiceMapper.convert(any(), any(), any())).thenReturn(loginResult);
+        when(loginMapper.convert(any())).thenReturn(loginResponse);
         // Act
-        LoginResult result = loginService.login(loginRequest, parameters);
+        LoginResponse result = loginService.login(loginRequest);
 
         // Assert
         assertNotNull(result);
@@ -160,21 +170,26 @@ class LoginServicesTests {
     @Test
     void shouldLoginSuccessfullyAlias() throws IOException {
         // Arrange
-        LoginRequest loginRequest = LoginRequest.builder()
-                .type("1")
-                .user("alias")
-                .password("1234")
-                .build();
+        LoginCredentialMWResponse mwResponse = LoginMWResponseFixture.withDefaultLoginCredentialMWResponse();
+        LoginRequest loginRequest = LoginRequestFixture.withDefaultLoginRequest();
+        loginRequest.setType("1");
+        loginRequest.setUser("alias");
         LoginValidationServiceResponse loginValidationResponse = LoginResponseFixture.withDefaultLoginValidationServiceResponse();
         LoginFactorMWResponse loginFactorMWResponse = LoginMWResponseFixture.withDefaultLoginFactorMWResponse();
         CreateTokenServiceResponse tokenResponse = LoginResponseFixture.withDefaultCreateTokenServiceResponse();
-        when(provider.validateFactorUser(any(), any())).thenReturn(loginFactorMWResponse);
-        when(provider.validateCredentials(any(), any(), any())).thenReturn(loginValidationResponse);
-        when(jwtService.generateToken(anyString(), anyString(), any())).thenReturn(tokenResponse);
-        when(loginServiceMapper.convert(any(), any(), any())).thenReturn(new LoginResult());
+        LoginCredentialMWRequest mwRequest = LoginMWRequestFixture.withDefaultLoginCredentialMWRequest();
+        LoginResult loginResult = LoginResponseFixture.withDefaultLoginResult();
+        LoginResponse loginResponse = LoginResponseFixture.withDefaultLoginResponse();
 
+        when(provider.validateFactorUser(any())).thenReturn(loginFactorMWResponse);
+        when(provider.validateCredentials(any())).thenReturn(mwResponse);
+        when(jwtService.generateToken(anyString(), anyString(), any())).thenReturn(tokenResponse);
+        when(mapper.convertResponse(any(), any())).thenReturn(loginValidationResponse);
+        when(mapper.mapperRequest((LoginRequest) any(), any())).thenReturn(mwRequest);
+        when(loginServiceMapper.convert(any(), any(), any())).thenReturn(loginResult);
+        when(loginMapper.convert(any())).thenReturn(loginResponse);
         // Act
-        LoginResult result = loginService.login(loginRequest, parameters);
+        LoginResponse result = loginService.login(loginRequest);
 
         // Assert
         assertNotNull(result);
@@ -185,71 +200,46 @@ class LoginServicesTests {
     void shouldLoginSuccessfullyInvalidData() throws IOException {
         // Arrange
         LoginRequest loginRequest = LoginRequestFixture.withDefaultLoginRequest();
-        LoginValidationServiceResponse loginValidationResponse = LoginResponseFixture.withDefaultLoginValidationServiceResponse();
-        CreateTokenServiceResponse tokenResponse = new CreateTokenServiceResponse();
-        tokenResponse.setStatusCode(CreateTokenServiceResponse.StatusCode.INVALID_DATA);
-        when(provider.validateCredentials(any(), any(), any())).thenReturn(loginValidationResponse);
-        when(jwtService.generateToken(anyString(), anyString(), any())).thenReturn(tokenResponse);
+        loginRequest.setType("6");
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            loginService.login(loginRequest, parameters);
+            loginService.login(loginRequest);
         });
 
         // Assert
-        assertEquals("Estado no valido para Login. INVALID_DATA", exception.getMessage());
+        assertEquals(LoginMiddlewareError.INVALID_AUTH_TYPE.getMessage(), exception.getMessage());
     }
 
     @Test
     void shouldLoginSuccessfullyFailed() throws IOException {
         // Arrange
         LoginRequest loginRequest = LoginRequestFixture.withDefaultLoginRequest();
-        LoginValidationServiceResponse loginValidationResponse = LoginResponseFixture.withDefaultLoginValidationServiceResponse();
-        CreateTokenServiceResponse tokenResponse = new CreateTokenServiceResponse();
-        tokenResponse.setStatusCode(CreateTokenServiceResponse.StatusCode.FAILED);
-        when(provider.validateCredentials(any(), any(), any())).thenReturn(loginValidationResponse);
-        when(jwtService.generateToken(anyString(), anyString(), any())).thenReturn(tokenResponse);
+        loginRequest.setPassword("");
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            loginService.login(loginRequest, parameters);
+            loginService.login(loginRequest);
         });
 
         // Assert
-        assertEquals("Error interno", exception.getMessage());
+        assertEquals(LoginMiddlewareError.PASSWORD_BLANK.getMessage(), exception.getMessage());
     }
 
     @Test
-    void shouldLoginBadRequestJsonDataNull() {
+    void shouldLoginBadRequestBiometricTypeLogin() {
         // Arrange
         LoginRequest loginRequest = LoginRequestFixture.withDefaultLoginRequest();
-        Map<String, String> parameters = new HashMap<>();
+        loginRequest.setType("5");
+        loginRequest.setTokenBiometric("");
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            loginService.login(loginRequest, parameters);
+            loginService.login(loginRequest);
         });
 
         // Assert
-        assertEquals("El header json-data es requerido", exception.getMessage());
-    }
-
-    @Test
-    void shouldLoginBadRequestPersonCodeAlphanumeric() {
-        // Arrange
-        LoginRequest loginRequest = LoginRequest.builder()
-                .type("2")
-                .user("123abc")
-                .password("1234")
-                .build();
-
-        // Act
-        GenericException exception = assertThrows(GenericException.class, () -> {
-            loginService.login(loginRequest, parameters);
-        });
-
-        // Assert
-        assertEquals("Se espera solo números en User", exception.getMessage());
+        assertEquals(LoginMiddlewareError.BIOMETRIC_TOKEN.getMessage(), exception.getMessage());
     }
 
     // refreshSession
@@ -266,10 +256,10 @@ class LoginServicesTests {
         when(jwtService.refreshToken(anyString())).thenReturn(tokenServiceResponse);
         when(jwtService.revokeAccessToken(accessToken)).thenReturn(true);
         when(loginServiceMapper.convert(any(), any())).thenReturn(refreshSessionResult);
-        when(loginServiceMapper.convert(any())).thenReturn(new TokenDataResponse());
+        when(loginServiceMapper.convert(any())).thenReturn(LoginResponseFixture.withDefaultTokenDataResponse());
 
         // Act
-        TokenDataResponse response = loginService.refreshSession(personId, refreshSessionRequest, bearerToken);
+        TokenDataResponse response = loginService.refreshSession("123456", refreshSessionRequest, bearerToken);
 
         // Assert
         assertNotNull(response);
@@ -288,12 +278,12 @@ class LoginServicesTests {
         when(jwtService.parseJwtRefresh(anyString())).thenReturn(jwtRefresh);
 
         // Act
-        HandledException exception = assertThrows(HandledException.class, () -> {
-            loginService.refreshSession(personId, refreshSessionRequest, accessToken);
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            loginService.refreshSession("123456", refreshSessionRequest, accessToken);
         });
 
         // Assert
-        assertEquals(RefreshControllerErrorResponse.INVALID_DATA.getDescription(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INVALID_ACCESS_JWT.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -310,12 +300,12 @@ class LoginServicesTests {
         when(jwtService.revokeAccessToken(accessToken)).thenReturn(true);
 
         // Act
-        HandledException exception = assertThrows(HandledException.class, () -> {
-            loginService.refreshSession(personId, refreshSessionRequest, bearerToken);
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            loginService.refreshSession("123456", refreshSessionRequest, bearerToken);
         });
 
         // Assert
-        assertEquals(RefreshControllerErrorResponse.INVALID_DATA.getDescription(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INVALID_ACCESS_JWT.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -332,34 +322,37 @@ class LoginServicesTests {
         when(jwtService.revokeAccessToken(accessToken)).thenReturn(true);
 
         // Act
-        HandledException exception = assertThrows(HandledException.class, () -> {
-            loginService.refreshSession(personId, refreshSessionRequest, bearerToken);
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            loginService.refreshSession("123456", refreshSessionRequest, bearerToken);
         });
 
         // Assert
-        assertEquals("Internal server error.", exception.getMessage());
+        assertEquals(DefaultMiddlewareError.AUTHENTICATION_FILTER_FAILURE.getMessage(), exception.getMessage());
     }
 
     // Logout
     @Test
     void shouldLogoutSuccessfully() throws IOException {
         // Arrange
+        LogoutMWResponse mwResponse = LoginMWResponseFixture.withDefaultLogoutMWResponse();
+        LogoutMWRequest mwRequest = LoginMWRequestFixture.withDefaultLogoutMWRequest();
         LogoutRequest logoutRequest = LoginRequestFixture.withDefaultLogoutRequest();
         IntrospectTokenKCResponse introspectTokenKCResponse = new IntrospectTokenKCResponse(IntrospectTokenKCResponse.Result.SUCCESS, true);
         when(jwtService.introspect(anyString())).thenReturn(introspectTokenKCResponse);
         when(jwtService.revokeAccessToken(anyString())).thenReturn(true);
         when(jwtService.revokeRefreshToken(anyString())).thenReturn(true);
-        when(provider.logout(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any())).thenReturn(new GenericResponse());
+        when(provider.logout(any())).thenReturn(mwResponse);
+        when(mapper.mapperRequest((String) any(), (String) any())).thenReturn(mwRequest);
 
         // Act
-        GenericResponse response = loginService.logout("deviceId", "deviceIp", "deviceName", "geoX", "geoY", "appVersion", "personId", "userDeviceId", "personRoleId", "Bearer some_access_token", logoutRequest);
+        GenericResponse response = loginService.logout("21321", "Bearer some_access_token", "21321", logoutRequest);
 
         // Assert
         assertNotNull(response);
         verify(jwtService).introspect(anyString());
         verify(jwtService).revokeAccessToken(anyString());
         verify(jwtService).revokeRefreshToken(anyString());
-        verify(provider).logout(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any());
+        verify(provider).logout(any());
     }
 
     @Test
@@ -373,7 +366,7 @@ class LoginServicesTests {
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () ->
-                loginService.logout("deviceId", "deviceIp", "deviceName", "geoX", "geoY", "appVersion", "personId", "userDeviceId", "personRoleId", "Bearer some_access_token", logoutRequest)
+                loginService.logout("personId", "Bearer some_access_token", "personRoleId", logoutRequest)
         );
 
         // Assert
@@ -392,11 +385,11 @@ class LoginServicesTests {
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () ->
-                loginService.logout("deviceId", "deviceIp", "deviceName", "geoX", "geoY", "appVersion", "personId", "userDeviceId", "personRoleId", "Bearer some_access_token", logoutRequest)
+                loginService.logout("personId", "Bearer some_access_token", "personRoleId", logoutRequest)
         );
 
         // Assert
-        assertEquals(AppError.INVALID_REFRESH_TOKEN.getCode(), exception.getCode());
+        assertEquals(DefaultMiddlewareError.INVALID_ACCESS_JWT.getCode(), exception.getCode());
         verify(jwtService).introspect(anyString());
     }
 
@@ -404,29 +397,34 @@ class LoginServicesTests {
     @Test
     void shouldReturnEnrolledStatusWhenDeviceIsEnrolled() throws IOException {
         // Arrange
-        DeviceEnrollmentMWResponse mockResponse = LoginResponseFixture.withDefaultDeviceEnrollmentMWResponse();
-        when(provider.makeValidateDevice(anyMap())).thenReturn(mockResponse);
+        DeviceEnrollmentMWResponse mockMWResponse = LoginResponseFixture.withDefaultDeviceEnrollmentMWResponse();
+        DeviceEnrollmentResponse mockResponse = LoginResponseFixture.withDefaultDeviceEnrollmentResponse();
+        when(provider.makeValidateDevice()).thenReturn(mockMWResponse);
+        when(mapper.convertResponse((DeviceEnrollmentMWResponse) any())).thenReturn(mockResponse);
 
         // Act
-        DeviceEnrollmentResponse response = loginService.validation(parameters);
+        DeviceEnrollmentResponse response = loginService.validation();
 
         // Assert
         assertNotNull(response);
-        verify(provider).makeValidateDevice(anyMap());
+        verify(provider).makeValidateDevice();
     }
 
     @Test
     void shouldReturnNotEnrolledStatusWhenDeviceIsNotEnrolled() throws IOException {
         // Arrange
-        DeviceEnrollmentMWResponse mockResponse = LoginResponseFixture.withDefaultDeviceEnrollmentMWResponseNotEnrolled();
-        when(provider.makeValidateDevice(anyMap())).thenReturn(mockResponse);
+        DeviceEnrollmentMWResponse mockMWResponse = LoginResponseFixture.withDefaultDeviceEnrollmentMWResponseNotEnrolled();
+        DeviceEnrollmentResponse mockResponse = LoginResponseFixture.withDefaultDeviceEnrollmentResponse();
+        mockResponse.setStatusCode(2);
+        when(provider.makeValidateDevice()).thenReturn(mockMWResponse);
+        when(mapper.convertResponse((DeviceEnrollmentMWResponse) any())).thenReturn(mockResponse);
 
         // Act
-        DeviceEnrollmentResponse response = loginService.validation(parameters);
+        DeviceEnrollmentResponse response = loginService.validation();
 
         // Assert
         assertNotNull(response);
         assertEquals(2, response.getStatusCode());
-        verify(provider).makeValidateDevice(anyMap());
+        verify(provider).makeValidateDevice();
     }
 }

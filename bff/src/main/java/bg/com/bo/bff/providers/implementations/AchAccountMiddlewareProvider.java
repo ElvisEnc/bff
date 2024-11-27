@@ -77,7 +77,7 @@ public class AchAccountMiddlewareProvider extends MiddlewareProvider<AchAccountM
     @Override
     public QrListMWResponse getListQrGeneratePaidMW(QrListMWRequest request, String personId, Map<String, String> parameters) throws IOException {
         String url = baseUrl + AchAccountMiddlewareServices.GET_TRANSACTION_HISTORY.getServiceURL();
-        ByMwErrorResponseHandler<QrListMWResponse> responseHandler = ByMwErrorResponseHandler.instance(AchAccountMiddlewareError.MDWAAM_0001);
+        ByMwErrorResponseHandler<QrListMWResponse> responseHandler = ByMwErrorResponseHandler.instance(AchAccountMiddlewareError.MDWAAM_001);
         return post(url, HeadersMW.getDefaultHeaders(parameters), request, QrListMWResponse.class, responseHandler);
     }
 }

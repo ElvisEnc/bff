@@ -12,4 +12,6 @@ public final class CacheConstants {
     public static final String USER_DATA = "user-data";
     public static final String GENERIC_DATA = "generic-data";
     public static final String TOKEN_BLACKLIST = "token-blacklist";
+    public static final String ANONYMOUS_KEY_PREFIX = "anonymous-key";
+    public static final String ANONYMOUS_KEYS = "anonymous-keys";
 }

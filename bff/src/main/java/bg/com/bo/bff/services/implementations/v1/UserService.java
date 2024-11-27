@@ -22,12 +22,16 @@ import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.commons.enums.user.Gender;
 import bg.com.bo.bff.commons.enums.user.MaritalStatus;
 import bg.com.bo.bff.commons.validators.generics.*;
+import bg.com.bo.bff.mappings.providers.login.ILoginMapper;
+import bg.com.bo.bff.providers.dtos.request.login.mw.ChangePasswordMWRequest;
+import bg.com.bo.bff.providers.dtos.request.login.mw.UpdateBiometricsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.DistrictsNetRequest;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
 import bg.com.bo.bff.providers.dtos.request.personal.information.UpdatePersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.response.login.mw.BiometricStatusMWResponse;
+import bg.com.bo.bff.providers.dtos.response.login.mw.ChangePasswordMWResponse;
 import bg.com.bo.bff.providers.dtos.response.personal.information.EconomyActivity;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
 import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
@@ -35,6 +39,8 @@ import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
 import bg.com.bo.bff.mappings.providers.apiface.IApiFaceMapper;
 import bg.com.bo.bff.mappings.providers.information.IPersonalInformationMapper;
+import bg.com.bo.bff.providers.models.enums.middleware.login.LoginMiddlewareError;
+import bg.com.bo.bff.providers.models.enums.middleware.response.user.UserControllerResponse;
 import bg.com.bo.bff.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,50 +56,52 @@ public class UserService implements IUserService {
     private static final String HAS_HUSBAND_LAST_NAME_NO = "N";
     private static final String MARRIED_AND_COMMON_LAW_UNION = "CU";
     private static final String BANK_EMPLOYEE = "3";
-    private static final String DEPENDENT_INCOME_SOURCE ="D";
+    private static final String DEPENDENT_INCOME_SOURCE = "D";
     private final ILoginMiddlewareProvider loginMiddlewareProvider;
     private final IPersonalInformationNetProvider personalInformationNetProvider;
     private final IPersonalInformationMapper iPersonalInformationMapper;
     private final IApiFaceNetProvider apiFaceNetProvider;
     private final IApiFaceMapper iApiFaceMapper;
+    private final ILoginMapper mapper;
 
     @Autowired
     public UserService(ILoginMiddlewareProvider provider, IPersonalInformationNetProvider providerPersonal, IPersonalInformationMapper iPersonalInformationMapper, IApiFaceNetProvider apiFaceNetProvider,
-                       IApiFaceMapper iApiFaceMapper) {
+                       IApiFaceMapper iApiFaceMapper, ILoginMapper mapper) {
         this.loginMiddlewareProvider = provider;
         this.personalInformationNetProvider = providerPersonal;
         this.iPersonalInformationMapper = iPersonalInformationMapper;
         this.apiFaceNetProvider = apiFaceNetProvider;
         this.iApiFaceMapper = iApiFaceMapper;
+        this.mapper = mapper;
     }
 
     @Override
-    public GenericResponse changePassword(String personId, String personRoleId, ChangePasswordRequest changePasswordRequest, Map<String, String> parameters) throws IOException {
-        IValidator<String> validator = new NotEqualsValidator<>(changePasswordRequest.getOldPassword(), new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.SAME_PASSWORD));
-        validator.setNext(new MinLengthValidator(Constants.PASSWORD_MIN_LENGTH, new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD)))
-                .setNext(new MaxLengthValidator(Constants.PASSWORD_MAX_LENGTH, new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD)))
-                .setNext(new ContainsDigitValidator(new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD)))
-                .setNext(new ContainsLetterValidator(new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD)));
+    public GenericResponse changePassword(String personId, String personRoleId, ChangePasswordRequest changePasswordRequest) throws IOException {
+        IValidator<String> validator = new NotEqualsValidator<>(changePasswordRequest.getOldPassword(), new HandledException(LoginMiddlewareError.SAME_PASSWORD));
+        validator.setNext(new MinLengthValidator(Constants.PASSWORD_MIN_LENGTH, new HandledException(LoginMiddlewareError.NOT_VALID_PASSWORD)))
+                .setNext(new MaxLengthValidator(Constants.PASSWORD_MAX_LENGTH, new HandledException(LoginMiddlewareError.NOT_VALID_PASSWORD)))
+                .setNext(new ContainsDigitValidator(new HandledException(LoginMiddlewareError.NOT_VALID_PASSWORD)))
+                .setNext(new ContainsUpperCaseValidator(new HandledException(LoginMiddlewareError.NOT_VALID_PASSWORD)));
+//                .setNext(new ContainsLetterValidator(new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD)));
         validator.validate(changePasswordRequest.getNewPassword());
-
-        return loginMiddlewareProvider.changePassword(personId, personRoleId, changePasswordRequest, parameters);
-    }
-
-    @Override
-    public BiometricsResponse getBiometrics(Integer personId, Map<String, String> parameter) throws IOException {
-        BiometricStatusMWResponse mwResponse = loginMiddlewareProvider.getBiometricsMW(personId, parameter);
-        return BiometricsResponse.builder()
-                .status(Objects.equals(mwResponse.getData().getStatusBiometric(), "S"))
-                .authenticationType(mwResponse.getData().getAuthenticationType())
-                .build();
-    }
-
-    @Override
-    public UpdateBiometricsResponse updateBiometrics(Integer personId, UpdateBiometricsRequest request, Map<String, String> parameter) throws IOException {
-        if (request.getStatus() == null) {
-            throw new GenericException("status no puede estar vacío", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
+        ChangePasswordMWRequest mwRequest = mapper.mapperRequest(changePasswordRequest, personId, personRoleId);
+        ChangePasswordMWResponse mwResponse = loginMiddlewareProvider.changePassword(mwRequest);
+        if (mwResponse.getPersonId() == null) {
+            throw new GenericException(AppError.DEFAULT);
         }
-        return loginMiddlewareProvider.updateBiometricsMW(personId, request, parameter);
+        return GenericResponse.instance(UserControllerResponse.SUCCESS);
+    }
+
+    @Override
+    public BiometricsResponse getBiometrics(Integer personId) throws IOException {
+        BiometricStatusMWResponse mwResponse = loginMiddlewareProvider.getBiometricsMW(personId);
+        return mapper.convertResponse(mwResponse);
+    }
+
+    @Override
+    public UpdateBiometricsResponse updateBiometrics(Integer personId, UpdateBiometricsRequest request) throws IOException {
+        UpdateBiometricsMWRequest mwRequest = mapper.mapperUpdateBiometricRequest(request);
+        return loginMiddlewareProvider.updateBiometricsMW(personId, mwRequest);
     }
 
     @Override
@@ -102,42 +110,42 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public PersonalResponse getPersonalInformation(String personId, Map<String, String> parameters) throws IOException {
+    public PersonalResponse getPersonalInformation(String personId) throws IOException {
         ApiPersonalInformationNetRequest requestData = iPersonalInformationMapper.mapperRequest(personId);
-        PersonalInformationNetResponse response = personalInformationNetProvider.getPersonalInformation(requestData, parameters);
+        PersonalInformationNetResponse response = personalInformationNetProvider.getPersonalInformation(requestData);
         return iPersonalInformationMapper.convertRequest(response);
     }
 
     @Override
-    public EconomicActivityResponse getEconomicActivity(Integer personId, Map<String, String> parameter) {
+    public EconomicActivityResponse getEconomicActivity(Integer personId) {
         return personalInformationNetProvider.getEconomicalActivity(personId);
     }
 
     @Override
-    public DepartmentsResponse getDepartments(Map<String, String> parameter) throws IOException {
-        DepartmentsNetResponse netResponse = apiFaceNetProvider.getDepartments(parameter);
+    public DepartmentsResponse getDepartments() throws IOException {
+        DepartmentsNetResponse netResponse = apiFaceNetProvider.getDepartments();
         return iApiFaceMapper.mapToDepartmentsResponse(netResponse);
     }
 
     @Override
-    public DistrictsResponse getDistricts(String departmentId, Map<String, String> parameter) throws IOException {
+    public DistrictsResponse getDistricts(String departmentId) throws IOException {
         DistrictsNetRequest requestData = iPersonalInformationMapper.mapToDistrictRequest(String.valueOf(departmentId));
-        DistrictsNetResponse netResponse = personalInformationNetProvider.getDistricts(requestData, parameter);
+        DistrictsNetResponse netResponse = personalInformationNetProvider.getDistricts(requestData);
 
         return iPersonalInformationMapper.mapToDistrictsResponse(netResponse);
     }
 
     @Override
-    public MaritalStatusResponse getMaritalStatus(Map<String, String> parameter) {
+    public MaritalStatusResponse getMaritalStatus() {
         return personalInformationNetProvider.getMaritalStatuses();
     }
 
     @Override
-    public GenericResponse updateDataUser(String personId, UpdateDataUserRequest request, Map<String, String> parameter) throws IOException {
+    public GenericResponse updateDataUser(String personId, UpdateDataUserRequest request) throws IOException {
 
         ApiPersonalInformationNetRequest requestData = iPersonalInformationMapper.mapperRequest(personId);
 
-        PersonalInformationNetResponse personalInformation = personalInformationNetProvider.getPersonalInformation(requestData, parameter);
+        PersonalInformationNetResponse personalInformation = personalInformationNetProvider.getPersonalInformation(requestData);
 
         if (personalInformation.getDataContent().getClientDataList().isEmpty()) {
             AppError error = AppError.NOT_ACCEPTABLE_UPDATE_PERSONAL_INFORMATION;
@@ -150,9 +158,9 @@ public class UserService implements IUserService {
                 personalInformation.getDataContent().getClientDataList().get(0).getGender()));
 
         validateCityCode(request.getPersonalData().getDepartmentCode(),
-                request.getPersonalData().getCityCode(), parameter);
+                request.getPersonalData().getCityCode());
 
-        UpdatePersonalDetail.EconomicalActivity economicalActivity   = validateEconomicalActivity(
+        UpdatePersonalDetail.EconomicalActivity economicalActivity = validateEconomicalActivity(
                 personId,
                 request.getEconomicalActivity(),
                 request.getPersonalData().getBankEmployee(),
@@ -163,7 +171,7 @@ public class UserService implements IUserService {
 
         request.setEconomicalActivity(economicalActivity);
         UpdatePersonalInformationNetRequest updatePersonalInformationNetRequest = iPersonalInformationMapper.convertRequest(personId, request, personalInformation);
-        personalInformationNetProvider.updatePersonalInformation(updatePersonalInformationNetRequest, parameter);
+        personalInformationNetProvider.updatePersonalInformation(updatePersonalInformationNetRequest);
 
         return GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
     }
@@ -174,7 +182,7 @@ public class UserService implements IUserService {
                                                                                String incomeLevel,
                                                                                int economicActivity,
                                                                                EconomyActivity economyActivity) {
-        if(bankEmployee.equals(BANK_EMPLOYEE)){
+        if (bankEmployee.equals(BANK_EMPLOYEE)) {
             return UpdatePersonalDetail.EconomicalActivity.builder()
                     .type(economyActivity.getIncomeSource())
                     .company(economyActivity.getCompany())
@@ -186,27 +194,27 @@ public class UserService implements IUserService {
 
         final EconomicActivityResponse economicActivityResponse = personalInformationNetProvider.getEconomicalActivity(Integer.valueOf(personId));
 
-        if(economicActivityResponse.getIncomeSource().stream().noneMatch(x->x.getId().equals(economicalActivity.getType()))) {
+        if (economicActivityResponse.getIncomeSource().stream().noneMatch(x -> x.getId().equals(economicalActivity.getType()))) {
             throw new GenericException(AppError.INCOME_SOURCE_NOT_EXIST.getMessage(), AppError.INCOME_SOURCE_NOT_EXIST.getHttpCode(), AppError.INCOME_SOURCE_NOT_EXIST.getCode());
         }
 
-        if(economicActivityResponse.getIncomeLevel().stream().noneMatch(x->x.getId().equals(economicalActivity.getIncomeLevel().toString()))){
+        if (economicActivityResponse.getIncomeLevel().stream().noneMatch(x -> x.getId().equals(economicalActivity.getIncomeLevel().toString()))) {
             throw new GenericException(AppError.INCOME_LEVEL_NOT_EXIST.getMessage(), AppError.INCOME_LEVEL_NOT_EXIST.getHttpCode(), AppError.INCOME_LEVEL_NOT_EXIST.getCode());
         }
 
-        if(!economicalActivity.getType().equals(DEPENDENT_INCOME_SOURCE)){
+        if (!economicalActivity.getType().equals(DEPENDENT_INCOME_SOURCE)) {
             return economicalActivity;
         }
 
-        if(economicActivityResponse.getJobTitle().stream().noneMatch(x->x.getId().equals(economicalActivity.getPosition()))){
+        if (economicActivityResponse.getJobTitle().stream().noneMatch(x -> x.getId().equals(economicalActivity.getPosition()))) {
             throw new GenericException(AppError.POSITION_NOT_EXIST.getMessage(), AppError.POSITION_NOT_EXIST.getHttpCode(), AppError.POSITION_NOT_EXIST.getCode());
         }
 
-        if(economicActivityResponse.getEconomicActivity().stream().noneMatch(x->x.getId().equals(String.valueOf(economicalActivity.getEconomicActivity())))){
+        if (economicActivityResponse.getEconomicActivity().stream().noneMatch(x -> x.getId().equals(String.valueOf(economicalActivity.getEconomicActivity())))) {
             throw new GenericException(AppError.ECONOMIC_ACTIVITY_NOT_EXIST.getMessage(), AppError.ECONOMIC_ACTIVITY_NOT_EXIST.getHttpCode(), AppError.ECONOMIC_ACTIVITY_NOT_EXIST.getCode());
         }
 
-        if(economicalActivity.getCompany() ==  null){
+        if (economicalActivity.getCompany() == null) {
             throw new GenericException(AppError.COMPANY_NAME_NOT_NULL.getMessage(), AppError.COMPANY_NAME_NOT_NULL.getHttpCode(), AppError.COMPANY_NAME_NOT_NULL.getCode());
         }
         return economicalActivity;
@@ -235,13 +243,13 @@ public class UserService implements IUserService {
 
     }
 
-    private void validateCityCode(int departmentId, Integer cityCode, Map<String, String> parameter) throws IOException {
+    private void validateCityCode(int departmentId, Integer cityCode) throws IOException {
 
 
         DistrictsNetRequest requestData = iPersonalInformationMapper.mapToDistrictRequest(String.valueOf(departmentId));
-        DistrictsNetResponse netResponse = personalInformationNetProvider.getDistricts(requestData, parameter);
+        DistrictsNetResponse netResponse = personalInformationNetProvider.getDistricts(requestData);
 
-        if (netResponse.getResult().getData().stream().map(x->Integer.valueOf(x.getCodeDistrict())).anyMatch(data -> data.equals(cityCode))) {
+        if (netResponse.getResult().getData().stream().map(x -> Integer.valueOf(x.getCodeDistrict())).anyMatch(data -> data.equals(cityCode))) {
             return;
         }
 
@@ -255,7 +263,7 @@ public class UserService implements IUserService {
             maritalStatus.setHasHusbandLastName(HAS_HUSBAND_LAST_NAME_NO);
         }
         if (!MARRIED_AND_COMMON_LAW_UNION.contains(maritalStatus.getStatus())) {
-           return maritalStatus;
+            return maritalStatus;
         }
 
         if (Optional.ofNullable(maritalStatus.getSpouseName()).isEmpty()) {
@@ -263,7 +271,7 @@ public class UserService implements IUserService {
             throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
         }
 
-        if(maritalStatus.getStatus().equals(MaritalStatus.COMMON_LAW_UNION.getCode())){
+        if (maritalStatus.getStatus().equals(MaritalStatus.COMMON_LAW_UNION.getCode())) {
             maritalStatus.setStatus(HAS_HUSBAND_LAST_NAME_NO);
             return maritalStatus;
         }

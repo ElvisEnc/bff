@@ -83,7 +83,7 @@ class PersonalInformationNetProviderTest {
                 .willReturn(okJson(jsonResponse)));
 
         // Act
-        PersonalInformationNetResponse response = personalInformationNetProvider.getPersonalInformation(PersonalInformationNetRequestFixture.withDefaultApiPersonalInformationNetRequest(), map);
+        PersonalInformationNetResponse response = personalInformationNetProvider.getPersonalInformation(PersonalInformationNetRequestFixture.withDefaultApiPersonalInformationNetRequest());
 
         // Assert
         assertNotNull(response);
@@ -226,7 +226,7 @@ class PersonalInformationNetProviderTest {
                 .willReturn(okJson(jsonResponse)));
 
         // Act
-        DistrictsNetResponse response = personalInformationNetProvider.getDistricts(requestMapperMock, map);
+        DistrictsNetResponse response = personalInformationNetProvider.getDistricts(requestMapperMock);
 
         // Assert
         assertNotNull(response);
@@ -260,7 +260,7 @@ class PersonalInformationNetProviderTest {
         stubFor(post(anyUrl())
                 .willReturn(okJson(jsonResponse)));
         //Act
-        PersonalUpdateNetResponse response = personalInformationNetProvider.updatePersonalInformation(request, map);
+        PersonalUpdateNetResponse response = personalInformationNetProvider.updatePersonalInformation(request);
 
         assertNotNull(response);
         assertEquals(expectedResponse.getMessage(), response.getMessage());

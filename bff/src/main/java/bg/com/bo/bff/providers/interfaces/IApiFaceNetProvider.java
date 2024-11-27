@@ -6,5 +6,5 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface IApiFaceNetProvider {
-    DepartmentsNetResponse getDepartments(Map<String, String> parameter) throws IOException;
+    DepartmentsNetResponse getDepartments() throws IOException;
 }

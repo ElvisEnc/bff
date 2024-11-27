@@ -33,7 +33,7 @@ public class ApiFaceNetProvider implements IApiFaceNetProvider {
     }
 
     @Override
-    public DepartmentsNetResponse getDepartments(Map<String, String> parameter) throws IOException {
+    public DepartmentsNetResponse getDepartments() throws IOException {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String path = urlApiFaceNet + URL_GET_DEPARTMENTS;
             HttpPost httpPost = new HttpPost(path);

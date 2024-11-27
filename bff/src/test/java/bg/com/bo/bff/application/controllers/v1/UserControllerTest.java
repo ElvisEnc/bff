@@ -1,5 +1,6 @@
 package bg.com.bo.bff.application.controllers.v1;
 
+import bg.com.bo.bff.application.config.HeadersDataFixture;
 import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.user.UserRequestFixture;
@@ -27,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -53,7 +55,6 @@ class UserControllerTest {
     private IUserService userService;
     private MockMvc mockMvc;
     @Mock
-    private HttpServletRequest httpServletRequest;
     private HttpHeaders headers;
     private static final String DEVICE_ID = "42ebffbd7c30307d";
     private static final String DEVICE_IP = "127.0.0.1";
@@ -69,8 +70,12 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
+
+
         headers = new HttpHeaders();
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+        MockHttpServletRequest mockRequest = HeadersDataFixture.getMockHttpServletRequest();
+        userController.setHttpServletRequest(mockRequest);
 
         Map<String, String> map = Map.of(
                 DeviceMW.DEVICE_ID.getCode(), DEVICE_ID,
@@ -89,7 +94,6 @@ class UserControllerTest {
         headers.add(DeviceMW.GEO_POSITION_X.getCode(), GEO_POSITION_X);
         headers.add(DeviceMW.GEO_POSITION_Y.getCode(), GEO_POSITION_Y);
         headers.add(DeviceMW.APP_VERSION.getCode(), APP_VERSION);
-
     }
 
     @Test
@@ -101,7 +105,7 @@ class UserControllerTest {
 
         GenericResponse expected = new GenericResponse();
 
-        when(userService.changePassword(any(), any(), any(), any())).thenReturn(expected);
+        when(userService.changePassword(any(), any(), any())).thenReturn(expected);
 
         // Act & Assert
         mockMvc.perform(put(URL_CHANGE_PASSWORD)
@@ -121,7 +125,7 @@ class UserControllerTest {
                 .andReturn();
 
         // Arrange
-        verify(userService).changePassword(any(), any(), any(), any());
+        verify(userService).changePassword(any(), any(), any());
     }
 
     @Test
@@ -159,7 +163,7 @@ class UserControllerTest {
     void givenValidDataWhenGetPersonalInformation() throws Exception {
         // Arrange
         PersonalResponse expected = UserResponseFixture.withDefaultPersonalResponse();
-        when(userService.getPersonalInformation(any(), any())).thenReturn(expected);
+        when(userService.getPersonalInformation(any())).thenReturn(expected);
 
         // Act & Assert
         String url = "/api/v1/users/123/info";
@@ -171,47 +175,38 @@ class UserControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
-        verify(userService).getPersonalInformation(any(), any());
+        verify(userService).getPersonalInformation(any());
     }
 
     @Test
     void givenValidPersonIdWhenGetBiometricStatus() throws Exception {
         // Assert
-        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
-        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
-
         BiometricsResponse expected = UserResponseFixture.withDefaultBiometricsResponse();
-        when(userService.getBiometrics(any(), any())).thenReturn(expected);
+        when(userService.getBiometrics(any())).thenReturn(expected);
 
         // Act
-        mockMvc.perform(get(URL_BIOMETRICS, "123")
-                        .accept(MediaType.APPLICATION_JSON)
+        String path = "/api/v1/users/{personId}/biometric";
+
+        mockMvc.perform(get(path, 123)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .headers(this.headers))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
         // Arrange
-        verify(userService).getBiometrics(any(), any());
+        verify(userService).getBiometrics(any());
     }
 
     @Test
     void givenPersonIdWhenUpdateBiometricThenResponseExpected() throws Exception {
         // Arrange
-        HttpHeaders localHeaders = new HttpHeaders();
-        localHeaders.add("json-data", JSON_DATA);
-        localHeaders.addAll(headers);
-
-        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
-        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
-
         UpdateBiometricsResponse expected = UserResponseFixture.withDefaultUpdateBiometricsResponse();
         UpdateBiometricsRequest request = UserRequestFixture.withDefaultUpdateBiometricsRequest();
-        when(userService.updateBiometrics(any(), any(), any())).thenReturn(expected);
+        when(userService.updateBiometrics(any(), any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(put(URL_BIOMETRICS, "123")
-                        .headers(localHeaders)
+                        .header("json-data", JSON_DATA)
                         .content(Util.objectToString(request))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -222,21 +217,17 @@ class UserControllerTest {
 
         // Assert
         assertEquals(response, responseExpected);
-        verify(userService).updateBiometrics(any(), any(), any());
+        verify(userService).updateBiometrics(any(), any());
     }
 
     @Test
     void givenPersonIdWhenGetEconomicActivityThenResponseExpected() throws Exception {
         // Assert
-        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
-        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
-
         EconomicActivityResponse expected = UserResponseFixture.withDefaultEconomicActivityResponse();
-        when(userService.getEconomicActivity(any(), any())).thenReturn(expected);
+        when(userService.getEconomicActivity(any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(get("/api/v1/users/{personId}/economical-activity", "123")
-                        .headers(this.headers)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -246,19 +237,18 @@ class UserControllerTest {
 
         // Arrange
         assertEquals(response, responseExpected);
-        verify(userService).getEconomicActivity(any(), any());
+        verify(userService).getEconomicActivity(any());
     }
 
     @Test
     void givenValidDataWhenGetDepartments() throws Exception {
         // Arrange
         DepartmentsResponse expected = UserResponseFixture.withDefaultDepartmentsResponse();
-        when(userService.getDepartments(any())).thenReturn(expected);
+        when(userService.getDepartments()).thenReturn(expected);
 
         // Act & Assert
         String url = "/api/v1/users/departments";
         mockMvc.perform(get(url)
-                        .headers(this.headers)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -266,19 +256,18 @@ class UserControllerTest {
                 .andReturn();
 
         // Arrange
-        verify(userService).getDepartments(any());
+        verify(userService).getDepartments();
     }
 
     @Test
     void givenDepartmentIdWhenGetDistricts() throws Exception {
         // Arrange
         DistrictsResponse expected = UserResponseFixture.withDefaultDistrictsResponse();
-        when(userService.getDistricts(any(), any())).thenReturn(expected);
+        when(userService.getDistricts(any())).thenReturn(expected);
 
         // Act & Assert
         String url = "/api/v1/users/departments/123/dictricts";
         MvcResult result = mockMvc.perform(get(url)
-                        .headers(this.headers)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -289,21 +278,17 @@ class UserControllerTest {
 
         // Arrange
         assertEquals(response, responseExpected);
-        verify(userService).getDistricts(any(), any());
+        verify(userService).getDistricts(any());
     }
 
     @Test
     void whenGetMaritalStatusThenResponseExpected() throws Exception {
         // Assert
-        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
-        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
-
         MaritalStatusResponse expected = UserResponseFixture.withDefaultMaritalStatusResponse();
-        when(userService.getMaritalStatus(any())).thenReturn(expected);
+        when(userService.getMaritalStatus()).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(get("/api/v1/users/marital-statuses")
-                        .headers(this.headers)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -313,23 +298,20 @@ class UserControllerTest {
 
         // Arrange
         assertEquals(response, responseExpected);
-        verify(userService).getMaritalStatus(any());
+        verify(userService).getMaritalStatus();
     }
 
     @Test
     void givenUpdateDataUserRequestWhenUpdateDataUserThenUpdateDataUserResponse() throws Exception {
         // Assert
-        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
-
         GenericResponse expected = GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
         UpdateDataUserRequest request = UserRequestFixture.withDefaultUpdateDataUserRequest();
-        when(userService.updateDataUser(any(), any(), any())).thenReturn(expected);
+        when(userService.updateDataUser(any(), any())).thenReturn(expected);
 
         // Act
         MvcResult result = mockMvc.perform(post(URL_UPDATE_DATA_USER, "123")
                         .accept(MediaType.APPLICATION_JSON_UTF8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .headers(this.headers)
                         .content(Util.objectToString(request)))
 
                 .andExpect(status().isOk())
@@ -340,6 +322,6 @@ class UserControllerTest {
 
         // Arrange
         assertEquals(response, responseExpected);
-        verify(userService).updateDataUser(any(), any(), any());
+        verify(userService).updateDataUser(any(), any());
     }
 }

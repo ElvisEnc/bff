@@ -1,5 +1,6 @@
 package bg.com.bo.bff.application.controllers.v1;
 
+import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
 import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.user.UpdateDataUserRequest;
@@ -13,7 +14,6 @@ import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
 import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
 import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
 import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
-import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.services.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,7 +22,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -44,14 +43,12 @@ import java.io.IOException;
 @Validated
 @RequestMapping("api/v1/users")
 @Tag(name = "User Controller", description = "Controlador de usuario.")
-public class UserController {
+public class UserController extends AbstractBFFController {
     private final IUserService userService;
-    private final HttpServletRequest httpServletRequest;
 
     @Autowired
-    public UserController(IUserService userService, HttpServletRequest httpServletRequest) {
+    public UserController(IUserService userService) {
         this.userService = userService;
-        this.httpServletRequest = httpServletRequest;
     }
 
     @Operation(summary = "Cambio de contraseña de usuario con sesión iniciada.", description = "Cambia la contraseña del usuario solo si tiene la sesión iniciada.")
@@ -63,22 +60,11 @@ public class UserController {
     @PutMapping("/{personId}/change-password")
     public ResponseEntity<GenericResponse> changePassword(
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @Valid @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
-            @Valid @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
-            @Valid @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
-            @Valid @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
-            @Valid @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @Valid @RequestHeader("person-role-id") String personRoleId,
             @Valid @RequestBody ChangePasswordRequest changePasswordRequest
     ) throws IOException {
-        return ResponseEntity.ok(userService.changePassword(personId, personRoleId, changePasswordRequest,
-                Headers.getParameter(httpServletRequest,
-                        deviceId,
-                        deviceName,
-                        geoPositionX,
-                        geoPositionY,
-                        appVersion
-                )));
+        getDeviceDataHeader();
+        return ResponseEntity.ok(userService.changePassword(personId, personRoleId, changePasswordRequest));
     }
 
     @Operation(summary = "Estado de Biometría", description = "Obtiene el estado de la biometría y el tipo")
@@ -88,14 +74,10 @@ public class UserController {
     })
     @GetMapping("/{personId}/biometric")
     public ResponseEntity<BiometricsResponse> getBiometricStatus(
-            @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
-            @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
-            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
-            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
-            @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") Integer personId
     ) throws IOException {
-        return ResponseEntity.ok(userService.getBiometrics(personId, Headers.getParameter(httpServletRequest)));
+        getDeviceDataHeader();
+        return ResponseEntity.ok(userService.getBiometrics(personId));
     }
 
     @Operation(summary = "Actualizar Biometría", description = "Actualiza la biometría y el tipo")
@@ -106,16 +88,12 @@ public class UserController {
     })
     @PutMapping("/{personId}/biometric")
     public ResponseEntity<UpdateBiometricsResponse> updateBiometrics(
-            @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
-            @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
-            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
-            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
-            @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") Integer personId,
             @RequestHeader("json-data") @NotNull(message = "json-data must be not null.") @NotBlank(message = "json-data must be not empty.") @Parameter(description = "Información genérica en formato json encodeado en base64.", example = "50") String jsonData,
             @RequestBody @Valid UpdateBiometricsRequest request
     ) throws IOException {
-        return ResponseEntity.ok(userService.updateBiometrics(personId, request, Headers.getParameter(httpServletRequest)));
+        getDeviceDataHeader();
+        return ResponseEntity.ok(userService.updateBiometrics(personId, request));
     }
 
     @Operation(summary = "Obtener la información de datos de contacto.", description = "Obtiene la información de contacto del Banco Ganadero.")
@@ -136,19 +114,10 @@ public class UserController {
     })
     @GetMapping("/{personId}/info")
     public ResponseEntity<PersonalResponse> getPersonalInformation(
-            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
-            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
-            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
-            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
-            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion
+            @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId
     ) throws IOException {
-        return ResponseEntity.ok(userService.getPersonalInformation(personId, Headers.getParameter(httpServletRequest,
-                deviceId,
-                deviceName,
-                geoPositionX,
-                geoPositionY,
-                appVersion)));
+        getDeviceDataHeader();
+        return ResponseEntity.ok(userService.getPersonalInformation(personId));
     }
 
     @Operation(summary = "Actividad Economica", description = "Obtiene la información de la Actividad Economica")
@@ -158,14 +127,10 @@ public class UserController {
     })
     @GetMapping("/{personId}/economical-activity")
     public ResponseEntity<EconomicActivityResponse> getEconomicActivity(
-            @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
-            @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
-            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
-            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
-            @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") Integer personId
     ) {
-        return ResponseEntity.ok(userService.getEconomicActivity(personId, Headers.getParameter(httpServletRequest)));
+        getDeviceDataHeader();
+        return ResponseEntity.ok(userService.getEconomicActivity(personId));
     }
 
     @Operation(summary = "Obtención del listado de departamentos", description = "Obtiene el listado de los departamentos")
@@ -175,19 +140,9 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/departments")
-    public ResponseEntity<DepartmentsResponse> getDepartments(
-            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
-            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
-            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
-            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
-            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion
-    ) throws IOException {
-        return ResponseEntity.ok(userService.getDepartments(Headers.getParameter(httpServletRequest,
-                deviceId,
-                deviceName,
-                geoPositionX,
-                geoPositionY,
-                appVersion)));
+    public ResponseEntity<DepartmentsResponse> getDepartments() throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(userService.getDepartments());
     }
 
     @Operation(summary = "Obtención del listado de distritos", description = "Obtiene el listado de los distritos")
@@ -198,19 +153,10 @@ public class UserController {
     })
     @GetMapping("/departments/{departmentId}/dictricts")
     public ResponseEntity<DistrictsResponse> getDistricts(
-            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
-            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
-            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
-            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
-            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("departmentId") @NotNull @Parameter(description = "Código del departamento", example = "1") String departmentId
     ) throws IOException {
-        return ResponseEntity.ok(userService.getDistricts(departmentId, Headers.getParameter(httpServletRequest,
-                deviceId,
-                deviceName,
-                geoPositionX,
-                geoPositionY,
-                appVersion)));
+        getDeviceDataHeader();
+        return ResponseEntity.ok(userService.getDistricts(departmentId));
     }
 
     @Operation(summary = "Estados Civiles", description = "Obtiene el listado de los estados civiles")
@@ -220,13 +166,9 @@ public class UserController {
     })
     @GetMapping("/marital-statuses")
     public ResponseEntity<MaritalStatusResponse> getMaritalStatus(
-            @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
-            @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
-            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
-            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
-            @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion
     ) {
-        return ResponseEntity.ok(userService.getMaritalStatus(Headers.getParameter(httpServletRequest)));
+        getDeviceDataHeader();
+        return ResponseEntity.ok(userService.getMaritalStatus());
     }
 
     @Operation(summary = "Modificacions de datos Personales ", description = "Modificacions de datos personales")
@@ -237,19 +179,10 @@ public class UserController {
     })
     @PostMapping("/{personId}/info")
     public ResponseEntity<GenericResponse> updateInfo(
-            @RequestHeader("device-id") @NotBlank @Parameter(description = "deviceId del dispositivo", example = "42ebffbd7c30307d") String deviceId,
-            @RequestHeader("device-name") @Parameter(description = "nombre del dispositivo", example = "ios") String deviceName,
-            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "geoPositionX", example = "12.265656") String geoPositionX,
-            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "geoPositionY", example = "12.454545") String geoPositionY,
-            @RequestHeader("app-version") @NotBlank @Parameter(description = "versión de la App", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") String personId,
             @RequestBody @Valid UpdateDataUserRequest request
     ) throws IOException {
-        return ResponseEntity.ok(userService.updateDataUser(personId, request, Headers.getParameter(httpServletRequest,
-                deviceId,
-                deviceName,
-                geoPositionX,
-                geoPositionY,
-                appVersion)));
+        getDeviceDataHeader();
+        return ResponseEntity.ok(userService.updateDataUser(personId, request));
     }
 }

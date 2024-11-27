@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
+import bg.com.bo.bff.application.dtos.response.registry.BffHandshakeResponse;
 import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.registry.RegistryResponse;
 import bg.com.bo.bff.services.interfaces.IRegistryService;
@@ -14,10 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -45,5 +43,10 @@ public class RegistryController {
     @PostMapping("/device/migration")
     public ResponseEntity<RegistryResponse> registerDeviceByMigration(@Valid @RequestBody RegistryRequest registryRequest) throws NoSuchAlgorithmException {
         return ResponseEntity.ok(registryService.registerByMigration(registryRequest));
+    }
+
+    @GetMapping("/device/handshake")
+    public ResponseEntity<BffHandshakeResponse> handshake() {
+        return ResponseEntity.ok(registryService.handshake());
     }
 }

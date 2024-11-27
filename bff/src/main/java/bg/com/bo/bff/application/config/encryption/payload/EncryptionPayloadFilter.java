@@ -2,21 +2,27 @@ package bg.com.bo.bff.application.config.encryption.payload;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.Constants;
+import bg.com.bo.bff.models.payload.encryption.FirstLayerEncryptionHandlerFactory;
+import bg.com.bo.bff.models.payload.encryption.IFirstLayerEncryptionHandler;
+import bg.com.bo.bff.models.payload.encryption.RequestCompare;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @Order(3)
@@ -31,7 +37,7 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
     @Value("${payload.algorithm}")
     private String payloadAlgorithm;
 
-    private IEncryptionService encryptionService;
+    private final IEncryptionService encryptionService;
 
     private static final Logger logger = LogManager.getLogger(EncryptionPayloadFilter.class.getName());
 
@@ -43,8 +49,9 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            DecryptRequestWrapper decryptRequestWrapper = new DecryptRequestWrapper(request, encryptionService, payloadAlgorithm);
-            EncryptResponseWrapper responseWrapper = new EncryptResponseWrapper(response, encryptionService, decryptRequestWrapper.getEncodeInfo(), payloadAlgorithm);
+            IFirstLayerEncryptionHandler firstLayerEncryptionHandler = FirstLayerEncryptionHandlerFactory.instance(request, encryptionService);
+            DecryptRequestWrapper decryptRequestWrapper = new DecryptRequestWrapper(request, payloadAlgorithm, firstLayerEncryptionHandler);
+            EncryptResponseWrapper responseWrapper = new EncryptResponseWrapper(response, firstLayerEncryptionHandler, payloadAlgorithm);
 
             filterChain.doFilter(decryptRequestWrapper, responseWrapper);
 
@@ -60,7 +67,7 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String eek = request.getHeader(Constants.ENCRYPTION_EXCLUDE_KEY_HEADER);
+        String eek = request.getHeader(Constants.ENCRYPTION_EXCLUDED_KEY_HEADER);
         if (encryptionExcludeKey != null && eek != null
                 && !eek.isBlank() && !encryptionExcludeKey.isBlank()
                 && eek.equals(encryptionExcludeKey))
@@ -73,6 +80,33 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
             if (path.matches(reg))
                 return true;
 
+        for (RequestCompare requestCompare : EncryptionPayloadFilter.getExcludedEncryptionUrls()) {
+            if (request.getMethod().equals(requestCompare.getMethod().name()) && path.matches(requestCompare.getPath()))
+                return true;
+        }
+
         return false;
+    }
+
+    @Getter
+    private static final List<RequestCompare> anonymousEncryptionUrls;
+
+    static {
+        anonymousEncryptionUrls = List.of(
+                new RequestCompare(HttpMethod.POST, "/api/v.*/registry/device/migration"),
+                new RequestCompare(HttpMethod.GET, "/api/v.*/login/validate-device")
+        );
+    }
+
+    @Getter
+    private static final List<RequestCompare> excludedEncryptionUrls;
+
+    static {
+        excludedEncryptionUrls = List.of(
+                new RequestCompare(HttpMethod.GET, "/api/v.*/registry/device/handshake"),
+                new RequestCompare(HttpMethod.GET, "/api/v.*/users/contact"),
+                new RequestCompare(HttpMethod.GET, "/api/v.*/attention-points/points/[0-9]+"),
+                new RequestCompare(HttpMethod.GET, "/api/v.*/attention-points/points/[0-9]+/tickets")
+        );
     }
 }

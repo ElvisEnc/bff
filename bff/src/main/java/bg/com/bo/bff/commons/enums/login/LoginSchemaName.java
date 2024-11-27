@@ -3,6 +3,9 @@ package bg.com.bo.bff.commons.enums.login;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 @Getter
 @AllArgsConstructor
 public enum LoginSchemaName {
@@ -14,4 +17,9 @@ public enum LoginSchemaName {
 
     private final String code;
     private final String name;
+    public static Optional<LoginSchemaName> findByCode(String code) {
+        return Arrays.stream(values())
+                .filter(schema -> schema.code.equals(code))
+                .findFirst();
+    }
 }

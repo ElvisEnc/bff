@@ -256,7 +256,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
             throw ex;
         } catch (Exception e) {
             LOGGER.error(e);
-            throw new GenericException(DefaultMiddlewareError.DEFAULT.getMessage(), DefaultMiddlewareError.DEFAULT.getHttpCode(), DefaultMiddlewareError.DEFAULT.getCode());
+            throw new GenericException(DefaultMiddlewareError.DEFAULT);
         }
     }
 

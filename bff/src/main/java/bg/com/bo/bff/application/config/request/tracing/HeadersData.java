@@ -57,11 +57,7 @@ public class HeadersData {
             Util.validate(headerData);
             return headerData;
         } catch (Exception ex) {
-            throw new GenericException(
-                    ex.getMessage(),
-                    DefaultMiddlewareError.HEADER_DATA.getHttpCode(),
-                    DefaultMiddlewareError.HEADER_DATA.getCode()
-            );
+            throw new GenericException(DefaultMiddlewareError.HEADER_DATA);
         }
     }
 }

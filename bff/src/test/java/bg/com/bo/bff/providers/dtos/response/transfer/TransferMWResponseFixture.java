@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.dtos.response.transfer;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class TransferMWResponseFixture {
     public static TransferMWResponse withDefault() {
@@ -209,6 +210,14 @@ public class TransferMWResponseFixture {
                         .toCurrency("068")
                         .toHolder("bbbbbbbb")
                         .build())
+                .build();
+    }
+
+    public static CryptoMWResponse withDefaultCryptoMWResponse(){
+        return CryptoMWResponse.builder()
+                .code("0")
+                .cryptoName(new ArrayList<String>())
+                .message("Tiene cripto")
                 .build();
     }
 }

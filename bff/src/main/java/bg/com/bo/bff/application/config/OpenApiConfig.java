@@ -51,7 +51,8 @@ public class OpenApiConfig {
                 path.equals("/api/v1/registry/device/migration") ||
                 path.equals("/api/v1/attention-points/points") ||
                 path.equals("/api/v1/attention-points/points/{pointId}") ||
-                path.equals("/api/v1/attention-points/points/{pointId}/tickets");
+                path.equals("/api/v1/attention-points/points/{pointId}/tickets") ||
+                path.equals("/api/v1/registry/device/handshake");
     }
 
     private void addHeaders(Operation operation) {

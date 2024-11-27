@@ -17,23 +17,23 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface IUserService {
-    GenericResponse changePassword(String personId, String personRoleId, ChangePasswordRequest changePasswordRequest, Map<String, String> parameters) throws IOException;
+    GenericResponse changePassword(String personId, String personRoleId, ChangePasswordRequest changePasswordRequest) throws IOException;
 
-    BiometricsResponse getBiometrics(Integer personId, Map<String, String> parameter) throws IOException;
+    BiometricsResponse getBiometrics(Integer personId) throws IOException;
 
-    UpdateBiometricsResponse updateBiometrics(Integer personId, UpdateBiometricsRequest request, Map<String, String> parameter) throws IOException;
+    UpdateBiometricsResponse updateBiometrics(Integer personId, UpdateBiometricsRequest request) throws IOException;
 
     ContactResponse getContactInfo();
 
-    PersonalResponse getPersonalInformation(String personId, Map<String, String> parameter) throws IOException;
+    PersonalResponse getPersonalInformation(String personId) throws IOException;
 
-    EconomicActivityResponse getEconomicActivity(Integer personId, Map<String, String> parameter);
+    EconomicActivityResponse getEconomicActivity(Integer personId);
 
-    DepartmentsResponse getDepartments(Map<String, String> parameter) throws IOException;
+    DepartmentsResponse getDepartments() throws IOException;
 
-    DistrictsResponse getDistricts(String departmentId, Map<String, String> parameter) throws IOException;
+    DistrictsResponse getDistricts(String departmentId) throws IOException;
 
-    MaritalStatusResponse getMaritalStatus(Map<String, String> parameter);
+    MaritalStatusResponse getMaritalStatus();
 
-    GenericResponse updateDataUser(String personId, UpdateDataUserRequest request, Map<String, String> parameter) throws IOException;
+    GenericResponse updateDataUser(String personId, UpdateDataUserRequest request) throws IOException;
 }

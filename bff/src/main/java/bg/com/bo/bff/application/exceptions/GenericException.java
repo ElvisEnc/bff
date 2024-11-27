@@ -29,6 +29,14 @@ public class GenericException extends RuntimeException {
         fillTrace();
     }
 
+    public GenericException(String description, String title) {
+        super(description);
+        this.status = HttpStatus.NOT_ACCEPTABLE;
+        this.code = AppError.DEFAULT.getCode();
+        this.title = title;
+        fillTrace();
+    }
+
     public GenericException(String description, HttpStatus status) {
         super(description);
         this.status = status;

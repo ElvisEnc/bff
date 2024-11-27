@@ -68,4 +68,10 @@ public class CipherUtils {
     public static String encodeKeyToBase64(Key key) {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
+
+    public static KeyPair createKeys(EncryptionAlgorithm encryptionAlgorithm) throws NoSuchAlgorithmException {
+        KeyPairGenerator generator = KeyPairGenerator.getInstance(encryptionAlgorithm.getCode());
+        generator.initialize(encryptionAlgorithm.getKeySize());
+        return generator.generateKeyPair();
+    }
 }

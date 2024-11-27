@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum AchAccountMiddlewareError implements IMiddlewareError {
+    MDWPGL_400(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWPGL-400", "Error en los datos", "Datos inválidos"),
     MDWHDR_01(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWHDR-01", "Invalid Header channel", "Parámetros inválidos"),
     MDWHDR_02(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWHDR-02", "Channel not implemented yet", "Canal no implementado"),
     MDWAAM002(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWAAM002", "Datos Invalidos", "Datos invalidos"),
@@ -17,6 +18,7 @@ public enum AchAccountMiddlewareError implements IMiddlewareError {
     MDWAAM_0004(HttpStatus.BAD_REQUEST, "NOT_FOUND", "MDWAAM-0004", "El tipo de cuenta es inválida.", "Cuenta inválida"),
     MDWAAM_0005(HttpStatus.BAD_REQUEST, "NOT_FOUND", "MDWAAM-0005", "El tipo de oficina es inválido.", "Cuenta inválida"),
     MDWAAM_0006(HttpStatus.BAD_REQUEST, "NOT_FOUND", "MDWAAM-0006", "La entidad financiera de destino es inválida.", "Cuenta inválida"),
+    MDWAAM_001(HttpStatus.BAD_REQUEST, "NOT_FOUND", "MDWAAM-001", "No se encontraron registros.", "Datos no encontrados"),
     MDWAAM_002(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWAAM-002", "La cuenta ya se encuentra registrada.", "Cuenta registrada"),
     MDWAAM_004(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "MDWAAM-004", "No tiene datos", "Datos no encontrados"),
     MDWAAM_006(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWAAM-006", "Params must be the same for CHANNEL 2", "Error de parámetros"),

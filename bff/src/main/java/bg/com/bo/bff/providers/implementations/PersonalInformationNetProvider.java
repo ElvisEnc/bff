@@ -56,7 +56,7 @@ public class PersonalInformationNetProvider implements IPersonalInformationNetPr
     }
 
     @Override
-    public PersonalInformationNetResponse getPersonalInformation(ApiPersonalInformationNetRequest request, Map<String, String> parameters) throws IOException {
+    public PersonalInformationNetResponse getPersonalInformation(ApiPersonalInformationNetRequest request) throws IOException {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String path = urlProviderPersonalInformationNet + "/obtenerDatosClienteGanaSueldo";
             String jsonMapper = Util.objectToString(request);
@@ -128,7 +128,7 @@ public class PersonalInformationNetProvider implements IPersonalInformationNetPr
     }
 
     @Override
-    public DistrictsNetResponse getDistricts(DistrictsNetRequest request, Map<String, String> parameter) throws IOException {
+    public DistrictsNetResponse getDistricts(DistrictsNetRequest request) throws IOException {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String path = urlProviderPersonalInformationNet + URL_GET_DISTRICTS;
             String jsonMapper = Util.objectToString(request);
@@ -179,7 +179,7 @@ public class PersonalInformationNetProvider implements IPersonalInformationNetPr
     }
 
     @Override
-    public PersonalUpdateNetResponse updatePersonalInformation(UpdatePersonalInformationNetRequest request, Map<String, String> parameter) throws IOException {
+    public PersonalUpdateNetResponse updatePersonalInformation(UpdatePersonalInformationNetRequest request) throws IOException {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             String path = urlProviderPersonalInformationNet + UPDATE_PERSONAL_INFORMATION;
             String jsonMapper = Util.objectToString(request);

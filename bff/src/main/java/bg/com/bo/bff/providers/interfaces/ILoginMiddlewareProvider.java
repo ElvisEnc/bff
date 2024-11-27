@@ -1,36 +1,31 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
-import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
-import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
-import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.user.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
-import bg.com.bo.bff.application.dtos.response.login.LoginValidationServiceResponse;
-import bg.com.bo.bff.providers.dtos.request.login.mw.LogoutMWRequest;
-import bg.com.bo.bff.providers.dtos.response.login.mw.BiometricStatusMWResponse;
-import bg.com.bo.bff.providers.dtos.response.login.mw.DeviceEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.login.mw.LoginFactorData;
-import bg.com.bo.bff.providers.dtos.response.login.mw.LoginFactorMWResponse;
+import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
+import bg.com.bo.bff.providers.dtos.request.login.mw.*;
+import bg.com.bo.bff.providers.dtos.response.encryption.UserEncryptionKeys;
+import bg.com.bo.bff.providers.dtos.response.login.mw.*;
 
 import java.io.IOException;
-import java.util.Map;
 
 public interface ILoginMiddlewareProvider {
 
-    LoginFactorMWResponse validateFactorUser(LoginRequest loginRequest, Map<String, String> parameters) throws IOException;
+    LoginFactorMWResponse validateFactorUser(LoginFactorMWRequest loginRequest) throws IOException;
 
-    LoginValidationServiceResponse validateCredentials(LoginRequest loginRequest, LoginFactorData data, Map<String, String> parameters) throws IOException;
+    LoginCredentialMWResponse validateCredentials(LoginCredentialMWRequest loginRequest) throws IOException;
 
-    GenericResponse logout(String deviceId, String deviceIp, String deviceName, String geoPositionX, String geoPositionY, String appVersion, LogoutMWRequest logoutMWRequest) throws IOException;
+    LogoutMWResponse logout(LogoutMWRequest logoutMWRequest) throws IOException;
 
-    GenericResponse changePassword(String personId, String personRoleId, ChangePasswordRequest changePasswordRequest, Map<String, String> parameters) throws IOException;
+    ChangePasswordMWResponse changePassword(ChangePasswordMWRequest mwRequest) throws IOException;
 
     ContactResponse getContactInfo();
 
-    DeviceEnrollmentMWResponse makeValidateDevice(Map<String, String> parameter) throws IOException;
+    DeviceEnrollmentMWResponse makeValidateDevice() throws IOException;
 
-    BiometricStatusMWResponse getBiometricsMW(Integer personId, Map<String, String> parameter) throws IOException;
+    BiometricStatusMWResponse getBiometricsMW(Integer personId) throws IOException;
 
-    UpdateBiometricsResponse updateBiometricsMW(Integer personId, UpdateBiometricsRequest request, Map<String, String> parameter) throws IOException;
+    UpdateBiometricsResponse updateBiometricsMW(Integer personId, UpdateBiometricsMWRequest request) throws IOException;
+
+    UserEncryptionKeys getEncryptionKeys(EncryptInfo encodeInfo) throws IOException;
 }

@@ -6,23 +6,22 @@ import bg.com.bo.bff.providers.dtos.response.jwt.JwtPayload;
 import bg.com.bo.bff.providers.dtos.response.jwt.JwtRefresh;
 import bg.com.bo.bff.providers.dtos.response.jwt.keycloak.CreateTokenServiceResponse;
 import bg.com.bo.bff.providers.dtos.response.login.mw.DeviceEnrollmentMWResponse;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class LoginResponseFixture {
     public static LoginValidationServiceResponse withDefaultLoginValidationServiceResponse() {
-        LoginValidationServiceResponse response = new LoginValidationServiceResponse();
-        response.setStatusCode("12345");
-        response.setPersonId("123456");
-        response.setUserDeviceId("12345");
-        response.setRolePersonId("12345");
-        response.setLastConnectionDate("12345");
-        response.setKeyChange(false);
-        response.setKeyChangeMessage("12345");
-        return response;
+        return LoginValidationServiceResponse.builder()
+                .statusCode("12345")
+                .personId("123456")
+                .userDeviceId("12345")
+                .rolePersonId("12345")
+                .name("Jorge")
+                .fullName("Jorge Gonzales")
+                .lastConnectionDate("12345")
+                .keyChange(false)
+                .keyChangeMessage("12345")
+                .build();
     }
 
     public static JwtRefresh withDefaultJwtRefresh() {
@@ -86,5 +85,71 @@ public class LoginResponseFixture {
         DeviceEnrollmentMWResponse deviceEnrollmentMWResponse = new DeviceEnrollmentMWResponse();
         deviceEnrollmentMWResponse.setStatusCode("NOT_ENROLLED");
         return deviceEnrollmentMWResponse;
+    }
+
+    public static LoginResponse withDefaultLoginResponse() {
+        return LoginResponse.builder()
+                .accessToken("eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJRSmc5dDcxWDI0VVk2QXhJR09USTdHdVp0YS1aa2s3N0dNRlpIbm56U2NZIn0")
+                .refreshToken("eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5MjcyNjQ3ZS0wMGM4LTRhYTYtODljOC02NTBjMWQ2ZGVmYjMifQ")
+                .expiresIn(600)
+                .refreshExpiresIn(1800)
+                .userData(
+                        UserDataResponse.builder()
+                                .userDeviceId("4804")
+                                .rolePersonId("149688")
+                                .name("ALVARO")
+                                .personId("123456")
+                                .fullName("ALVARO GUTIERREZ")
+                                .build()
+                )
+                .lastConnectionDate("13/11/2024 16:42:31")
+                .keyChange(false)
+                .keyChangeMessage("Sugerencia de Cambio de Clave")
+                .build();
+    }
+
+    public static LoginResult withDefaultLoginResult() {
+        return LoginResult.builder()
+                .personId("123456")
+                .userDeviceId("123321")
+                .rolePersonId("654321")
+                .name("Jorge")
+                .fullName("Jorge Perez")
+                .lastConnectionDate("29/10/2024 15:35:53")
+                .keyChange(false)
+                .keyChangeMessage("Sugerencia de Cambio de Clave")
+                .tokenData(TokenData.builder()
+                        .accessToken("eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJRSmc5dDcxWDI0VVk2QXhJR09USTdHdVp0YS1aa2s3N0dNRlpIbm56U2NZIn0")
+                        .refreshToken("eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5MjcyNjQ3ZS0wMGM4LTRhYTYtODljOC02NTBjMWQ2ZGVmYjMifQ")
+                        .expiresIn(600)
+                        .refreshExpiresIn(1800)
+                        .build())
+                .statusCode(LoginResult.StatusCode.valueOf("SUCCESS"))
+                .build();
+    }
+
+    public static DeviceEnrollmentResponse withDefaultDeviceEnrollmentResponse() {
+        return DeviceEnrollmentResponse.builder()
+                .personId("123456")
+                .statusCode(1)
+                .build();
+    }
+
+    public static TokenDataResponse withDefaultTokenDataResponse() {
+        return TokenDataResponse.builder()
+                .accessToken("eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJRSmc5dDcxWDI0VVk2QXhJR09USTdHdVp0YS1aa2s3N0dNRlpIbm56U2NZIn0")
+                .refreshToken("eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5MjcyNjQ3ZS0wMGM4LTRhYTYtODljOC02NTBjMWQ2ZGVmYjMifQ")
+                .expiresIn(600)
+                .refreshExpiresIn(1800)
+                .build();
+    }
+
+    public static TokenData withDefaultTokenData() {
+        return TokenData.builder()
+                .accessToken("eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJRSmc5dDcxWDI0VVk2QXhJR09USTdHdVp0YS1aa2s3N0dNRlpIbm56U2NZIn0")
+                .refreshToken("eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5MjcyNjQ3ZS0wMGM4LTRhYTYtODljOC02NTBjMWQ2ZGVmYjMifQ")
+                .expiresIn(600)
+                .refreshExpiresIn(1800)
+                .build();
     }
 }

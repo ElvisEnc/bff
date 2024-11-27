@@ -2,14 +2,12 @@ package bg.com.bo.bff.application.config.encryption.payload;
 
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.constants.Constants;
-import bg.com.bo.bff.commons.enums.config.provider.EncryptionAlgorithm;
-import bg.com.bo.bff.commons.utils.CipherUtils;
+import bg.com.bo.bff.models.payload.encryption.IFirstLayerEncryptionHandler;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.payload.encryption.AesPayloadResolver;
 import bg.com.bo.bff.models.payload.encryption.EncryptionPayload;
 import bg.com.bo.bff.models.payload.encryption.EncryptionPayloadResult;
 import bg.com.bo.bff.models.payload.encryption.PayloadKey;
-import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
@@ -27,23 +25,20 @@ import java.security.*;
 import java.util.Base64;
 
 public class EncryptResponseWrapper extends HttpServletResponseWrapper {
-    private final IEncryptionService encryptionService;
-
     private final ByteArrayOutputStream capture;
     private ServletOutputStream output;
     private PrintWriter writer;
 
     @lombok.Getter
     private String content;
-    private final EncryptInfo encodeInfo;
+    private final IFirstLayerEncryptionHandler firstLayerEncryptionHandler;
     private SecretKey secretKey;
     private IvParameterSpec iv;
     private final String payloadAlgorithm;
 
-    public EncryptResponseWrapper(HttpServletResponse response, IEncryptionService encryptionService, EncryptInfo encodeInfo, String payloadAlgorithm) {
+    public EncryptResponseWrapper(HttpServletResponse response, IFirstLayerEncryptionHandler firstLayerEncryptionHandler, String payloadAlgorithm) {
         super(response);
-        this.encodeInfo = encodeInfo;
-        this.encryptionService = encryptionService;
+        this.firstLayerEncryptionHandler = firstLayerEncryptionHandler;
         this.capture = new ByteArrayOutputStream(response.getBufferSize());
         this.payloadAlgorithm = payloadAlgorithm;
     }
@@ -129,19 +124,11 @@ public class EncryptResponseWrapper extends HttpServletResponseWrapper {
 
     /**
      * Setea la clave de encriptacion AES del payload, encriptada a su vez con RSA. Modifica tambien el content type y el content length resultante de la encriptacion del body original.
-     *
-     * @throws IOException
-     * @throws InvalidAlgorithmParameterException
-     * @throws NoSuchPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws NoSuchAlgorithmException
-     * @throws BadPaddingException
-     * @throws InvalidKeyException
      */
-    private void setEncryptionHeadersData() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    private void setEncryptionHeadersData() {
         this.setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         this.setHeader("Content-Length", String.valueOf(Util.getEncodedBytes(content).length));
-        this.setHeader(Constants.SESSION_ENCRYPTED_KEY_HEADER, this.encryptKeyHeader());
+        this.setHeader(Constants.SESSION_ENCRYPT_KEY_HEADER, this.encryptKeyHeader());
     }
 
     /**
@@ -171,21 +158,13 @@ public class EncryptResponseWrapper extends HttpServletResponseWrapper {
      * Encripta con RSA los datos necesarios para la desencriptacion del payload.
      *
      * @return
-     * @throws IOException
-     * @throws NoSuchPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws NoSuchAlgorithmException
-     * @throws BadPaddingException
-     * @throws InvalidKeyException
      */
-    private String encryptKeyHeader() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        PublicKey publicKey = this.encryptionService.getUserPublicKey(encodeInfo);
-
+    private String encryptKeyHeader() {
         PayloadKey payloadKey = PayloadKey.builder()
                 .secret(Base64.getEncoder().encodeToString(secretKey.getEncoded()))
                 .iv(Base64.getEncoder().encodeToString(iv.getIV()))
                 .build();
 
-        return CipherUtils.encrypt(EncryptionAlgorithm.RSA, Util.objectToString(payloadKey), publicKey);
+        return firstLayerEncryptionHandler.encrypt(payloadKey);
     }
 }

@@ -1,10 +1,12 @@
 package bg.com.bo.bff.application.dtos.response.login;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @lombok.Data
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class LoginResult {
     private String personId;

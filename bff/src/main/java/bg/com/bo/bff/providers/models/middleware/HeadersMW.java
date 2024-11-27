@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.config.request.tracing.HeadersData;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.utils.Headers;
+import bg.com.bo.bff.commons.utils.Util;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,29 @@ public enum HeadersMW {
     KONG_REQUEST_ID("X-Kong-Request-Id");
 
     private final String name;
+
+    private static String decodeBase64(String encodedValue) {
+        try {
+            return new String(Base64.getDecoder().decode(encodedValue));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid Base64 encoding in json-data header", e);
+        }
+    }
+
+    public static Header[] addSpecificHeaders(Header[] headers, HttpServletRequest request, Set<String> keyHeaders) {
+        List<Header> allHeaders = headers != null ? new ArrayList<>(Arrays.asList(headers)) : new ArrayList<>();
+        keyHeaders.forEach(key -> {
+            String headerValue = request.getHeader(key);
+            if (headerValue != null) {
+                if (DeviceMW.JSON_DATA.getCode().equalsIgnoreCase(key)) {
+                    headerValue = Util.decodeBase64ToString(headerValue);
+                }
+                allHeaders.add(new BasicHeader(key, headerValue));
+            }
+        });
+
+        return allHeaders.toArray(new Header[0]);
+    }
 
     public static Header[] getMWIdentificationChannelHeaders() {
         return new Header[]{

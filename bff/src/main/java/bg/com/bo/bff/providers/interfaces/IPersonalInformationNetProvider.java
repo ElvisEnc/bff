@@ -13,13 +13,13 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface IPersonalInformationNetProvider {
-    PersonalInformationNetResponse getPersonalInformation(ApiPersonalInformationNetRequest request, Map<String, String> parameters) throws IOException;
+    PersonalInformationNetResponse getPersonalInformation(ApiPersonalInformationNetRequest request) throws IOException;
 
     EconomicActivityResponse getEconomicalActivity(Integer personId);
 
-    DistrictsNetResponse getDistricts(DistrictsNetRequest request, Map<String, String> parameter) throws IOException;
+    DistrictsNetResponse getDistricts(DistrictsNetRequest request) throws IOException;
 
     MaritalStatusResponse getMaritalStatuses();
 
-    PersonalUpdateNetResponse updatePersonalInformation(UpdatePersonalInformationNetRequest request, Map<String, String> parameter) throws IOException;
+    PersonalUpdateNetResponse updatePersonalInformation(UpdatePersonalInformationNetRequest request) throws IOException;
 }

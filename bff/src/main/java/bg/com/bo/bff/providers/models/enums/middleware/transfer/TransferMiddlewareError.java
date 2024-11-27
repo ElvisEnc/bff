@@ -61,7 +61,8 @@ public enum TransferMiddlewareError implements IMiddlewareError {
     MDWTRM_059(HttpStatus.NOT_ACCEPTABLE, "INVALID_DATA", "MDWTRM-059", "No se pudo validar la transacción PCC01.","Ocurrió un problema"),
     MDWTRM_063(HttpStatus.NOT_ACCEPTABLE, "INVALID_DATA", "MDWTRM-063", "La cuenta de destino es inválida.","Ocurrió un problema"),
     MDWPGL_400(HttpStatus.BAD_REQUEST, "INVALID_DATA", "MDWPGL-400", "Los parámetros enviados son inválidos.","Datos inválidos"),
-    MDWTRM_PENDING(HttpStatus.OK, "TRANSFER_PENDING", "MDWPGL-PENDING", "Se requiere la autorización de otro firmante para completar la transacción.","Transacción pendiente");
+    MDWTRM_PENDING(HttpStatus.OK, "TRANSFER_PENDING", "MDWPGL-PENDING", "Se requiere la autorización de otro firmante para completar la transacción.","Transacción pendiente"),
+    MDWTRM_CRYPTO(HttpStatus.CONFLICT, "CRYPTO_FOUND", null, "Estimado Cliente: las plataformas transaccionales y la compraventa de Activos Virtuales no está bajo control, supervisión ni regulación de ASFI. Estas transacciones son a riesgo del cliente. Gracias.","Transacción no permitida");
 
     private final HttpStatus httpCode;
     private final String code;

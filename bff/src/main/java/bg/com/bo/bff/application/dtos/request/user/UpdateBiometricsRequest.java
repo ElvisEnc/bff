@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateBiometricsRequest {
-    @NotNull
-    @Schema(example = "true", description = "nuevo estado de la biometría")
+    @NotNull(message = "El estado de la biometría no puede ser nulo")
+    @Schema(example = "true", description = "Nuevo estado de la biometría")
     private Boolean status;
 
     @NotNull

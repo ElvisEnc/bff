@@ -7,18 +7,18 @@ public class LoginMWRequestFixture {
 
     public static ChangePasswordMWRequest withDefaultChangePasswordMWRequest() {
         ChangePasswordMWRequest request = new ChangePasswordMWRequest();
-        request.setPreviousPassword("1233");
-        request.setNewPassword("1234");
+        request.setPreviousPassword("1234");
+        request.setNewPassword("1234567A");
         request.setOwnerAccount(withDefaultMWOwnerAccountRequest());
         return request;
     }
 
     public static MWOwnerAccountRequest withDefaultMWOwnerAccountRequest() {
-        MWOwnerAccountRequest ownerAccountRequest = new MWOwnerAccountRequest();
-        ownerAccountRequest.setPersonId("123");
-        ownerAccountRequest.setPersonRoleId("123");
-        ownerAccountRequest.setUserDeviceId("123");
-        return ownerAccountRequest;
+        return MWOwnerAccountRequest.builder()
+                .personRoleId("123")
+                .personId("123")
+                .userDeviceId("123")
+                .build();
     }
 
     public static UpdateBiometricsMWRequest withDefaultUpdateBiometricsMWRequest() {
@@ -47,4 +47,10 @@ public class LoginMWRequestFixture {
                 .build();
     }
 
+    public static LoginFactorMWRequest withDefaultLoginFactorMWRequest() {
+        return LoginFactorMWRequest.builder()
+                .factor("12345")
+                .codeTypeAuthentication("2")
+                .build();
+    }
 }

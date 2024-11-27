@@ -6,10 +6,12 @@ import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Response;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.request.transfer.CryptoMWRequest;
 import bg.com.bo.bff.providers.dtos.request.transfer.Pcc01MWRequest;
 import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequest;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AddAccountMWResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
+import bg.com.bo.bff.providers.dtos.response.transfer.CryptoMWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfer.Pcc01MWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfer.TransferWalletMWResponse;
@@ -52,6 +54,13 @@ public class TransferMiddlewareProvider extends MiddlewareProvider<TransferMiddl
     public TransferWalletMWResponse transferWalletAccount(TransferMWRequest request, Map<String, String> parameters) throws IOException {
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + TransferMiddlewareServices.TRANSFER_TO_WALLET_ACCOUNT.getServiceURL();
         return post(url, HeadersMW.getDefaultHeaders(parameters), request, TransferWalletMWResponse.class);
+    }
+
+    @Override
+    public CryptoMWResponse validateCrypto(CryptoMWRequest request, Map<String, String> parameters) throws IOException {
+        String url = middlewareConfig.getUrlBase() + ProjectNameMW.TRANSFER_MANAGER.getName() + TransferMiddlewareServices.VALIDATE_CRYPTO.getServiceURL();
+        ApiDataResponse<CryptoMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(parameters), request, ApiDataResponse.class);
+        return Util.stringToObject(Util.objectToString(mwResponse.getData()), CryptoMWResponse.class);
     }
 }
 

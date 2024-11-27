@@ -65,7 +65,7 @@ class ApiFaceNetProviderTest {
                 .willReturn(okJson(jsonResponse)));
 
         // Act
-        DepartmentsNetResponse response = apiFaceNetProvider.getDepartments(map);
+        DepartmentsNetResponse response = apiFaceNetProvider.getDepartments();
 
         // Assert
         assertNotNull(response);
@@ -85,7 +85,7 @@ class ApiFaceNetProviderTest {
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
-            apiFaceNetProvider.getDepartments(map);
+            apiFaceNetProvider.getDepartments();
         });
 
         // Assert
@@ -100,7 +100,7 @@ class ApiFaceNetProviderTest {
 
         // Act
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            apiFaceNetProvider.getDepartments(map);
+            apiFaceNetProvider.getDepartments();
         });
 
         // Assert

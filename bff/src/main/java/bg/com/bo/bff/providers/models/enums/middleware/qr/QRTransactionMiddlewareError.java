@@ -52,6 +52,7 @@ public enum QRTransactionMiddlewareError implements IMiddlewareError {
     MDWQTM_040(HttpStatus.BAD_REQUEST, "QR_HAS_BEEN_USED", "MDWQTM-040", "El código QR ya ha sido utilizado.", "Código QR utilizado"),
     MDWQTM_041(HttpStatus.BAD_REQUEST, "ERROR_DATA_ACCOUNT_DESTINY", "MDWQTM-041", "Número de cuenta inválido de destino.", "Error en cuenta de destino"),
     MDWQTM_042(HttpStatus.BAD_REQUEST, "DIFFERENT_AMOUNT", "MDWQTM-042", "El monto de la transacción es diferente al monto requerido.", "Monto de transacción diferente"),
+    MDWQTM_043(HttpStatus.CONFLICT, "CHECK_TRANSFER", "MDWQTM-043", "Verifica si la transacción fue satisfactoria, revisa tu extracto.", "Tiempo excedido"),
     MDWGQM_PENDING(HttpStatus.OK, "TRANSFER_PENDING", "MDWPGL-PENDING", "Se requiere la autorización de otro firmante para completar la transacción.", "Transacción pendiente");
 
     private final HttpStatus httpCode;

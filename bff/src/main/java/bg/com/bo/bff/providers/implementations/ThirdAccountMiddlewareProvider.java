@@ -39,7 +39,7 @@ public class ThirdAccountMiddlewareProvider extends MiddlewareProvider<ThirdAcco
 
     @Override
     public ValidateAccountResponse validateAccount(String accountNumber, String clientName, Map<String, String> parameters) throws IOException {
-        String url = baseUrl + String.format(ThirdAccountMiddlewareServices.VALIDATE_NEW_ACCOUNT.getServiceURL(), accountNumber, clientName);
+        String url = baseUrl + String.format(ThirdAccountMiddlewareServices.VALIDATE_NEW_ACCOUNT.getServiceURL(), accountNumber, Util.encodeUrl(clientName));
         return get(url, HeadersMW.getDefaultHeaders(parameters), ValidateAccountResponse.class);
     }
 

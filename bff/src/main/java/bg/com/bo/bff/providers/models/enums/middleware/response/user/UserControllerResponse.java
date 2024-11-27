@@ -7,8 +7,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum UserControllerResponse implements IGenericControllerResponse {
-    SUCCESS("SUCCESS", "La contraseña se cambió exitosamente.");
+    SUCCESS("SUCCESS", "La contraseña se cambió exitosamente.", "Cambio contraseña");
 
     private final String code;
     private final String message;
+    private final String title;
 }

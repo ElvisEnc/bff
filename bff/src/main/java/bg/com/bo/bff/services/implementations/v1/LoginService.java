@@ -6,12 +6,15 @@ import bg.com.bo.bff.application.dtos.request.login.RefreshSessionRequest;
 import bg.com.bo.bff.application.dtos.response.login.*;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.enums.config.provider.AppError;
-import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.enums.login.LoginSchemaName;
-import bg.com.bo.bff.providers.models.enums.middleware.response.GenericControllerErrorResponse;
-import bg.com.bo.bff.providers.models.enums.middleware.response.RefreshControllerErrorResponse;
+import bg.com.bo.bff.mappings.application.LoginMapper;
+import bg.com.bo.bff.mappings.providers.login.ILoginMapper;
+import bg.com.bo.bff.providers.dtos.request.login.mw.LoginCredentialMWRequest;
+import bg.com.bo.bff.providers.dtos.request.login.mw.LoginFactorMWRequest;
+import bg.com.bo.bff.providers.dtos.response.login.mw.LogoutMWResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.login.LoginMiddlewareError;
+import bg.com.bo.bff.providers.models.enums.middleware.login.LoginMiddlewareResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.services.LoginServiceMapper;
 import bg.com.bo.bff.commons.enums.user.UserRole;
@@ -24,88 +27,111 @@ import bg.com.bo.bff.providers.dtos.response.login.mw.LoginFactorData;
 import bg.com.bo.bff.providers.dtos.response.login.mw.LoginFactorMWResponse;
 import bg.com.bo.bff.providers.interfaces.IJwtProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import bg.com.bo.bff.services.interfaces.ILoginServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class LoginService implements ILoginServices {
     private final ILoginMiddlewareProvider provider;
+    private final LoginMapper loginMapper;
+    private final ILoginMapper mapper;
     private final IJwtProvider jwtService;
     private final LoginServiceMapper loginServiceMapper;
 
     @Autowired
-    public LoginService(ILoginMiddlewareProvider provider, IJwtProvider jwtService, LoginServiceMapper loginMapper) {
+    public LoginService(ILoginMiddlewareProvider provider, LoginMapper loginMapper, IJwtProvider jwtService, LoginServiceMapper loginServiceMapper, ILoginMapper mapper) {
         this.provider = provider;
+        this.loginMapper = loginMapper;
         this.jwtService = jwtService;
-        this.loginServiceMapper = loginMapper;
+        this.loginServiceMapper = loginServiceMapper;
+        this.mapper = mapper;
     }
 
     @Override
-    public LoginResult login(LoginRequest loginRequest, Map<String, String> parameters) throws IOException {
+    public LoginResponse login(LoginRequest loginRequest) throws IOException {
+        LoginFactorMWRequest loginMWRequest = LoginFactorMWRequest.builder()
+                .codeTypeAuthentication(loginRequest.getType())
+                .factor(loginRequest.getUser())
+                .build();
+
         String sid = UUID.randomUUID().toString();
-
         String factorId = loginRequest.getType();
-        String loginPerson = LoginSchemaName.PERSON_ID_LOGIN.getCode();
-        String loginFinger = LoginSchemaName.FINGERPRINT_BIOMETRICS.getCode();
-        String loginFacial = LoginSchemaName.FACIAL_BIOMETRICS.getCode();
+        LoginSchemaName schema = LoginSchemaName.findByCode(factorId)
+                .orElseThrow(() -> new GenericException(LoginMiddlewareError.INVALID_AUTH_TYPE));
 
-        if (Objects.equals(factorId, loginFinger) || Objects.equals(factorId, loginFacial)) {
-            if (Util.isStringNullOrEmpty(loginRequest.getTokenBiometric())) {
-                throw new GenericException("Token Biometrico no debe estar vacío", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
-            }
-        } else if (Util.isStringNullOrEmpty(loginRequest.getPassword())) {
-            throw new GenericException("Password no debe estar vacío", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
-        }
-        decodeJsonData(parameters);
+        validateCredentials(schema, loginRequest);
         encryptPassword(loginRequest);
-        LoginValidationServiceResponse loginValidation;
-        String user = loginRequest.getUser();
-        if (Objects.equals(factorId, loginPerson) || Objects.equals(factorId, loginFinger) || Objects.equals(factorId, loginFacial)) {
-            validateNumber(user);
-            LoginFactorData data = new LoginFactorData();
-            data.setPersonId(user);
-            loginValidation = provider.validateCredentials(loginRequest, data, parameters);
-        } else {
-            if (Objects.equals(factorId, LoginSchemaName.DNI_LOGIN.getCode()))
-                validateNumber(user);
-            LoginFactorMWResponse loginMWFactorResponse = provider.validateFactorUser(loginRequest, parameters);
-            loginValidation = provider.validateCredentials(loginRequest, loginMWFactorResponse.getData(), parameters);
+        LoginValidationServiceResponse loginValidation = processLoginValidation(schema, loginRequest, loginMWRequest);
+        CreateTokenServiceResponse createToken = jwtService.generateToken(loginValidation.getPersonId(), sid, UserRole.LOGGED_USER);
+        return handleTokenResponse(createToken, loginValidation);
+    }
+
+    private void validateCredentials(LoginSchemaName factorId, LoginRequest loginRequest) {
+        EnumSet<LoginSchemaName> passwordRequiredFactors = EnumSet.of(
+                LoginSchemaName.PERSON_ID_LOGIN,
+                LoginSchemaName.DNI_LOGIN,
+                LoginSchemaName.ID_LOGIN
+        );
+        EnumSet<LoginSchemaName> biometricRequiredFactors = EnumSet.of(
+                LoginSchemaName.FINGERPRINT_BIOMETRICS,
+                LoginSchemaName.FACIAL_BIOMETRICS
+        );
+
+        if (passwordRequiredFactors.contains(factorId) && Util.isStringNullOrEmpty(loginRequest.getPassword())) {
+            throw new GenericException(LoginMiddlewareError.PASSWORD_BLANK);
         }
 
-        CreateTokenServiceResponse createToken = jwtService.generateToken(loginValidation.getPersonId(), sid, UserRole.LOGGED_USER);
+        if (biometricRequiredFactors.contains(factorId) && Util.isStringNullOrEmpty(loginRequest.getTokenBiometric())) {
+            throw new GenericException(LoginMiddlewareError.BIOMETRIC_TOKEN);
+        }
+    }
 
+    private LoginValidationServiceResponse processLoginValidation(LoginSchemaName factorId, LoginRequest loginRequest, LoginFactorMWRequest loginMWRequest) throws IOException {
+        LoginValidationServiceResponse loginValidation;
+        LoginFactorData data = new LoginFactorData();
+        LoginCredentialMWRequest request;
+
+        if (EnumSet.of(LoginSchemaName.FINGERPRINT_BIOMETRICS, LoginSchemaName.FACIAL_BIOMETRICS).contains(factorId)) {
+            loginRequest.setPassword(null);
+        }
+
+        if (EnumSet.of(LoginSchemaName.PERSON_ID_LOGIN, LoginSchemaName.FINGERPRINT_BIOMETRICS, LoginSchemaName.FACIAL_BIOMETRICS).contains(factorId)) {
+            data.setPersonId(loginRequest.getUser());
+            request = mapper.mapperRequest(loginRequest, data);
+            loginValidation = mapper.convertResponse(data, provider.validateCredentials(request));
+        } else {
+            LoginFactorMWResponse loginMWFactorResponse = provider.validateFactorUser(loginMWRequest);
+            request = mapper.mapperRequest(loginRequest, loginMWFactorResponse.getData());
+            loginValidation = mapper.convertResponse(loginMWFactorResponse.getData(), provider.validateCredentials(request));
+        }
+
+        return loginValidation;
+    }
+
+    private LoginResponse handleTokenResponse(CreateTokenServiceResponse createToken, LoginValidationServiceResponse loginValidation) {
         return switch (createToken.getStatusCode()) {
-            case SUCCESS -> loginServiceMapper.convert(createToken, loginValidation, LoginResult.StatusCode.SUCCESS);
+            case SUCCESS -> {
+                LoginResult loginResult = loginServiceMapper.convert(createToken, loginValidation, LoginResult.StatusCode.SUCCESS);
+                yield loginMapper.convert(loginResult);
+            }
             case INVALID_DATA ->
-                    throw new GenericException(String.format("Estado no valido para Login. %s", createToken.getStatusCode()), AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
-            default -> throw new GenericException();
+                    throw new GenericException(String.format("Estado no valido para Login. %s", createToken.getStatusCode()),
+                            AppError.BAD_REQUEST.getHttpCode(),
+                            AppError.BAD_REQUEST.getCode(),
+                            "Datos inválidos");
+            default -> throw new GenericException("Unexpected error during login");
         };
     }
 
-    private void decodeJsonData(Map<String, String> parameters) {
-        String jsonDataName = DeviceMW.JSON_DATA.getCode();
-        if (!parameters.containsKey(jsonDataName)) {
-            throw new GenericException("El header json-data es requerido", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
-        }
-        String data = Util.decodeBase64ToString(parameters.get(jsonDataName));
-        parameters.put(jsonDataName, data);
-    }
-
     private void encryptPassword(LoginRequest loginRequest) {
-        String encrypted = Util.encodeSha512(loginRequest.getPassword());
-        loginRequest.setPassword(encrypted);
-    }
-
-    private void validateNumber(String user) {
-        if (!user.matches("\\d+")) {
-            throw new GenericException("Se espera solo números en User", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode());
+        if (!loginRequest.getPassword().isBlank()) {
+            String encrypted = Util.encodeSha512(loginRequest.getPassword());
+            loginRequest.setPassword(encrypted);
         }
     }
 
@@ -114,69 +140,38 @@ public class LoginService implements ILoginServices {
         JwtRefresh jwtRefresh = jwtService.parseJwtRefresh(refreshSessionRequest.getRefreshToken());
 
         if (!jwtRefresh.getPayload().getPersonId().trim().equals(personId.trim()))
-            throw new HandledException(RefreshControllerErrorResponse.INVALID_DATA);
+            throw new GenericException(DefaultMiddlewareError.INVALID_ACCESS_JWT);
 
         String accessToken = accessJwt.substring(7);
-        if(!jwtService.revokeAccessToken(accessToken))
-            throw new HandledException(RefreshControllerErrorResponse.INVALID_DATA);
 
-        try {
-            CreateTokenServiceResponse createTokenResponse = jwtService.refreshToken(refreshSessionRequest.getRefreshToken());
+        if (!jwtService.revokeAccessToken(accessToken))
+            throw new GenericException(DefaultMiddlewareError.BLACKLISTED_ACCESS_JWT);
 
-            return switch (createTokenResponse.getStatusCode()) {
-                case SUCCESS -> {
-                    RefreshSessionResult refreshSessionResult = loginServiceMapper.convert(createTokenResponse.getTokenData(), RefreshSessionResult.StatusCode.SUCCESS);
-                    yield loginServiceMapper.convert(refreshSessionResult);
-                }
-                case INVALID_DATA -> throw new HandledException(RefreshControllerErrorResponse.INVALID_DATA);
-                default -> throw new GenericException();
-            };
-        } catch (HandledException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new HandledException(GenericControllerErrorResponse.INTERNAL_SERVER_ERROR, e);
-        }
+        CreateTokenServiceResponse createTokenResponse = jwtService.refreshToken(refreshSessionRequest.getRefreshToken());
+        return switch (createTokenResponse.getStatusCode()) {
+            case SUCCESS -> {
+                RefreshSessionResult refreshSessionResult = loginServiceMapper.convert(createTokenResponse.getTokenData(), RefreshSessionResult.StatusCode.SUCCESS);
+                yield loginServiceMapper.convert(refreshSessionResult);
+            }
+            case INVALID_DATA -> throw new GenericException(DefaultMiddlewareError.INVALID_ACCESS_JWT);
+            default -> throw new GenericException(DefaultMiddlewareError.AUTHENTICATION_FILTER_FAILURE);
+        };
     }
 
     @Override
-    public GenericResponse logout(String deviceId,
-                                  String deviceIp,
-                                  String deviceName,
-                                  String geoPositionX,
-                                  String geoPositionY,
-                                  String appVersion,
-                                  String personId,
-                                  String userDeviceId,
-                                  String personRoleId,
-                                  String authorization,
-                                  LogoutRequest request) throws IOException {
-
+    public GenericResponse logout(String personId, String authorization, String personRoleId, LogoutRequest request) throws IOException {
         String accessToken = authorization.substring(7);
-
         validateRequestToken(request.getRefreshToken());
-
         if (!jwtService.revokeAccessToken(accessToken) || !jwtService.revokeRefreshToken(request.getRefreshToken())) {
             AppError errorKetCloak = AppError.KEY_CLOAK_ERROR;
             throw new GenericException(errorKetCloak.getMessage(), errorKetCloak.getHttpCode(), errorKetCloak.getCode());
         }
 
-        LogoutMWRequest logoutMWRequest = LogoutMWRequest.builder()
-                .ownerAccount(LogoutMWRequest.OwnerAccount.builder()
-                        .personId(personId)
-                        .userDeviceId(userDeviceId)
-                        .personRoleId(personRoleId)
-                        .build())
-                .deviceData(LogoutMWRequest.LogoutDataMW.builder()
-                        .deviceId(deviceId)
-                        .deviceIp(deviceIp)
-                        .deviceName(deviceName)
-                        .geoPositionX(geoPositionX)
-                        .geoPositionY(geoPositionY)
-                        .appVersion(appVersion)
-                        .build())
-                .build();
-
-        return provider.logout(deviceId, deviceIp, deviceName, geoPositionX, geoPositionY, appVersion, logoutMWRequest);
+        LogoutMWRequest logoutMWRequest = mapper.mapperRequest(personId, personRoleId);
+        LogoutMWResponse mwResponse = provider.logout(logoutMWRequest);
+        if (mwResponse.getData().getId() != null)
+            return GenericResponse.instance(LoginMiddlewareResponse.SUCCESS_LOGOUT);
+        else throw new GenericException(DefaultMiddlewareError.INTERNAL_SERVER_ERROR);
     }
 
     private void validateRequestToken(String token) {
@@ -185,24 +180,15 @@ public class LoginService implements ILoginServices {
         if (introspect.getResult() != IntrospectTokenKCResponse.Result.SUCCESS) {
             if (Arrays.asList(IntrospectTokenKCResponse.Result.EXPIRED_TOKEN,
                     IntrospectTokenKCResponse.Result.INVALID_TOKEN).contains(introspect.getResult())) {
-                AppError invalidRefreshTokenError = AppError.INVALID_REFRESH_TOKEN;
-                throw new GenericException(invalidRefreshTokenError.getMessage(), invalidRefreshTokenError.getHttpCode(), invalidRefreshTokenError.getCode());
+                throw new GenericException(DefaultMiddlewareError.INVALID_ACCESS_JWT);
             } else
                 throw new GenericException(errorKetCloak.getMessage(), errorKetCloak.getHttpCode(), errorKetCloak.getCode());
         }
     }
 
     @Override
-    public DeviceEnrollmentResponse validation(Map<String, String> parameter) throws IOException {
-        DeviceEnrollmentMWResponse deviceEnrollmentResponse = provider.makeValidateDevice(parameter);
-
-        String enrolled = deviceEnrollmentResponse.getStatusCode();
-        DeviceEnrollmentResponse response = new DeviceEnrollmentResponse();
-        if (Objects.equals(enrolled, "ENROLLED")) {
-            response.setPersonId(deviceEnrollmentResponse.getPersonId());
-            response.setStatusCode(1);
-        } else
-            response.setStatusCode(2);
-        return response;
+    public DeviceEnrollmentResponse validation() throws IOException {
+        DeviceEnrollmentMWResponse deviceEnrollmentResponse = provider.makeValidateDevice();
+        return mapper.convertResponse(deviceEnrollmentResponse);
     }
 }

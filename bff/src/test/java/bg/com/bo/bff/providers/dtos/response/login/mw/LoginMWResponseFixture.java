@@ -15,6 +15,22 @@ public class LoginMWResponseFixture {
         return response;
     }
 
+    public static ChangePasswordMWResponse withDefaultChangePasswordMWResponse() {
+        return ChangePasswordMWResponse.builder()
+                .personId("123")
+                .build();
+    }
+
+    public static LogoutMWResponse withDefaultLogoutMWResponse() {
+        return LogoutMWResponse.builder()
+                .data(
+                        LogoutMWResponse.LogoutData.builder()
+                                .id("123")
+                                .build()
+                )
+                .build();
+    }
+
     public static LoginCredentialMWResponse withDefaultLoginCredentialMWResponse() {
         LoginCredentialMWResponse response = new LoginCredentialMWResponse();
         response.setData(withDefaultLoginCredentialData());
@@ -49,7 +65,7 @@ public class LoginMWResponseFixture {
         return role;
     }
 
-    public static LoginFactorMWResponse withDefaultLoginFactorMWResponse(){
+    public static LoginFactorMWResponse withDefaultLoginFactorMWResponse() {
         return new LoginFactorMWResponse(withDefaultLoginFactorData());
     }
 
