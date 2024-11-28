@@ -44,9 +44,9 @@ class DestinationAccountControllerTest {
     private static final String URL_WALLET = "/api/v1/destination-accounts/1234567/wallets";
     private static final String URL_ACH = "/api/v1/destination-accounts/1234567/ach-accounts";
     private static final String URL_QR = "/api/v1/destination-accounts/1234567/qrs/Third";
-    private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/accounts/";
-    private static final String DELETE_ACH_ACCOUNT = "/api/v1/destination-accounts/56/ach-accounts/46";
-    private static final String DELETE_WALLET_ACCOUNT = "/api/v1/destination-accounts/123/wallets/456/wallet-accounts/789";
+    private static final String DELETE_THIRD_ACCOUNT = "/api/v1/destination-accounts/23/third-accounts/46/delete";
+    private static final String DELETE_ACH_ACCOUNT = "/api/v1/destination-accounts/56/ach-accounts/456/delete";
+    private static final String DELETE_WALLET_ACCOUNT = "/api/v1/destination-accounts/123/wallets/456/delete";
     private static final String GET_LIST_BANKS = "/api/v1/destination-accounts/banks";
     private static final String GET_ACCOUNT_TYPES = "/api/v1/destination-accounts/account-types";
     private static final String GET_BRANCH_OFFICE = "/api/v1/destination-accounts/banks/{bankCode}/branch-offices";
@@ -173,26 +173,20 @@ class DestinationAccountControllerTest {
     @Test
     void givenValidDataWhenDeleteThirdAccountThenReturnOk() throws Exception {
         // Arrange
-        String personId = "23";
-        long identifier = 46;
-        String ip = "127.0.0.1";
-        String deviceId = "123";
-        long accountNumber = 1;
-
-        GenericResponse expected = new GenericResponse();
-
-        when(service.deleteThirdAccount(any(), anyLong(), anyLong(), any())).thenReturn(expected);
+        DeleteAccountRequest request = DeleteAccountRequest.builder().accountNumber(123456).build();
+        when(service.deleteThirdAccount(any(), anyLong(), any(), any())).thenReturn(new GenericResponse());
 
         // Act
-        MvcResult result = mockMvc.perform(delete(DELETE_THIRD_ACCOUNT + accountNumber)
+        mockMvc.perform(post(DELETE_THIRD_ACCOUNT)
                         .headers(this.headers)
+                        .content(objectMapper.writeValueAsString(request))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
         // Assert
-        verify(service).deleteThirdAccount(any(), anyLong(), anyLong(), any());
+        verify(service).deleteThirdAccount(any(), anyLong(), any(), any());
     }
 
     @Test
@@ -224,39 +218,39 @@ class DestinationAccountControllerTest {
     @Test
     void givenValidaDAtaWhenDeleteWalletAccountThenReturnOk() throws Exception {
         // Arrange
-        String deviceId = "123";
-
-        // Act and Assert
-        MvcResult result = mockMvc.perform(delete(DELETE_WALLET_ACCOUNT)
-                        .headers(this.headers)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-    }
-
-    @Test
-    void givenValidDataWhenDeleteAchAccountThenReturnOk() throws Exception {
-        // Arrange
-        String personId = "56";
-        long identifier = 46;
-        String ip = "127.0.0.1";
-        String deviceId = "123";
-
-        GenericResponse expected = new GenericResponse();
-
-        when(service.deleteAchAccount(any(), anyLong(), any())).thenReturn(expected);
+        DeleteAccountRequest request = DeleteAccountRequest.builder().accountNumber(123456).build();
+        when(service.deleteWalletAccount(any(), anyLong(), any(), any())).thenReturn(new GenericResponse());
 
         // Act
-        MvcResult result = mockMvc.perform(delete(DELETE_ACH_ACCOUNT)
+        mockMvc.perform(post(DELETE_WALLET_ACCOUNT)
                         .headers(this.headers)
+                        .content(objectMapper.writeValueAsString(request))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
         // Assert
-        verify(service).deleteAchAccount(any(), anyLong(), any());
+        verify(service).deleteWalletAccount(any(), anyLong(), any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenDeleteAchAccountThenReturnOk() throws Exception {
+        // Arrange
+        DeleteAccountRequest request = DeleteAccountRequest.builder().accountNumber(123456).build();
+        when(service.deleteAchAccount(any(), anyLong(), any(), any())).thenReturn(new GenericResponse());
+
+        // Act
+        mockMvc.perform(post(DELETE_ACH_ACCOUNT)
+                        .headers(this.headers)
+                        .content(objectMapper.writeValueAsString(request))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Assert
+        verify(service).deleteAchAccount(any(), anyLong(), any(), any());
     }
 
     @Test
@@ -372,7 +366,7 @@ class DestinationAccountControllerTest {
 
         // Act
         String path = "/api/v1/destination-accounts/persons/{personId}/account-types/{accountType}/account/{accountId}";
-        MvcResult result = mockMvc.perform(get(path, "721","1","6378182")
+        MvcResult result = mockMvc.perform(get(path, "721", "1", "6378182")
                         .accept(MediaType.APPLICATION_JSON)
                         .headers(this.headers)
                         .contentType(MediaType.APPLICATION_JSON))

@@ -28,7 +28,8 @@ public enum DefaultMiddlewareError implements IMiddlewareError {
     INVALID_ACCESS_JWT(HttpStatus.UNAUTHORIZED, "BFF-IAJ", null, "Por tu seguridad, cerramos la sesión automáticamente.", "Sesión inválida"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "FORBIDDEN", null, "No permitido", "No permitido"),
     KC_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "BFF-KCF", null, "Error interno", "Error interno"),
-    MW_TOKEN_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "BFF-MWTF", null, "Error interno", "Error interno");
+    MW_TOKEN_FAILURE(HttpStatus.SERVICE_UNAVAILABLE, "BFF-MWTF", null, "Error interno", "Error interno"),
+    MW_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "BFF-MWSU", null, "Error interno", "Error interno");
 
     private final HttpStatus httpCode;
     private final String code;

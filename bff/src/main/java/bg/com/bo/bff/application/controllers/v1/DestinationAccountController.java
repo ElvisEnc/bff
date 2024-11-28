@@ -209,7 +209,7 @@ public class DestinationAccountController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
-    @DeleteMapping("/{personId}/third-accounts/{identifier}/accounts/{accountNumber}")
+    @PostMapping("/{personId}/third-accounts/{identifier}/delete")
     public ResponseEntity<GenericResponse> deleteThirdAccount(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
@@ -218,9 +218,8 @@ public class DestinationAccountController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId", example = "12345") String personId,
             @PathVariable("identifier") @NotNull @Min(value = 1) @Parameter(description = "Este es el id de la cuenta", example = "12345") long identifier,
-            @PathVariable("accountNumber") @NotNull @Min(value = 1) @Schema(example = "1234", description = "Este es el número de la cuenta.") long accountNumber
-    ) throws IOException {
-        return ResponseEntity.ok(service.deleteThirdAccount(personId, identifier, accountNumber, Headers.getParameter(httpServletRequest,
+            @RequestBody DeleteAccountRequest request) throws IOException {
+        return ResponseEntity.ok(service.deleteThirdAccount(personId, identifier, request, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,
@@ -235,7 +234,7 @@ public class DestinationAccountController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
-    @DeleteMapping("/{personId}/wallets/{identifier}/wallet-accounts/{accountNumber}")
+    @PostMapping("/{personId}/wallets/{identifier}/delete")
     public ResponseEntity<GenericResponse> deleteWalletAccount(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
@@ -244,9 +243,8 @@ public class DestinationAccountController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId", example = "12345") String personId,
             @PathVariable("identifier") @NotNull @Min(value = 1) @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
-            @PathVariable("accountNumber") @NotNull @Min(value = 1) @Parameter(description = "Este es el número de la cuenta", example = "12345") long accountNumber
-    ) throws IOException {
-        return ResponseEntity.ok(service.deleteWalletAccount(personId, identifier, accountNumber, Headers.getParameter(httpServletRequest,
+            @RequestBody DeleteAccountRequest request) throws IOException {
+        return ResponseEntity.ok(service.deleteWalletAccount(personId, identifier, request, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,
@@ -261,7 +259,7 @@ public class DestinationAccountController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
-    @DeleteMapping("/{personId}/ach-accounts/{identifier}")
+    @PostMapping("/{personId}/ach-accounts/{identifier}/delete")
     public ResponseEntity<GenericResponse> deleteAchAccount(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
@@ -269,9 +267,9 @@ public class DestinationAccountController {
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el personId", example = "12345") String personId,
-            @PathVariable("identifier") @NotNull @Min(value = 1) @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier
-    ) throws IOException {
-        return ResponseEntity.ok(service.deleteAchAccount(personId, identifier, Headers.getParameter(httpServletRequest,
+            @PathVariable("identifier") @NotNull @Min(value = 1) @Parameter(description = "Este es el identificador de la cuenta", example = "12345") long identifier,
+            @RequestBody DeleteAccountRequest request) throws IOException {
+        return ResponseEntity.ok(service.deleteAchAccount(personId, identifier, request, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,

@@ -1,10 +1,6 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.destination.account.AddAchAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddThirdAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddWalletAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import org.springframework.stereotype.Service;
@@ -28,11 +24,11 @@ public interface IDestinationAccountService {
 
     AccountTypeListResponse accountTypes();
 
-    GenericResponse deleteThirdAccount(String personId, long identifier, long accountNumber, Map<String, String> parameters) throws IOException;
+    GenericResponse deleteThirdAccount(String personId, long identifier, DeleteAccountRequest request, Map<String, String> parameters) throws IOException;
 
-    GenericResponse deleteWalletAccount(String personId, long identifier, long accountNumber, Map<String, String> parameters) throws IOException;
+    GenericResponse deleteWalletAccount(String personId, long identifier, DeleteAccountRequest request, Map<String, String> parameters) throws IOException;
 
-    GenericResponse deleteAchAccount(String personId, long identifier, Map<String, String> parameter) throws IOException;
+    GenericResponse deleteAchAccount(String personId, long identifier,DeleteAccountRequest request, Map<String, String> parameter) throws IOException;
 
     DestinationAccountResponse getDestinationAccounts(String personId, DestinationAccountRequest request, Map<String, String> parameter) throws IOException;
 

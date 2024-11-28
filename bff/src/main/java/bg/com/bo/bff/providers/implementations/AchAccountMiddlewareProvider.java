@@ -17,6 +17,7 @@ import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.ach.account.AchAccountMiddlewareResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.ach.account.AchAccountMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.ach.account.AchAccountMiddlewareServices;
+import bg.com.bo.bff.providers.models.enums.middleware.third.account.ThirdAccountMiddlewareServices;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
 import bg.com.bo.bff.providers.models.middleware.response.handler.ByMwErrorResponseHandler;
@@ -46,9 +47,9 @@ public class AchAccountMiddlewareProvider extends MiddlewareProvider<AchAccountM
     }
 
     @Override
-    public GenericResponse deleteAchAccount(DeleteAchAccountMWRequest request, Map<String, String> parameters) throws IOException {
-        String url = baseUrl + AchAccountMiddlewareServices.DELETE_ACCOUNT.getServiceURL();
-        ApiDataResponse<AddAccountMWResponse> mwResponse = deleteWithBody(url, HeadersMW.getDefaultHeaders(parameters), request, ApiDataResponse.class);
+    public GenericResponse deleteAchAccount(String personId, long identifier, long accountNumber, Map<String, String> parameters) throws IOException {
+        String url = baseUrl + String.format(AchAccountMiddlewareServices.DELETE_ACCOUNT.getServiceURL(), identifier, personId, accountNumber);
+        ApiDataResponse<AddAccountMWResponse> mwResponse = delete(url, HeadersMW.getDefaultHeaders(parameters), ApiDataResponse.class);
         AddAccountMWResponse response = Util.stringToObject(Util.objectToString(mwResponse.getData()), AddAccountMWResponse.class);
         if (response.getIdentifier() != null)
             return GenericResponse.instance(AchAccountMiddlewareResponse.SUCCESS_DELETE_ACCOUNT);

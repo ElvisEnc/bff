@@ -239,7 +239,7 @@ class LoginMiddlewareProviderTests {
                         .description("500")
                         .build()))
                 .build();
-        GenericException expectedResponse = new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        GenericException expectedResponse = new GenericException(DefaultMiddlewareError.MW_SERVICE_UNAVAILABLE.getMessage(), DefaultMiddlewareError.MW_SERVICE_UNAVAILABLE.getHttpCode(), DefaultMiddlewareError.MW_SERVICE_UNAVAILABLE.getCode());
         stubFor(post(anyUrl()).willReturn(aResponse()
                 .withStatus(500)
                 .withBody(new ObjectMapper().writeValueAsString(errorMiddlewareProvider))));

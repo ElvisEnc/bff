@@ -113,7 +113,7 @@ class AchAccountMiddlewareProviderTest {
         stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = provider.deleteAchAccount(requestMock, map);
+        GenericResponse response = provider.deleteAchAccount("123", 123456,654321, map);
 
         // Assert
         assertNotNull(response);
@@ -129,7 +129,7 @@ class AchAccountMiddlewareProviderTest {
         stubFor(delete(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = provider.deleteAchAccount(requestMock, map);
+        GenericResponse response = provider.deleteAchAccount("123", 123456,654321, map);
 
         // Assert
         assertNotNull(response);

@@ -45,8 +45,7 @@ public class TransferService implements ITransferService {
         if (!Objects.equals(responseMW.getData().getStatus(), "PENDING")) {
             return mapper.convert(responseMW);
         } else {
-            TransferMiddlewareError error = TransferMiddlewareError.MDWTRM_PENDING;
-            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            throw new GenericException(TransferMiddlewareError.MDWTRM_PENDING);
         }
     }
 
@@ -58,8 +57,7 @@ public class TransferService implements ITransferService {
         if (!Objects.equals(responseMW.getData().getStatus(), "PENDING")) {
             return mapper.convert(responseMW);
         } else {
-            TransferMiddlewareError error = TransferMiddlewareError.MDWTRM_PENDING;
-            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            throw new GenericException(TransferMiddlewareError.MDWTRM_PENDING);
         }
     }
 
@@ -71,8 +69,7 @@ public class TransferService implements ITransferService {
         if (!Objects.equals(responseMW.getData().getStatus(), "PENDING")) {
             return mapper.convert(responseMW);
         } else {
-            TransferMiddlewareError error = TransferMiddlewareError.MDWTRM_PENDING;
-            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            throw new GenericException(TransferMiddlewareError.MDWTRM_PENDING);
         }
     }
 

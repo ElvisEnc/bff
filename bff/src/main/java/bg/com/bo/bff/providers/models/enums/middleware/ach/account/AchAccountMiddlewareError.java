@@ -14,7 +14,7 @@ public enum AchAccountMiddlewareError implements IMiddlewareError {
     MDWAAM002(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWAAM002", "Datos Invalidos", "Datos invalidos"),
     MDWAAM_0001(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWAAM-0001", "La cuenta ya se encuentra registrada.", "Cuenta registrada"),
     MDWAAM_0002(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWAAM-0002", "La versión es inválida.", "Versión inválida"),
-    MDWAAM_0003(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWAAM-0003", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
+    MDWAAM_0003(HttpStatus.CONFLICT, "INVALID_DATA", "MDWAAM-0003", "No se encontraron registros asociados a la cuenta.", "Datos inválidos"),
     MDWAAM_0004(HttpStatus.BAD_REQUEST, "NOT_FOUND", "MDWAAM-0004", "El tipo de cuenta es inválida.", "Cuenta inválida"),
     MDWAAM_0005(HttpStatus.BAD_REQUEST, "NOT_FOUND", "MDWAAM-0005", "El tipo de oficina es inválido.", "Cuenta inválida"),
     MDWAAM_0006(HttpStatus.BAD_REQUEST, "NOT_FOUND", "MDWAAM-0006", "La entidad financiera de destino es inválida.", "Cuenta inválida"),

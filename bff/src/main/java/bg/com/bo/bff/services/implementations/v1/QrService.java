@@ -153,8 +153,7 @@ public class QrService implements IQrService {
         if (!Objects.equals(result.getData().getStatus(), "PENDING")) {
             return result;
         } else {
-            QRTransactionMiddlewareError error = QRTransactionMiddlewareError.MDWGQM_PENDING;
-            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            throw new GenericException(QRTransactionMiddlewareError.MDWGQM_PENDING);
         }
     }
 }

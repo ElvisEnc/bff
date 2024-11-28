@@ -16,7 +16,7 @@ import java.util.Map;
 public interface IAchAccountProvider {
     AddAccountResponse addAchAccount(AddAchAccountBasicRequest request, Map<String, String> parameters) throws IOException;
 
-    GenericResponse deleteAchAccount(DeleteAchAccountMWRequest request, Map<String, String> parameters) throws IOException;
+    GenericResponse deleteAchAccount(String personId, long identifier, long accountNumber, Map<String, String> parameters) throws IOException;
 
     BanksMWResponse getBanks(Map<String, String> parameters) throws IOException;
 

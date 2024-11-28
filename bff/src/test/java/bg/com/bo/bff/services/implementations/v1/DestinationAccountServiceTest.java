@@ -21,7 +21,6 @@ import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
 import bg.com.bo.bff.mappings.providers.account.IAchAccountsMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.third.account.ThirdAccountMiddlewareError;
-import bg.com.bo.bff.providers.models.enums.middleware.third.account.ThirdAccountMiddlewareResponse;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -148,7 +147,7 @@ class DestinationAccountServiceTest {
         when(thirdAccountProvider.deleteThirdAccount(any(), any())).thenReturn(expectedResponse);
 
         // Act
-        GenericResponse response = service.deleteThirdAccount(personId, identifier, accountNumber, new HashMap<>());
+        GenericResponse response = service.deleteThirdAccount(personId, identifier, DeleteAccountRequest.builder().accountNumber(123456).build(), new HashMap<>());
 
         // Assert
         verify(thirdAccountProvider).deleteThirdAccount(any(), any());
@@ -176,10 +175,7 @@ class DestinationAccountServiceTest {
     void givenValidaDataWhenDeleteWalletAccountThenReturnOk() throws IOException {
         // Arrange
         String personId = "1";
-        int accountNumber = 1;
         int identifier = 1;
-        String deviceId = "1";
-        String deviceIp = "127.0.0.1";
 
         GenericResponse expectedResponse = new GenericResponse();
         expectedResponse.setCode("SUCCESS");
@@ -187,7 +183,7 @@ class DestinationAccountServiceTest {
         when(thirdAccountProvider.deleteWalletAccount(any(), anyLong(), anyLong(), any())).thenReturn(expectedResponse);
 
         // Act
-        GenericResponse response = service.deleteWalletAccount(personId, identifier, accountNumber, new HashMap<>());
+        GenericResponse response = service.deleteWalletAccount(personId, identifier, DeleteAccountRequest.builder().accountNumber(123456).build(), new HashMap<>());
 
         // Assert
         verify(thirdAccountProvider).deleteWalletAccount(any(), anyLong(), anyLong(), any());
@@ -197,21 +193,16 @@ class DestinationAccountServiceTest {
     @Test
     void givenValidDataWhenDeleteAchAccountThenReturnOk() throws IOException {
         // Arrange
-        String personId = "1";
-        int identifier = 1;
-        String deviceId = "1";
-        String ip = "127.0.0.1";
-
         GenericResponse expectedResponse = new GenericResponse();
         expectedResponse.setCode("SUCCESS");
         expectedResponse.setMessage("Se borró la cuenta exitosamente.");
-        when(achAccountProvider.deleteAchAccount(any(), any())).thenReturn(expectedResponse);
+        when(achAccountProvider.deleteAchAccount(any(), anyLong(), anyLong(), any())).thenReturn(expectedResponse);
 
         // Act
-        GenericResponse response = service.deleteAchAccount("123", 123, new HashMap<>());
+        GenericResponse response = service.deleteAchAccount("123", 123, DeleteAccountRequest.builder().accountNumber(123456).build(), new HashMap<>());
 
         // Assert
-        verify(achAccountProvider).deleteAchAccount(any(), any());
+        verify(achAccountProvider).deleteAchAccount(any(), anyLong(), anyLong(), any());
         assertEquals(expectedResponse, response);
     }
 
@@ -429,7 +420,7 @@ class DestinationAccountServiceTest {
         when(thirdMapper.convertThirdAccountToDestinationAccount(any(), any(), any())).thenReturn(thirdDestinationAccount);
 
         // Act
-        DestinationAccount result = service.getAccount(personId,"1", "1", parameter);
+        DestinationAccount result = service.getAccount(personId, "1", "1", parameter);
 
         // Assert
         assertNotNull(result);
@@ -450,7 +441,7 @@ class DestinationAccountServiceTest {
         when(iAchAccountsMapper.convertAchAccountToDestinationAccount(any())).thenReturn(achDestinationAccount);
 
         // Act
-        DestinationAccount result = service.getAccount(personId,"2", "1", parameter);
+        DestinationAccount result = service.getAccount(personId, "2", "1", parameter);
 
         // Assert
         assertNotNull(result);
@@ -471,7 +462,7 @@ class DestinationAccountServiceTest {
         when(thirdMapper.convertThirdAccountToDestinationAccount(any(), any(), any())).thenReturn(walletDestinationAccount);
 
         // Act
-        DestinationAccount result = service.getAccount(personId,"3", "1", parameter);
+        DestinationAccount result = service.getAccount(personId, "3", "1", parameter);
 
         // Assert
         assertNotNull(result);
@@ -487,7 +478,7 @@ class DestinationAccountServiceTest {
         Map<String, String> parameter = new HashMap<>();
 
         // Act
-        GenericException exception = assertThrows(GenericException.class, () -> service.getAccount(personId,"4", "1", parameter));
+        GenericException exception = assertThrows(GenericException.class, () -> service.getAccount(personId, "4", "1", parameter));
 
         // Assert
         assertNotNull(exception);
@@ -506,7 +497,7 @@ class DestinationAccountServiceTest {
         when(thirdMapper.convertThirdAccountToDestinationAccount(any(), any(), any())).thenReturn(walletDestinationAccount);
 
         // Act
-        GenericException exception = assertThrows(GenericException.class, () -> service.getAccount(personId,"3", "123", parameter));
+        GenericException exception = assertThrows(GenericException.class, () -> service.getAccount(personId, "3", "123", parameter));
 
         // Assert
         assertNotNull(exception);

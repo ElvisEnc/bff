@@ -246,6 +246,11 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
                 if (responseHandler != null && responseHandler.getEvaluator().evaluate(jsonResponse, statusCode, this::mapProviderIError))
                     return responseHandler.getResolver().resolve(jsonResponse, classType, this::mapProviderIError);
 
+                if (statusCode >= 500) {
+                    LOGGER.error(String.format("Not Mapped Error:%s", jsonResponse));
+                    throw new GenericException(DefaultMiddlewareError.MW_SERVICE_UNAVAILABLE);
+                }
+
                 IMiddlewareError error = this.mapProviderIError(jsonResponse);
                 if (error.equals(DefaultMiddlewareError.DEFAULT))
                     LOGGER.error(String.format("Not Mapped Error:%s", jsonResponse));

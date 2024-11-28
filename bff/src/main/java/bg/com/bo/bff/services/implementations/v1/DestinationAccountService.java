@@ -1,10 +1,6 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.destination.account.AddAchAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddThirdAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddWalletAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.AddQRAccountRequest;
-import bg.com.bo.bff.application.dtos.request.destination.account.DestinationAccountRequest;
+import bg.com.bo.bff.application.dtos.request.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
@@ -124,7 +120,7 @@ public class DestinationAccountService implements IDestinationAccountService {
                 AddAccountResponse response = achAccountProvider.addAchAccount(achRequest, parameters);
                 if (response.getId() != null)
                     yield GenericResponse.instance(AchAccountMiddlewareResponse.SUCCESS_ADD_ACCOUNT);
-                else  throw new GenericException(AchAccountMiddlewareError.ERROR_ADD_ACCOUNT);
+                else throw new GenericException(AchAccountMiddlewareError.ERROR_ADD_ACCOUNT);
             }
             default -> throw new IllegalArgumentException("Invalid bank type: " + bankType);
         };
@@ -151,20 +147,19 @@ public class DestinationAccountService implements IDestinationAccountService {
     }
 
     @Override
-    public GenericResponse deleteThirdAccount(String personId, long identifier, long accountNumber, Map<String, String> parameters) throws IOException {
-        DeleteThirdAccountMWRequest mwRequest = thirdMapper.mapperRequest(personId, identifier, accountNumber);
+    public GenericResponse deleteThirdAccount(String personId, long identifier, DeleteAccountRequest request, Map<String, String> parameters) throws IOException {
+        DeleteThirdAccountMWRequest mwRequest = thirdMapper.mapperRequest(personId, identifier, request.getAccountNumber());
         return thirdAccountProvider.deleteThirdAccount(mwRequest, parameters);
     }
 
     @Override
-    public GenericResponse deleteWalletAccount(String personId, long identifier, long accountNumber, Map<String, String> parameters) throws IOException {
-        return thirdAccountProvider.deleteWalletAccount(personId, identifier, accountNumber, parameters);
+    public GenericResponse deleteWalletAccount(String personId, long identifier, DeleteAccountRequest request, Map<String, String> parameters) throws IOException {
+        return thirdAccountProvider.deleteWalletAccount(personId, identifier, request.getAccountNumber(), parameters);
     }
 
     @Override
-    public GenericResponse deleteAchAccount(String personId, long identifier, Map<String, String> parameter) throws IOException {
-        DeleteAchAccountMWRequest requestData = achMapper.mapperRequest(personId, identifier);
-        return achAccountProvider.deleteAchAccount(requestData, parameter);
+    public GenericResponse deleteAchAccount(String personId, long identifier, DeleteAccountRequest request, Map<String, String> parameter) throws IOException {
+        return achAccountProvider.deleteAchAccount(personId, identifier, request.getAccountNumber(), parameter);
     }
 
     @Override
