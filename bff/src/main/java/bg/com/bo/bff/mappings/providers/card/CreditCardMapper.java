@@ -300,8 +300,8 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .supplementaryData(PayCreditCardMWRequest.SupplementaryData.builder()
                         .transactionType(CreditCardConstans.TRANSACTION_TYPE.getValue())
                         .description(request.getData().getDescription())
-                        .sourceOfFunds(request.getData().getSourceOfFounds())
-                        .destinationOfFunds(request.getData().getDestinationOfFounds())
+                        .sourceOfFunds(request.getData().getSourceOfFunds())
+                        .destinationOfFunds(request.getData().getDestinationOfFunds())
                         .build())
                 .build();
     }

@@ -122,13 +122,16 @@ public class QrService implements IQrService {
 
     @Override
     public QRCodeGenerateResponse generateQR(QRCodeGenerateRequest request, Map<String, String> parameters) throws IOException {
-        cryptoService.validateCrypto(request.getReference(), parameters);
+        if (request.getReference().length() > 2)
+            cryptoService.validateCrypto(request.getReference(), parameters);
         QRCodeGenerateMWRequest requestMW = iQrMapper.convert(request);
         return qrProvider.generate(requestMW, parameters);
     }
 
     @Override
     public QRCodeGenerateResponse regenerateQR(QRCodeRegenerateRequest request, Map<String, String> parameter) throws IOException {
+        if (request.getReference().length() > 2)
+            cryptoService.validateCrypto(request.getReference(), parameter);
         QRCodeRegenerateMWRequest requestMW = this.iQrMapper.convert(request);
         return this.qrProvider.regenerate(requestMW, parameter);
     }
@@ -146,7 +149,8 @@ public class QrService implements IQrService {
 
     @Override
     public QRPaymentMWResponse qrPayment(QRPaymentRequest request, String personId, String accountId, Map<String, String> parameter) throws IOException {
-        cryptoService.validateCrypto(request.getSupplementaryData().getDescription(), parameter);
+        if (request.getSupplementaryData().getDescription().length() > 2)
+            cryptoService.validateCrypto(request.getSupplementaryData().getDescription(), parameter);
         QRPaymentMWRequest requestMW = iQrMapper.convert(request, personId, accountId);
         QRPaymentMWResponse result = this.qrTransactionProvider.qrPayment(requestMW, parameter);
         result.getData().getReceiptDetail().setAccountingDate(UtilDate.formatDate(result.getData().getReceiptDetail().getAccountingDate()));

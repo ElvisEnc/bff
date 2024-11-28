@@ -110,8 +110,8 @@ public class CreditCardRequestFixture {
                 .transactionType("TC")
                 .data(DataTransfer.builder()
                         .description("Pago de TC")
-                        .sourceOfFounds("Cuenta de ahorros ahorros ahorros")
-                        .destinationOfFounds("Pago de tarjeta de crédito para mas credito")
+                        .sourceOfFunds("Cuenta de ahorros ahorros ahorros")
+                        .destinationOfFunds("Pago de tarjeta de crédito para mas credito")
                         .build())
                 .build();
     }

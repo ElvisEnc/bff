@@ -28,12 +28,12 @@ public class DataTransfer {
     @DescriptionChars
     @Size(min = 25, max = 100, message = "La fuente de los fondos debe tener entre 25 y 100 caracteres.")
     @Schema(description = "Fuente de fondos para la transferencia", example = "Fuente de fondos para la transferencia")
-    private String sourceOfFounds;
+    private String sourceOfFunds;
 
     @DescriptionChars
     @Size(min = 25, max = 100, message = "El destino de los fondos debe tener entre 25 y 100 caracteres.")
     @Schema(description = "Destino de los fondos para la transferencia", example = "Destino de los fondos para la transferencia")
-    private String destinationOfFounds;
+    private String destinationOfFunds;
 
     @Builder.Default
     @ValidYoNParameter

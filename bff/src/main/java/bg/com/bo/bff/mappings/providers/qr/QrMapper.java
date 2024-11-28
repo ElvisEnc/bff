@@ -146,6 +146,8 @@ public class QrMapper implements IQrMapper {
                         .fields(request.getSupplementaryData().getFields())
                         .serialNumber(request.getSupplementaryData().getSerialNumber())
                         .allowsDuplicate(request.getSupplementaryData().getAllowsDuplicate() != null ? request.getSupplementaryData().getAllowsDuplicate() : String.valueOf('N'))
+                        .destinationOfFunds(request.getSupplementaryData().getDestinationOfFunds())
+                        .sourceOfFunds(request.getSupplementaryData().getSourceOfFunds())
                         .build())
                 .risk(new RiskMW(request.getRisk().getPaymentContextCode()))
                 .build();

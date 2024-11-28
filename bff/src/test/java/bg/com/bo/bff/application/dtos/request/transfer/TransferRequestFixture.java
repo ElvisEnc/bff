@@ -8,7 +8,11 @@ public class TransferRequestFixture {
         return TransferRequest.builder()
                 .targetAccount(TargetAccount.builder().id("123456789").build())
                 .amount(AmountTransfer.builder().amount(BigDecimal.valueOf(4.0)).currency("068").build())
-                .data(DataTransfer.builder().description("Test").destinationOfFounds("test destino como minimo 25 caracteres").build())
+                .data(DataTransfer.builder()
+                        .description("Test")
+                        .destinationOfFunds("test destino como minimo 25 caracteres")
+                        .sourceOfFunds("test origen como minimo 25 caracteres")
+                        .build())
                 .build();
     }
 

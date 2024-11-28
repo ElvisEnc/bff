@@ -25,7 +25,7 @@ public enum QRTransactionMiddlewareError implements IMiddlewareError {
     MDWQTM_013(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_REGISTER_PLEDGE", "MDWQTM-013", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_014(HttpStatus.BAD_REQUEST, "ERROR_NUMBER_ACH", "MDWQTM-014", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_015(HttpStatus.INTERNAL_SERVER_ERROR, "TRANSFER_ERROR", "MDWQTM-015", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
-    MDWQTM_016(HttpStatus.BAD_REQUEST, "ACCOUNT_ORIGIN_BLOCKED_FOR_DEBIT", "MDWQTM-016", "No es posible utilizar cuenta para realizar esta transacción.", "Cuenta de origen inactiva"),
+    MDWQTM_016(HttpStatus.CONFLICT, "ACCOUNT_BLOCKED", "MDWQTM-016", "No es posible utilizar esta cuenta para realizar la transacción.", "Cuenta de origen inactiva"),
     MDWQTM_017(HttpStatus.BAD_REQUEST, "CRYPTO_ACTIVE", "MDWQTM-017", "Esta operación presenta relación con la comercialización de criptomonedas y no puede realizarse.", "Operación no permitida"),
     MDWQTM_018(HttpStatus.BAD_REQUEST, "ERROR_ROL_USER_EMPRESA", "MDWQTM-018", "La transacción no puede ser procesada para el rol del usuario.", "Rol de usuario no autorizado"),
     MDWQTM_019(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_INSERT_MAE", "MDWQTM-019", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
@@ -50,7 +50,7 @@ public enum QRTransactionMiddlewareError implements IMiddlewareError {
     MDWQTM_038(HttpStatus.BAD_REQUEST, "INVALID_CHANNEL", "MDWQTM-038", "Canal inválido para esta transacción.", "Canal inválido"),
     MDWQTM_039(HttpStatus.BAD_REQUEST, "FUNDS_REQUIRED", "MDWQTM-039", "Es necesario indicar el origen y destino de los fondos.", "Origen y destino de fondos requeridos"),
     MDWQTM_040(HttpStatus.BAD_REQUEST, "QR_HAS_BEEN_USED", "MDWQTM-040", "El código QR ya ha sido utilizado.", "Código QR utilizado"),
-    MDWQTM_041(HttpStatus.BAD_REQUEST, "ERROR_DATA_ACCOUNT_DESTINY", "MDWQTM-041", "Número de cuenta inválido de destino.", "Error en cuenta de destino"),
+    MDWQTM_041(HttpStatus.BAD_REQUEST, "ERROR_DATA_ACCOUNT_DESTINY", "MDWQTM-041", "Número de cuenta de destino inválida.", "Cuenta de destino inválida"),
     MDWQTM_042(HttpStatus.BAD_REQUEST, "DIFFERENT_AMOUNT", "MDWQTM-042", "El monto de la transacción es diferente al monto requerido.", "Monto de transacción diferente"),
     MDWQTM_043(HttpStatus.CONFLICT, "CHECK_TRANSFER", "MDWQTM-043", "Verifica si la transacción fue satisfactoria, revisa tu extracto.", "Tiempo excedido"),
     MDWGQM_PENDING(HttpStatus.OK, "TRANSFER_PENDING", "MDWPGL-PENDING", "Se requiere la autorización de otro firmante para completar la transacción.", "Transacción pendiente");

@@ -21,7 +21,7 @@ public enum AchTransactionMiddlewareError implements IMiddlewareError {
     MDWACH_010(HttpStatus.BAD_REQUEST, "AMOUNT_LIMIT_KO", "MDWACH-010", "El límite de monto ha sido superado para esta transacción.", "Límite de monto excedido"),
     MDWACH_011(HttpStatus.BAD_REQUEST, "NOT_FOUND_AVAILABLE", "MDWACH-011", "Verifica el saldo disponible e intenta nuevamente.", "Saldo insuficiente"),
     MDWACH_012(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWACH-012", "Tuvimos un problema interno. Inténtalo nuevamente.","Ocurrió un problema"),
-    MDWACH_013(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWACH-013", "Tuvimos un problema interno. Inténtalo nuevamente.","Ocurrió un problema"),
+    MDWACH_013(HttpStatus.NOT_ACCEPTABLE, "ERROR_PLEDGE", "MDWACH-013", "Transacción no procesada. Inténtalo nuevamente más tarde.","Ocurrió un problema"),
     MDWACH_014(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWACH-014", "Tuvimos un problema interno. Inténtalo nuevamente.","Ocurrió un problema"),
     MDWACH_015(HttpStatus.INTERNAL_SERVER_ERROR, "TRANSFER_KO_001", "MDWACH-015", "Tuvimos un problema interno. Inténtalo nuevamente.","Ocurrió un problema"),
     MDWACH_016(HttpStatus.BAD_REQUEST, "SOURCE_ACCOUNT_KO_002", "MDWACH-016", "No es posible utilizar esta cuenta para realizar esta transacción.", "Cuenta de origen inactiva"),
