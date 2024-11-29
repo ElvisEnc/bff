@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountStatementsMWRequest {
+    private String personId;
+    private String companyId;
     private String accountId;
     private String startDate;
     private String endDate;

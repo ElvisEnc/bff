@@ -41,4 +41,6 @@ public class MiddlewareConfig {
     private String clientCreditCardTransactionManager;
 
     private String clientPointAttentionManager;
+
+    private String clientAccountStatementManager;
 }

@@ -3,7 +3,6 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.*;
 import bg.com.bo.bff.providers.models.enums.middleware.own.account.OwnAccountsMiddlewareError;
@@ -17,7 +16,6 @@ import bg.com.bo.bff.providers.dtos.request.own.account.mw.UpdateTransactionLimi
 import bg.com.bo.bff.providers.interfaces.IOwnAccountsProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
-import bg.com.bo.bff.providers.models.middleware.response.handler.ByMwErrorResponseHandler;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -54,12 +52,5 @@ public class OwnAccountsMiddlewareProvider extends MiddlewareProvider<OwnAccount
         String url = baseUrl + String.format(OwnAccountsMiddlewareService.GET_TRANSACTION_LIMIT.getServiceURL(), personId, accountId, personId);
         ApiDataResponse<TransactionLimitsMWResponse> mwResponse = get(url, HeadersMW.getDefaultHeaders(parameter), ApiDataResponse.class);
         return Util.stringToObject(Util.objectToString(mwResponse.getData()), TransactionLimitsMWResponse.class);
-    }
-
-    @Override
-    public AccountStatementsMWResponse getAccountStatements(AccountStatementsMWRequest request, Map<String, String> parameter) throws IOException {
-        String url = baseUrl + OwnAccountsMiddlewareService.POST_ACCOUNT_STATEMENT.getServiceURL();
-        ByMwErrorResponseHandler<AccountStatementsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(OwnAccountsMiddlewareError.MDWACM_008);
-        return post(url, HeadersMW.getDefaultHeaders(parameter), request, AccountStatementsMWResponse.class, responseHandler);
     }
 }

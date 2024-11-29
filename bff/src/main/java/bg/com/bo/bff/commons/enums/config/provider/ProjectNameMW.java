@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ProjectNameMW {
+    ACCOUNT_STATEMENT_MANAGER("/account-statement-manager", "ACCOUNT STATEMENT MANAGER", "Secret"),
     LOGIN_MANAGER("/login-manager", "LOGIN MANAGER", "Secret"),
     OWN_ACCOUNT_MANAGER("/own-accounts-manager", "OWN ACCOUNT MANAGER", "Secret"),
     TRANSFER_MANAGER("/transaction-manager", "TRANSACTION MANAGER", "Secret"),

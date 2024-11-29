@@ -10,6 +10,7 @@ import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRe
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.OwnAccountMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.OwnAccountMWResponseFixture;
+import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.providers.interfaces.IOwnAccountsProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +34,7 @@ class AccountStatementServiceTest {
     @InjectMocks
     private AccountStatementService service;
     @Mock
-    private IOwnAccountsProvider provider;
+    private IAccountStatementProvider provider;
     @Spy
     private IOwnAccountsMapper mapper = new OwnAccountsMapper();
     @Mock
@@ -48,12 +49,12 @@ class AccountStatementServiceTest {
         when(self.getAccountStatementsCache(any(), any(), any(), any())).thenReturn(expected);
 
         // Act
-        List<AccountStatementsResponse> response = service.getAccountStatement("123", requestMock, new HashMap<>());
+        List<AccountStatementsResponse> response = service.getAccountStatement("123", "123456", requestMock, new HashMap<>());
 
         // Assert
         assertNotNull(response);
         verify(self).getAccountStatementsCache(any(), any(), any(), any());
-        verify(mapper).mapperRequest(any(), any(), any(), any());
+        verify(mapper).mapperRequest(any(), any(), any(), any(), any());
     }
 
     @Test

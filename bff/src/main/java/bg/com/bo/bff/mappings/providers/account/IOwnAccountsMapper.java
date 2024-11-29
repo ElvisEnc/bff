@@ -20,7 +20,7 @@ public interface IOwnAccountsMapper {
 
     TransactionLimitsResponse convertResponse(TransactionLimitsMWResponse mwResponse);
 
-    AccountStatementsMWRequest mapperRequest(String accountId, String init, String total, AccountStatementsRequest request);
+    AccountStatementsMWRequest mapperRequest(String accountId, String personId, String init, String total, AccountStatementsRequest request);
 
     List<AccountStatementsResponse> convertResponse(AccountStatementsMWResponse mwResponse);
 }

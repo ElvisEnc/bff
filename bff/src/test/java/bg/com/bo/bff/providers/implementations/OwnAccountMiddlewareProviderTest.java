@@ -134,21 +134,4 @@ class OwnAccountMiddlewareProviderTest {
         assertNotNull(response);
         assertEquals(response, responseExpected);
     }
-
-    // Get Account Statement List
-    @Test
-    void givenAccountStatementRequestWhenGetAccountStatementsThenReturnAccountStatementList() throws IOException {
-        // Arrange
-        AccountStatementsMWRequest requestMock = OwnAccountMWRequestFixture.withDefaultAccountStatementsMWRequest();
-        AccountStatementsMWResponse responseExpected = OwnAccountMWResponseFixture.withDefaultAccountReportBasicResponse();
-        String jsonResponse = Util.objectToString(responseExpected);
-        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
-
-        //Act
-        AccountStatementsMWResponse response = provider.getAccountStatements(requestMock, map);
-
-        //Assert
-        assertNotNull(response);
-        assertEquals(response, responseExpected);
-    }
 }

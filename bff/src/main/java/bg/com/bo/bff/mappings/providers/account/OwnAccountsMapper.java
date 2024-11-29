@@ -75,8 +75,10 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
     }
 
     @Override
-    public AccountStatementsMWRequest mapperRequest(String accountId, String init, String total, AccountStatementsRequest request) {
+    public AccountStatementsMWRequest mapperRequest(String accountId, String personId, String init, String total, AccountStatementsRequest request) {
         return AccountStatementsMWRequest.builder()
+                .personId(personId)
+                .companyId(personId)
                 .accountId(accountId)
                 .startDate(request.getFilters().getDate().getStart())
                 .endDate(request.getFilters().getDate().getEnd())

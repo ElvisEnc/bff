@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-
 @RestController
 @Validated
 @RequestMapping("api/v1/account-statement")
@@ -54,7 +53,7 @@ public class AccountStatementController {
             @PathVariable("personId") @NotBlank @Parameter(description = "código de persona", example = "12345") String personId,
             @Valid @RequestBody AccountStatementsRequest request
     ) throws IOException {
-        return ResponseEntity.ok(ApiDataResponse.of(iAccountStatementService.getAccountStatement( accountId, request, Headers.getParameter(httpServletRequest,
+        return ResponseEntity.ok(ApiDataResponse.of(iAccountStatementService.getAccountStatement(accountId, personId, request, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,

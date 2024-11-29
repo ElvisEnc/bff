@@ -8,6 +8,8 @@ public class OwnAccountMWRequestFixture {
 
     public static AccountStatementsMWRequest withDefaultAccountStatementsMWRequest() {
         return AccountStatementsMWRequest.builder()
+                .personId("123456")
+                .companyId("123456")
                 .accountId("123")
                 .startDate("2024-08-08")
                 .endDate("2024-08-08")

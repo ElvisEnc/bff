@@ -14,6 +14,4 @@ public interface IOwnAccountsProvider {
     GenericResponse updateTransactionLimit(String personId, String accountId, UpdateTransactionLimitMWRequest request, Map<String, String> parameter) throws IOException;
 
     TransactionLimitsMWResponse getTransactionLimit(String personId, String accountId, Map<String, String> parameter) throws IOException;
-
-    AccountStatementsMWResponse getAccountStatements(AccountStatementsMWRequest request, Map<String, String> parameter) throws IOException;
 }

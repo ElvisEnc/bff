@@ -11,7 +11,7 @@ import bg.com.bo.bff.commons.filters.TypeFilter;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.mappings.providers.account.IOwnAccountsMapper;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
-import bg.com.bo.bff.providers.interfaces.IOwnAccountsProvider;
+import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.services.interfaces.IAccountStatementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,23 +35,23 @@ public class AccountStatementService implements IAccountStatementService {
     private String init;
     @Value("${account.statement.total}")
     private String total;
-    private final IOwnAccountsProvider provider;
+    private final IAccountStatementProvider provider;
     private final IOwnAccountsMapper mapper;
 
     @Autowired
     private AccountStatementService self;
 
-    public AccountStatementService(IOwnAccountsProvider provider, IOwnAccountsMapper mapper) {
+    public AccountStatementService(IAccountStatementProvider provider, IOwnAccountsMapper mapper) {
         this.provider = provider;
         this.mapper = mapper;
     }
 
     @Override
-    public List<AccountStatementsResponse> getAccountStatement(String accountId, AccountStatementsRequest request, Map<String, String> parameter) throws IOException {
+    public List<AccountStatementsResponse> getAccountStatement(String accountId, String personId, AccountStatementsRequest request, Map<String, String> parameter) throws IOException {
         String key = accountId + "|" + request.getFilters().getDate().getStart() + "|" + request.getFilters().getDate().getEnd();
         Boolean refreshData = request.getRefreshData();
 
-        AccountStatementsMWRequest mwRequest = mapper.mapperRequest(accountId, init, total, request);
+        AccountStatementsMWRequest mwRequest = mapper.mapperRequest(accountId, personId, init, total, request);
         List<AccountStatementsResponse> list = self.getAccountStatementsCache(mwRequest, parameter, key, refreshData);
 
         Map<String, Function<AccountStatementsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
