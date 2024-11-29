@@ -38,7 +38,7 @@ public enum QRTransactionMiddlewareError implements IMiddlewareError {
     MDWQTM_026(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_OBTAIN_MAE", "MDWQTM-026", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_027(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_ACH_DATA", "MDWQTM-027", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_028(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_RELEASE_PLEDGE", "MDWQTM-028", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
-    MDWQTM_029(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_REGISTER_MASTER_QR", "MDWQTM-029", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
+    MDWQTM_029(HttpStatus.CONFLICT, "ERROR_REGISTER_MASTER_QR", "MDWQTM-029", "No se pudo realizar la transacción, error al registrar Maestro QR.", "Ocurrió un problema"),
     MDWQTM_030(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_ACH_EXPRESS", "MDWQTM-030", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_031(HttpStatus.BAD_REQUEST, "ACCOUNT_DESTINY_BLOCKED_FOR_CREDIT", "MDWQTM-031", "La cuenta de destino está bloqueada para recibir créditos.", "Cuenta de destino bloqueada para créditos"),
     MDWQTM_032(HttpStatus.BAD_REQUEST, "ERROR_DATA_ACCOUNT_DESTINY", "MDWQTM-032", "Error al obtener los datos de la cuenta de destino.", "Error en cuenta de destino"),

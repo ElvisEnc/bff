@@ -22,7 +22,8 @@ public enum QRMiddlewareError implements IMiddlewareError {
     MDWGQM_011(HttpStatus.BAD_REQUEST, "ERROR_DATE", "MDWGQM-011", "La fecha proporcionada no es correcta.", "Fecha incorrecta"),
     MDWGQM_004(HttpStatus.BAD_REQUEST, "CONVERTING_DATE_FORMAT", "MDWGQM-004", "El formato de la fecha no es correcto.", "Formato de fecha incorrecto"),
     MDWGQM_008(HttpStatus.BAD_REQUEST, "SOURCE_ACCOUNT_KO", "MDWGQM-008", "No es posible utilizar esta cuenta para realizar esta transacción.", "Cuenta de origen inactiva"),
-    MDWGQM_017(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWGQM-017", "La cuenta o el código de persona no pertenece.", "Cuenta o código de persona incorrecto");
+    MDWGQM_017(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWGQM-017", "La cuenta o el código de persona no pertenece.", "Cuenta o código de persona incorrecto"),
+    MDWGQM_020(HttpStatus.CONFLICT, "INVALID_DATA", "MDWGQM-020", "El monto ingresado supera al permitido.", "Monto inválido");
 
     private final HttpStatus httpCode;
     private final String code;

@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum TransferMiddlewareError implements IMiddlewareError {
     MDWTRM_001(HttpStatus.INTERNAL_SERVER_ERROR, "SOURCE_ACCOUNT_KO", "MDWTRM-001", "Tuvimos un problema interno. Inténtalo nuevamente.","Ocurrió un problema"),
     MDWTRM_002(HttpStatus.BAD_REQUEST, "TRANSFER_KO", "MDWTRM-002", "No es posible utilizar esta cuenta para realizar esta transacción.","Transacción no disponible"),
-    MDWTRM_003(HttpStatus.BAD_REQUEST, "TARGET_ACCOUNT_NOT_FOUND", "MDWTRM-003", "Tuvimos un problema al obtener la cuenta de destino. Inténtalo nuevamente.","Ocurrió un problema"),
+    MDWTRM_003(HttpStatus.NOT_ACCEPTABLE, "TARGET_ACCOUNT_NOT_FOUND", "MDWTRM-003", "Tuvimos un problema al obtener la cuenta de destino. Inténtalo nuevamente.","Ocurrió un problema"),
     MDWTRM_004(HttpStatus.BAD_REQUEST, "TARGET_ACCOUNT_KO", "MDWTRM-004", "No es posible utilizar esta cuenta para realizar esta transacción.","Cuenta de destino inactiva"),
     MDWTRM_005(HttpStatus.BAD_REQUEST, "SAME_ACCOUNT", "MDWTRM-005", "La cuenta de origen y de destino no pueden ser la misma.","Cuenta de origen y destino iguales"),
     MDWTRM_006(HttpStatus.INTERNAL_SERVER_ERROR, "NOT_FOUND_AVAILABLE", "MDWTRM-006", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
@@ -58,7 +58,8 @@ public enum TransferMiddlewareError implements IMiddlewareError {
     MDWTRM_054(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_POWER_VALIDATION", "MDWTRM-054", "Tuvimos un problema interno. Inténtalo nuevamente.","Ocurrió un problema"),
     MDWTRM_055(HttpStatus.BAD_REQUEST, "POWER_VALIDATION", "MDWTRM-055", "Se requiere la autorización de otro firmante para completar la transacción.","Transacción pendiente"),
     MDWTRM_056(HttpStatus.BAD_REQUEST, "TRUSTED_ACCOUNT", "MDWTRM-056", "La cuenta no está en la lista de confianza.","Ocurrió un problema"),
-    MDWTRM_059(HttpStatus.NOT_ACCEPTABLE, "INVALID_DATA", "MDWTRM-059", "No se pudo validar la transacción PCC01.","Ocurrió un problema"),
+    MDWTRM_059(HttpStatus.CONFLICT, "INVALID_ACCOUNT", "MDWTRM-059", "La cuenta de destino no puede recibir abonos.","Ocurrió un problema"),
+    MDWTRM_061(HttpStatus.CONFLICT, "INVALID_DATA", "MDWTRM-061", "La cuenta de destino no está en la lista de confianza.","Ocurrió un problema"),
     MDWTRM_063(HttpStatus.NOT_ACCEPTABLE, "INVALID_DATA", "MDWTRM-063", "La cuenta de destino es inválida.","Ocurrió un problema"),
     MDWPGL_400(HttpStatus.BAD_REQUEST, "INVALID_DATA", "MDWPGL-400", "Los parámetros enviados son inválidos.","Datos inválidos"),
     MDWTRM_PENDING(HttpStatus.OK, "TRANSFER_PENDING", "MDWPGL-PENDING", "Se requiere la autorización de otro firmante para completar la transacción.","Transacción pendiente"),

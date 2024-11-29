@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.dtos.request.qr;
 
 
+import bg.com.bo.bff.commons.annotations.generics.ValidAmountQR;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -39,7 +40,7 @@ public class QRCodeRegenerateRequest {
     private String currency;
 
 
-    @Schema(example = "100.50", description = "Este es el monto de pago")
+    @ValidAmountQR
     private String amount;
 
 

@@ -1,5 +1,6 @@
 package bg.com.bo.bff.application.dtos.request.transfer;
 
+import bg.com.bo.bff.commons.annotations.generics.ValidAmount;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,9 +25,6 @@ public class AmountTransfer {
     @Schema(description = "Código de la moneda", example = "068")
     private String currency;
 
-    @NotNull(message = "El monto es obligatorio")
-    @DecimalMin(value = "0", inclusive = false, message = "El monto debe ser mayor que cero")
-    @Digits(integer = 12, fraction = 2, message = "El monto debe tener hasta 12 dígitos enteros y 2 decimales")
-    @Schema(description = "Monto de la transferencia", example = "100.00")
+    @ValidAmount
     private BigDecimal amount;
 }

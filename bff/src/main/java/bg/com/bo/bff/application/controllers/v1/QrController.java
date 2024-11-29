@@ -142,7 +142,7 @@ public class QrController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotNull @Parameter(description = "Este es el código de persona", example = "1234567") String personId,
             @PathVariable("accountId") @NotNull @Parameter(description = "Este es el accountId", example = "1234567") String accountId,
-            @RequestBody final QRPaymentRequest request
+            @Valid @RequestBody final QRPaymentRequest request
     ) throws IOException {
 
         return ResponseEntity.ok(iQrService.qrPayment(request, personId,

@@ -2,7 +2,9 @@ package bg.com.bo.bff.application.dtos.request.qr;
 
 
 import bg.com.bo.bff.commons.annotations.generics.DescriptionChars;
+import bg.com.bo.bff.commons.annotations.generics.ValidAmountQR;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +22,8 @@ public class QRCodeGenerateRequest {
     private String companyName;
 
 
-    @Schema(example = "100.50", description = "Este es el monto de pago")
+    @ValidAmountQR
+    @DecimalMin(value = "0", inclusive = true, message = "El monto debe ser mayor o igual a cero")
     private String amount;
 
     @NotBlank(message = "El código de moneda no puede estar vacío")
