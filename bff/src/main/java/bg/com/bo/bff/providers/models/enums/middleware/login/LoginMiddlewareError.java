@@ -18,8 +18,7 @@ public enum LoginMiddlewareError implements IMiddlewareError {
     MDWLM_020(HttpStatus.UNAUTHORIZED, "PASSWORD_CHANGE_LM", "MDWLM-020", "Estimado cliente, debe cambiar la contraseña.", "Cambio de contraseña"),
     MDWLM_23(HttpStatus.UNAUTHORIZED, "BLOCKED_USER", "MDWLM-23", "Has superado el número máximo de intentos. Por tu seguridad, necesitamos verificar tu identidad.", "Usuario bloqueado"),
     MDWLM_24(HttpStatus.UNAUTHORIZED, "NOT_ENROLLED", "MDWLM-24", "¿Deseas habilitar GanaMóvil en este dispositivo?", "Habilitación de GanaMóvil"),
-    MDWLM_25(HttpStatus.UNAUTHORIZED, "RESTRICTED_USER", "MDWLM-25", "Visita una agencia para confirmar tu identidad.", "Acceso restringido"),
-
+    MDWLM_25(HttpStatus.UNAUTHORIZED, "ACCESS_DENIED", "MDWLM-25", "Verifica tus datos o visita una agencia para confirmar tu identidad.", "Acceso denegado"),
     MDWLM_008(HttpStatus.UNAUTHORIZED, "INVALID_DATA", "MDWLM-008", "Verifica tu método de ingreso y contraseña.", "Datos inválidos"), // alias, DNI
     MDWLM_009(HttpStatus.UNAUTHORIZED, "INVALID_DATA", "MDWLM-009", "Verifica tu código de persona y contraseña.", "Datos inválidos"), // personId
     MDWLM_007(HttpStatus.UNAUTHORIZED, "INVALID_DATA", "MDWLM-007", "Tipo de autenticación inválido.", "Autenticación inválida"), // type

@@ -50,8 +50,15 @@ public enum AchTransactionMiddlewareError implements IMiddlewareError {
     MDWACH_039(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "MDWACH-039", "Tuvimos un problema interno. Inténtalo nuevamente.","Ocurrió un problema"),
     MDWACH_040(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWACH-040", "Parámetros inválidos","Parámetros inválidos"),
     MDWACH_041(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWACH-041", "Canal inválido","Canal inválido"),
-    MDWACH_043(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWACH-043", "La cuenta no pertenece al usuario.","Ocurrió un problema"),;
-    
+    MDWACH_043(HttpStatus.CONFLICT, "DATA_INVALID", "MDWACH-043", "La cuenta no pertenece al cliente.","Cuenta inválida"),
+    MDWACH_044(HttpStatus.NOT_ACCEPTABLE, "AUTHORIZATION_INVALID", "MDWACH-044", "No tienes la autorización para realizar la transacción.","Transacción no procesada"),
+    MDWACH_045(HttpStatus.NOT_ACCEPTABLE, "ERROR_VALIDATION", "MDWACH-045", "No se pueden validar los poderes para esta transacción.", "Transacción pendiente"),
+    MDWACH_046(HttpStatus.NOT_ACCEPTABLE, "ERROR_AUTHORIZATION", "MDWACH-046", "No se pudo procesar la autorización.","Autorización pendiente"),
+    MDWACH_047(HttpStatus.CONFLICT, "DATA_INVALID", "MDWACH-047", "Cuenta billetera inválida, verifica e intenta nuevamente.","Cuenta inválida"),
+    MDWACH_048(HttpStatus.NOT_ACCEPTABLE, "ERROR_VALIDATION", "MDWACH-048", "No se pudieron validar los límites de la cuenta.","Validación de límites"),
+    MDWACH_049(HttpStatus.NOT_ACCEPTABLE, "CONTINGENCY_DESTINATION_BANK", "MDWACH-049", "La entidad financiera de destino esta fuera de servicio para realizar esta transacción. Intentálo más tarde.", "Servicio no disponible"),
+    MDWACH_050(HttpStatus.NOT_ACCEPTABLE, "CONTINGENCY_ORIGIN_BANK", "MDWACH-050", "Nuestra entidad esta fuera de servicio para realizar esta transacción. Intentálo más tarde.", "Servicio no disponible");
+
     private final HttpStatus httpCode;
     private final String code;
     private final String codeMiddleware;

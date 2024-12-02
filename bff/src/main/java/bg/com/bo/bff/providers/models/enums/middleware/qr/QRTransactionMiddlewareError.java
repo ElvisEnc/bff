@@ -17,7 +17,7 @@ public enum QRTransactionMiddlewareError implements IMiddlewareError {
     MDWQTM_005(HttpStatus.BAD_REQUEST, "VALIDATE_COMBINATION", "MDWQTM-005", "No hay combinación válida de poderes para esta transacción.", "Transacción pendiente"),
     MDWQTM_006(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_DATA_ACCOUNT_ORIGIN", "MDWQTM-006", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_007(HttpStatus.BAD_REQUEST, "INVALID_CURRENCY", "MDWQTM-007", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
-    MDWQTM_008(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_CONVERTION_AMOUNT", "MDWQTM-008", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
+    MDWQTM_008(HttpStatus.NOT_ACCEPTABLE, "ERROR_CONVERTION_AMOUNT", "MDWQTM-008", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_009(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_ITF", "MDWQTM-009", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_010(HttpStatus.BAD_REQUEST, "AMOUNT_LIMIT_KO", "MDWQTM-010", "El límite de monto ha sido superado para esta transacción.", "Límite de monto excedido"),
     MDWQTM_011(HttpStatus.BAD_REQUEST, "NO_FOUNDS_AVAILABLE", "MDWQTM-011", "Verifica el saldo disponible e intenta nuevamente.", "Saldo insuficiente"),
@@ -26,7 +26,7 @@ public enum QRTransactionMiddlewareError implements IMiddlewareError {
     MDWQTM_014(HttpStatus.BAD_REQUEST, "ERROR_NUMBER_ACH", "MDWQTM-014", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_015(HttpStatus.CONFLICT, "TRANSFER_ERROR", "MDWQTM-015", "La transacción no puede ser procesada para la cuenta a debitar.", "Transacción no disponible"),
     MDWQTM_016(HttpStatus.CONFLICT, "ACCOUNT_BLOCKED", "MDWQTM-016", "No es posible utilizar esta cuenta para realizar la transacción.", "Cuenta de origen inactiva"),
-    MDWQTM_017(HttpStatus.BAD_REQUEST, "CRYPTO_ACTIVE", "MDWQTM-017", "Esta operación presenta relación con la comercialización de criptomonedas y no puede realizarse.", "Operación no permitida"),
+    MDWQTM_017(HttpStatus.CONFLICT, "CRYPTO_ACTIVE", "MDWQTM-017", "Esta operación presenta relación con la comercialización de criptomonedas y no puede realizarse.", "Operación no permitida"),
     MDWQTM_018(HttpStatus.BAD_REQUEST, "ERROR_ROL_USER_EMPRESA", "MDWQTM-018", "La transacción no puede ser procesada para el rol del usuario.", "Rol de usuario no autorizado"),
     MDWQTM_019(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_INSERT_MAE", "MDWQTM-019", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_020(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_INSERT_AUTHORIZATION", "MDWQTM-020", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
@@ -53,6 +53,8 @@ public enum QRTransactionMiddlewareError implements IMiddlewareError {
     MDWQTM_041(HttpStatus.BAD_REQUEST, "ERROR_DATA_ACCOUNT_DESTINY", "MDWQTM-041", "Número de cuenta de destino inválida.", "Cuenta de destino inválida"),
     MDWQTM_042(HttpStatus.BAD_REQUEST, "DIFFERENT_AMOUNT", "MDWQTM-042", "El monto de la transacción es diferente al monto requerido.", "Monto de transacción diferente"),
     MDWQTM_043(HttpStatus.CONFLICT, "CHECK_TRANSFER", "MDWQTM-043", "Verifica si la transacción fue satisfactoria, revisa tu extracto.", "Tiempo excedido"),
+    MDWQTM_044(HttpStatus.NOT_ACCEPTABLE, "CONTINGENCY_DESTINATION_BANK", "MDWQTM-044", "La entidad financiera de destino esta fuera de servicio para realizar esta transacción. Intentálo más tarde.", "Servicio no disponible"),
+    MDWQTM_045(HttpStatus.NOT_ACCEPTABLE, "CONTINGENCY_ORIGIN_BANK", "MDWQTM-045", "Nuestra entidad esta fuera de servicio para realizar esta transacción. Intentálo más tarde.", "Servicio no disponible"),
     MDWGQM_PENDING(HttpStatus.OK, "TRANSFER_PENDING", "MDWPGL-PENDING", "Se requiere la autorización de otro firmante para completar la transacción.", "Transacción pendiente");
 
     private final HttpStatus httpCode;
