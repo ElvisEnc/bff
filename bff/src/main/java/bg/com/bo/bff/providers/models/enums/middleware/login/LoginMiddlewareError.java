@@ -27,6 +27,7 @@ public enum LoginMiddlewareError implements IMiddlewareError {
     MDWLM_021(HttpStatus.UNAUTHORIZED, "PASSWORD_CHANGE_LM", "MDWLM-021", "Estimado cliente, debe cambiar la contraseña", "Cambio de contraseña"), // contraseña
     MDWRLIB_0003(HttpStatus.NOT_FOUND, "NOT_FOUND", "MDWRLIB-0003", "Error en los datos.", "Datos no encontrados"),
     MDWLM_29(HttpStatus.INTERNAL_SERVER_ERROR, "DUPLICATED_DEVICE_ID", "MDWLM-29", "No se puede validar el device id.", "Device Id duplicado"),
+    MDWLM_31(HttpStatus.CONFLICT, "BIOMETRIC_DISABLED", "MDWLM-31", "Estimado cliente, no tienes habilitado el ingreso por biometría.", "Biometría no habilitada"),
     INVALID_AUTH_TYPE(HttpStatus.BAD_REQUEST, "INVALID_DATA", null, "Tipo de autenticación inválida.", "Datos inválidos"),
 
     // Logout

@@ -24,7 +24,7 @@ public enum QRTransactionMiddlewareError implements IMiddlewareError {
     MDWQTM_012(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_NUMBER_PLEDGE", "MDWQTM-012", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_013(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_REGISTER_PLEDGE", "MDWQTM-013", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     MDWQTM_014(HttpStatus.BAD_REQUEST, "ERROR_NUMBER_ACH", "MDWQTM-014", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
-    MDWQTM_015(HttpStatus.INTERNAL_SERVER_ERROR, "TRANSFER_ERROR", "MDWQTM-015", "Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
+    MDWQTM_015(HttpStatus.CONFLICT, "TRANSFER_ERROR", "MDWQTM-015", "La transacción no puede ser procesada para la cuenta a debitar.", "Transacción no disponible"),
     MDWQTM_016(HttpStatus.CONFLICT, "ACCOUNT_BLOCKED", "MDWQTM-016", "No es posible utilizar esta cuenta para realizar la transacción.", "Cuenta de origen inactiva"),
     MDWQTM_017(HttpStatus.BAD_REQUEST, "CRYPTO_ACTIVE", "MDWQTM-017", "Esta operación presenta relación con la comercialización de criptomonedas y no puede realizarse.", "Operación no permitida"),
     MDWQTM_018(HttpStatus.BAD_REQUEST, "ERROR_ROL_USER_EMPRESA", "MDWQTM-018", "La transacción no puede ser procesada para el rol del usuario.", "Rol de usuario no autorizado"),

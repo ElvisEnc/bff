@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {})
 @NotNull(message = "El monto es obligatorio")
-@DecimalMin(value = "0.10", inclusive = false, message = "El monto debe ser mayor que cero")
+@DecimalMin(value = "0.10", inclusive = true, message = "El monto debe ser mayor que cero")
 @Digits(integer = 12, fraction = 2, message = "El monto debe tener hasta 12 dígitos enteros y 2 decimales")
 @Schema(description = "Monto de la transferencia", example = "100.00")
 public @interface ValidAmount {
