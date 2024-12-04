@@ -14,7 +14,7 @@ public class ThirdAccountMWResponseFixture {
         return ThirdAccountsMWResponse.builder()
                 .data(Collections.singletonList(
                         ThirdAccountsMWResponse.ThirdAccountMW.builder()
-                                .id("1")
+                                .identifier("1")
                                 .accountId("123456789")
                                 .accountNumber("987654321")
                                 .currencyCode("USD")

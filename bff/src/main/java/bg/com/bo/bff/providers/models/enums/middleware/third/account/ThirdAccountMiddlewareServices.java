@@ -11,7 +11,7 @@ public enum ThirdAccountMiddlewareServices  {
     ADD_WALLET_ACCOUNT("/bs/v1/wallets"),
     DELETE_THIRD_ACCOUNT("/bs/v1/third-party-accounts"),
     DELETE_WALLET_ACCOUNT("/bs/v1/wallets/%s/persons/%s/wallet-accounts/%s"),
-    GET_THIRD_ACCOUNTS("/bs/v1/persons/%s/companies/%s/devices/%s/roles/%s"),
+    GET_THIRD_ACCOUNTS("/bs/v1/persons/%s/companies/%s"),
     GET_WALLET_ACCOUNTS("/bs/v1/wallets/companies/%s/persons/%s");
 
     private final String serviceURL;

@@ -85,7 +85,7 @@ public class ThirdAccountMiddlewareProvider extends MiddlewareProvider<ThirdAcco
 
     @Override
     public ThirdAccountsMWResponse getThirdAccounts(String personId, Map<String, String> parameters) throws IOException {
-        String url = baseUrl + String.format(ThirdAccountMiddlewareServices.GET_THIRD_ACCOUNTS.getServiceURL(), personId, personId, PersonRol.PERSONA.getId(), PersonRol.PERSONA.getId());
+        String url = baseUrl + String.format(ThirdAccountMiddlewareServices.GET_THIRD_ACCOUNTS.getServiceURL(), personId, personId);
         ByMwErrorResponseHandler<ThirdAccountsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(ThirdAccountMiddlewareError.MDWACTM_002);
         return get(url, HeadersMW.getDefaultHeaders(parameters), ThirdAccountsMWResponse.class, responseHandler);
     }

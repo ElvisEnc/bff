@@ -16,7 +16,7 @@ public class ThirdAccountsMWResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ThirdAccountMW{
-        private String id;
+        private String identifier;
         private String accountId;
         private String accountNumber;
         private String currencyCode;

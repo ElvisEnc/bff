@@ -29,7 +29,7 @@ public class ThirdAccountsMapper implements IThirdAccountsMapper {
             return Collections.emptyList();
         return mwResponse.getData().stream()
                 .map(mw -> DestinationAccount.builder()
-                        .id(Long.valueOf(mw.getId()))
+                        .id(Long.valueOf(mw.getIdentifier()))
                         .accountId(Long.valueOf(mw.getAccountId()))
                         .accountNumber(new BigInteger(mw.getAccountNumber().trim()))
                         .currencyCode(mw.getCurrencyCode())

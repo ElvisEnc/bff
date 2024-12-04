@@ -33,7 +33,7 @@ public class OwnAccountsMiddlewareProvider extends MiddlewareProvider<OwnAccount
 
     @Override
     public OwnAccountsListMWResponse getAccounts(String personId, String userDeviceId, Map<String, String> parameter) throws IOException {
-        String url = baseUrl + String.format(OwnAccountsMiddlewareService.GET_OWN_ACCOUNTS.getServiceURL(), personId, personId, userDeviceId, PersonRol.PERSONA.getId());
+        String url = baseUrl + String.format(OwnAccountsMiddlewareService.GET_OWN_ACCOUNTS.getServiceURL(), personId, personId, PersonRol.PERSONA.getId());
         return get(url, HeadersMW.getDefaultHeaders(parameter), OwnAccountsListMWResponse.class);
     }
 
