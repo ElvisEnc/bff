@@ -1,5 +1,6 @@
 package bg.com.bo.bff.application.dtos.request.destination.account;
 
+import bg.com.bo.bff.commons.annotations.generics.ReferenceChars;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -42,6 +43,7 @@ public class AddQRAccountRequest {
 
     @Schema(example = "Referencias ", description = "Referencia del contacto", requiredMode = Schema.RequiredMode.REQUIRED)
     @Size(max = 40, message = "El campo acepta valores entre 1 y 40 caracteres.")
+    @ReferenceChars
     private String reference;
 
 }

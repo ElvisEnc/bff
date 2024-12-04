@@ -1,5 +1,6 @@
 package bg.com.bo.bff.application.dtos.request.destination.account;
 
+import bg.com.bo.bff.commons.annotations.generics.ReferenceChars;
 import bg.com.bo.bff.commons.annotations.generics.ValidYoNParameter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -37,6 +38,7 @@ public class AddAchAccountRequest {
 
     @Schema(example = "Referencias ", description = "Referencia", requiredMode = Schema.RequiredMode.REQUIRED)
     @Size(max = 100, message = "El campo acepta valores entre 1 y 100 caracteres.")
+    @ReferenceChars
     private String reference;
 
 
@@ -69,6 +71,7 @@ public class AddAchAccountRequest {
     @NotBlank(message = "Invalid destinationHolderName.")
     @Schema(example = "Juan Perez", description = "Nombre de cuanta destino", requiredMode = Schema.RequiredMode.REQUIRED)
     @Size(min = 1, max = 50, message = "El campo acepta valores entre 1 y 50 caracteres.")
+    @ReferenceChars
     private String destinationHolderName;
 
     @Schema(example = "123456", description = "Numero de identificacion", requiredMode = Schema.RequiredMode.REQUIRED)

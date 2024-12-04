@@ -136,7 +136,7 @@ public class DestinationAccountController {
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("personId") @NotBlank @Parameter(description = "Este es el id de la persona", example = "12345") String personId,
             @PathVariable("bankType") @NotBlank @Parameter(description = "Este es el tipo de banco", example = "Third") String bankType,
-            @RequestBody AddQRAccountRequest addQRAccountRequest) throws IOException {
+            @Valid @RequestBody AddQRAccountRequest addQRAccountRequest) throws IOException {
         return ResponseEntity.ok(service.addQRAccount(personId, bankType, addQRAccountRequest, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,

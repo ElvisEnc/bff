@@ -15,6 +15,6 @@ public class Amount {
 
     private String currency;
     @ValidAmountQR
-    @DecimalMin(value = "0.10", inclusive = true, message = "El monto debe ser mayor a cero")
+    @DecimalMin(value = "0.01", inclusive = true, message = "El monto debe ser mayor a cero")
     private String amount;
 }

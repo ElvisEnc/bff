@@ -1,6 +1,7 @@
 
 package bg.com.bo.bff.application.dtos.request.destination.account;
 
+import bg.com.bo.bff.commons.annotations.generics.ReferenceChars;
 import bg.com.bo.bff.commons.annotations.generics.ValidYoNParameter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -29,6 +30,7 @@ public class AddThirdAccountRequest {
 
     @Schema(example = "Referencias ", description = "Referencia", requiredMode = Schema.RequiredMode.REQUIRED)
     @Size(max = 40, message = "El campo acepta valores entre 1 y 40 caracteres.")
+    @ReferenceChars
     private String reference;
 
     @JsonProperty(required = true)

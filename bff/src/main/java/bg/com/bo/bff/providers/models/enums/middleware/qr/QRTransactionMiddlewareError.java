@@ -50,7 +50,7 @@ public enum QRTransactionMiddlewareError implements IMiddlewareError {
     MDWQTM_038(HttpStatus.BAD_REQUEST, "INVALID_CHANNEL", "MDWQTM-038", "Canal inválido para esta transacción.", "Canal inválido"),
     MDWQTM_039(HttpStatus.BAD_REQUEST, "FUNDS_REQUIRED", "MDWQTM-039", "Es necesario indicar el origen y destino de los fondos.", "Origen y destino de fondos requeridos"),
     MDWQTM_040(HttpStatus.BAD_REQUEST, "QR_HAS_BEEN_USED", "MDWQTM-040", "El código QR ya ha sido utilizado.", "Código QR utilizado"),
-    MDWQTM_041(HttpStatus.BAD_REQUEST, "ERROR_DATA_ACCOUNT_DESTINY", "MDWQTM-041", "Número de cuenta de destino inválida.", "Cuenta de destino inválida"),
+    MDWQTM_041(HttpStatus.CONFLICT, "ERROR_DATA_ACCOUNT_DESTINY", "MDWQTM-041", "No podemos procesar tu transacción por razones internas.", "Transacción no disponible"),
     MDWQTM_042(HttpStatus.BAD_REQUEST, "DIFFERENT_AMOUNT", "MDWQTM-042", "El monto de la transacción es diferente al monto requerido.", "Monto de transacción diferente"),
     MDWQTM_043(HttpStatus.CONFLICT, "CHECK_TRANSFER", "MDWQTM-043", "Verifica si la transacción fue satisfactoria, revisa tu extracto.", "Tiempo excedido"),
     MDWQTM_044(HttpStatus.NOT_ACCEPTABLE, "CONTINGENCY_DESTINATION_BANK", "MDWQTM-044", "La entidad financiera de destino esta fuera de servicio para realizar esta transacción. Intentálo más tarde.", "Servicio no disponible"),
