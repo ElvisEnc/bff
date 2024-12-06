@@ -9,26 +9,23 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Date;
 
 @Component
-@Order(6)
+@Order(3)
 @Log4j2
-public class RequestTracingFilter extends OncePerRequestFilter {
+public class RawRequestTracingFilter extends OncePerRequestFilter {
     private final IRequestTraceMapper requestTraceMapper;
 
     @Autowired
-    public RequestTracingFilter(IRequestTraceMapper requestTraceMapper) {
+    public RawRequestTracingFilter(IRequestTraceMapper requestTraceMapper) {
         this.requestTraceMapper = requestTraceMapper;
     }
 
@@ -38,11 +35,10 @@ public class RequestTracingFilter extends OncePerRequestFilter {
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 
         ZonedDateTime in = ZonedDateTime.now();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         filterChain.doFilter(requestWrapper, responseWrapper);
 
-        RequestTrace requestTrace = requestTraceMapper.convert(requestWrapper, responseWrapper, in, authentication);
+        RequestTrace requestTrace = requestTraceMapper.convert(requestWrapper, responseWrapper, in, null);
 
         responseWrapper.copyBodyToResponse();
 

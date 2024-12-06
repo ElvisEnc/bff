@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
-@Order(3)
+@Order(5)
 public class EncryptionPayloadFilter extends OncePerRequestFilter {
 
     @Value("${encryption.url.exclude.pattern}")

@@ -11,7 +11,7 @@ import java.util.Date;
 @lombok.ToString
 @JsonTypeName(value = "requestTrace")
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
-@JsonInclude(JsonInclude.Include.ALWAYS)
+@JsonInclude
 public class RequestTrace {
     private String traceId;
     private String method;

@@ -9,16 +9,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.env.MockEnvironment;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,23 +26,28 @@ class RequestTracingFilterTests {
     @Test
     void givenRequestTracingFilterWhenExecuteRequestThenTraceAndAddTraceIdHeader() throws ServletException, IOException {
         // Arrange
+        RequestTrace requestTrace = RequestTrace.builder()
+                .traceId(UUID.randomUUID().toString())
+                .build();
+
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
         MockFilterChain chain = new MockFilterChain();
-        MockEnvironment env = new MockEnvironment();
+
+        IRequestTraceMapper requestTraceMapper = mock(IRequestTraceMapper.class);
+        when(requestTraceMapper.convert(any(), any(), any(), any())).thenReturn(requestTrace);
 
         ArgumentCaptor<RequestTrace> captor = ArgumentCaptor.forClass(RequestTrace.class);
         Logger logger = mock(Logger.class);
 
-        MockedStatic<LogManager> mocked = mockStatic(LogManager.class);
-        mocked.when(() -> LogManager.getLogger(any(String.class))).thenReturn(logger);
+        try (MockedStatic<LogManager> mocked = mockStatic(LogManager.class)) {
+            mocked.when(() -> LogManager.getLogger(RequestTracingFilter.class)).thenReturn(logger);
 
-        IRequestTraceMapper requestTraceMapper = new RequestTraceMapper();
-        RequestTracingFilter filter = new RequestTracingFilter(requestTraceMapper, env);
+            RequestTracingFilter filter = new RequestTracingFilter(requestTraceMapper);
 
-        //Act
-        filter.doFilter(req, res, chain);
-        mocked.close();
+            //Act
+            filter.doFilter(req, res, chain);
+        }
 
         //Assert
         verify(logger, times(1)).trace(captor.capture());

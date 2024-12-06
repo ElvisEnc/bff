@@ -357,4 +357,24 @@ public class Util {
             throw new RuntimeException("Encoding failed", e);
         }
     }
+
+    public static boolean IsDevLogConfigurationFile() {
+        String logConfigurationFileByEnv = System.getenv("log4j.configurationFile");
+        String logConfigurationFileByProperty = System.getProperty("log4j.configurationFile");
+        String configurationFile = null;
+        if (logConfigurationFileByEnv != null)
+            configurationFile = logConfigurationFileByEnv;
+        else if (logConfigurationFileByProperty != null)
+            configurationFile = logConfigurationFileByProperty;
+
+        if (configurationFile != null) {
+            String configurationFileWithoutExtension = configurationFile.contains(".") ?
+                    configurationFile.substring(0, configurationFile.lastIndexOf('.')) : configurationFile;
+            if (configurationFileWithoutExtension.endsWith("-dev"))
+                return true;
+            else
+                return false;
+        } else
+            return false;
+    }
 }

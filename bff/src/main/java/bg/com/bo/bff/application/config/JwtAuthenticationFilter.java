@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@Order(2)
+@Order(4)
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final IJwtProvider jwtService;

@@ -48,7 +48,7 @@ public class RequestTraceMapper implements IRequestTraceMapper {
                     .headersResponse(objectToString(responseHeaders))
                     .bodyResponse(payload)
                     .status(responseWrapper.getStatus())
-                    .userData(objectToString(currentUser))
+                    .userData(currentUser != null ? objectToString(currentUser) : null)
                     .headersRequest(objectToString(requestHeaders))
                     .bodyRequest(requestBody)
                     .build();
@@ -66,7 +66,7 @@ public class RequestTraceMapper implements IRequestTraceMapper {
     }
 
     private static long getElapsed(ZonedDateTime in, ZonedDateTime out) {
-        return Duration.between(out, in).toMillis();
+        return Duration.between(in, out).toMillis();
     }
 
     private static String getRequestBody(ContentCachingRequestWrapper requestWrapper) {

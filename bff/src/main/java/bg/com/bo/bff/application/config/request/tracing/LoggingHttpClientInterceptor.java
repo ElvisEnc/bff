@@ -8,6 +8,7 @@ import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.log4j.Log4j2;
 import org.apache.http.*;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.protocol.HttpContext;
@@ -26,16 +27,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@Log4j2
 public class LoggingHttpClientInterceptor implements HttpRequestInterceptor, HttpResponseInterceptor {
     private static final ThreadLocal<RequestTrace> requestTraceHolder = new ThreadLocal<>();
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final Logger logger = LogManager.getLogger(LoggingHttpClientInterceptor.class.getName());
     private final HttpServletRequest httpServletRequest;
-    private final Environment env;
 
-    public LoggingHttpClientInterceptor(HttpServletRequest httpServletRequest, Environment env) {
+    public LoggingHttpClientInterceptor(HttpServletRequest httpServletRequest) {
         this.httpServletRequest = httpServletRequest;
-        this.env = env;
     }
 
     @Override
@@ -71,11 +70,11 @@ public class LoggingHttpClientInterceptor implements HttpRequestInterceptor, Htt
             trace.setStatus(response.getStatusLine().getStatusCode());
             trace.setHeadersResponse(headersToString(response.getAllHeaders()));
             trace.setBodyResponse(bodyResponse);
-            trace.setElapsed(Duration.between(responseTime, trace.getIn()).toMillis());
-            if (Arrays.stream(env.getActiveProfiles()).toList().contains(EnvProfile.dev.name()))
-                logger.trace(Util.objectToString(trace, true));
+            trace.setElapsed(Duration.between(trace.getIn(), responseTime).toMillis());
+            if (Util.IsDevLogConfigurationFile())
+                log.trace(Util.objectToString(trace, true));
             else
-                logger.trace(trace);
+                log.trace(trace);
         }
         requestTraceHolder.remove();
     }
@@ -109,7 +108,7 @@ public class LoggingHttpClientInterceptor implements HttpRequestInterceptor, Htt
         try {
             return objectMapper.writeValueAsString(headersMap);
         } catch (JsonProcessingException e) {
-            logger.error("Error serializing headers to JSON", e);
+            log.error("Error serializing headers to JSON", e);
             return "{}";
         }
     }
