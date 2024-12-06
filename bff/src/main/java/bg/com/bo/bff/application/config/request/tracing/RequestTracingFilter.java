@@ -21,6 +21,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Component
@@ -41,7 +43,7 @@ public class RequestTracingFilter extends OncePerRequestFilter {
         CustomHeadersRequestWrapper requestWrapper = new CustomHeadersRequestWrapper(request);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 
-        Date in = new Date();
+        ZonedDateTime in = ZonedDateTime.now();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String traceId = resolveRequestTraceId(requestWrapper);

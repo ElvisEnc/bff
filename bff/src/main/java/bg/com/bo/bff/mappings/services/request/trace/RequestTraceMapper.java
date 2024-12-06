@@ -16,6 +16,9 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Component
@@ -24,9 +27,9 @@ public class RequestTraceMapper implements IRequestTraceMapper {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public RequestTrace convert(ContentCachingRequestWrapper requestWrapper, ContentCachingResponseWrapper responseWrapper, Date in, Authentication authentication) {
+    public RequestTrace convert(ContentCachingRequestWrapper requestWrapper, ContentCachingResponseWrapper responseWrapper, ZonedDateTime in, Authentication authentication) {
         try {
-            Date out = new Date();
+            ZonedDateTime out = ZonedDateTime.now();
             UserData currentUser = UtilAuthentication.getUserData(authentication);
             Map<String, String> requestHeaders = Headers.getHeaders(requestWrapper);
             String traceId = getTraceId(requestHeaders);
@@ -62,8 +65,8 @@ public class RequestTraceMapper implements IRequestTraceMapper {
             return UUID.randomUUID().toString();
     }
 
-    private static long getElapsed(Date in, Date out) {
-        return out.getTime() - in.getTime();
+    private static long getElapsed(ZonedDateTime in, ZonedDateTime out) {
+        return Duration.between(out, in).toMillis();
     }
 
     private static String getRequestBody(ContentCachingRequestWrapper requestWrapper) {

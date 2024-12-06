@@ -19,6 +19,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,7 +42,7 @@ public class LoggingHttpClientInterceptor implements HttpRequestInterceptor, Htt
     public void process(HttpRequest request, HttpContext context) throws IOException {
         String method = request.getRequestLine().getMethod();
         String path = request.getRequestLine().getUri();
-        Date requestTime = new Date();
+        ZonedDateTime requestTime = ZonedDateTime.now();
         String bodyRequest = extractRequestBody(request);
         UserData userData = UtilAuthentication.getUserData(SecurityContextHolder.getContext().getAuthentication());
         String traceId = httpServletRequest.getHeader(HeadersMW.REQUEST_ID.getName());
@@ -59,7 +62,7 @@ public class LoggingHttpClientInterceptor implements HttpRequestInterceptor, Htt
 
     @Override
     public void process(HttpResponse response, HttpContext context) throws IOException {
-        Date responseTime = new Date();
+        ZonedDateTime responseTime = ZonedDateTime.now();
         RequestTrace trace = requestTraceHolder.get();
 
         if (trace != null) {
@@ -68,7 +71,7 @@ public class LoggingHttpClientInterceptor implements HttpRequestInterceptor, Htt
             trace.setStatus(response.getStatusLine().getStatusCode());
             trace.setHeadersResponse(headersToString(response.getAllHeaders()));
             trace.setBodyResponse(bodyResponse);
-            trace.setElapsed(responseTime.getTime() - trace.getIn().getTime());
+            trace.setElapsed(Duration.between(responseTime, trace.getIn()).toMillis());
             if (Arrays.stream(env.getActiveProfiles()).toList().contains(EnvProfile.dev.name()))
                 logger.trace(Util.objectToString(trace, true));
             else

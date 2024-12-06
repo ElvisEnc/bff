@@ -2,6 +2,7 @@ package bg.com.bo.bff.application.config.request.tracing;
 
 import com.fasterxml.jackson.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @lombok.Builder
@@ -16,10 +17,10 @@ public class RequestTrace {
     private String method;
     private String path;
     private int status;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-    private Date in;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-    private Date out;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS Z")
+    private ZonedDateTime in;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS Z")
+    private ZonedDateTime out;
     private String headersRequest;
     private String headersResponse;
     private String bodyRequest;
