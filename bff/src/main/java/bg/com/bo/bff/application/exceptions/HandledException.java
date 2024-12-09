@@ -18,6 +18,7 @@ public class HandledException extends RuntimeException {
     private String method;
     private String source;
     private String title;
+    private int categoryId;
 
     public HandledException(IErrorControllerResponse controllerResponse) {
         super(controllerResponse.getDescription());
@@ -25,6 +26,7 @@ public class HandledException extends RuntimeException {
         this.status = controllerResponse.getHttpCode();
         this.code = controllerResponse.getCode();
         this.title = controllerResponse.getTitle();
+        this.categoryId = controllerResponse.getCategoryId();
         fillTrace();
     }
 
@@ -43,6 +45,7 @@ public class HandledException extends RuntimeException {
         this.status = controllerResponse.getHttpCode();
         this.code = controllerResponse.getCode();
         this.title = controllerResponse.getTitle();
+        this.categoryId = controllerResponse.getCategoryId();
     }
 
     public HandledException(IErrorResponse response) {
@@ -51,6 +54,7 @@ public class HandledException extends RuntimeException {
         this.status = response.getHttpCode();
         this.code = response.getCode();
         this.title = response.getTitle();
+        this.categoryId = response.getCategoryId();
         fillTrace();
     }
 
@@ -60,6 +64,7 @@ public class HandledException extends RuntimeException {
         this.status = response.getHttpCode();
         this.code = response.getCode();
         this.title = response.getTitle();
+        this.categoryId = response.getCategoryId();
     }
 
     private void fillTrace() {

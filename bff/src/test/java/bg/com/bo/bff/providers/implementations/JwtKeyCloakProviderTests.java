@@ -15,6 +15,7 @@ import bg.com.bo.bff.providers.dtos.response.jwt.JwtKey;
 import bg.com.bo.bff.commons.enums.user.UserRole;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.models.enums.keycloak.KeyCloakService;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import bg.com.bo.bff.services.interfaces.ISessionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -311,7 +312,7 @@ class JwtKeyCloakProviderTests {
         GenericException notHandledResponseException = assertThrows(GenericException.class, () -> jwtKeyCloakProvider.refreshToken(refreshToken));
 
         //Assert
-        assertEquals(message, notHandledResponseException.getMessage());
+        assertEquals(DefaultMiddlewareError.KC_FAILURE.getMessage(), notHandledResponseException.getMessage());
     }
 
     @Disabled
@@ -476,8 +477,8 @@ class JwtKeyCloakProviderTests {
         GenericException genericException = assertThrows(GenericException.class, () -> jwtKeyCloakProvider.introspect(token));
 
         // Assert
-        assertSame(genericException.getCode(), AppError.KEY_CLOAK_ERROR.getCode());
-        assertSame(genericException.getMessage(), AppError.KEY_CLOAK_ERROR.getMessage());
+        assertSame(DefaultMiddlewareError.KC_FAILURE.getCode(), genericException.getCode());
+        assertSame(DefaultMiddlewareError.KC_FAILURE.getMessage(), genericException.getMessage());
     }
 
     @Test
@@ -490,7 +491,7 @@ class JwtKeyCloakProviderTests {
         GenericException genericException = assertThrows(GenericException.class, () -> jwtKeyCloakProvider.introspect(token));
 
         // Assert
-        assertSame(genericException.getCode(), AppError.KEY_CLOAK_ERROR.getCode());
-        assertSame(genericException.getMessage(), AppError.KEY_CLOAK_ERROR.getMessage());
+        assertSame(genericException.getCode(), DefaultMiddlewareError.KC_FAILURE.getCode());
+        assertSame(genericException.getMessage(), DefaultMiddlewareError.KC_FAILURE.getMessage());
     }
 }

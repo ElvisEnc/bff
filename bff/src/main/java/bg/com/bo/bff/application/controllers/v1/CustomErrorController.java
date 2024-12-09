@@ -19,8 +19,28 @@ public class CustomErrorController implements ErrorController {
         this.errorService = errorService;
     }
 
-    @RequestMapping(value = "/error", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH})
-    public ResponseEntity<ErrorResponse> handleErrors(WebRequest webRequest) {
+    @GetMapping(value = "/error")
+    public ResponseEntity<ErrorResponse> handleErrorGet(WebRequest webRequest) {
+        return errorService.map(errorAttributes, webRequest);
+    }
+
+    @PostMapping(value = "/error")
+    public ResponseEntity<ErrorResponse> handleErrorPost(WebRequest webRequest) {
+        return errorService.map(errorAttributes, webRequest);
+    }
+
+    @PutMapping(value = "/error")
+    public ResponseEntity<ErrorResponse> handleErrorPut(WebRequest webRequest) {
+        return errorService.map(errorAttributes, webRequest);
+    }
+
+    @DeleteMapping(value = "/error")
+    public ResponseEntity<ErrorResponse> handleErrorDelete(WebRequest webRequest) {
+        return errorService.map(errorAttributes, webRequest);
+    }
+
+    @PatchMapping(value = "/error")
+    public ResponseEntity<ErrorResponse> handleErrorPatch(WebRequest webRequest) {
         return errorService.map(errorAttributes, webRequest);
     }
 }

@@ -20,6 +20,7 @@ import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import bg.com.bo.bff.providers.models.enums.middleware.payment.services.PaymentServicesMiddlewareError;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.http.HttpStatus;
@@ -245,7 +246,7 @@ class PaymentServicesProviderTest {
         });
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
     }
 
     @Test

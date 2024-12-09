@@ -151,8 +151,8 @@ class LoginMiddlewareProviderTests {
         });
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
-        assertEquals(AppError.DEFAULT.getHttpCode(), exception.getStatus());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getHttpCode(), exception.getStatus());
     }
 
     @Test
@@ -207,8 +207,8 @@ class LoginMiddlewareProviderTests {
         });
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
-        assertEquals(AppError.DEFAULT.getHttpCode(), exception.getStatus());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getHttpCode(), exception.getStatus());
     }
 
     @Test
@@ -268,8 +268,8 @@ class LoginMiddlewareProviderTests {
         });
 
         // Assert
-        assertEquals(DefaultMiddlewareError.DEFAULT.getMessage(), exception.getMessage());
-        assertEquals(DefaultMiddlewareError.DEFAULT.getHttpCode(), exception.getStatus());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getHttpCode(), exception.getStatus());
     }
 
     @Test
@@ -326,8 +326,8 @@ class LoginMiddlewareProviderTests {
         );
 
         //Assert
-        assertEquals(DefaultMiddlewareError.DEFAULT.getMessage(), exception.getMessage());
-        assertEquals(DefaultMiddlewareError.DEFAULT.getHttpCode(), exception.getStatus());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getHttpCode(), exception.getStatus());
     }
 
     @Test
@@ -376,7 +376,7 @@ class LoginMiddlewareProviderTests {
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(clientTokenMock);
         errorMiddlewareProvider = ErrorMiddlewareProvider.builder()
                 .errorDetailResponse(Collections.singletonList(ErrorMiddlewareProvider.ErrorDetailProvider.builder()
-                        .code(AppError.DEFAULT.getCodeMiddleware())
+                        .code(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getCodeMiddleware())
                         .build()))
                 .build();
         stubFor(get(anyUrl()).willReturn(aResponse().withStatus(400).withBody(new ObjectMapper().writeValueAsString(errorMiddlewareProvider))));
@@ -387,8 +387,8 @@ class LoginMiddlewareProviderTests {
         );
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
-        assertEquals(AppError.DEFAULT.getHttpCode(), exception.getStatus());
+        assertEquals(DefaultMiddlewareError.DEFAULT.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.DEFAULT.getHttpCode(), exception.getStatus());
     }
 
     @Test
@@ -418,16 +418,16 @@ class LoginMiddlewareProviderTests {
         });
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
-        assertEquals(AppError.DEFAULT.getHttpCode(), exception.getStatus());
-        assertEquals(AppError.DEFAULT.getCode(), exception.getCode());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getHttpCode(), exception.getStatus());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getCode(), exception.getCode());
     }
 
     @Test
     @DisplayName("Getting generic exception response on validate device.")
     void givenGenericExceptionWhenValidateDeviceThenRethrowGenericException() throws IOException {
         // Arrange
-        GenericException simulatedException = new GenericException(AppError.DEFAULT.getMessage(), AppError.DEFAULT.getHttpCode(), AppError.DEFAULT.getCode());
+        GenericException simulatedException = new GenericException(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getHttpCode(), DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getCode());
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenThrow(simulatedException);
         Mockito.reset(httpClientFactoryMock);
@@ -496,8 +496,8 @@ class LoginMiddlewareProviderTests {
         );
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
-        assertEquals(AppError.DEFAULT.getHttpCode(), exception.getStatus());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getHttpCode(), exception.getStatus());
     }
 
     @Test
@@ -582,8 +582,8 @@ class LoginMiddlewareProviderTests {
         });
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
-        assertEquals(AppError.DEFAULT.getHttpCode(), exception.getStatus());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getHttpCode(), exception.getStatus());
         Mockito.verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
 

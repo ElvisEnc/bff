@@ -2,7 +2,6 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.exceptions.*;
 import bg.com.bo.bff.commons.constants.CacheConstants;
-import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.providers.IGenericsMapper;
 import bg.com.bo.bff.mappings.providers.keycloak.KeyCloakMapper;
@@ -23,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.log4j.Log4j2;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -31,8 +31,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -42,14 +40,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Log4j2
 public class JwtKeyCloakProvider implements IJwtProvider {
-    private static final Logger logger = LogManager.getLogger(JwtKeyCloakProvider.class.getName());
 
     @Value("${keycloak.base.url}")
     private String urlBase;
@@ -111,7 +110,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
         try {
             customClaimsJson = mapper.writeValueAsString(customClaimsData);
         } catch (JsonProcessingException e) {
-            logger.error(e);
+            log.error(e);
             throw new GenericException(e.getMessage());
         }
 
@@ -148,13 +147,16 @@ public class JwtKeyCloakProvider implements IJwtProvider {
                 Function<JwtKey, String> func = (JwtKey::getId);
                 return genericsMapper.convert(certListResponse.getKeys(), func, conv);
             } catch (Exception e) {
-                logger.error(e);
+                log.error(e);
                 throw new GenericException("Hubo un error no controlado al consultar los certificados.");
             }
         } catch (GenericException e) {
             throw e;
+        } catch (UnknownHostException e){
+            log.error(e);
+            throw new GenericException(DefaultMiddlewareError.KC_UNAVAILABLE);
         } catch (Exception e) {
-            logger.error(e);
+            log.error(e);
             throw new GenericException("Hubo un error no controlado al crear el cliente para la obtencion de certificados.");
         }
     }
@@ -229,25 +231,27 @@ public class JwtKeyCloakProvider implements IJwtProvider {
                     case 404:
                         throw new GenericException(String.format("Error en el request. Respuesta: %s", response), HttpStatus.NOT_FOUND, ErrorKCResponse.Error.NOT_FOUND_404.name());
                     case 503:
-                        logger.error("Servicio de token NO Disponible.");
-                        logger.error(response);
-                        throw new GenericException("Servicio de token NO Disponible.", HttpStatus.SERVICE_UNAVAILABLE, ErrorKCResponse.Error.NOT_AVAILABLE.name());
+                        log.error(response);
+                        throw new GenericException(DefaultMiddlewareError.KC_UNAVAILABLE);
                     default:
-                        logger.error(response);
-                        throw new GenericException(response);
+                        log.error(response);
+                        throw new GenericException(DefaultMiddlewareError.KC_FAILURE);
                 }
 
                 return createTokenResponse;
             } catch (GenericException e) {
                 throw e;
+            } catch (UnknownHostException e){
+                log.error(e);
+                throw new GenericException(DefaultMiddlewareError.KC_UNAVAILABLE);
             } catch (Exception e) {
-                logger.error(e);
+                log.error(e);
                 throw new GenericException(DefaultMiddlewareError.KC_FAILURE);
             }
         } catch (GenericException e) {
             throw e;
         } catch (Exception e) {
-            logger.error(e);
+            log.error(e);
             throw new GenericException(DefaultMiddlewareError.KC_FAILURE);
         }
     }
@@ -308,7 +312,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
 
             return authorizedPartyValidation && issuerValidation;
         } catch (Exception e) {
-            logger.error("Hubo un error inesperado al validar el token.");
+            log.error("Hubo un error inesperado al validar el token.");
             return false;
         }
     }
@@ -326,7 +330,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
 
             return authorizedPartyValidation && issuerValidation;
         } catch (Exception e) {
-            logger.error("Hubo un error inesperado al validar el token.");
+            log.error("Hubo un error inesperado al validar el token.");
             return false;
         }
     }
@@ -346,9 +350,9 @@ public class JwtKeyCloakProvider implements IJwtProvider {
         }catch(InvalidKeyException | SignatureException e){
             throw new GenericException(DefaultMiddlewareError.INVALID_ACCESS_JWT);
         } catch (Exception e) {
-            logger.error("Hubo un error al obtener el Access JWT.");
-            logger.error(e);
-            logger.error(token);
+            log.error("Hubo un error al obtener el Access JWT.");
+            log.error(e);
+            log.error(token);
             throw new GenericException(DefaultMiddlewareError.INTERNAL_SERVER_ERROR);
         }
     }
@@ -363,9 +367,9 @@ public class JwtKeyCloakProvider implements IJwtProvider {
         try {
             return keyCloakMapper.getJsonMapper().convertToJwtRefresh(token);
         } catch (Exception e) {
-            logger.error("Hubo un error al obtener el Refresh JWT.");
-            logger.error(e);
-            logger.error(token);
+            log.error("Hubo un error al obtener el Refresh JWT.");
+            log.error(e);
+            log.error(token);
             throw new JwtException("Hubo un error al obtener el Refresh JWT.");
         }
     }
@@ -408,12 +412,12 @@ public class JwtKeyCloakProvider implements IJwtProvider {
                 String response = EntityUtils.toString(httpResponse.getEntity());
                 if (statusCode == HttpStatus.OK.value()) return true;
                 else {
-                    logger.error(response);
+                    log.error(response);
                     return false;
                 }
             }
         } catch (Exception e) {
-            logger.error(e);
+            log.error(e);
             return false;
         }
     }
@@ -445,18 +449,19 @@ public class JwtKeyCloakProvider implements IJwtProvider {
                     if (Objects.equals(errorResponse.getError(), ErrorKCResponse.Error.INVALID_REQUEST.getCode()))
                         return IntrospectTokenKCResponse.instance(IntrospectTokenKCResponse.Result.INVALID_TOKEN);
                     else {
-                        logger.error(stringResponse);
-                        AppError error = AppError.KEY_CLOAK_ERROR;
-                        throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                        log.error(stringResponse);
+                        throw new GenericException(DefaultMiddlewareError.KC_FAILURE);
                     }
                 }
             }
         } catch (GenericException e) {
             throw e;
+        } catch (UnknownHostException e){
+            log.error(e);
+            throw new GenericException(DefaultMiddlewareError.KC_UNAVAILABLE);
         } catch (Exception e) {
-            logger.error(e);
-            AppError error = AppError.KEY_CLOAK_ERROR;
-            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            log.error(e);
+            throw new GenericException(DefaultMiddlewareError.KC_FAILURE);
         }
     }
 }

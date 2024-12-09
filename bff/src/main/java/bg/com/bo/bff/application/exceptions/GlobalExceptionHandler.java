@@ -2,13 +2,13 @@ package bg.com.bo.bff.application.exceptions;
 
 
 import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
+import bg.com.bo.bff.commons.enums.CategoryError;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.UnexpectedTypeException;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -35,21 +35,21 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
     @ExceptionHandler({MissingRequestHeaderException.class, MethodArgumentTypeMismatchException.class, ConstraintViolationException.class, UnexpectedTypeException.class})
     public ResponseEntity<ErrorResponse> handleValidationException(Exception exception) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), exception.getMessage(), "Bad request");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), exception.getMessage(), "Bad request", CategoryError.INVALID_FORMAT.getCategoryId());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException exception) {
         String message = String.format("%s: El campo es requerido.", exception.getParameterName());
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), message, "Bad request");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), message, "Bad request", CategoryError.INVALID_FORMAT.getCategoryId());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         String specificMessage = extractSpecificMessage(ex);
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), specificMessage, "Bad request");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), specificMessage, "Bad request", CategoryError.INVALID_FORMAT.getCategoryId());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
 
         List<String> orderedErrors = errors.stream().sorted(Comparator.nullsFirst(Comparator.naturalOrder())).toList();
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), String.join(", ", orderedErrors), "Bad request");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), String.join(", ", orderedErrors), "Bad request", CategoryError.INVALID_FORMAT.getCategoryId());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
 
         List<String> orderedErrors = errors.stream().sorted(Comparator.nullsFirst(Comparator.naturalOrder())).toList();
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), String.join(", ", orderedErrors), "Bad request");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), String.join(", ", orderedErrors), "Bad request", CategoryError.INVALID_FORMAT.getCategoryId());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 

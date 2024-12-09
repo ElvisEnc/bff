@@ -47,7 +47,7 @@ class GlobalExceptionHandlerTest {
     @Test
     void notGivenRequiredHeaderWhenHandlingGlobalExceptionThenReturnBadRequest() throws Exception {
         // Arrange
-        ErrorResponse expectedResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), "Required request header 'request-header' for method parameter type String is not present", "Bad request");
+        ErrorResponse expectedResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), "Required request header 'request-header' for method parameter type String is not present", "Bad request", 1200);
         String path = String.format("/%s/%s", MockedController.MOCKED_CONTROLLER, MockedController.EP_WITH_REQUIRED_AND_NON_BLANK_HEADER);
 
         // Act
@@ -67,7 +67,7 @@ class GlobalExceptionHandlerTest {
     @Test
     void givenBlankHeaderOnRequiredHeaderWhenHandlingGlobalExceptionThenReturnBadRequest() throws Exception {
         // Arrange
-        ErrorResponse expectedResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), MockedController.NOT_BLANK, "Bad request");
+        ErrorResponse expectedResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), MockedController.NOT_BLANK, "Bad request", 1200);
         String path = String.format("/%s/%s", MockedController.MOCKED_CONTROLLER, MockedController.EP_WITH_REQUIRED_AND_NON_BLANK_HEADER);
 
         // Act
@@ -88,7 +88,7 @@ class GlobalExceptionHandlerTest {
     @Test
     void givenInvalidHeaderOnRequiredAndWithMinNumericHeaderWhenHandlingGlobalExceptionThenReturnBadRequest() throws Exception {
         // Arrange
-        ErrorResponse expectedResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), "Failed to convert value of type 'java.lang.String' to required type 'java.lang.Integer'; For input string: \"s\"", "Bad request");
+        ErrorResponse expectedResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), "Failed to convert value of type 'java.lang.String' to required type 'java.lang.Integer'; For input string: \"s\"", "Bad request", 1200);
         String path = String.format("/%s/%s", MockedController.MOCKED_CONTROLLER, MockedController.EP_WITH_REQUIRED_AND_NUMERIC_HEADER);
 
         // Act
@@ -111,7 +111,7 @@ class GlobalExceptionHandlerTest {
         // Arrange
         String request = "{\"stringParam\":\"ab\",\"decimalParam\":\"s\"}";
 
-        ErrorResponse expectedResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), "El campo 'decimalParam' debe ser un Integer válido", "Bad request");
+        ErrorResponse expectedResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), "El campo 'decimalParam' debe ser un Integer válido", "Bad request", 1200);
         String path = String.format("/%s/%s", MockedController.MOCKED_CONTROLLER, MockedController.EP_WITH_REQUIRED_BODY);
 
         // Act
@@ -133,7 +133,7 @@ class GlobalExceptionHandlerTest {
     void notGivenRequiredRequestParamWhenHandlingGlobalExceptionThenReturnBadRequest() throws Exception {
         // Arrange
         ErrorResponse expectedResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
-                String.format("%s: El campo es requerido.", MockedController.BIG_DECIMAL_REQUEST_PARAM), "Bad request");
+                String.format("%s: El campo es requerido.", MockedController.BIG_DECIMAL_REQUEST_PARAM), "Bad request", 1200);
         String path = String.format("/%s/%s?",
                 MockedController.MOCKED_CONTROLLER,
                 MockedController.EP_WITH_REQUIRED_BIG_DECIMAL_REQUEST_PARAM);

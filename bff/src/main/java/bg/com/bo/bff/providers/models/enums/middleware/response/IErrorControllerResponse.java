@@ -12,4 +12,8 @@ public interface IErrorControllerResponse {
     default String getTitle() {
         return "";
     }
+
+    default int getCategoryId() {
+        return 0;
+    }
 }

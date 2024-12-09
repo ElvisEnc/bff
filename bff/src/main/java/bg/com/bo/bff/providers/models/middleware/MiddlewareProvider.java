@@ -13,25 +13,25 @@ import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
 import bg.com.bo.bff.providers.models.middleware.response.handler.ResponseHandler;
 import bg.com.bo.bff.providers.models.middleware.response.handler.DefaultResponseHandler;
+import lombok.extern.log4j.Log4j2;
 import org.apache.http.Header;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 /**
  * Base class for middleware services.
  */
+@Log4j2
 public abstract class MiddlewareProvider<T extends IMiddlewareError> {
 
     protected ITokenMiddlewareProvider tokenMiddlewareProvider;
     protected final MiddlewareConfig middlewareConfig;
-    protected static final Logger LOGGER = LogManager.getLogger(MiddlewareProvider.class.getName());
     protected final IHttpClientFactory httpClientFactory;
 
     private final Class<T> appErrorValue;
@@ -247,21 +247,24 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
                     return responseHandler.getResolver().resolve(jsonResponse, classType, this::mapProviderIError);
 
                 if (statusCode >= 500) {
-                    LOGGER.error(String.format("Not Mapped Error:%s", jsonResponse));
+                    log.error(String.format("Service unavailable:%s", jsonResponse));
                     throw new GenericException(DefaultMiddlewareError.MW_SERVICE_UNAVAILABLE);
                 }
 
                 IMiddlewareError error = this.mapProviderIError(jsonResponse);
                 if (error.equals(DefaultMiddlewareError.DEFAULT))
-                    LOGGER.error(String.format("Not Mapped Error:%s", jsonResponse));
+                    log.error(String.format("Not Mapped Error:%s", jsonResponse));
 
-                throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode(), error.getTitle());
+                throw new GenericException(error);
             }
         } catch (GenericException ex) {
             throw ex;
+        } catch (UnknownHostException e){
+            log.error(e);
+            throw new GenericException(DefaultMiddlewareError.MW_SERVICE_UNAVAILABLE);
         } catch (Exception e) {
-            LOGGER.error(e);
-            throw new GenericException(DefaultMiddlewareError.DEFAULT);
+            log.error(e);
+            throw new GenericException(DefaultMiddlewareError.INTERNAL_SERVER_ERROR);
         }
     }
 

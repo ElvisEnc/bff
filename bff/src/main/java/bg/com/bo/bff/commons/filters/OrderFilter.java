@@ -1,6 +1,7 @@
 package bg.com.bo.bff.commons.filters;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.enums.CategoryError;
 import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.commons.filters.interfaces.IFilter;
 
@@ -32,7 +33,7 @@ public class OrderFilter<T> implements IFilter<T> {
     private Comparator<T> getComparatorForField(String field) {
         Function<T, ? extends Comparable<?>> keyExtractor = comparatorOptions.get(field.toUpperCase());
         if (keyExtractor == null) {
-            throw new GenericException(field + " - El campo esperado no es correcto.", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode(), "Datos inválidos");
+            throw new GenericException(field + " - El campo esperado no es correcto.", AppError.BAD_REQUEST.getHttpCode(), AppError.BAD_REQUEST.getCode(), "Datos inválidos", CategoryError.INVALID_FORMAT.getCategoryId());
         }
         return Comparator.comparing(
                 keyExtractor,

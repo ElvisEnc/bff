@@ -137,7 +137,7 @@ class TokenMiddlewareProviderTest {
         //Arrange
         Mockito.when(httpClientFactory.create()).thenReturn(closeableHttpClientMock);
         Mockito.when(closeableHttpClientMock.execute(Mockito.any(HttpPost.class))).thenThrow(new RuntimeException("Test Catch General"));
-        GenericException expected = new GenericException(DefaultMiddlewareError.MW_TOKEN_FAILURE);
+        GenericException expected = new GenericException(DefaultMiddlewareError.MW_FAILURE);
 
         //Act
         Exception result = assertThrows(Exception.class, () -> provider.generateAccountAccessToken(ProjectNameMW.TRANSFER_MANAGER.getName(), middlewareConfig.getClientTransfer(), ProjectNameMW.TRANSFER_MANAGER.getHeaderKey()));

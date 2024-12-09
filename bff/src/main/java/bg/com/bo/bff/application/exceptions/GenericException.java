@@ -14,6 +14,7 @@ public class GenericException extends RuntimeException {
     private String source;
     private final String code;
     private String title = "";
+    private int categoryId = 0;
 
     public GenericException() {
         super(AppError.DEFAULT.getMessage());
@@ -51,11 +52,12 @@ public class GenericException extends RuntimeException {
         fillTrace();
     }
 
-    public GenericException(String description, HttpStatus status, String code, String title) {
+    public GenericException(String description, HttpStatus status, String code, String title, int categoryId) {
         super(description);
         this.status = status;
         this.code = code;
         this.title = title;
+        this.categoryId = categoryId;
         fillTrace();
     }
 
@@ -64,6 +66,7 @@ public class GenericException extends RuntimeException {
         this.status = error.getHttpCode();
         this.code = error.getCode();
         this.title = error.getTitle();
+        this.categoryId = error.getCategoryId();
         fillTrace();
     }
 

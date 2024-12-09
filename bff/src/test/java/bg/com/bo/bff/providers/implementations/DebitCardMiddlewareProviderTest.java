@@ -16,6 +16,7 @@ import bg.com.bo.bff.providers.dtos.response.generic.ErrorMiddlewareProvider;
 import bg.com.bo.bff.providers.dtos.response.debit.card.mw.*;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
+import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -184,7 +185,7 @@ class DebitCardMiddlewareProviderTest {
         });
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -242,7 +243,7 @@ class DebitCardMiddlewareProviderTest {
         });
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -367,7 +368,7 @@ class DebitCardMiddlewareProviderTest {
         });
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -441,7 +442,7 @@ class DebitCardMiddlewareProviderTest {
         });
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -589,7 +590,7 @@ class DebitCardMiddlewareProviderTest {
         });
 
         // Assert
-        assertEquals(AppError.DEFAULT.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.INTERNAL_SERVER_ERROR.getMessage(), exception.getMessage());
     }
 
     @Test

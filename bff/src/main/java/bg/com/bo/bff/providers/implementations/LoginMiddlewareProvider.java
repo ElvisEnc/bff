@@ -93,7 +93,7 @@ public class LoginMiddlewareProvider extends MiddlewareProvider<LoginMiddlewareE
             return Util.stringToObject(jsonResponse, ContactResponse.class);
         } catch (Exception e) {
             log.error(e);
-            throw new GenericException(DefaultMiddlewareError.DEFAULT);
+            throw new GenericException(DefaultMiddlewareError.INTERNAL_SERVER_ERROR);
         }
     }
 

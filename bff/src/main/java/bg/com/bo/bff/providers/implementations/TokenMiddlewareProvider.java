@@ -4,16 +4,16 @@ import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.log4j.Log4j2;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -24,12 +24,11 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 
 @Service
+@Log4j2
 public class TokenMiddlewareProvider implements ITokenMiddlewareProvider {
     private final IHttpClientFactory httpClientFactory;
     private final MiddlewareConfig middlewareConfig;
     private final LoadingCache<String, ClientToken> tokenCache;
-    private static final Logger LOGGER = LogManager.getLogger(TokenMiddlewareProvider.class.getName());
-
 
     public TokenMiddlewareProvider(IHttpClientFactory httpClientFactory, MiddlewareConfig middlewareConfig, LoadingCache<String, ClientToken> tokenCache) {
         this.httpClientFactory = httpClientFactory;
@@ -50,16 +49,19 @@ public class TokenMiddlewareProvider implements ITokenMiddlewareProvider {
                     return Util.stringToObject(responseToken, ClientToken.class);
                 else {
                     AppError error = Util.mapProviderError(responseToken);
-                    LOGGER.error(responseToken);
-                    throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+                    log.error(responseToken);
+                    throw new GenericException(error);
                 }
             }
         } catch (GenericException ex) {
-            LOGGER.error(ex);
+            log.error(ex);
             throw ex;
+        } catch (UnknownHostException e){
+            log.error(e);
+            throw new GenericException(DefaultMiddlewareError.MW_SERVICE_UNAVAILABLE);
         } catch (Exception e) {
-            LOGGER.error(e);
-            throw new GenericException(DefaultMiddlewareError.MW_TOKEN_FAILURE);
+            log.error(e);
+            throw new GenericException(DefaultMiddlewareError.MW_FAILURE);
         }
     }
 

@@ -8,6 +8,7 @@ import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.commons.enums.login.LoginSchemaName;
+import bg.com.bo.bff.commons.enums.CategoryError;
 import bg.com.bo.bff.mappings.application.LoginMapper;
 import bg.com.bo.bff.mappings.providers.login.ILoginMapper;
 import bg.com.bo.bff.providers.dtos.request.login.mw.LoginCredentialMWRequest;
@@ -123,7 +124,8 @@ public class LoginService implements ILoginServices {
                     throw new GenericException(String.format("Estado no valido para Login. %s", createToken.getStatusCode()),
                             AppError.BAD_REQUEST.getHttpCode(),
                             AppError.BAD_REQUEST.getCode(),
-                            "Datos inválidos");
+                            "Datos inválidos",
+                            CategoryError.INVALID_FORMAT.getCategoryId());
             default -> throw new GenericException("Unexpected error during login");
         };
     }

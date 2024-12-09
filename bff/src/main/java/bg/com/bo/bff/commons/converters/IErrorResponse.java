@@ -14,4 +14,8 @@ public interface IErrorResponse {
     default String getTitle() {
         return "";
     }
+
+    default int getCategoryId() {
+        return 0;
+    }
 }
