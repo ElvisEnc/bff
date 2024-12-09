@@ -21,7 +21,6 @@ public class QRCodeGenerateRequest {
     @Schema(example = "Banco Ganadero", description = "Razón social")
     private String companyName;
 
-
     @ValidAmountQR
     @DecimalMin(value = "0", inclusive = true, message = "El monto debe ser mayor o igual a cero")
     private String amount;
