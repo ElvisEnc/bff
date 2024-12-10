@@ -78,7 +78,11 @@ public class TransferService implements ITransferService {
         cryptoService.validateCrypto(transferRequest.getData().getDescription(), parameter);
         TransferMWRequest requestMW = transferMapper.convert("ach", personId, accountId, transferRequest);
         TransferAchMwResponse responseMW = transferACHProvider.transferAchAccount(requestMW, parameter);
-        return mapper.convert(responseMW);
+        if (!Objects.equals(responseMW.getData().getStatus(), "PENDING")) {
+            return mapper.convert(responseMW);
+        } else {
+            throw new GenericException(TransferMiddlewareError.MDWTRM_PENDING);
+        }
     }
 
     @Override
