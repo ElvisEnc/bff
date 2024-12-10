@@ -8,6 +8,17 @@ import org.springframework.http.HttpStatus;
 @lombok.Getter
 @lombok.AllArgsConstructor
 public enum DefaultMiddlewareError implements IMiddlewareError {
+    // Librerias MDW
+    MDWPGL_400(HttpStatus.NOT_IMPLEMENTED, "INVALID_PARAMS", "MDWPGL-400", "Los parámetros proporcionados no son válidos.", "Parámetros inválidos", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()),
+    MDWPGL_404(HttpStatus.NOT_IMPLEMENTED, "INVALID_REQUEST", "MDWPGL-404", "Petición no permitida, verifica e intenta nuevamente.", "Petición no permitida", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
+    MDWPGL_405(HttpStatus.NOT_IMPLEMENTED, "INVALID_METHOD", "MDWPGL-405", "Método no permitido, verifica e intenta nuevamente.", "Método no permitido", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
+    MDWPGL_500(HttpStatus.NOT_IMPLEMENTED, "UNKNOWN_ERROR", "MDWPGL-500", "Ocurrió un problema, error interno.", "Servicio no disponible", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()),
+
+    MDWRLIB_0001(HttpStatus.NOT_IMPLEMENTED, "INVALID_PARAMS", "MDWRLIB-0001", "Los parámetros deben ser los mismos para el canal 2.", "Parámetros inválidos", CategoryError.NO_HEADER_PARAMS_MW_ERROR.getCategoryId()),
+    MDWRLIB_0009(HttpStatus.NOT_IMPLEMENTED, "UNKNOWN_ERROR", "MDWRLIB-0009", "Ocurrió un problema, error interno.", "Servicio no disponible", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()),
+    MDWRLIB_0011(HttpStatus.NOT_IMPLEMENTED, "INVALID_PARAMS", "MDWRLIB-0011", "Parámetro inválido en la cabecera de id aplicación.", "Parámetros inválidos", CategoryError.NO_HEADER_PARAMS_MW_ERROR.getCategoryId()),
+    MDWRLIB_0012(HttpStatus.NOT_IMPLEMENTED, "INVALID_CANAL", "MDWRLIB-0012", "Ocurrió un problema, error interno.", "Servicio no disponible", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
+
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "Error en los parámetros", "Datos inválidos", CategoryError.INVALID_FORMAT.getCategoryId()),
     NOT_ACCEPTABLE(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "NOT_ACCEPTABLE", "No aceptable", "Datos no aceptables", CategoryError.INVALID_FORMAT.getCategoryId()),
     MDWACM_012(HttpStatus.BAD_REQUEST, "DATA_INVALID", "MDWACM-012", "Datos inválidos", "Datos inválidos", 0),
