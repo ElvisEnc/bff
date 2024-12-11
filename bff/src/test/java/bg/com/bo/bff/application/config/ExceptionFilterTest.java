@@ -1,79 +1,103 @@
 package bg.com.bo.bff.application.config;
 
+import bg.com.bo.bff.application.config.request.tracing.RequestTraceResolver;
 import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class ExceptionFilterTest {
 
-    ExceptionFilter filter;
-    HttpServletRequest request;
-    HttpServletResponse response;
-    FilterChain chain;
-    PrintWriter printWriter;
+    private ExceptionFilter exceptionFilter;
+
+    @Mock
+    private RequestTraceResolver requestTraceResolver;
+
+    @Mock
+    private FilterChain filterChain;
+
+    @Mock
+    private HttpServletRequest httpServletRequest;
+
+    @Mock
+    private HttpServletResponse httpServletResponse;
+
+    private ByteArrayOutputStream responseStream;
 
     @BeforeEach
-    void setUp() throws IOException {
-        filter = new ExceptionFilter();
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
-        chain = mock(FilterChain.class);
-        printWriter = mock(PrintWriter.class);
+    void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
+        exceptionFilter = new ExceptionFilter(requestTraceResolver);
 
-        when(response.getWriter()).thenReturn(printWriter);
+        responseStream = new ByteArrayOutputStream();
+        ServletOutputStream servletOutputStream = new ServletOutputStream() {
+            @Override
+            public void write(int b) {
+                responseStream.write(b);
+            }
+
+            @Override
+            public boolean isReady() {
+                return true;
+            }
+
+            @Override
+            public void setWriteListener(WriteListener writeListener) {
+            }
+        };
+
+        when(httpServletResponse.getOutputStream()).thenReturn(servletOutputStream);
+        when(httpServletResponse.getWriter()).thenReturn(new PrintWriter(responseStream));
     }
 
     @Test
-    void givenNoExceptionWhenDoFilterThenContinue() throws ServletException, IOException {
-        // Act
-        filter.doFilter(request, response, chain);
-
-        // Assert
-        verify(chain, times(1)).doFilter(request, response);
-    }
-
-
-    @Test
-    void givenGenericExceptionWhenDoFilterThenWriteErrorResponse() throws ServletException, IOException {
+    void testDoFilterInternal_genericException() throws Exception {
         // Arrange
-        GenericException exception = new GenericException(DefaultMiddlewareError.NOT_AUTHENTICATED_USER);
-        ErrorResponse errorResponse = ErrorResponse.instance(exception);
-
-        doThrow(exception).when(chain).doFilter(any(), any());
+        doThrow(new GenericException("Test error", HttpStatus.BAD_REQUEST)).when(filterChain)
+                .doFilter(any(ContentCachingRequestWrapper.class), any(ContentCachingResponseWrapper.class));
 
         // Act
-        filter.doFilter(request, response, chain);
+        exceptionFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
 
         // Assert
-        verify(printWriter).write(Util.objectToString(errorResponse));
+        verify(httpServletResponse).setStatus(HttpStatus.BAD_REQUEST.value());
+        String errorResponseJson = responseStream.toString();
+        ErrorResponse expectedErrorResponse = ErrorResponse.instance(new GenericException("Test error", HttpStatus.BAD_REQUEST));
+        assertEquals(Util.objectToString(expectedErrorResponse), errorResponseJson);
     }
 
     @Test
-    void givenExceptionWhenDoFilterThenWriteErrorResponse() throws ServletException, IOException {
+    void testDoFilterInternal_unexpectedException() throws Exception {
         // Arrange
-        Exception exception = new RuntimeException();
-        GenericException exceptionExpected = new GenericException(DefaultMiddlewareError.INTERNAL_SERVER_ERROR);
-        ErrorResponse errorResponse = ErrorResponse.instance(exceptionExpected);
-
-        doThrow(exception).when(chain).doFilter(any(), any());
+        doThrow(new RuntimeException("Unexpected error")).when(filterChain)
+                .doFilter(any(ContentCachingRequestWrapper.class), any(ContentCachingResponseWrapper.class));
 
         // Act
-        filter.doFilter(request, response, chain);
+        exceptionFilter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
 
         // Assert
-        verify(printWriter).write(Util.objectToString(errorResponse));
+        verify(httpServletResponse).setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        String errorResponseJson = responseStream.toString();
+        ErrorResponse expectedErrorResponse = ErrorResponse.instance(DefaultMiddlewareError.INTERNAL_SERVER_ERROR);
+        assertEquals(Util.objectToString(expectedErrorResponse), errorResponseJson);
     }
 }
+

@@ -61,8 +61,7 @@ public class RequestTraceMapper implements IRequestTraceMapper {
     private static String getTraceId(Map<String, String> requestHeaders) {
         if (requestHeaders.containsKey(HeadersMW.REQUEST_ID.getName()))
             return requestHeaders.get(HeadersMW.REQUEST_ID.getName());
-        else
-            return UUID.randomUUID().toString();
+        return null;
     }
 
     private static long getElapsed(ZonedDateTime in, ZonedDateTime out) {

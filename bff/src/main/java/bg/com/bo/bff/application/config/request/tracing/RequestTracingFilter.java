@@ -22,14 +22,14 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 @Component
-@Order(6)
+@Order(3)
 @Log4j2
 public class RequestTracingFilter extends OncePerRequestFilter {
-    private final IRequestTraceMapper requestTraceMapper;
+    private final RequestTraceResolver requestTraceResolver;
 
     @Autowired
-    public RequestTracingFilter(IRequestTraceMapper requestTraceMapper) {
-        this.requestTraceMapper = requestTraceMapper;
+    public RequestTracingFilter(RequestTraceResolver requestTraceResolver) {
+        this.requestTraceResolver = requestTraceResolver;
     }
 
     @Override
@@ -37,18 +37,10 @@ public class RequestTracingFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 
-        ZonedDateTime in = ZonedDateTime.now();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         filterChain.doFilter(requestWrapper, responseWrapper);
 
-        RequestTrace requestTrace = requestTraceMapper.convert(requestWrapper, responseWrapper, in, authentication);
+        requestTraceResolver.log(requestWrapper, responseWrapper);
 
         responseWrapper.copyBodyToResponse();
-
-        if (Util.IsDevLogConfigurationFile())
-            log.trace(Util.objectToString(requestTrace, true));
-        else
-            log.trace(requestTrace);
     }
 }
