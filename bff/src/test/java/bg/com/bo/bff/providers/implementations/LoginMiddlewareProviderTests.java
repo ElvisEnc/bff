@@ -365,8 +365,8 @@ class LoginMiddlewareProviderTests {
         );
 
         // Assert
-        assertEquals(LoginMiddlewareError.MDWPGL_400.getMessage(), exception.getMessage());
-        assertEquals(LoginMiddlewareError.MDWPGL_400.getHttpCode(), exception.getStatus());
+        assertEquals(DefaultMiddlewareError.MDWPGL_400.getMessage(), exception.getMessage());
+        assertEquals(DefaultMiddlewareError.MDWPGL_400.getHttpCode(), exception.getStatus());
     }
 
     @Test
