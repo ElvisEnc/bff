@@ -49,6 +49,7 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
+            request.setAttribute("encrypted", true);
             IFirstLayerEncryptionHandler firstLayerEncryptionHandler = FirstLayerEncryptionHandlerFactory.instance(request, encryptionService);
             DecryptRequestWrapper decryptRequestWrapper = new DecryptRequestWrapper(request, payloadAlgorithm, firstLayerEncryptionHandler);
             EncryptResponseWrapper responseWrapper = new EncryptResponseWrapper(response, firstLayerEncryptionHandler, payloadAlgorithm);
