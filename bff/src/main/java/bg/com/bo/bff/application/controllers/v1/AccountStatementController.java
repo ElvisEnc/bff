@@ -1,15 +1,12 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementsRequest;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IAccountStatementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,9 +35,7 @@ public class AccountStatementController {
 
     @Operation(summary = "Extractos", description = "Obtiene los extractos de una cuenta")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de extractos"),
-            @ApiResponse(responseCode = "400", description = "Algún error en los filtros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Lista de extractos")
     })
     @PostMapping("/{accountId}/persons/{personId}")
     public ResponseEntity<ApiDataResponse<List<AccountStatementsResponse>>> getAccountStatements(

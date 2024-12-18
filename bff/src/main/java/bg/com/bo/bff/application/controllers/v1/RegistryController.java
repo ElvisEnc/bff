@@ -2,7 +2,6 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
 import bg.com.bo.bff.application.dtos.response.registry.BffHandshakeResponse;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.registry.RegistryResponse;
 import bg.com.bo.bff.services.interfaces.IRegistryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,11 +34,7 @@ public class RegistryController {
 
     @Operation(summary = "Registro de dispositivo para migración.", description = "Este endpoint registra los datos de un dispositivo que realizo la migración del AGN al NGM.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Registro exitoso.", content = @Content(schema = @Schema(implementation = RegistryResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "401", description = "Registro fallido por fallo en la autenticación del usuario.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Alguno de los parámetros no es válido.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "422", description = "Los parámetros enviados no son válidos por su formato.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Registro exitoso.", content = @Content(schema = @Schema(implementation = RegistryResponse.class), mediaType = "application/json"))
     })
     @SecurityRequirements()
     @PostMapping("/device/migration")

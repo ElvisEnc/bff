@@ -1,7 +1,6 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.response.dpf.DpfListResponse;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.services.interfaces.IDPFService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,9 +31,7 @@ public class DpfController {
 
     @Operation(summary = "Listar los DPFs de una persona.", description = "Este endpoint obtiene el listado de DPFs de una persona.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = DpfListResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = DpfListResponse.class), mediaType = "application/json"))
     })
     @GetMapping("persons/{personId}")
     public ResponseEntity<DpfListResponse> getListDPFs(

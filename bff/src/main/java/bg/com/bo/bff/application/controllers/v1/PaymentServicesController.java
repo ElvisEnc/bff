@@ -5,7 +5,6 @@ import bg.com.bo.bff.application.dtos.request.payment.service.ListServiceRequest
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
@@ -47,8 +46,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Lista categorias", description = "Obtiene las categorias para pago de servicios")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene las categorias de pago de servicios"),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Obtiene las categorias de pago de servicios")
     })
     @GetMapping("/categories")
     public ResponseEntity<ApiDataResponse<List<CategoryResponse>>> getCategories(
@@ -64,10 +62,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Lista de subcategorias", description = "Lista de las subcategorias")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios", content = @Content(schema = @Schema(implementation = SubcategoriesResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Error si la categoria no tiene subcategorias", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios", content = @Content(schema = @Schema(implementation = SubcategoriesResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/categories/{categoryId}/subcategories")
     public ResponseEntity<SubcategoriesResponse> getSubcategories(
@@ -90,9 +85,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Ciudades por Subcategoria", description = "Lista las cidudades de pago por subcategorias")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene las las ciudades", content = @Content(schema = @Schema(implementation = SubCategoryCitiesResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Obtiene las las ciudades", content = @Content(schema = @Schema(implementation = SubCategoryCitiesResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/subcategories/{subCategoryId}/cities")
     public ResponseEntity<SubCategoryCitiesResponse> getSubcategoryCities(
@@ -115,10 +108,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Eliminar servicio", description = "Elimina un servicio afiliado")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "Error si la categoria no tiene subcategorias", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json"))
     })
     @DeleteMapping("/persons/{personId}/affiliate-services/{affiliateServiceId}")
     public ResponseEntity<GenericResponse> deleteAffiliation(
@@ -148,10 +138,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Lista Servicios Afiliados", description = "Obtiene los servicios afiliados")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Servicios afiliados"),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Error de negocio", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Servicios afiliados")
     })
     @GetMapping("/persons/{personId}/affiliate-services")
     public ResponseEntity<ApiDataResponse<List<AffiliatedServicesResponse>>> getAffiliatedServices(
@@ -168,10 +155,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Afiliar Servicio", description = "Endpoint para afiliar un servicio")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Servicio afiliado"),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Error de negocio", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Servicio afiliado")
     })
     @PutMapping("/persons/{personId}/affiliate-services")
     public ResponseEntity<ServiceAffiliationResponse> serviceAffiliation(
@@ -188,10 +172,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Lista de deudas", description = "Obtiene una lista de las deudas de un servicio afiliado")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Deudas de un servicio afiliado"),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Error de negocio", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Deudas de un servicio afiliado")
     })
     @PostMapping("/persons/{personId}/affiliate-services/{affiliateServiceId}/debts")
     public ResponseEntity<AffiliationDebtsResponse> getAffiliationDebts(
@@ -209,10 +190,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Pago de servicio", description = "Realiza pago de una servicio afiliado")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Pago de deuda"),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Error de negocio", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Pago de deuda")
     })
     @PostMapping("/persons/{personId}/affiliate-services/{affiliateServiceId}/payment")
     public ResponseEntity<PaymentDebtsResponse> paymentDebts(
@@ -230,10 +208,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Obtener la lista de servicios por subcategoria y ciudad", description = "Lista los servicios por subcategorias y ciudades")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios"),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "Error si la categoria no tiene subcategorias", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios")
     })
     @GetMapping("/subcategories/{subCategoryId}/cities/{cityId}")
     public ResponseEntity<ApiDataResponse<List<ServiceResponse>>> getServices(
@@ -261,9 +236,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Obtener criterios de afiliación", description = "Obtiene los criterios de afiliación de un servicio")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios", content = @Content(schema = @Schema(implementation = AffiliateCriteriaResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios", content = @Content(schema = @Schema(implementation = AffiliateCriteriaResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/persons/{personId}/affiliate-criteria")
     public ResponseEntity<AffiliateCriteriaResponse> getAffiliateCriteria(
@@ -291,9 +264,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Validar criterios de afiliación", description = "Valida los criterios de afiliación de un servicio")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios", content = @Content(schema = @Schema(implementation = ValidateAffiliateCriteriaResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Obtiene las subcategorias de pago de servicios", content = @Content(schema = @Schema(implementation = ValidateAffiliateCriteriaResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/validate-affiliate-criteria")
     public ResponseEntity<ValidateAffiliateCriteriaResponse> validateAffiliateCriteria(
@@ -318,10 +289,7 @@ public class PaymentServicesController {
 
     @Operation(summary = "Lista de servicios", description = "Listado de todos los servicios disponibles")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de servicios"),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Error de negocio", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Lista de servicios")
     })
     @PostMapping()
     public ResponseEntity<ApiDataResponse<List<ServiceResponse>>> listService(

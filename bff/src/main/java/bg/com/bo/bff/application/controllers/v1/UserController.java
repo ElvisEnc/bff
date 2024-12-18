@@ -5,7 +5,6 @@ import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
 import bg.com.bo.bff.application.dtos.request.user.UpdateDataUserRequest;
 import bg.com.bo.bff.application.dtos.response.user.BiometricsResponse;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.user.UpdateBiometricsResponse;
 import bg.com.bo.bff.application.dtos.response.user.apiface.DepartmentsResponse;
@@ -54,9 +53,7 @@ public class UserController extends AbstractBFFController {
 
     @Operation(summary = "Cambio de contraseña de usuario con sesión iniciada.", description = "Cambia la contraseña del usuario solo si tiene la sesión iniciada.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json"))
     })
     @PutMapping("/{personId}/change-password")
     public ResponseEntity<GenericResponse> changePassword(
@@ -70,8 +67,7 @@ public class UserController extends AbstractBFFController {
 
     @Operation(summary = "Estado de Biometría", description = "Obtiene el estado de la biometría y el tipo")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Estado de biometría", content = @Content(schema = @Schema(implementation = BiometricsResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Estado de biometría", content = @Content(schema = @Schema(implementation = BiometricsResponse.class), mediaType = "application/json"))
     })
     @SecurityRequirements()
     @GetMapping("/{personId}/biometric")
@@ -84,9 +80,7 @@ public class UserController extends AbstractBFFController {
 
     @Operation(summary = "Actualizar Biometría", description = "Actualiza la biometría y el tipo")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Biometría actualizada", content = @Content(schema = @Schema(implementation = UpdateBiometricsResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Biometría actualizada", content = @Content(schema = @Schema(implementation = UpdateBiometricsResponse.class), mediaType = "application/json"))
     })
     @PutMapping("/{personId}/biometric")
     public ResponseEntity<UpdateBiometricsResponse> updateBiometrics(
@@ -100,8 +94,7 @@ public class UserController extends AbstractBFFController {
 
     @Operation(summary = "Obtener la información de datos de contacto.", description = "Obtiene la información de contacto del Banco Ganadero.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Información de contacto.", content = @Content(schema = @Schema(implementation = ContactResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Información de contacto.", content = @Content(schema = @Schema(implementation = ContactResponse.class), mediaType = "application/json"))
     })
     @SecurityRequirements()
     @GetMapping("/contact")
@@ -111,9 +104,7 @@ public class UserController extends AbstractBFFController {
 
     @Operation(summary = "Obtención de información del usuario", description = "Obtiene la información personal de referencia del usuario que la solicita.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = PersonalResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = PersonalResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/{personId}/info")
     public ResponseEntity<PersonalResponse> getPersonalInformation(
@@ -125,8 +116,7 @@ public class UserController extends AbstractBFFController {
 
     @Operation(summary = "Actividad Economica", description = "Obtiene la información de la Actividad Economica")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de las actividades economicas", content = @Content(schema = @Schema(implementation = EconomicActivityResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Lista de las actividades economicas", content = @Content(schema = @Schema(implementation = EconomicActivityResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/{personId}/economical-activity")
     public ResponseEntity<EconomicActivityResponse> getEconomicActivity(
@@ -138,9 +128,7 @@ public class UserController extends AbstractBFFController {
 
     @Operation(summary = "Obtención del listado de departamentos", description = "Obtiene el listado de los departamentos")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = DepartmentsResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = DepartmentsResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/departments")
     public ResponseEntity<DepartmentsResponse> getDepartments() throws IOException {
@@ -150,9 +138,7 @@ public class UserController extends AbstractBFFController {
 
     @Operation(summary = "Obtención del listado de distritos", description = "Obtiene el listado de los distritos")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = DistrictsResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = DistrictsResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/departments/{departmentId}/dictricts")
     public ResponseEntity<DistrictsResponse> getDistricts(
@@ -164,8 +150,7 @@ public class UserController extends AbstractBFFController {
 
     @Operation(summary = "Estados Civiles", description = "Obtiene el listado de los estados civiles")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de estado civil", content = @Content(schema = @Schema(implementation = MaritalStatusResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Lista de estado civil", content = @Content(schema = @Schema(implementation = MaritalStatusResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/marital-statuses")
     public ResponseEntity<MaritalStatusResponse> getMaritalStatus(
@@ -176,9 +161,7 @@ public class UserController extends AbstractBFFController {
 
     @Operation(summary = "Modificacions de datos Personales ", description = "Modificacions de datos personales")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Modificaciones de datos", content = @Content(schema = @Schema(), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Modificaciones de datos", content = @Content(schema = @Schema(), mediaType = "application/json"))
     })
     @PostMapping("/{personId}/info")
     public ResponseEntity<GenericResponse> updateInfo(

@@ -3,7 +3,6 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
@@ -38,9 +37,7 @@ public class LoansController extends AbstractBFFController {
 
     @Operation(summary = "Lista de Prestamos", description = "Obtiene el listado de prestamos relacionados a una persona", operationId = "getListLoans")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de prestamos"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Lista de prestamos")
     })
     @PostMapping(path = "/persons/{personId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiDataResponse<List<ListLoansResponse>>> getListLoans(
@@ -53,9 +50,7 @@ public class LoansController extends AbstractBFFController {
 
     @Operation(summary = "Lista de Prestamos Pagados", description = "Obtiene el listado de prestamos pagados")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de prestamos pagados"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Lista de prestamos pagados")
     })
     @PostMapping("{loanId}/persons/{personId}/payments")
     public ResponseEntity<ApiDataResponse<List<LoanPaymentsResponse>>> getListLoanPayments(
@@ -69,9 +64,7 @@ public class LoansController extends AbstractBFFController {
 
     @Operation(summary = "Lista de pagos de Seguro", description = "Obtiene el listado de los pagos del seguro")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de seguros pagados"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Lista de seguros pagados")
     })
     @PostMapping("{loanId}/persons/{personId}/insurance-payments")
     public ResponseEntity<ApiDataResponse<List<LoanInsurancePaymentsResponse>>> getListLoanInsurancePayments(
@@ -85,9 +78,7 @@ public class LoansController extends AbstractBFFController {
 
     @Operation(summary = "Plan de pagos", description = "Obtiene una lista de planes de pago del prestamo")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Plan de pagos"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Plan de pagos")
     })
     @GetMapping("{loanId}/persons/{personId}")
     public ResponseEntity<ApiDataResponse<List<LoanPlanResponse>>> getLoanPlans(
@@ -100,9 +91,7 @@ public class LoansController extends AbstractBFFController {
 
     @Operation(summary = "Solicitud de pago préstamo", description = "Obtiene la solicitud de un pago de préstamo")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Solicitud de pago de préstamo", content = @Content(schema = @Schema(implementation = LoanDetailPaymentResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Solicitud de pago de préstamo", content = @Content(schema = @Schema(implementation = LoanDetailPaymentResponse.class), mediaType = "application/json"))
     })
     @GetMapping("{loanId}/persons/{personId}/payments/{clientId}")
     public ResponseEntity<LoanDetailPaymentResponse> getLoanDetailPayment(
@@ -116,9 +105,7 @@ public class LoansController extends AbstractBFFController {
 
     @Operation(summary = "Pago de préstamo", description = "Pagar un préstamo con una cuenta propia")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = LoanPaymentResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = LoanPaymentResponse.class), mediaType = "application/json"))
     })
     @PutMapping("/persons/{personId}/accounts/{accountId}/payments/{correlativeId}")
     public ResponseEntity<LoanPaymentResponse> payLoanInstallment(

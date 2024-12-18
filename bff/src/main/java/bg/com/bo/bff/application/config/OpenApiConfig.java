@@ -1,12 +1,17 @@
 package bg.com.bo.bff.application.config;
 
+import bg.com.bo.bff.commons.enums.CategoryError;
 import bg.com.bo.bff.commons.enums.EnvProfile;
 import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.enums.config.provider.EncryptionHeaders;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.responses.ApiResponse;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +22,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 
 import java.util.*;
 
@@ -46,6 +52,7 @@ public class OpenApiConfig {
                     pathItem.readOperations().forEach(this::addDeviceHeaders);
                 if (!shouldExcludePathFromEncryptionHeaders(path))
                     pathItem.readOperations().forEach(this::addEncryptionHeaders);
+                pathItem.readOperations().forEach(this::addGenericErrors);
             });
         };
     }
@@ -72,6 +79,85 @@ public class OpenApiConfig {
                 path.equals("/api/v1/attention-points/points/{pointId}") ||
                 path.equals("/api/v1/attention-points/points/{pointId}/tickets") ||
                 path.equals("/api/v1/registry/device/handshake");
+    }
+
+    private void addGenericErrors(Operation operation) {
+        operation.getResponses().addApiResponse("400", createGenericErrorApiResponse(
+                "Indica que hubo un error en los parámetros otorgados.",
+                "BAD_REQUEST",
+                "Error en los parámetros.",
+                "Error",
+                "1200"
+        ));
+
+        operation.getResponses().addApiResponse("401", createGenericErrorApiResponse(
+                "Indica que hubo problemas en la autenticación/autorización del usuario.",
+                "BFF-DNAVU",
+                "Usuario autenticado no válido.",
+                "Usuario no válido",
+                "1100"
+        ));
+
+        operation.getResponses().addApiResponse("403", createGenericErrorApiResponse(
+                "Indica que el usuario no tiene permisos.",
+                "BFF-F",
+                "Usuario no autenticado.",
+                "Usuario no autenticado",
+                "1100"
+        ));
+
+        operation.getResponses().addApiResponse("406", createGenericErrorApiResponse(
+                "Indica que hubo problemas con el MW.",
+                "INVALID_DATA",
+                "No se pudo agregar la cuenta. Inténtalo nuevamente.",
+                "Ocurrió un problema",
+                "1300"
+        ));
+
+        operation.getResponses().addApiResponse("409", createGenericErrorApiResponse(
+                "Identifica que el cliente/app manda la información con un formato correcto pero el MW nos indica que el resultado no es el esperado.",
+                "TRANSACTION_NOT_ALLOWED",
+                "Las transacciones en moneda extranjera están temporalmente deshabilitadas.",
+                "Transacción no disponible",
+                "1400"
+        ));
+
+        operation.getResponses().addApiResponse("500", createGenericErrorApiResponse(
+                "Indica que hubo un error interno.",
+                "INTERNAL_SERVER_ERROR",
+                "Hubo un error interno.",
+                "Error interno",
+                "1000"
+        ));
+
+        operation.getResponses().addApiResponse("501", createGenericErrorApiResponse(
+                "Indica que hay algo que no es correcto dentro del BFF al enviar/recibir un request al MW.",
+                "INVALID_VERSION",
+                "La versión es inválida.",
+                "Versión inválida",
+                "1502"
+        ));
+
+        operation.getResponses().addApiResponse("503", createGenericErrorApiResponse(
+                "Indica que alguno de los componentes del BFF no esta disponible.",
+                "INVALID_VERSION",
+                "La versión es inválida.",
+                "Versión inválida",
+                "1502"
+        ));
+    }
+
+    private static ApiResponse createGenericErrorApiResponse(String description, String code, String message, String title, String categoryId) {
+        return new ApiResponse()
+                .description(description)
+                .content(new Content().addMediaType("application/json",
+                        new MediaType().schema(new Schema<>().$ref("#/components/schemas/ErrorResponse"))
+                                .example(Map.of(
+                                        "code", code,
+                                        "message", message,
+                                        "title", title,
+                                        "categoryId", categoryId
+                                ))));
     }
 
     private void addEncryptionHeaders(Operation operation) {

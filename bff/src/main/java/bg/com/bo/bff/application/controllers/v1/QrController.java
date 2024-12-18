@@ -5,7 +5,6 @@ import bg.com.bo.bff.application.dtos.request.qr.QRCodeRegenerateRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QRPaymentRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrDecryptRequest;
 import bg.com.bo.bff.application.dtos.request.qr.QrListRequest;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrDecryptResponse;
 import bg.com.bo.bff.application.dtos.response.qr.QrListResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
@@ -50,9 +49,7 @@ public class QrController {
 
     @Operation(summary = "List of QR Generated and Paid", description = "Lista de QR Generados y Pagados")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene todos los QR generados y Pagados", content = @Content(schema = @Schema(implementation = QrListResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Obtiene todos los QR generados y Pagados", content = @Content(schema = @Schema(implementation = QrListResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}")
     public ResponseEntity<QrListResponse> getQrsGeneratedAndPaid(
@@ -69,10 +66,7 @@ public class QrController {
 
     @Operation(summary = "Generate QR", description = "Este es el Endpoint donde el usuario ganamovil hará su petición para generar QR de cobro")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Generate QR Success, devuelve QRCodeGenerateResponse", content = @Content(schema = @Schema(implementation = QRCodeGenerateResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "401", description = "Generate QR Failed, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Los parámetros proporcionados no son válidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Generate QR Success, devuelve QRCodeGenerateResponse", content = @Content(schema = @Schema(implementation = QRCodeGenerateResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/generate")
     public ResponseEntity<QRCodeGenerateResponse> generate(
@@ -89,10 +83,7 @@ public class QrController {
 
     @Operation(summary = "Regenerate QR", description = "Este es el Endpoint donde el usuario ganamovil hará su petición para regenerar QR de cobro")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Regenerate QR Success, devuelve QRCodeGenerateResponse", content = @Content(schema = @Schema(implementation = QRCodeGenerateResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "401", description = "Regenerate QR Failed, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Los parámetros proporcionados no son válidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Regenerate QR Success, devuelve QRCodeGenerateResponse", content = @Content(schema = @Schema(implementation = QRCodeGenerateResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/regenerate")
     public ResponseEntity<QRCodeGenerateResponse> generate(
@@ -109,10 +100,7 @@ public class QrController {
 
     @Operation(summary = "Obtención de datos QR", description = "Este es el endpoint donde se podrá obtener los datos de un QR")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtener datos QR Success, retorna los valores del QR", content = @Content(schema = @Schema(implementation = QrDecryptResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "401", description = "Obtener datos QR Failed, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Los parámetros proporcionados no son válidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Obtener datos QR Success, retorna los valores del QR", content = @Content(schema = @Schema(implementation = QrDecryptResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/info")
     public ResponseEntity<QrDecryptResponse> decrypt(
@@ -128,10 +116,7 @@ public class QrController {
 
     @Operation(summary = "Pago QR", description = "Este es el endpoint donde se podrá hacer pagos QR")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Pago QR Success, retorna los valores del QR", content = @Content(schema = @Schema(implementation = QRPaymentMWResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "401", description = "Pago QR Failed, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Los parámetros proporcionados no son válidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Pago QR Success, retorna los valores del QR", content = @Content(schema = @Schema(implementation = QRPaymentMWResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accounts/{accountId}/transfer")
     public ResponseEntity<QRPaymentMWResponse> qrPayment(

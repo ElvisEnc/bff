@@ -3,7 +3,6 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
 import bg.com.bo.bff.application.dtos.request.credit.card.*;
 import bg.com.bo.bff.application.dtos.response.credit.card.*;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.commons.annotations.Numeric;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
@@ -37,9 +36,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Lista de tarjetas de crédito/prepagada", description = "Obtiene la lista de las tarjetas de crédito o prepagadas")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de tarjetas", content = @Content(schema = @Schema(implementation = ListCreditCardResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Lista de tarjetas", content = @Content(schema = @Schema(implementation = ListCreditCardResponse.class)))
     })
     @GetMapping("/persons/{personId}")
     public ResponseEntity<ListCreditCardResponse> getListCreditCards(
@@ -51,9 +48,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Detalle Tarjeta de Crédito", description = "Obtiene el detalle de la tarjeta de crédito")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Detalle", content = @Content(schema = @Schema(implementation = DetailCreditCardResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Detalle", content = @Content(schema = @Schema(implementation = DetailCreditCardResponse.class)))
     })
     @GetMapping("/persons/{personId}/cards/{cardId}")
     public ResponseEntity<DetailCreditCardResponse> getDetailsCreditCards(
@@ -66,9 +61,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Detalle Tarjeta Prepagada", description = "Obtiene el detalle de la tarjeta prepagada")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Detalle", content = @Content(schema = @Schema(implementation = DetailPrepaidCardResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Detalle", content = @Content(schema = @Schema(implementation = DetailPrepaidCardResponse.class)))
     })
     @GetMapping("/persons/{personId}/cards/{cardId}/prepaid")
     public ResponseEntity<DetailPrepaidCardResponse> getDetailsPrepaidCards(
@@ -82,9 +75,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Bloquear Desbloquear Tarjeta de Crédito", description = "Realiza el bloqueo o desbloqueo de la tarjeta de crédito")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Operación ejecutada", content = @Content(schema = @Schema(implementation = GenericResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Operación ejecutada", content = @Content(schema = @Schema(implementation = GenericResponse.class)))
     })
     @PatchMapping("/persons/{personId}/cards/{cardId}/lock-status")
     public ResponseEntity<GenericResponse> blockCreditCard(
@@ -98,9 +89,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Disponible", description = "Obtiene el monto disponible de la tarjeta de crédito")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Datos", content = @Content(schema = @Schema(implementation = AvailableCreditCardResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Datos", content = @Content(schema = @Schema(implementation = AvailableCreditCardResponse.class)))
     })
     @GetMapping("/persons/{personId}/cards/{cardId}/available")
     public ResponseEntity<AvailableCreditCardResponse> getAvailableCreditCards(
@@ -116,8 +105,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Periodos", description = "Obtiene los periodos de pago")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Datos"),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Datos")
     })
     @GetMapping("/persons/{personId}/cards/{cardId}/payment-periods")
     public ResponseEntity<ApiDataResponse<List<PeriodCreditCardResponse>>> getPeriods(
@@ -130,9 +118,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Comisión de avance de efectivo para una cuenta de tarjeta de crédito", description = "Obtiene el monto de comisión de avance de efectivo para una cuenta de tarjeta de crédito")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Monto de comisión de avance en efectivo."),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Monto de comisión de avance en efectivo.")
     })
     @GetMapping("/persons/{personId}/cards/cash-advance/fee")
     public ResponseEntity<CashAdvanceFeeResponse> getCashAdvanceFee(
@@ -149,9 +135,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Lista de tarjeta de crédito linkser", description = "Obtiene las tarjetas de crédito de linkser")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Listado"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Listado")
     })
     @GetMapping("/persons/{personId}/cards")
     public ResponseEntity<ApiDataResponse<List<LinkserCreditCardResponse>>> getCreditCardByCmsAccount(
@@ -166,9 +150,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Avance de efectico", description = "Realiza el avance de efectivo")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Operación"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Operación")
     })
     @PostMapping("/persons/{personId}/cards/{cardId}/cash-advance")
     public ResponseEntity<CashAdvanceResponse> makeCashAdvance(
@@ -182,10 +164,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Extractos", description = "Obtiene los extractos de la tarjeta de crédito")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Operación"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Errores de negocio.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Operación")
     })
     @PostMapping("/persons/{personId}/cards/statements")
     public ResponseEntity<ApiDataResponse<List<CreditCardStatementsResponse>>> creditCardStatements(
@@ -198,9 +177,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Lista de autorizaciones", description = "Obtiene la lista de autorizaciones para las compras por internet")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Operación"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Operación")
     })
     @GetMapping("/persons/{personId}/authorizations")
     public ResponseEntity<ApiDataResponse<List<PurchaseAuthResponse>>> getPurchases(
@@ -215,10 +192,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Pago de TC o TPP", description = "Realiza el pago de una tarjeta de crédito o recarga de una tarjeta prepagada")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Operación", content = @Content(schema = @Schema(implementation = PayCreditCardResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Errores de negocio.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Operación", content = @Content(schema = @Schema(implementation = PayCreditCardResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accounts/{accountId}/payments")
     public ResponseEntity<PayCreditCardResponse> paymentCreditCard(
@@ -232,10 +206,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Habilitación de compras por Internet", description = "Realiza habilitación de compras por internet")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Operación", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Errores de negocio.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Operación", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/authorizations")
     public ResponseEntity<GenericResponse> authorizationCreditCard(
@@ -248,10 +219,7 @@ public class CreditCardController extends AbstractBFFController {
 
     @Operation(summary = "Comisión Tarjeta Prepagada", description = "Obtiene comisión para recarga de la tarjeta prepagada")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Detalle", content = @Content(schema = @Schema(implementation = FeePrepaidCardResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Errores de negocio.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Detalle", content = @Content(schema = @Schema(implementation = FeePrepaidCardResponse.class)))
     })
     @PostMapping("/persons/{personId}/cards/{cardId}/prepaid/fee")
     public ResponseEntity<FeePrepaidCardResponse> getFeePrepaidCard(

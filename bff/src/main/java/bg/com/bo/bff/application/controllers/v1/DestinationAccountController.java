@@ -2,7 +2,6 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.destination.account.*;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.commons.annotations.ValidText;
@@ -42,9 +41,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Agendar nueva cuenta de destino terceros.", description = "Agendar nueva cuenta de destino terceros.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AddAccountResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AddAccountResponse.class), mediaType = "application/json"))
     })
     @PutMapping("/{personId}/third-accounts")
     public ResponseEntity<AddAccountResponse> addThirdAccounts(
@@ -69,9 +66,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Agendar nueva cuenta de destino Billetera.", description = "Agendar nueva cuenta de destino Billetera.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AddAccountResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AddAccountResponse.class), mediaType = "application/json"))
     })
     @PutMapping("/{personId}/wallets")
     public ResponseEntity<AddAccountResponse> addWalletAccounts(
@@ -96,9 +91,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Agendar nueva cuenta de destino ACH.", description = "Agendar nueva cuenta de destino ACH.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AddAccountResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AddAccountResponse.class), mediaType = "application/json"))
     })
     @PutMapping("/{personId}/ach-accounts")
     public ResponseEntity<AddAccountResponse> addAchAccounts(
@@ -123,9 +116,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Agendar nueva cuenta desde QR.", description = "Agendar nueva cuenta al leer un QR.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/{personId}/qrs/{bankType}")
     public ResponseEntity<GenericResponse> addQRAccounts(
@@ -148,9 +139,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Lista de entidades financieras.", description = "Lista de entidades financieras.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = BanksResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = BanksResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/banks")
     public ResponseEntity<BanksResponse> getBanks(
@@ -171,9 +160,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Obtener el listado de Sucursales", description = "Este endpoint obtiene el listado de Sucursales de Otros Bancos.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = BranchOfficeResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = BranchOfficeResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/banks/{bankCode}/branch-offices")
     public ResponseEntity<BranchOfficeResponse> getListBranchOffice(
@@ -195,8 +182,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Obtiener lista de tipos de cuenta.", description = "Obtiene un listado de todos los tipos de cuentas.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AccountTypeListResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = AccountTypeListResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/account-types")
     public ResponseEntity<AccountTypeListResponse> accountTypes() {
@@ -205,9 +191,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Eliminación de cuenta de terceros.", description = "Elimina cuenta de terceros.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/{personId}/third-accounts/{identifier}/delete")
     public ResponseEntity<GenericResponse> deleteThirdAccount(
@@ -230,9 +214,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Eliminación de cuenta billetera.", description = "Elimina cuenta de billetera.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/{personId}/wallets/{identifier}/delete")
     public ResponseEntity<GenericResponse> deleteWalletAccount(
@@ -255,9 +237,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Eliminación de cuenta ACH.", description = "Elimina cuenta ACH.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/{personId}/ach-accounts/{identifier}/delete")
     public ResponseEntity<GenericResponse> deleteAchAccount(
@@ -280,9 +260,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Destination Accounts", description = "Listado de todas las cuentas de Destino para el módulo de Transferencia")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene todas las cuentas propias, terceros, billeteras y ACH", content = @Content(schema = @Schema(implementation = DestinationAccountResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Obtiene todas las cuentas propias, terceros, billeteras y ACH", content = @Content(schema = @Schema(implementation = DestinationAccountResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}")
     public ResponseEntity<DestinationAccountResponse> getDestinationAccounts(
@@ -305,9 +283,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Validate Accounts", description = "Valida las cuentas de terceros y billetera")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Valida las cuentas de terceros y billetera,", content = @Content(schema = @Schema(implementation = ValidateAccountResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parametros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Valida las cuentas de terceros y billetera,", content = @Content(schema = @Schema(implementation = ValidateAccountResponse.class), mediaType = "application/json"))
     })
     @GetMapping("")
     public ResponseEntity<ValidateAccountResponse> getValidationDestinationAccount(
@@ -344,9 +320,7 @@ public class DestinationAccountController {
 
     @Operation(summary = "Obtener cuenta.", description = "Obtiene una cuenta destinataria del usuario.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = DestinationAccount.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = DestinationAccount.class), mediaType = "application/json"))
     })
     @GetMapping("/persons/{personId}/account-types/{accountType}/account/{accountId}")
     public ResponseEntity<DestinationAccount> getAccount(

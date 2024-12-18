@@ -3,7 +3,6 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.transfer.Pcc01Request;
 import bg.com.bo.bff.application.dtos.request.transfer.TransferRequest;
 import bg.com.bo.bff.application.dtos.response.transfer.Pcc01Response;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.transfer.TransferResponse;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.services.interfaces.ITransferService;
@@ -37,9 +36,7 @@ public class TransferController {
 
     @Operation(summary = "Transfer Own Accounts Request", description = "Transferencias")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno, devuelve un 500 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accounts/{accountId}/own-account")
     public ResponseEntity<TransferResponse> ownTransfer(
@@ -62,9 +59,7 @@ public class TransferController {
 
     @Operation(summary = "Transfer Third Accounts Request", description = "Transferencias a cuentas de terceros")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno, devuelve un 500 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accounts/{accountId}/third-account")
     public ResponseEntity<TransferResponse> thirdTransfer(
@@ -88,9 +83,7 @@ public class TransferController {
 
     @Operation(summary = "Transfer to Wallet Accounts Request", description = "Transferencias a billetera Yolo")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accounts/{accountId}/wallet")
     public ResponseEntity<TransferResponse> walletTransfer(
@@ -108,9 +101,7 @@ public class TransferController {
 
     @Operation(summary = "Transfer to ACH Accounts", description = "Transferencias a cuenta de otros bancos")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Devuelve el comprobante en formato JSON", content = @Content(schema = @Schema(implementation = TransferResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accounts/{accountId}/ach")
     public ResponseEntity<TransferResponse> achTransfer(
@@ -128,9 +119,7 @@ public class TransferController {
 
     @Operation(summary = "Validación PCC01", description = "Se realiza el control de lavado de dinero.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Devuelve si requiere o no el control de lavado de dinero.", content = @Content(schema = @Schema(implementation = Pcc01Response.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Existe un error en los datos otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Ocurrio un error no controlado.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Devuelve si requiere o no el control de lavado de dinero.", content = @Content(schema = @Schema(implementation = Pcc01Response.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accounts/{accountId}/validate-digital")
     public ResponseEntity<Pcc01Response> control(

@@ -3,7 +3,6 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.response.attention.points.DetailAttentionPointResponse;
 import bg.com.bo.bff.application.dtos.response.attention.points.ListAttentionPointsResponse;
 import bg.com.bo.bff.application.dtos.response.attention.points.PendingTicketResponse;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.services.interfaces.IAttentionPointsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,10 +30,7 @@ public class AttentionPointsController {
 
     @Operation(summary = "Obtener lista de puntos de atención", description = "Obtiene la lista de los puntos de atención")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de puntos de atención", content = @Content(schema = @Schema(implementation = ListAttentionPointsResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Errores de negocio.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Lista de puntos de atención", content = @Content(schema = @Schema(implementation = ListAttentionPointsResponse.class)))
     })
     @SecurityRequirements()
     @GetMapping("/points")
@@ -44,10 +40,7 @@ public class AttentionPointsController {
 
     @Operation(summary = "Obtener datos del punto de atención", description = "Obtiene la lista de los datos de un punto de atención")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Detalle del punto de atención", content = @Content(schema = @Schema(implementation = DetailAttentionPointResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Errores de negocio.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Detalle del punto de atención", content = @Content(schema = @Schema(implementation = DetailAttentionPointResponse.class)))
     })
     @SecurityRequirements()
     @GetMapping("/points/{pointId}")
@@ -59,10 +52,7 @@ public class AttentionPointsController {
 
     @Operation(summary = "Tickets en espera", description = "Obtiene la cantidad de tickets en espera de un punto de atención")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Tickets del punto de atención", content = @Content(schema = @Schema(implementation = PendingTicketResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Errores de negocio.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Tickets del punto de atención", content = @Content(schema = @Schema(implementation = PendingTicketResponse.class)))
     })
     @SecurityRequirements()
     @GetMapping("/points/{pointId}/tickets")

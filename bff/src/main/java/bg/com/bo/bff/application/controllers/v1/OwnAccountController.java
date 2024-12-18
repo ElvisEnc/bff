@@ -1,7 +1,6 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.own.account.UpdateTransactionLimitRequest;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.own.account.TransactionLimitsResponse;
 import bg.com.bo.bff.application.dtos.response.own.account.OwnAccountsResponse;
@@ -47,10 +46,7 @@ public class OwnAccountController {
 
     @Operation(summary = "Own Accounts Request", description = "Este es el Endpoint donde el usuario obtendrá sus cuentas")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene todas las cuentas, para un personId con su document-number"),
-            @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "El document no corresponde al personId, devuelve un 406 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno, devuelve un 500 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Obtiene todas las cuentas, para un personId con su document-number")
     })
     @GetMapping("/persons/{personId}")
     public ResponseEntity<ApiDataResponse<List<OwnAccountsResponse>>> accountsByPersonId(
@@ -72,9 +68,7 @@ public class OwnAccountController {
 
     @Operation(summary = "Actualizar límites transaccionales", description = "Este es el endpoint donde el usuario actualizará el límite diario y la cantidad de retiros.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Actualización del límite diario y la cantidad de retiros", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno, devuelve un 500 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Actualización del límite diario y la cantidad de retiros", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json"))
     })
     @PutMapping("/persons/{personId}/account/{accountId}/transactional-limits")
     public ResponseEntity<GenericResponse> updateTransactioLimit(
@@ -98,9 +92,7 @@ public class OwnAccountController {
 
     @Operation(summary = "Obtener límites", description = "Endpoint para obtener el límite transaccional")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtiene el límite transaccional", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Existe un error en los parametros otorgados.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Un error interno, devuelve un 500 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Obtiene el límite transaccional", content = @Content(schema = @Schema(implementation = GenericResponse.class), mediaType = "application/json"))
     })
     @GetMapping("/persons/{personId}/account/{accountId}/transactional-limits")
     public ResponseEntity<TransactionLimitsResponse> getTransactioLimit(

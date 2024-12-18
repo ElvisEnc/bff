@@ -4,7 +4,6 @@ import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
 import bg.com.bo.bff.application.dtos.request.login.LogoutRequest;
 import bg.com.bo.bff.application.dtos.request.login.LoginRequest;
 import bg.com.bo.bff.application.dtos.request.login.RefreshSessionRequest;
-import bg.com.bo.bff.application.dtos.response.generic.ErrorResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.login.DeviceEnrollmentResponse;
 import bg.com.bo.bff.application.dtos.response.login.LoginResponse;
@@ -46,10 +45,7 @@ public class LoginController extends AbstractBFFController {
 
     @Operation(summary = "Login Request", description = "Este es el Endpoint donde el usuario ganamovil hará su petición login y se le devolverá si fue exitoso o fallido", security = {})
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Login Success, devuelve LoginResponse", content = @Content(schema = @Schema(implementation = LoginResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "401", description = "Login Failed, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Los parámetros proporcionados no son válidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Login Success, devuelve LoginResponse", content = @Content(schema = @Schema(implementation = LoginResponse.class), mediaType = "application/json"))
     })
     @SecurityRequirements()
     @PostMapping
@@ -63,8 +59,7 @@ public class LoginController extends AbstractBFFController {
 
     @Operation(summary = "Refresh session", description = "Realiza una extension de la sesion, a través de realizar un refresh token.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Se realizo un \"Refresh Token\" satisfactorio.", content = @Content(schema = @Schema(implementation = TokenDataResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "406", description = "Los parámetros proporcionados no son válidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Se realizo un \"Refresh Token\" satisfactorio.", content = @Content(schema = @Schema(implementation = TokenDataResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/{personId}/refresh")
     public ResponseEntity<TokenDataResponse> refresh(
@@ -77,8 +72,7 @@ public class LoginController extends AbstractBFFController {
 
     @Operation(summary = "Device Enrollment", description = "Se realiza la validación si un dispositivo está enrrolado")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Dispositivo enrolado con un usuario", content = @Content(schema = @Schema(implementation = DeviceEnrollmentResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Dispositivo enrolado con un usuario", content = @Content(schema = @Schema(implementation = DeviceEnrollmentResponse.class), mediaType = "application/json"))
     })
     @SecurityRequirements()
     @GetMapping("/validate-device")
@@ -89,9 +83,7 @@ public class LoginController extends AbstractBFFController {
 
     @Operation(summary = "Logout Request", description = "Endpoint para cerrar sesión", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Logout Success", content = @Content(schema = @Schema(implementation = LoginResult.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "400", description = "Error en los parámetros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "500", description = "Error Interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Logout Success", content = @Content(schema = @Schema(implementation = LoginResult.class), mediaType = "application/json"))
     })
     @PostMapping("/{personId}/logout")
     public ResponseEntity<GenericResponse> logout(
