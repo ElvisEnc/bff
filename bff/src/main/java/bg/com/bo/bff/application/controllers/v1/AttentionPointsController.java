@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ public class AttentionPointsController {
             @ApiResponse(responseCode = "406", description = "Errores de negocio.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
+    @SecurityRequirements()
     @GetMapping("/points")
     public ResponseEntity<ListAttentionPointsResponse> getListAttentionPoints(    ) throws IOException {
         return ResponseEntity.ok(service.getListAttentionPoints());
@@ -47,6 +49,7 @@ public class AttentionPointsController {
             @ApiResponse(responseCode = "406", description = "Errores de negocio.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
+    @SecurityRequirements()
     @GetMapping("/points/{pointId}")
     public ResponseEntity<DetailAttentionPointResponse> getDetailAttentionPoint(
             @PathVariable("pointId") @OnlyNumber @Parameter(description = "Este es el pointId del punto de atención", example = "1") String pointId
@@ -61,6 +64,7 @@ public class AttentionPointsController {
             @ApiResponse(responseCode = "406", description = "Errores de negocio.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
+    @SecurityRequirements()
     @GetMapping("/points/{pointId}/tickets")
     public ResponseEntity<PendingTicketResponse> getPendingTickets(
             @PathVariable("pointId") @OnlyNumber @Parameter(description = "Este es el pointId del punto de atención", example = "1") String pointId

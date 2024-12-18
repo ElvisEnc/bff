@@ -1,6 +1,8 @@
 package bg.com.bo.bff.application.config;
 
+import bg.com.bo.bff.commons.enums.EnvProfile;
 import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.EncryptionHeaders;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -14,9 +16,17 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springframework.core.env.Environment;
+
+import java.util.*;
 
 @Configuration
 public class OpenApiConfig {
+    private final Environment env;
+
+    public OpenApiConfig(Environment env) {
+        this.env = env;
+    }
 
     @Bean
     public OpenAPI openAPI() {
@@ -32,9 +42,10 @@ public class OpenApiConfig {
         return openApi -> {
             Paths paths = openApi.getPaths();
             paths.forEach((path, pathItem) -> {
-                if (!shouldExcludePath(path)) {
-                    pathItem.readOperations().forEach(this::addHeaders);
-                }
+                if (!shouldExcludePathFromDeviceHeaders(path))
+                    pathItem.readOperations().forEach(this::addDeviceHeaders);
+                if (!shouldExcludePathFromEncryptionHeaders(path))
+                    pathItem.readOperations().forEach(this::addEncryptionHeaders);
             });
         };
     }
@@ -45,7 +56,15 @@ public class OpenApiConfig {
                 .scheme("bearer");
     }
 
-    private boolean shouldExcludePath(String path) {
+    private boolean shouldExcludePathFromEncryptionHeaders(String path) {
+        return path.equals("/api/v1/login/{personId}/refresh") ||
+                path.equals("/api/v1/attention-points/points") ||
+                path.equals("/api/v1/attention-points/points/{pointId}") ||
+                path.equals("/api/v1/attention-points/points/{pointId}/tickets") ||
+                path.equals("/api/v1/registry/device/handshake");
+    }
+
+    private boolean shouldExcludePathFromDeviceHeaders(String path) {
         return path.equals("/api/v1/login/{personId}/refresh") ||
                 path.equals("/api/v1/users/contact") ||
                 path.equals("/api/v1/registry/device/migration") ||
@@ -55,7 +74,36 @@ public class OpenApiConfig {
                 path.equals("/api/v1/registry/device/handshake");
     }
 
-    private void addHeaders(Operation operation) {
+    private void addEncryptionHeaders(Operation operation) {
+        String paramInType = "header";
+        Parameter sekHeader = new Parameter().in(paramInType)
+                .name(EncryptionHeaders.SESSION_ENCRYPT_KEY_HEADER.getCode())
+                .description("Session encrypted key")
+                .required(false)
+                .schema(new StringSchema())
+                .example("QA56UutnnDqRd8538giU2f5zkVsPE3id7tv...");
+        operation.addParametersItem(sekHeader);
+
+        Parameter eiHeader = new Parameter().in(paramInType)
+                .name(EncryptionHeaders.ENCRYPT_INFO_HEADER.getCode())
+                .description("Encrypt info")
+                .required(false)
+                .schema(new StringSchema())
+                .example("eyJwdWJsaWMiOiJNSUlDSWpBTkJna3Foa2lc...");
+        operation.addParametersItem(eiHeader);
+
+        if (!Arrays.stream(env.getActiveProfiles()).toList().contains(EnvProfile.prod.name())) {
+            Parameter eekHeader = new Parameter().in(paramInType)
+                    .name(EncryptionHeaders.ENCRYPTION_EXCLUDED_KEY_HEADER.getCode())
+                    .description("Exclude encryption key")
+                    .required(false)
+                    .schema(new StringSchema())
+                    .example("1DlrmwRqPbQqabsxBd1dXfiUlqrCazkjsjcda...");
+            operation.addParametersItem(eekHeader);
+        }
+    }
+
+    private void addDeviceHeaders(Operation operation) {
         String paramInType = "header";
         Parameter deviceIdHeader = new Parameter().in(paramInType)
                 .name(DeviceMW.DEVICE_ID.getCode())

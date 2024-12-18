@@ -19,6 +19,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -42,13 +44,14 @@ public class LoginController extends AbstractBFFController {
         this.iLoginServices = iLoginServices;
     }
 
-    @Operation(summary = "Login Request", description = "Este es el Endpoint donde el usuario ganamovil hará su petición login y se le devolverá si fue exitoso o fallido")
+    @Operation(summary = "Login Request", description = "Este es el Endpoint donde el usuario ganamovil hará su petición login y se le devolverá si fue exitoso o fallido", security = {})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login Success, devuelve LoginResponse", content = @Content(schema = @Schema(implementation = LoginResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "401", description = "Login Failed, devuelve un 401 ErrorResponse", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Los parámetros proporcionados no son válidos.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
+    @SecurityRequirements()
     @PostMapping
     public ResponseEntity<LoginResponse> login(
             @RequestHeader("json-data") @ValidBase64 @Parameter(description = "Json Dispositivo en Base64", example = "IntcImRhdG9zXCI6XCJ0b2Rvc2xvc2RhdG9zZGVsZGlzcG9zaXRpdm9cIn0i") String jsonData,
@@ -77,13 +80,14 @@ public class LoginController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Dispositivo enrolado con un usuario", content = @Content(schema = @Schema(implementation = DeviceEnrollmentResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
+    @SecurityRequirements()
     @GetMapping("/validate-device")
     public ResponseEntity<DeviceEnrollmentResponse> validateEnrollment() throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(iLoginServices.validation());
     }
 
-    @Operation(summary = "Logout Request", description = "Endpoint para cerrar sesión")
+    @Operation(summary = "Logout Request", description = "Endpoint para cerrar sesión", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Logout Success", content = @Content(schema = @Schema(implementation = LoginResult.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Error en los parámetros", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),

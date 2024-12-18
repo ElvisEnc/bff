@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +41,13 @@ public class RegistryController {
             @ApiResponse(responseCode = "422", description = "Los parámetros enviados no son válidos por su formato.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
+    @SecurityRequirements()
     @PostMapping("/device/migration")
     public ResponseEntity<RegistryResponse> registerDeviceByMigration(@Valid @RequestBody RegistryRequest registryRequest) throws NoSuchAlgorithmException {
         return ResponseEntity.ok(registryService.registerByMigration(registryRequest));
     }
 
+    @SecurityRequirements()
     @GetMapping("/device/handshake")
     public ResponseEntity<BffHandshakeResponse> handshake() {
         return ResponseEntity.ok(registryService.handshake());

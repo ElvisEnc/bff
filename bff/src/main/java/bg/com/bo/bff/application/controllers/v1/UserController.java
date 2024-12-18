@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -72,6 +73,7 @@ public class UserController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Estado de biometría", content = @Content(schema = @Schema(implementation = BiometricsResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
+    @SecurityRequirements()
     @GetMapping("/{personId}/biometric")
     public ResponseEntity<BiometricsResponse> getBiometricStatus(
             @PathVariable("personId") @NotNull @Parameter(description = "Código de Persona", example = "12345") Integer personId
@@ -101,6 +103,7 @@ public class UserController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Información de contacto.", content = @Content(schema = @Schema(implementation = ContactResponse.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Error interno.", content = @Content(schema = @Schema(implementation = ErrorResponse.class), mediaType = "application/json"))
     })
+    @SecurityRequirements()
     @GetMapping("/contact")
     public ResponseEntity<ContactResponse> getContactDetails() {
         return ResponseEntity.ok(userService.getContactInfo());

@@ -2,6 +2,7 @@ package bg.com.bo.bff.application.config.encryption.payload;
 
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.constants.Constants;
+import bg.com.bo.bff.commons.enums.config.provider.EncryptionHeaders;
 import bg.com.bo.bff.models.payload.encryption.IFirstLayerEncryptionHandler;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.payload.encryption.AesPayloadResolver;
@@ -128,7 +129,7 @@ public class EncryptResponseWrapper extends HttpServletResponseWrapper {
     private void setEncryptionHeadersData() {
         this.setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         this.setHeader("Content-Length", String.valueOf(Util.getEncodedBytes(content).length));
-        this.setHeader(Constants.SESSION_ENCRYPT_KEY_HEADER, this.encryptKeyHeader());
+        this.setHeader(EncryptionHeaders.SESSION_ENCRYPT_KEY_HEADER.getCode(), this.encryptKeyHeader());
     }
 
     /**

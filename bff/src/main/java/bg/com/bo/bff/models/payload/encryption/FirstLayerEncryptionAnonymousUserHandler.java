@@ -1,8 +1,8 @@
 package bg.com.bo.bff.models.payload.encryption;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.enums.config.provider.EncryptionAlgorithm;
+import bg.com.bo.bff.commons.enums.config.provider.EncryptionHeaders;
 import bg.com.bo.bff.commons.utils.CipherUtils;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
@@ -49,8 +49,8 @@ public class FirstLayerEncryptionAnonymousUserHandler implements IFirstLayerEncr
     }
 
     private void validate(HttpServletRequest request) {
-        this.sessionEncryptedKeyHeader = request.getHeader(Constants.SESSION_ENCRYPT_KEY_HEADER);
-        String encryptInfoHeader = request.getHeader(Constants.USER_SESSION_ENCRYPT_INFO_HEADER);
+        this.sessionEncryptedKeyHeader = request.getHeader(EncryptionHeaders.SESSION_ENCRYPT_KEY_HEADER.getCode());
+        String encryptInfoHeader = request.getHeader(EncryptionHeaders.ENCRYPT_INFO_HEADER.getCode());
 
         boolean validSessionEncryptedKeyHeader = sessionEncryptedKeyHeader != null && !sessionEncryptedKeyHeader.isEmpty();
         boolean validEncryptInfoHeader = encryptInfoHeader != null && !encryptInfoHeader.isEmpty();

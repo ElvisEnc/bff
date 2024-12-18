@@ -2,6 +2,8 @@ package bg.com.bo.bff.application.config.encryption.payload;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.Constants;
+import bg.com.bo.bff.commons.enums.EnvProfile;
+import bg.com.bo.bff.commons.enums.config.provider.EncryptionHeaders;
 import bg.com.bo.bff.models.payload.encryption.FirstLayerEncryptionHandlerFactory;
 import bg.com.bo.bff.models.payload.encryption.IFirstLayerEncryptionHandler;
 import bg.com.bo.bff.models.payload.encryption.RequestCompare;
@@ -15,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -22,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -38,12 +42,14 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
     private String payloadAlgorithm;
 
     private final IEncryptionService encryptionService;
+    private final Environment env;
 
     private static final Logger logger = LogManager.getLogger(EncryptionPayloadFilter.class.getName());
 
     @Autowired
-    public EncryptionPayloadFilter(IEncryptionService encryptionService) {
+    public EncryptionPayloadFilter(IEncryptionService encryptionService, Environment env) {
         this.encryptionService = encryptionService;
+        this.env = env;
     }
 
     @Override
@@ -68,10 +74,11 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String eek = request.getHeader(Constants.ENCRYPTION_EXCLUDED_KEY_HEADER);
-        if (encryptionExcludeKey != null && eek != null
-                && !eek.isBlank() && !encryptionExcludeKey.isBlank()
-                && eek.equals(encryptionExcludeKey))
+        String eek = request.getHeader(EncryptionHeaders.ENCRYPTION_EXCLUDED_KEY_HEADER.getCode());
+        if (!Arrays.stream(env.getActiveProfiles()).toList().contains(EnvProfile.prod.name())
+                && (encryptionExcludeKey != null && eek != null
+                    && !eek.isBlank() && !encryptionExcludeKey.isBlank()
+                    && eek.equals(encryptionExcludeKey)))
             return true;
 
         String path = request.getServletPath();
