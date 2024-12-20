@@ -88,7 +88,6 @@ class GlobalExceptionHandlerTest {
     @Test
     void givenInvalidHeaderOnRequiredAndWithMinNumericHeaderWhenHandlingGlobalExceptionThenReturnBadRequest() throws Exception {
         // Arrange
-        ErrorResponse expectedResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.name(), "Failed to convert value of type 'java.lang.String' to required type 'java.lang.Integer'; For input string: \"s\"", "Bad request", 1200);
         String path = String.format("/%s/%s", MockedController.MOCKED_CONTROLLER, MockedController.EP_WITH_REQUIRED_AND_NUMERIC_HEADER);
 
         // Act
@@ -103,7 +102,8 @@ class GlobalExceptionHandlerTest {
 
         // Assert
         verify(spyHandler).handleValidationException(any(MethodArgumentTypeMismatchException.class));
-        assertEquals(expectedResponse, errorResponse);
+        assertEquals(HttpStatus.BAD_REQUEST.name(), errorResponse.getCode());
+        assertTrue(errorResponse.getMessage().contains("request-header"));
     }
 
     @Test

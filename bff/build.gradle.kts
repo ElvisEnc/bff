@@ -1,6 +1,6 @@
 plugins {
 	java
-	id("org.springframework.boot") version "3.3.4"
+	id("org.springframework.boot") version "3.3.7"
 	id("io.spring.dependency-management") version "1.1.6"
 	jacoco
 }
@@ -34,16 +34,16 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-web:3.3.4")
-	implementation("org.springframework.boot:spring-boot-starter-security:3.3.4")
-	implementation("org.springframework.security:spring-security-core:6.3.2")
-	implementation("org.springframework.boot:spring-boot-starter-validation:3.3.4")
-	implementation("org.springframework.boot:spring-boot-starter-cache:3.3.4")
-	implementation("org.springframework.boot:spring-boot-starter-data-redis:3.3.4")
-	implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.4")
-	implementation("org.springframework.boot:spring-boot-starter-log4j2:3.3.4")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.security:spring-security-core:6.3.6")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.springframework.boot:spring-boot-starter-cache")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("org.springframework.boot:spring-boot-starter-log4j2")
 	implementation("org.springframework.cloud:spring-cloud-context:4.1.4")
-	implementation("org.springframework.security:spring-security-config:6.3.1")
+	implementation("org.springframework.security:spring-security-config:6.3.6")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 	implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 	implementation("org.apache.httpcomponents:httpclient:4.5.13")
@@ -60,7 +60,7 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok:1.18.34")
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
 
-	testImplementation("org.springframework.boot:spring-boot-starter-test:3.3.4")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
 	testImplementation("org.mockito:mockito-core:5.6.0")
 	testImplementation("it.ozimov:embedded-redis:0.7.3")
