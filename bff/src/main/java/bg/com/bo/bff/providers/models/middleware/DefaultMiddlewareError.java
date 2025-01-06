@@ -21,6 +21,9 @@ public enum DefaultMiddlewareError implements IMiddlewareError {
     MDWRLIB_0012(HttpStatus.NOT_IMPLEMENTED, "INVALID_CANAL", "MDWRLIB-0012", "Ocurrió un problema, error interno.", "Servicio no disponible", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
 
     MDWRLIB_003(HttpStatus.NOT_IMPLEMENTED, "DATA_NOT_FOUND", "MDWRLIB-003", "Registros no encontrados.", "Ocurrió un problema", CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
+    MDWRLIB_0014(HttpStatus.NOT_IMPLEMENTED, "ACCESS_DENIED", "MDWRLIB-0014", "Error token invalido", "Token Inválido", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
+    MDWPGL_401(HttpStatus.NOT_IMPLEMENTED, "ACCESS_DENIED", "MDWPGL-401", "Error token expirado", "Access token expired", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
+    MDWRLIB_0007(HttpStatus.NOT_IMPLEMENTED, "INVALID_URL", "MDWRLIB-0007", "Error url inválido", "URL inválido", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
 
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "Error en los parámetros", "Datos inválidos", CategoryError.INVALID_FORMAT.getCategoryId()),
     NOT_ACCEPTABLE(HttpStatus.NOT_ACCEPTABLE, "NOT_ACCEPTABLE", "NOT_ACCEPTABLE", "No aceptable", "Datos no aceptables", CategoryError.INVALID_FORMAT.getCategoryId()),
