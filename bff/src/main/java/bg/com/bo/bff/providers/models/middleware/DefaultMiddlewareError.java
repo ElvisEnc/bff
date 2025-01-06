@@ -13,6 +13,11 @@ public enum DefaultMiddlewareError implements IMiddlewareError {
     MDWPGL_404(HttpStatus.NOT_IMPLEMENTED, "INVALID_REQUEST", "MDWPGL-404", "Petición no permitida, verifica e intenta nuevamente.", "Petición no permitida", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
     MDWPGL_405(HttpStatus.NOT_IMPLEMENTED, "INVALID_METHOD", "MDWPGL-405", "Método no permitido, verifica e intenta nuevamente.", "Método no permitido", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
     MDWPGL_500(HttpStatus.NOT_IMPLEMENTED, "UNKNOWN_ERROR", "MDWPGL-500", "Ocurrió un problema, error interno.", "Servicio no disponible", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()),
+    MDWPGL_0001(HttpStatus.NOT_IMPLEMENTED, "ERROR_PROCEDURE", "MDWPGL-0001", "No se encontraron datos", "Datos no encontrados", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()), // Not data found
+    MDWPGL_0002(HttpStatus.NOT_IMPLEMENTED, "INVALID_DATA", "MDWPGL-0002", "Datos invalidos", "Datos invalidos", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()), // Json invalid
+    MDWPGL_003(HttpStatus.NOT_IMPLEMENTED, "ERROR_PROCEDURE", "MDWPGL-003", "Ocurrió un problema, error interno.", "Datos invalidos", CategoryError.MW_UNEXPECTED_FORMAT.getCategoryId()), // Error converting date format
+
+    MDWPGL_900(HttpStatus.NOT_IMPLEMENTED, "ERROR_PROCEDURE", "MDWPGL-900", "Ocurrió un problema, error interno.", "Ocurrio un problema", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()), // No connection to BD
 
     MDWRLIB_0001(HttpStatus.NOT_IMPLEMENTED, "INVALID_PARAMS", "MDWRLIB-0001", "Los parámetros deben ser los mismos para el canal 2.", "Parámetros inválidos", CategoryError.NO_HEADER_PARAMS_MW_ERROR.getCategoryId()),
     MDWRLIB_0003(HttpStatus.NOT_IMPLEMENTED, "DATA_NOT_FOUND", "MDWRLIB-0003", "Registros no encontrados.", "Ocurrió un problema", CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
