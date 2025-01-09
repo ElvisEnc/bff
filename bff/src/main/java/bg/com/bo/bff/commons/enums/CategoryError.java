@@ -3,6 +3,7 @@ package bg.com.bo.bff.commons.enums;
 @lombok.Getter
 @lombok.AllArgsConstructor
 public enum CategoryError {
+    SUCCESS(0000),
     AUTH(1100),
     ENCRYPTION(1101),
     UNHANDLED(1000),

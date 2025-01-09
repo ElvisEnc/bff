@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @lombok.AllArgsConstructor
 public enum DefaultMiddlewareError implements IMiddlewareError {
     // Librerias MDW
-    MDWPGL_400(HttpStatus.NOT_IMPLEMENTED, "INVALID_PARAMS", "MDWPGL-400", "Los parámetros proporcionados no son válidos.", "Parámetros inválidos", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()),
+    MDWPGL_400(HttpStatus.NOT_IMPLEMENTED, "INVALID_PARAMS", "MDWPGL-400", "Los parámetros proporcionados no son válidos.", "Parámetros inválidos", CategoryError.MW_UNEXPECTED_FORMAT.getCategoryId()),
     MDWPGL_404(HttpStatus.NOT_IMPLEMENTED, "INVALID_REQUEST", "MDWPGL-404", "Petición no permitida, verifica e intenta nuevamente.", "Petición no permitida", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
     MDWPGL_405(HttpStatus.NOT_IMPLEMENTED, "INVALID_METHOD", "MDWPGL-405", "Método no permitido, verifica e intenta nuevamente.", "Método no permitido", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
     MDWPGL_500(HttpStatus.NOT_IMPLEMENTED, "UNKNOWN_ERROR", "MDWPGL-500", "Ocurrió un problema, error interno.", "Servicio no disponible", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()),

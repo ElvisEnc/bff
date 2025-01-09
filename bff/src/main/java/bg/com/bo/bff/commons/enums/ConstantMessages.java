@@ -6,8 +6,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ConstantMessages {
-    GENERIC("Tuvimos un problema interno. Inténtalo nuevamente.","Ocurrió un problema"),
-    ACH_DUPLICATE("Su transacción no se registró debido a que existe otra trasacción similar ingresada recitemente. Favor revisar el Reporte transferencias a Otros Bancos", "Tranferencia Duplicada");
+    GENERIC("Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
+    TRANSFER_DUPLICATE("Tienes un pago similar realizado hace poco. ¿Quieres repetir el pago con el mismo monto?", "Pago duplicado"),
+    CRYPTO_FOUND("Estimado Cliente: las plataformas transaccionales y la compraventa de Activos Virtuales no está bajo control, supervisión ni regulación de ASFI. Estas transacciones son a riesgo del cliente. Gracias.", "Transacción no permitida"),
+    QUANTITY_LIMIT_KO("Límite de cantidad ha sido superado para esta transacción.", "Límite de cantidad excedido"),
+    AMOUNT_LIMIT_KO("El límite de monto ha sido superado para esta transacción.", "Límite de monto excedido"),
+    VALIDATE_COMBINATION("Se requiere la autorización de otro firmante para completar la transacción.", "Transacción pendiente"),
+    FUNDS_REQUIRED("Es necesario indicar el origen y destino de los fondos.", "Origen y destino de fondos requeridos"),
+    TRANSACTION_NOT_ALLOWED("Las transacciones en moneda extranjera están temporalmente deshabilitadas.", "Transacción no disponible");
 
     private final String message;
     private final String title;
