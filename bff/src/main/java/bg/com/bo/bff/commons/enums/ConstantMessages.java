@@ -15,7 +15,11 @@ public enum ConstantMessages {
     VALIDATE_COMBINATION("Se requiere la autorización de otro firmante para completar la transacción.", "Transacción pendiente"),
     ACCOUNT_BLOCKED("No es posible utilizar esta cuenta para realizar esta transacción.", "Transacción no disponible"),
     FUNDS_REQUIRED("Es necesario indicar el origen y destino de los fondos.", "Origen y destino de fondos requeridos"),
-    TRANSACTION_NOT_ALLOWED("Las transacciones en moneda extranjera están temporalmente deshabilitadas.", "Transacción no disponible");
+    TRANSACTION_NOT_ALLOWED("Las transacciones en moneda extranjera están temporalmente deshabilitadas.", "Transacción no disponible"),
+    INVALID_LOGIN_DATA("No se pudo validar los datos, acércate a una agencia cercana.", "Datos inválidos"),
+    INVALID_USER_DATA("Verifica tu código de persona y contraseña.", "Datos de usuario inválidos"),
+    MAX_ATTEMPTS("Se ha alcanzado el número máximo de intentos permitidos. Inténtalo nuevamente más tarde.", "Intentos máximos alcanzados"),
+    NO_FOUND_DATA("No se encontraron registros.", "Datos no encontrados");
 
     private final String message;
     private final String title;

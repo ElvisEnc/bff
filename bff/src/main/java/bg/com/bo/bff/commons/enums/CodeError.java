@@ -20,7 +20,13 @@ public enum CodeError {
     INVALID_PARAMS("INVALID_PARAMS", "Error en los parámetros, pueden ser los del header o path"),
     INVALID_DATA("INVALID_DATA", "Datos inválidos, ya sea desde el front o postman"),
     INVALID_USER_DATA("INVALID_USER_DATA", "Datos inválidos del usuario, ya sea desde el front o postman"),
-    ERROR_PROCEDURE("ERROR_PROCEDURE", "Error ocurrido en el proceso");
+    ERROR_PROCEDURE("ERROR_PROCEDURE", "Error ocurrido en el proceso"),
+    MAX_ATTEMPTS("MAX_ATTEMPTS", "Limite de intentos máximos alcanzados"),
+    ACCESS_DENIED("ACCESS_DENIED", "Acceso denegado"),
+    BLOCKED_USER("BLOCKED_USER", "Usuario Bloqueado"),
+    ERROR_DB_PROCEDURE("ERROR_DB_PROCEDURE", "Error ocurrido en la BD durante el proceso"),
+    DATA_NOT_FOUND("DATA_NOT_FOUND", "Datos no encontrados"),
+    ERROR_LOG("ERROR_LOG", "Error al registrar logs");
 
     private final String code;
     private final String description;
