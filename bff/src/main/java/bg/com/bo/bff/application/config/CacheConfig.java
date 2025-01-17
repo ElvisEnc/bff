@@ -54,9 +54,6 @@ public class CacheConfig {
     @Value("${token.blacklist.ttl}")
     private Integer tokenBlacklistTtl;
 
-    @Value("${cache.remittance.parameters.ttl}")
-    private Integer remittanceParameters;
-
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return builder -> builder
@@ -105,12 +102,6 @@ public class CacheConfig {
                 .withCacheConfiguration(CacheConstants.TOKEN_BLACKLIST,
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofMinutes(tokenBlacklistTtl))
-                                .disableCachingNullValues()
-                                .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
-                                .prefixCacheNameWith(cachePrefix))
-                .withCacheConfiguration(CacheConstants.REMITTANCE_PARAMETERS,
-                        RedisCacheConfiguration.defaultCacheConfig()
-                                .entryTtl(Duration.ofMinutes(remittanceParameters))
                                 .disableCachingNullValues()
                                 .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                                 .prefixCacheNameWith(cachePrefix));

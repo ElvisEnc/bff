@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
@@ -30,16 +29,12 @@ public class UtilDate {
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S"),
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
                 DateTimeFormatter.ofPattern("yyyy-MM-dd"),
-                DateTimeFormatter.ofPattern(localFormat),
-                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+                DateTimeFormatter.ofPattern(localFormat)
         );
 
         for (DateTimeFormatter formatter : formatters) {
             try {
-                if (dateString.contains("T")) {
-                    ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateString, formatter);
-                    return zonedDateTime.toLocalDate().format(DateTimeFormatter.ofPattern(localFormat));
-                } else if (dateString.contains(" ")) {
+                if (dateString.contains(" ")) {
                     LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
                     return dateTime.toLocalDate().format(DateTimeFormatter.ofPattern(localFormat));
                 } else {

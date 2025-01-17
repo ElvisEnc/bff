@@ -26,7 +26,6 @@ public enum HeadersMW {
     APP_JSON("application/json"),
     DEVICE_ID("device-id"),
     DEVICE_IP("device-ip"),
-    APP_VERSION("app-version"),
     REQUEST_ID("X-Request-ID"),
     KONG_REQUEST_ID("X-Kong-Request-Id");
 
@@ -85,14 +84,6 @@ public enum HeadersMW {
                 getMWIdentificationChannelHeaders(),
                 getRequestIdHeaders(parameters),
                 new Header[]{new BasicHeader(HeadersMW.CONTENT_TYPE.getName(), HeadersMW.APP_JSON.getName())});
-    }
-
-    public static String getSpecificHeader(String headerName, HttpServletRequest request) {
-        String headerValue = request.getHeader(headerName);
-        if (headerValue != null && !headerValue.trim().isEmpty()) {
-            return headerValue.trim();
-        }
-        return null;
     }
 
     private static Header[] getRequestIdHeaders(Map<String, String> parameters) {

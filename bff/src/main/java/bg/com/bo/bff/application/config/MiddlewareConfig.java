@@ -36,8 +36,6 @@ public class MiddlewareConfig {
 
     private String clientLoansTransactionManager;
 
-    private String clientRemittanceManager;
-
     private String clientCreditCardManager;
 
     private String clientCreditCardTransactionManager;

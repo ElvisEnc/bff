@@ -63,9 +63,6 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.account.statement.manager}")
     private String clientAccountStatementManager;
 
-    @Value("${client.secret.remittance.manager}")
-    private String clientRemittanceManager;
-
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
@@ -88,7 +85,6 @@ public class MiddlewareConfigFactory {
                 .clientCreditCardTransactionManager(clientCreditCardTransactionManager)
                 .clientPointAttentionManager(clientPointAttentionManager)
                 .clientAccountStatementManager(clientAccountStatementManager)
-                .clientRemittanceManager(clientRemittanceManager)
                 .build();
     }
 }
