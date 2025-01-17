@@ -14,5 +14,4 @@ public final class CacheConstants {
     public static final String TOKEN_BLACKLIST = "token-blacklist";
     public static final String ANONYMOUS_KEY_PREFIX = "anonymous-key";
     public static final String ANONYMOUS_KEYS = "anonymous-keys";
-    public static final String REMITTANCE_PARAMETERS = "remittance-parameters";
 }

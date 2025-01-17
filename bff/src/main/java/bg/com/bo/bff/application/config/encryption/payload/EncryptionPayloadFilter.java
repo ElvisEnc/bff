@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.config.encryption.payload;
 
 import bg.com.bo.bff.application.exceptions.GenericException;
+import bg.com.bo.bff.commons.constants.Constants;
 import bg.com.bo.bff.commons.enums.EnvProfile;
 import bg.com.bo.bff.commons.enums.config.provider.EncryptionHeaders;
 import bg.com.bo.bff.models.payload.encryption.FirstLayerEncryptionHandlerFactory;
