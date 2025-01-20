@@ -22,7 +22,8 @@ public enum ProjectNameMW {
     LOANS_TRANSACTION("/loans-transaction-manager", "LOANS TRANSACTION MANAGER", "Secret"),
     CREDIT_CARD_MANAGER("/creditcard-manager", "CREDIT CARD MANAGER", "Secret"),
     CREDIT_CARD_TRANSACTION_MANAGER("/creditcard-transaction-manager", "CREDIT CARD TRANSACTION MANAGER", "Secret"),
-    POINT_ATTENTION_MANAGER("/point-attention-manager", "POINT ATTENTION MANAGER", "Secret"),;
+    POINT_ATTENTION_MANAGER("/point-attention-manager", "POINT ATTENTION MANAGER", "Secret"),
+    REMITTANCE_MANAGER("/remittance-manager", "REMITTANCE MANAGER", "Secret"),;
 
     private final String name;
     private final String description;

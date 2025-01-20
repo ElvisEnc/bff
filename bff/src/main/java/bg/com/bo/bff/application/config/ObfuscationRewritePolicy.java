@@ -46,7 +46,8 @@ public final class ObfuscationRewritePolicy implements RewritePolicy {
                 RegexReplacement.createRegexReplacement(Pattern.compile("\\\\\"oldPassword\\\\\"\\s*:\\s*\\\\\"[^\\\\\"]*\\\\\""), "\\\\\"oldPassword\\\\\": \\\\\"****\\\\\""),
                 RegexReplacement.createRegexReplacement(Pattern.compile("\\\\\"newPassword\\\\\"\\s*:\\s*\\\\\"[^\\\\\"]*\\\\\""), "\\\\\"newPassword\\\\\": \\\\\"****\\\\\""),
                 RegexReplacement.createRegexReplacement(Pattern.compile("\\\\\"passwordBiometric\\\\\"\\s*:\\s*\\\\\"[^\\\\\"]*\\\\\""), "\\\\\"passwordBiometric\\\\\": \\\\\"****\\\\\""),
-                RegexReplacement.createRegexReplacement(Pattern.compile("\\\\\"tokenFinger\\\\\"\\s*:\\s*\\\\\"[^\\\\\"]*\\\\\""), "\\\\\"tokenFinger\\\\\": \\\\\"****\\\\\"")
+                RegexReplacement.createRegexReplacement(Pattern.compile("\\\\\"tokenFinger\\\\\"\\s*:\\s*\\\\\"[^\\\\\"]*\\\\\""), "\\\\\"tokenFinger\\\\\": \\\\\"****\\\\\""),
+                RegexReplacement.createRegexReplacement(Pattern.compile("\\\\\"pStrClave\\\\\"\\s*:\\s*\\\\\"[^\\\\\"]*\\\\\""), "\\\\\"pStrClave\\\\\": \\\\\"****\\\\\"")
         );
     }
 }
