@@ -45,4 +45,6 @@ public class MiddlewareConfig {
     private String clientPointAttentionManager;
 
     private String clientAccountStatementManager;
+
+    private String clientSoftTokenManager;
 }

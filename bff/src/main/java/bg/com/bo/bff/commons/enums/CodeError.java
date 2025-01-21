@@ -26,7 +26,9 @@ public enum CodeError {
     BLOCKED_USER("BLOCKED_USER", "Usuario Bloqueado"),
     ERROR_DB_PROCEDURE("ERROR_DB_PROCEDURE", "Error ocurrido en la BD durante el proceso"),
     DATA_NOT_FOUND("DATA_NOT_FOUND", "Datos no encontrados"),
-    ERROR_LOG("ERROR_LOG", "Error al registrar logs");
+    ERROR_LOG("ERROR_LOG", "Error al registrar logs"),
+    SOFTTOKEN_DISABLED("SOFTOKEN_DISABLED", "Usuario sin GanaPin, con algún tipo de error");
+
 
     private final String code;
     private final String description;
