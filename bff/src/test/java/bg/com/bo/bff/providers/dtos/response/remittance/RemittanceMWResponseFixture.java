@@ -50,4 +50,11 @@ public class RemittanceMWResponseFixture {
                 ))
                 .build();
     }
+
+    public static ValidateAccountMWResponse withDefaultValidateAccount() {
+        return ValidateAccountMWResponse.builder()
+                .codeError("COD000")
+                .message("SIN BLOQUEO")
+                .build();
+    }
 }

@@ -1,11 +1,18 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
+import bg.com.bo.bff.commons.enums.user.AppCodeResponseNet;
 import bg.com.bo.bff.mappings.providers.remittance.IRemittanceMapper;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
 import bg.com.bo.bff.providers.interfaces.IRemittanceProvider;
+import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareError;
+import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareResponse;
 import bg.com.bo.bff.services.interfaces.IRemittanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -40,5 +47,15 @@ public class RemittanceService implements IRemittanceService {
         GeneralParametersMWRequest mwRequest = mapper.mapperRequest(personId);
         ListGeneralParametersMWResponse mwResponse = provider.getGeneralParameters(mwRequest);
         return mapper.convertResponse(mwResponse);
+    }
+
+    @Override
+    public GenericResponse validateAccount(String personId, String accountId) throws IOException {
+        ValidateAccountMWRequest mwRequest = mapper.mapperRequest(personId, accountId);
+        ValidateAccountMWResponse mwResponse = provider.validateAccount(mwRequest);
+        if (mwResponse.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
+            return GenericResponse.instance(RemittanceMiddlewareResponse.ACCOUNT_ENABLED);
+        }
+        throw new GenericException(RemittanceMiddlewareError.RM_031);
     }
 }

@@ -1,9 +1,14 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
+import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
+import bg.com.bo.bff.application.dtos.request.debit.card.DebitCardRequestFixture;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.RemittanceResponseFixture;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
+import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareResponse;
 import bg.com.bo.bff.services.interfaces.IRemittanceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,5 +72,29 @@ class RemittanceControllerTest {
         assertNotNull(result);
         assertEquals(expected, actual);
         verify(service).getGeneralParameters(any());
+    }
+
+    @Test
+    void givenValidDataWhenValidateAccountThenGenericResponse() throws Exception {
+        // Arrange
+        GenericResponse responseExpected = GenericResponse.instance(RemittanceMiddlewareResponse.ACCOUNT_ENABLED);
+        when(service.validateAccount(any(), any())).thenReturn(responseExpected);
+
+        // Act
+        String URL_VALIDATE_ACCOUNT = "/api/v1/remittances/persons/{personId}/accounts/{accountId}/validate";
+        MvcResult result = mockMvc.perform(get(URL_VALIDATE_ACCOUNT, "123", "123456")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        String expected = Util.objectToString(responseExpected);
+        String actual = result.getResponse().getContentAsString();
+
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).validateAccount(any(), any());
     }
 }

@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.services.interfaces.IRemittanceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,5 +38,18 @@ public class RemittanceController extends AbstractBFFController {
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.getGeneralParameters(personId));
+    }
+
+    @Operation(summary = "Validar cuenta", description = "Valida si la cuenta esta bloqueada o disponible", operationId = "validateAccount")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Valida la cuenta")
+    })
+    @GetMapping(path = "/persons/{personId}/accounts/{accountId}/validate", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<GenericResponse> validateAccount(
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("accountId") @NotNull @Parameter(description = "Este es el accountId de la persona", example = "12345") String accountId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.validateAccount(personId, accountId));
     }
 }
