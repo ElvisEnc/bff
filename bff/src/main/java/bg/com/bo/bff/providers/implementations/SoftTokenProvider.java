@@ -1,0 +1,86 @@
+package bg.com.bo.bff.providers.implementations;
+
+import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
+import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
+import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.request.softtoken.mw.SoftTokenMWRequest;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
+import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenDataEnrollmentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenQuestionEnrollmentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenValidationEnrollmentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenWelcomeMWResponse;
+import bg.com.bo.bff.providers.interfaces.ISoftTokenProvider;
+import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
+import bg.com.bo.bff.providers.models.enums.middleware.softtoken.SoftTokenMiddlewareError;
+import bg.com.bo.bff.providers.models.enums.middleware.softtoken.SoftTokenMiddlewareServices;
+import bg.com.bo.bff.providers.models.middleware.HeadersMW;
+import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+
+@Service
+public class SoftTokenProvider extends MiddlewareProvider<SoftTokenMiddlewareError> implements ISoftTokenProvider {
+
+    private final String baseUrl;
+    private final HttpServletRequest httpServletRequest;
+
+    public SoftTokenProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory, HttpServletRequest httpServletRequest) {
+        super(ProjectNameMW.SOFT_TOKEN_MANAGER, SoftTokenMiddlewareError.class, tokenMiddlewareProvider, middlewareConfig, httpClientFactory, middlewareConfig.getClientSoftTokenManager());
+        this.baseUrl = middlewareConfig.getUrlBase() + ProjectNameMW.SOFT_TOKEN_MANAGER.getName();
+        this.httpServletRequest = httpServletRequest;
+    }
+
+    private String getDeviceId() {
+        return HeadersMW.getSpecificHeader(HeadersMW.DEVICE_ID.getName(), httpServletRequest);
+    }
+
+    private String getDeviceName() {
+        return HeadersMW.getSpecificHeader(DeviceMW.DEVICE_NAME.getCode(), httpServletRequest);
+    }
+
+    private void getRequest(SoftTokenMWRequest request){
+        String deviceId = getDeviceId();
+        request.setImei(deviceId);
+        request.setDidBga(deviceId);
+        request.setKsBga(deviceId);
+    }
+
+    @Override
+    public SoftTokenWelcomeMWResponse getWelcomeMessage(SoftTokenMWRequest request) throws IOException {
+        getRequest(request);
+        request.setOperatingSystem(getDeviceName());
+        String url = baseUrl + String.format(SoftTokenMiddlewareServices.GET_WELCOME_SOFTTOKEN.getServiceURL());
+        ApiDataResponse<SoftTokenWelcomeMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(httpServletRequest),request, ApiDataResponse.class);
+        return Util.stringToObject(Util.objectToString(mwResponse.getData()), SoftTokenWelcomeMWResponse.class);
+    }
+
+    @Override
+    public SoftTokenDataEnrollmentMWResponse getDataEnrollment(SoftTokenMWRequest request) throws IOException {
+        getRequest(request);
+        request.setOperatingSystem(getDeviceName());
+        String url = baseUrl + String.format(SoftTokenMiddlewareServices.GET_DATA_ENROLLMENT_SOFTTOKEN.getServiceURL());
+        ApiDataResponse<SoftTokenDataEnrollmentMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(httpServletRequest),request, ApiDataResponse.class);
+        return Util.stringToObject(Util.objectToString(mwResponse.getData()), SoftTokenDataEnrollmentMWResponse.class);
+    }
+
+    @Override
+    public SoftTokenQuestionEnrollmentMWResponse getQuestionEnrollment(SoftTokenMWRequest request) throws IOException {
+        getRequest(request);
+        request.setOperatingSystem(getDeviceName());
+        String url = baseUrl + String.format(SoftTokenMiddlewareServices.GET_QUESTION_ENROLLMENT_SOFTTOKEN.getServiceURL());
+        ApiDataResponse<SoftTokenQuestionEnrollmentMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(httpServletRequest),request, ApiDataResponse.class);
+        return Util.stringToObject(Util.objectToString(mwResponse.getData()), SoftTokenQuestionEnrollmentMWResponse.class);
+    }
+
+    @Override
+    public SoftTokenValidationEnrollmentMWResponse getValidationEnrollment(SoftTokenMWRequest request) throws IOException {
+        getRequest(request);
+        String url = baseUrl + String.format(SoftTokenMiddlewareServices.GET_VALIDATION_ENROLLMENT_SOFTTOKEN.getServiceURL());
+        ApiDataResponse<SoftTokenValidationEnrollmentMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(httpServletRequest),request, ApiDataResponse.class);
+        return Util.stringToObject(Util.objectToString(mwResponse.getData()), SoftTokenValidationEnrollmentMWResponse.class);
+    }
+}

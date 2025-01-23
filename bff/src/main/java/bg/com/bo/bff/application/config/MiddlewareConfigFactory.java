@@ -66,6 +66,9 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.remittance.manager}")
     private String clientRemittanceManager;
 
+    @Value("${client.secret.softtoken.manager}")
+    private String clientSoftTokenManager;
+
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
@@ -89,6 +92,7 @@ public class MiddlewareConfigFactory {
                 .clientPointAttentionManager(clientPointAttentionManager)
                 .clientAccountStatementManager(clientAccountStatementManager)
                 .clientRemittanceManager(clientRemittanceManager)
+                .clientSoftTokenManager(clientSoftTokenManager)
                 .build();
     }
 }
