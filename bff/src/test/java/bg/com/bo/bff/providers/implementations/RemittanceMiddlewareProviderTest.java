@@ -12,6 +12,7 @@ import bg.com.bo.bff.providers.dtos.request.remittance.RemittanceMWRequestFixtur
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.RemittanceMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -87,5 +88,21 @@ class RemittanceMiddlewareProviderTest {
         // Assert
         assertNotNull(response);
         assertThat(response).usingRecursiveComparison().isEqualTo(RemittanceMWResponseFixture.withDefaultGeneralParameters());
+    }
+
+    @Test
+    @DisplayName("Validate account given personId and accountId")
+    void givenValidDataWhenValidateAccountThenExpectResponse() throws IOException {
+        // Arrange
+        ValidateAccountMWResponse expectedResponse = RemittanceMWResponseFixture.withDefaultValidateAccount();
+        String jsonResponse = Util.objectToString(ApiDataResponse.of(expectedResponse));
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        ValidateAccountMWResponse response = provider.validateAccount(RemittanceMWRequestFixture.withDefaultValidateAccount());
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(response.getCodeError(), expectedResponse.getCodeError());
     }
 }

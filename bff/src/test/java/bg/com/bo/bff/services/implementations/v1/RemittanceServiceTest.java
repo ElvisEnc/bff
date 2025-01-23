@@ -1,9 +1,14 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.RemittanceResponseFixture;
 import bg.com.bo.bff.mappings.providers.remittance.RemittanceMapper;
+import bg.com.bo.bff.providers.dtos.request.remittance.RemittanceMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.response.remittance.RemittanceMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IRemittanceProvider;
+import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,5 +49,22 @@ class RemittanceServiceTest {
         assertNotNull(response);
         assertEquals(expectedResponse, response);
         verify(self).getGeneralParametersData(any());
+    }
+
+    @Test
+    void givenValidDataWhenValidateAccountThenGenericResponse() throws IOException {
+        //Arrange
+        GenericResponse expected = GenericResponse.instance(RemittanceMiddlewareResponse.ACCOUNT_ENABLED);
+
+        when(provider.validateAccount(any())).thenReturn(RemittanceMWResponseFixture.withDefaultValidateAccount());
+        when(mapper.mapperRequest(any(), any())).thenReturn(RemittanceMWRequestFixture.withDefaultValidateAccount());
+
+        // Act
+        GenericResponse response = service.validateAccount("161616", "123456");
+
+        // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).validateAccount(RemittanceMWRequestFixture.withDefaultValidateAccount());
     }
 }

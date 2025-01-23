@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum RemittanceMiddlewareError implements IMiddlewareError {
     RM_030(HttpStatus.CONFLICT, "NOT_ACCEPTABLE", "RM-030", "No se encontraron registros para la petición.", "Datos no encontrados", CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
+    RM_031(HttpStatus.CONFLICT, "INVALID_ACCOUNT", "RM-031", "No es posible utilizar esta cuenta para realizar esta transacción.", "Cuenta inactiva", CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
     RM002(HttpStatus.CONFLICT, "BAD_REQUEST", "RM002", "No se encontraron registros para la petición.", "Datos no encontrados", CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId());
 
     private final HttpStatus httpCode;

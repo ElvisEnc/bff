@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.response.remittance.*;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareEnums;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,16 @@ public class RemittanceMapper implements IRemittanceMapper {
                 .codLanguage(Integer.parseInt(RemittanceMiddlewareEnums.CODE_LANGUAGE.getCode()))
                 .codPerson(personId)
                 .codApplication(CanalMW.GANAMOVIL.getCanal())
+                .build();
+    }
+
+    @Override
+    public ValidateAccountMWRequest mapperRequest(String personId, String accountId) {
+        return ValidateAccountMWRequest.builder()
+                .codLanguage(Integer.parseInt(RemittanceMiddlewareEnums.CODE_LANGUAGE.getCode()))
+                .codPerson(personId)
+                .codApplication(Integer.parseInt(CanalMW.GANAMOVIL.getCanal()))
+                .jtsOidAccount(accountId)
                 .build();
     }
 
