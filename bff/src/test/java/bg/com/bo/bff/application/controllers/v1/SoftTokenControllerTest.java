@@ -1,9 +1,13 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
+import bg.com.bo.bff.application.dtos.request.softtoken.SoftTokenCodeEnrollmentRequest;
+import bg.com.bo.bff.application.dtos.request.softtoken.SoftTokenCodeEnrollmentRequestFixture;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.softtoken.*;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.ISoftTokenService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,8 +60,8 @@ class SoftTokenControllerTest {
         when(service.getWelcomeMessage(any())).thenReturn(responseExpected);
 
         // Act
-        String URL_GET_WELCOME = "/api/v1/softtoken/persons/{personId}/welcome";
-        MvcResult result = mockMvc.perform(get(URL_GET_WELCOME, "123")
+        String urlGetWelcome = "/api/v1/softtoken/persons/{personId}/welcome";
+        MvcResult result = mockMvc.perform(get(urlGetWelcome, "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -78,8 +83,8 @@ class SoftTokenControllerTest {
         when(service.getDataEnrollment(any())).thenReturn(responseExpected);
 
         // Act
-        String URL_GET_DATA_ENROLLMENT = "/api/v1/softtoken/persons/{personId}/data-enrollment";
-        MvcResult result = mockMvc.perform(get(URL_GET_DATA_ENROLLMENT, "123")
+        String urlGetDataEnrollment = "/api/v1/softtoken/persons/{personId}/data-enrollment";
+        MvcResult result = mockMvc.perform(get(urlGetDataEnrollment, "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -103,8 +108,8 @@ class SoftTokenControllerTest {
         when(service.getQuestionEnrollment(any())).thenReturn(responseExpected);
 
         // Act
-        String URL_GET_QUESTION_ENROLLMENT = "/api/v1/softtoken/persons/{personId}/question-enrollment";
-        MvcResult result = mockMvc.perform(get(URL_GET_QUESTION_ENROLLMENT, "123")
+        String urlGetQuestionEnrollment = "/api/v1/softtoken/persons/{personId}/question-enrollment";
+        MvcResult result = mockMvc.perform(get(urlGetQuestionEnrollment, "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -122,12 +127,12 @@ class SoftTokenControllerTest {
     @Test
     void givenPersonIdWhenGetValidateEnrollmentThenReturnSuccess() throws Exception {
         // Arrange
-        SoftTokenValidationEnrollmentResponse responseExpected = SoftTokenResponseFixture.withDefaultValidate();
+        GenericResponse responseExpected = SoftTokenResponseFixture.withDefaultGeneric();
         when(service.getValidationEnrollment(any())).thenReturn(responseExpected);
 
         // Act
-        String URL_GET_VALIDATE_ENROLLMENT = "/api/v1/softtoken/persons/{personId}/validation-enrollment";
-        MvcResult result = mockMvc.perform(get(URL_GET_VALIDATE_ENROLLMENT, "123")
+        String urlGetValidateEnrollment = "/api/v1/softtoken/persons/{personId}/validation-enrollment";
+        MvcResult result = mockMvc.perform(get(urlGetValidateEnrollment, "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -140,6 +145,29 @@ class SoftTokenControllerTest {
         assertNotNull(result);
         assertEquals(expected, actual);
         verify(service).getValidationEnrollment(any());
+    }
+
+
+    @Test
+    void givenPersonIdWhenPostCodeEnrollmentThenReturnSuccess() throws Exception {
+        // Arrange
+        SoftTokenCodeEnrollmentRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefault();
+        GenericResponse responseExpected = SoftTokenResponseFixture.withDefaultGenericCode();
+        when(service.postCodeEnrollment(any(), any())).thenReturn(responseExpected);
+
+        // Act
+        String urlCodeEnrollment = "/api/v1/softtoken/persons/{personId}/code-enrollment";
+        MvcResult result = mockMvc.perform(post(urlCodeEnrollment, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).postCodeEnrollment(any(), any());
     }
 
 }

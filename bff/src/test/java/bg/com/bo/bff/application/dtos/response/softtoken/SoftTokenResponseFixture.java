@@ -1,5 +1,7 @@
 package bg.com.bo.bff.application.dtos.response.softtoken;
 
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+
 public class SoftTokenResponseFixture {
 
     public static SoftTokenWelcomeResponse withDefaultWelcome() {
@@ -26,6 +28,22 @@ public class SoftTokenResponseFixture {
     public static SoftTokenValidationEnrollmentResponse withDefaultValidate() {
         return SoftTokenValidationEnrollmentResponse.builder()
                 .status("ENROLLMENT")
+                .build();
+    }
+
+    public static GenericResponse withDefaultGeneric() {
+        return GenericResponse.builder()
+                .code("ENROLLMENT")
+                .message("ENROLLMENT")
+                .title("ENROLLMENT")
+                .build();
+    }
+
+    public static GenericResponse withDefaultGenericCode() {
+        return GenericResponse.builder()
+                .code("COD000")
+                .message("Código enviado")
+                .title("")
                 .build();
     }
 }

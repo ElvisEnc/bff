@@ -1,6 +1,8 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
+import bg.com.bo.bff.application.dtos.request.softtoken.SoftTokenCodeEnrollmentRequest;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenDataEnrollmentResponse;
 import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenQuestionEnrollmentResponse;
 import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenValidationEnrollmentResponse;
@@ -9,6 +11,7 @@ import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.services.interfaces.ISoftTokenService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -52,11 +55,20 @@ public class SoftTokenController extends AbstractBFFController {
     }
 
     @GetMapping("/persons/{personId}/validation-enrollment")
-    public ResponseEntity<SoftTokenValidationEnrollmentResponse> getValidationEnrollment(
+    public ResponseEntity<GenericResponse> getValidationEnrollment(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.getValidationEnrollment(personId));
+    }
+
+    @PostMapping("/persons/{personId}/code-enrollment")
+    public ResponseEntity<GenericResponse> postCodeEnrollment(
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @Valid @RequestBody SoftTokenCodeEnrollmentRequest request
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.postCodeEnrollment(personId, request));
     }
 
 }
