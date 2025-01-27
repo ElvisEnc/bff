@@ -73,7 +73,8 @@ public class PaymentServicesService implements IPaymentServicesService {
     @Override
     public List<AffiliatedServicesResponse> getAffiliatedServices(Integer personId, Map<String, String> parameter) throws IOException {
         AffiliatedServiceMWResponse mwResponse = provider.getAffiliatedServices(personId, parameter);
-        return mapper.convertResponse(mwResponse);
+        List<AffiliatedServicesResponse.Service> response = mapper.convertResponse(mwResponse);
+        return mapper.convertResponse(response);
     }
 
     @Override

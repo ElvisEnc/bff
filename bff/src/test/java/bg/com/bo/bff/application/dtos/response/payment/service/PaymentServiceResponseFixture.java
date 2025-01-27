@@ -6,10 +6,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class PaymentServiceResponseFixture {
-    public static AffiliatedServicesResponse withDefaultAffiliateServiceResponse() {
-        return AffiliatedServicesResponse.builder()
+    public static AffiliatedServicesResponse.Service withDefaultAffiliateServiceDetailResponse() {
+        return AffiliatedServicesResponse.Service.builder()
                 .affiliateServiceId("123")
                 .serviceCode("123")
                 .serviceName("test")
@@ -20,6 +21,14 @@ public class PaymentServiceResponseFixture {
                 .contingency(true)
                 .build();
     }
+    public static AffiliatedServicesResponse withDefaultAffiliateServiceResponse() {
+        return AffiliatedServicesResponse.builder()
+                .serviceCode("123")
+                .serviceName("test")
+                .data(Collections.singletonList(withDefaultAffiliateServiceDetailResponse()))
+                .total(1)
+                .build();
+    }
 
     public static ApiDataResponse<List<AffiliatedServicesResponse>> withDataDefaultListAffiliateServiceResponse() {
         return ApiDataResponse.of(Collections.singletonList(withDefaultAffiliateServiceResponse()));
@@ -27,14 +36,12 @@ public class PaymentServiceResponseFixture {
 
     public static AffiliatedServicesResponse withDefaultAffiliateServiceResponseContingencyTrue() {
         return AffiliatedServicesResponse.builder()
-                .affiliateServiceId("123")
                 .serviceCode("123")
                 .serviceName("test")
-                .internalCode("123")
-                .referenceName("test")
-                .nameHolder("test")
-                .year("123")
-                .contingency(false)
+                .data(Stream.of(withDefaultAffiliateServiceDetailResponse())
+                        .peek(detail -> detail.setContingency(false))
+                        .toList())
+                .total(1)
                 .build();
     }
 
