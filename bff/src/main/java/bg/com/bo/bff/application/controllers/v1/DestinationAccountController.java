@@ -4,8 +4,8 @@ import bg.com.bo.bff.application.dtos.request.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.destination.account.*;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
-import bg.com.bo.bff.commons.annotations.ValidText;
 import bg.com.bo.bff.commons.annotations.destination.account.ValidAccountType;
+import bg.com.bo.bff.commons.annotations.generics.ReferenceChars;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.services.interfaces.IDestinationAccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -299,7 +299,7 @@ public class DestinationAccountController {
             @RequestParam(value = "clientName")
             @NotBlank(message = "No debe tener espacios en blanco")
             @NotNull(message = "No debe ser nulo")
-            @ValidText
+            @ReferenceChars
             @Size(min = 1, max = 100, message = "Debe tener un mínimo de 1 y un máximo de 100 caracteres") final String clientName,
 
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,

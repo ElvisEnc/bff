@@ -16,4 +16,10 @@ public class ServiceResponse {
 
     @Schema(example = "Entel", description = "Nombre del servicio")
     private String serviceName;
+
+    @Schema(example = "1", description = "Id de la categoría")
+    private String categoryId;
+
+    @Schema(example = "16", description = "Id de la subcategoría")
+    private String subCategoryId;
 }

@@ -18,7 +18,7 @@ public enum LoginMiddlewareError implements IMiddlewareError {
     MDWLM_013(HttpStatus.NOT_ACCEPTABLE, CodeError.ERROR_PROCEDURE.getCode(), "MDWLM-013", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     MDWLM_23(HttpStatus.UNAUTHORIZED, CodeError.BLOCKED_USER.getCode(), "MDWLM-23", "Has superado el número máximo de intentos. Por tu seguridad, necesitamos verificar tu identidad.", "Usuario bloqueado", CategoryError.AUTH.getCategoryId()),
     MDWLM_24(HttpStatus.UNAUTHORIZED, "NOT_ENROLLED", "MDWLM-24", "¿Deseas habilitar GanaMóvil en este dispositivo?", "Habilitación de GanaMóvil", CategoryError.AUTH.getCategoryId()),
-    MDWLM_25(HttpStatus.UNAUTHORIZED, CodeError.ACCESS_DENIED.getCode(), "MDWLM-25", "Verifica tus datos o visita una agencia para confirmar tu identidad.", "Acceso denegado", CategoryError.AUTH.getCategoryId()),
+    MDWLM_25(HttpStatus.UNAUTHORIZED, "NOT_ENROLLED", "MDWLM-25", "¿Deseas habilitar GanaMóvil en este dispositivo?", "Habilitación de GanaMóvil", CategoryError.AUTH.getCategoryId()),
     MDWLM_008(HttpStatus.UNAUTHORIZED, CodeError.INVALID_DATA.getCode(), "MDWLM-008", "Verifica tu método de ingreso y contraseña.", "Datos inválidos", CategoryError.AUTH.getCategoryId()), // alias, DNI
     MDWLM_009(HttpStatus.UNAUTHORIZED, CodeError.INVALID_DATA.getCode(), "MDWLM-009", "Verifica tu código de persona y contraseña.", "Datos inválidos", CategoryError.AUTH.getCategoryId()), // personId
     MDWLM_007(HttpStatus.UNAUTHORIZED, CodeError.INVALID_DATA.getCode(), "MDWLM-007", "Tipo de autenticación inválido.", "Autenticación inválida", CategoryError.AUTH.getCategoryId()), // type

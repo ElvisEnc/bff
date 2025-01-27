@@ -21,9 +21,8 @@ import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.Ser
 import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class PaymentServicesMapper implements IPaymentServicesMapper {
@@ -56,11 +55,11 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
     }
 
     @Override
-    public List<AffiliatedServicesResponse> convertResponse(AffiliatedServiceMWResponse mwResponse) {
+    public List<AffiliatedServicesResponse.Service> convertResponse(AffiliatedServiceMWResponse mwResponse) {
         if (mwResponse == null || mwResponse.getData() == null)
             return Collections.emptyList();
         return mwResponse.getData().stream()
-                .map(mw -> AffiliatedServicesResponse.builder()
+                .map(mw -> AffiliatedServicesResponse.Service.builder()
                         .affiliateServiceId(mw.getAffiliationCode())
                         .serviceCode(mw.getServiceCode())
                         .serviceName(mw.getServiceDesc())
@@ -71,6 +70,29 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                         .contingency(!mw.getStateContingency().equals("N"))
                         .build())
                 .toList();
+    }
+
+    @Override
+    public List<AffiliatedServicesResponse> convertResponse(List<AffiliatedServicesResponse.Service> response) {
+        Map<String, Map<String, List<AffiliatedServicesResponse.Service>>> groupedMap = response.stream()
+                .collect(Collectors.groupingBy(
+                        AffiliatedServicesResponse.Service::getServiceCode,
+                        Collectors.groupingBy(AffiliatedServicesResponse.Service::getServiceName)
+                ));
+
+        return (groupedMap.entrySet().stream()
+                .flatMap(serviceCodeEntry -> serviceCodeEntry.getValue().entrySet().stream()
+                        .map(serviceNameEntry -> {
+                            AffiliatedServicesResponse groupedData = new AffiliatedServicesResponse();
+                            groupedData.setServiceCode(serviceCodeEntry.getKey());
+                            groupedData.setServiceName(serviceNameEntry.getKey());
+                            groupedData.setData(serviceNameEntry.getValue());
+                            groupedData.setTotal(serviceNameEntry.getValue().size());
+                            return groupedData;
+                        })
+                )
+                .sorted(Comparator.comparing(AffiliatedServicesResponse::getServiceName))
+                .toList());
     }
 
     @Override
@@ -226,6 +248,8 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                 .map(mw -> ServiceResponse.builder()
                         .serviceCode(mw.getServiceCode())
                         .serviceName(mw.getServiceName())
+                        .categoryId(mw.getIdCategory())
+                        .subCategoryId(mw.getIdSubCategory())
                         .build())
                 .toList();
     }
