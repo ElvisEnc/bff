@@ -1,17 +1,17 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.response.loans.ListLoansResponse;
+import bg.com.bo.bff.application.dtos.request.softtoken.SoftTokenCodeEnrollmentRequest;
+import bg.com.bo.bff.application.dtos.request.softtoken.SoftTokenCodeEnrollmentRequestFixture;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenDataEnrollmentResponse;
 import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenQuestionEnrollmentResponse;
-import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenValidationEnrollmentResponse;
 import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenWelcomeResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.softtoken.SoftTokenMapper;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.ListLoansMWResponse;
-import bg.com.bo.bff.providers.dtos.response.loans.mw.LoansMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.softtoken.SoftTokenMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenDataEnrollmentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenQuestionEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenValidationEnrollmentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenEnrollmentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenWelcomeMWResponse;
 import bg.com.bo.bff.providers.interfaces.ISoftTokenProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.softtoken.SoftTokenMiddlewareResponse;
@@ -26,8 +26,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -101,31 +100,29 @@ class SoftTokenServiceTest {
     @Test
     void givenValidDataWhenGetValidationEnrollment() throws IOException {
         //Arrange
-        SoftTokenValidationEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultValidate();
+        SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultValidate();
         when(provider.getValidationEnrollment(any())).thenReturn(expectedResponse);
 
         //Act
-        SoftTokenValidationEnrollmentResponse response = service.getValidationEnrollment("1234");
+        GenericResponse response = service.getValidationEnrollment("1234");
 
         assertNotNull(response);
-        assertEquals(SoftTokenMiddlewareResponse.ENROLLMENT.getMessage(), response.getStatus());
+        assertEquals(SoftTokenMiddlewareResponse.ENROLLMENT.getMessage(), response.getMessage());
         verify(provider).getValidationEnrollment(any());
-        verify(mapper).convertResponse(any(SoftTokenValidationEnrollmentMWResponse.class));
     }
 
     @Test
     void givenValidDataWhenGetValidationNotEnrollment() throws IOException {
         //Arrange
-        SoftTokenValidationEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultNotValidate();
+        SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultNotValidate();
         when(provider.getValidationEnrollment(any())).thenReturn(expectedResponse);
 
         //Act
-        SoftTokenValidationEnrollmentResponse response = service.getValidationEnrollment("1234");
+        GenericResponse response = service.getValidationEnrollment("1234");
 
         assertNotNull(response);
-        assertEquals(SoftTokenMiddlewareResponse.NOT_ENROLLMENT.getMessage(), response.getStatus());
+        assertEquals(SoftTokenMiddlewareResponse.NOT_ENROLLMENT.getMessage(), response.getMessage());
         verify(provider).getValidationEnrollment(any());
-        verify(mapper).convertResponse(any(SoftTokenValidationEnrollmentMWResponse.class));
     }
 
     @Test
@@ -143,4 +140,57 @@ class SoftTokenServiceTest {
         verify(mapper).convertResponse(expectedResponse);
     }
 
+    @Test
+    void givenValidDataWhenPostCodeEnrollmentResponseNull() throws IOException {
+        //Arrange
+        SoftTokenCodeEnrollmentRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefault();
+        SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultNotValidate();
+        when(provider.postCodeEnrollment(any())).thenReturn(expectedResponse);
+
+        //Act
+        GenericResponse response = service.postCodeEnrollment("123", request);
+
+        //Assert
+        assertNotNull(response);
+        verify(provider).postCodeEnrollment(any());
+    }
+
+    @Test
+    void givenValidDataWhenPostCodeEnrollmentResponse() throws IOException {
+        //Arrange
+        SoftTokenCodeEnrollmentRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefault();
+        SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultError();
+        when(provider.postCodeEnrollment(any())).thenReturn(expectedResponse);
+
+        //Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.postCodeEnrollment("123", request)
+        );
+        //Assert
+        assertEquals("DATA_NOT_FOUND", exception.getCode());
+    }
+
+    @Test
+    void givenValidDataWhenPostCodeEnrollmentRequestEmpty() {
+        //Arrange
+        SoftTokenCodeEnrollmentRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultNullEmpty();
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.postCodeEnrollment("123", request)
+        );
+        //Assert
+        assertEquals("BAD_REQUEST", exception.getCode());
+    }
+
+    @Test
+    void givenValidDataWhenPostCodeEnrollmentRequestNull() {
+        //Arrange
+        SoftTokenCodeEnrollmentRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultNull();
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.postCodeEnrollment("123", request)
+        );
+        //Assert
+        assertEquals("BAD_REQUEST", exception.getCode());
+    }
 }

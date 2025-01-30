@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SoftTokenValidationEnrollmentMWResponse {
+public class SoftTokenEnrollmentMWResponse {
     @Schema(description = "Codigo de respuesta")
     private String codeError;
 

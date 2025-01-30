@@ -13,7 +13,7 @@ import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.softtoken.SoftTokenMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenDataEnrollmentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenQuestionEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenValidationEnrollmentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenEnrollmentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenWelcomeMWResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -129,12 +129,28 @@ class SoftTokenMiddlewareProviderTest {
     @DisplayName("question enrollment given PersonCode")
     void givenPersonCodeWhenGetValidationEnrollmentWhenExpectResponse() throws IOException {
         // Arrange
-        ApiDataResponse<SoftTokenValidationEnrollmentMWResponse> expectedResponse = ApiDataResponse.of(SoftTokenMWResponseFixture.withDefaultValidate());
+        ApiDataResponse<SoftTokenEnrollmentMWResponse> expectedResponse = ApiDataResponse.of(SoftTokenMWResponseFixture.withDefaultValidate());
         String jsonResponse = Util.objectToString(expectedResponse);
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        SoftTokenValidationEnrollmentMWResponse response = provider.getValidationEnrollment(SoftTokenMWRequestFixture.withDefault());
+        SoftTokenEnrollmentMWResponse response = provider.getValidationEnrollment(SoftTokenMWRequestFixture.withDefault());
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(SoftTokenMWResponseFixture.withDefaultValidate());
+    }
+
+    @Test
+    @DisplayName("question enrollment given PersonCode")
+    void givenPersonCodeWhenPostCodeEnrollmentWhenExpectResponse() throws IOException {
+        // Arrange
+        ApiDataResponse<SoftTokenEnrollmentMWResponse> expectedResponse = ApiDataResponse.of(SoftTokenMWResponseFixture.withDefaultValidate());
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        SoftTokenEnrollmentMWResponse response = provider.postCodeEnrollment(SoftTokenMWRequestFixture.withDefaultCode());
 
         // Assert
         assertNotNull(response);
