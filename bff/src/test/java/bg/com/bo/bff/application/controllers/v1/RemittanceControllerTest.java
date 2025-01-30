@@ -2,6 +2,7 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.RemittanceResponseFixture;
@@ -121,5 +122,29 @@ class RemittanceControllerTest {
         assertNotNull(result);
         assertEquals(expected, actual);
         verify(service).getMoneyOrdersSent(any());
+    }
+
+    @Test
+    void givenValidDataWhenCheckRemittanceThenListCheckRemittanceResponse() throws Exception {
+        // Arrange
+        List<CheckRemittanceResponse> expectedResponse = RemittanceResponseFixture.withDataDefaultListCheckRemittanceResponse();
+        when(service.checkRemittance(any(), any())).thenReturn(expectedResponse);
+
+        // Act
+        String URL_MONEY_ORDERS = "/api/v1/remittances/persons/{personId}/remittance/{remittanceId}";
+        MvcResult result = mockMvc.perform(get(URL_MONEY_ORDERS, "123456", "123456789")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        String expected = Util.objectToString(ApiDataResponse.of(expectedResponse));
+        String actual = result.getResponse().getContentAsString();
+
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).checkRemittance(any(), any());
     }
 }

@@ -62,4 +62,24 @@ public class RemittanceResponseFixture {
                 .toMaternalLastName("")
                 .build());
     }
+
+    public static List<CheckRemittanceResponse> withDataDefaultListCheckRemittanceResponse() {
+        return Collections.singletonList(CheckRemittanceResponse.builder()
+                        .remittanceId(1)
+                        .consultationId(1)
+                        .amount(BigDecimal.valueOf(100.0))
+                        .currencyCode("068")
+                        .originCountry("Honduras")
+                        .originCity("Tegucigalpa")
+                        .holderName("Juan Perez")
+                        .phone("50499999999")
+                        .recipientPhone("50499999999")
+                        .recipientCountry("Bolivia")
+                        .recipientCity("La Paz")
+                        .recipientName("Arnoldo Gonzales")
+                        .documentNumber("0801199900001")
+                        .documentType("CI")
+                        .documentExtension("SC")
+                .build());
+    }
 }

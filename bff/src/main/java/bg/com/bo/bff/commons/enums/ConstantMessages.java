@@ -19,7 +19,7 @@ public enum ConstantMessages {
     INVALID_LOGIN_DATA("No se pudo validar los datos, acércate a una agencia cercana.", "Datos inválidos"),
     INVALID_USER_DATA("Verifica tu código de persona y contraseña.", "Datos de usuario inválidos"),
     MAX_ATTEMPTS("Se ha alcanzado el número máximo de intentos permitidos. Inténtalo nuevamente más tarde.", "Intentos máximos alcanzados"),
-    NO_FOUND_DATA("No se encontraron registros.", "Datos no encontrados"),
+    NO_FOUND_DATA("No se encontraron registros para la petición.", "Datos no encontrados"),
     SOFTTOKEN_DISABLED("GanaPin deshabilitado", "Usuario sin ganapin habilitado, presentando algun error");
 
     private final String message;

@@ -1,6 +1,7 @@
 package bg.com.bo.bff.services.interfaces;
 
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
 import org.springframework.stereotype.Service;
@@ -17,4 +18,5 @@ public interface IRemittanceService {
 
     List<MoneyOrderSentResponse> getMoneyOrdersSent(String personId) throws IOException;
 
+    List<CheckRemittanceResponse> checkRemittance(String personId,String remittanceId) throws IOException;
 }

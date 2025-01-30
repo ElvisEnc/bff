@@ -1,9 +1,14 @@
 package bg.com.bo.bff.providers.dtos.response.remittance;
 
+import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.*;
+import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareError;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class RemittanceMWResponseFixture {
     public static ListGeneralParametersMWResponse withDefaultGeneralParameters() {
@@ -70,6 +75,40 @@ public class RemittanceMWResponseFixture {
                         .rPaternalNameReceiver("")
                         .rMaternalNameReceiver("")
                         .build()))
+                .build();
+    }
+
+    public static CheckRemittanceMWResponse withDefaultCheckRemittance() {
+        return CheckRemittanceMWResponse.builder()
+                .data(Collections.singletonList(CheckRemittanceMWResponse.CheckRemittanceMW.builder()
+                        .noRemittance(123456789)
+                        .noConsult(123456789)
+                        .amountReceived(BigDecimal.valueOf(1000.0))
+                        .currencyReceived("0")
+                        .countryEmission("PARAGUAY")
+                        .plazaOrigin("ASUNCION")
+                        .payer("ROBERT MOORE")
+                        .noTelephone("123456789")
+                        .telephoneBeneficiary("123456789")
+                        .countryDestination("PARAGUAY")
+                        .plazaDestination("ASUNCION")
+                        .beneficiary("ROBERT MOORE")
+                        .noDocument("123456789")
+                        .documentType("CI")
+                        .extension("SC")
+                        .build()))
+                .build();
+    }
+
+    public static ApiErrorResponse withErrorRM001() {
+        List<ErrorDetailResponse> list = new ArrayList<>();
+        ErrorDetailResponse errorDetailResponse = ErrorDetailResponse.builder()
+                .code(RemittanceMiddlewareError.RM001.getCodeMiddleware())
+                .description(RemittanceMiddlewareError.RM001.getMessage())
+                .build();
+        list.add(errorDetailResponse);
+        return ApiErrorResponse.builder()
+                .errorDetailResponse(list)
                 .build();
     }
 }

@@ -1,8 +1,10 @@
 package bg.com.bo.bff.providers.interfaces;
 
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
@@ -16,4 +18,6 @@ public interface IRemittanceProvider {
     ValidateAccountMWResponse validateAccount(ValidateAccountMWRequest request) throws IOException;
 
     MoneyOrderSentMWResponse getMoneyOrdersSent(MoneyOrderSentMWRequest request) throws IOException;
+
+    CheckRemittanceMWResponse checkRemittance(CheckRemittanceMWRequest request) throws IOException;
 }

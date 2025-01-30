@@ -2,6 +2,7 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
@@ -66,5 +67,18 @@ public class RemittanceController extends AbstractBFFController {
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(ApiDataResponse.of(service.getMoneyOrdersSent(personId)));
+    }
+
+    @Operation(summary = "Consultar remesa cliente", description = "Consulta la remesa de una persona", operationId = "checkRemittance")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener giros enviados")
+    })
+    @GetMapping(path = "/persons/{personId}/remittance/{remittanceId}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ApiDataResponse<List<CheckRemittanceResponse>>> checkRemittance(
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("remittanceId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "123456789") String remittanceId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(ApiDataResponse.of(service.checkRemittance(personId, remittanceId)));
     }
 }
