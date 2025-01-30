@@ -9,9 +9,11 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.providers.dtos.request.remittance.RemittanceMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.RemittanceMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -32,6 +34,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
@@ -104,5 +107,22 @@ class RemittanceMiddlewareProviderTest {
         // Assert
         assertNotNull(response);
         assertEquals(response.getCodeError(), expectedResponse.getCodeError());
+    }
+
+    @Test
+    @DisplayName("Get money orders sent given personId")
+    void givenValidDataWhenGetMoneyOrdersSentThenExpectResponse() throws IOException {
+        // Arrange
+        MoneyOrderSentMWRequest request = RemittanceMWRequestFixture.withDefaultMoneyOrdersSent();
+        MoneyOrderSentMWResponse expectedResponse = RemittanceMWResponseFixture.withDefaultMoneyOrdersSent();
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        MoneyOrderSentMWResponse response = provider.getMoneyOrdersSent(request);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 }

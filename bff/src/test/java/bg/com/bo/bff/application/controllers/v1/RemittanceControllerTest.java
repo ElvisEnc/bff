@@ -1,13 +1,12 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
-import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsRequest;
-import bg.com.bo.bff.application.dtos.request.debit.card.DebitCardRequestFixture;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.RemittanceResponseFixture;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareResponse;
 import bg.com.bo.bff.services.interfaces.IRemittanceService;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +21,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -96,5 +97,29 @@ class RemittanceControllerTest {
         assertNotNull(result);
         assertEquals(expected, actual);
         verify(service).validateAccount(any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenGetMoneyOrdersSentThenListMoneyOrderSentResponse() throws Exception {
+        // Arrange
+        List<MoneyOrderSentResponse> expectedResponse = RemittanceResponseFixture.withDataDefaultListMoneyOrderSentResponse();
+        when(service.getMoneyOrdersSent(any())).thenReturn(expectedResponse);
+
+        // Act
+        String URL_MONEY_ORDERS = "/api/v1/remittances/persons/{personId}/money-orders";
+        MvcResult result = mockMvc.perform(get(URL_MONEY_ORDERS, "123456")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        String expected = Util.objectToString(ApiDataResponse.of(expectedResponse));
+        String actual = result.getResponse().getContentAsString();
+
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getMoneyOrdersSent(any());
     }
 }

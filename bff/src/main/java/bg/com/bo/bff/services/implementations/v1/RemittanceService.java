@@ -2,13 +2,16 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.user.AppCodeResponseNet;
 import bg.com.bo.bff.mappings.providers.remittance.IRemittanceMapper;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
 import bg.com.bo.bff.providers.interfaces.IRemittanceProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareError;
@@ -22,6 +25,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -57,5 +62,12 @@ public class RemittanceService implements IRemittanceService {
             return GenericResponse.instance(RemittanceMiddlewareResponse.ACCOUNT_ENABLED);
         }
         throw new GenericException(RemittanceMiddlewareError.RM_031);
+    }
+
+    @Override
+    public List<MoneyOrderSentResponse> getMoneyOrdersSent(String personId) throws IOException {
+        MoneyOrderSentMWRequest mwRequest = mapper.mapperRequestOrders(personId);
+        MoneyOrderSentMWResponse mwResponse = provider.getMoneyOrdersSent(mwRequest);
+        return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
 }

@@ -4,12 +4,15 @@ import bg.com.bo.bff.application.dtos.response.remittance.*;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareEnums;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
 
 @Component
 public class RemittanceMapper implements IRemittanceMapper {
@@ -30,6 +33,15 @@ public class RemittanceMapper implements IRemittanceMapper {
                 .codPerson(personId)
                 .codApplication(Integer.parseInt(CanalMW.GANAMOVIL.getCanal()))
                 .jtsOidAccount(accountId)
+                .build();
+    }
+
+    @Override
+    public MoneyOrderSentMWRequest mapperRequestOrders(String personId) {
+        return MoneyOrderSentMWRequest.builder()
+                .codLanguage(Integer.parseInt(RemittanceMiddlewareEnums.CODE_LANGUAGE.getCode()))
+                .codPerson(personId)
+                .codApplication(CanalMW.GANAMOVIL.getCanal())
                 .build();
     }
 
@@ -98,5 +110,23 @@ public class RemittanceMapper implements IRemittanceMapper {
                         .toList()
                         : Collections.emptyList())
                 .build();
+    }
+
+    @Override
+    public List<MoneyOrderSentResponse> convertResponse(MoneyOrderSentMWResponse mwResponse) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return Collections.emptyList();
+        return mwResponse.getData().stream()
+                .map(mw -> MoneyOrderSentResponse.builder()
+                        .orderId(mw.getIdNumber())
+                        .transactionId(mw.getMtcn())
+                        .transactionType(mw.getRNameTypeReceiver())
+                        .fromHolderName(mw.getRFirstNameReceiver().trim())
+                        .fromLastName(mw.getRLastNameReceiver().trim())
+                        .toHolderName(mw.getRGivenNameReceiver().trim())
+                        .toPaternalLastName(mw.getRPaternalNameReceiver().trim())
+                        .toMaternalLastName(mw.getRMaternalNameReceiver().trim())
+                        .build())
+                .toList();
     }
 }
