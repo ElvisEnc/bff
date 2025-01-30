@@ -57,4 +57,19 @@ public class RemittanceMWResponseFixture {
                 .message("SIN BLOQUEO")
                 .build();
     }
+
+    public static MoneyOrderSentMWResponse withDefaultMoneyOrdersSent() {
+        return MoneyOrderSentMWResponse.builder()
+                .data(Collections.singletonList(MoneyOrderSentMWResponse.MoneyOrderSentMW.builder()
+                        .idNumber("129004")
+                        .mtcn("8037118303")
+                        .rNameTypeReceiver("D")
+                        .rFirstNameReceiver("ROBERT")
+                        .rLastNameReceiver("MOORE")
+                        .rGivenNameReceiver("")
+                        .rPaternalNameReceiver("")
+                        .rMaternalNameReceiver("")
+                        .build()))
+                .build();
+    }
 }

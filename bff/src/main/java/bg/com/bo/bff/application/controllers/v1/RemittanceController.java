@@ -3,6 +3,8 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IRemittanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @Validated
 @RestController
@@ -51,5 +54,17 @@ public class RemittanceController extends AbstractBFFController {
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.validateAccount(personId, accountId));
+    }
+
+    @Operation(summary = "Obtener giros enviados", description = "Obtiene los giros enviados de una persona", operationId = "getMoneyOrdersSent")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener giros enviados")
+    })
+    @GetMapping(path = "/persons/{personId}/money-orders", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ApiDataResponse<List<MoneyOrderSentResponse>>> getMoneyOrdersSent(
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(ApiDataResponse.of(service.getMoneyOrdersSent(personId)));
     }
 }

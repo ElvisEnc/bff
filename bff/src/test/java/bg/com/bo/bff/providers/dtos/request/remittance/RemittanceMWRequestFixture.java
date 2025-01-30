@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.dtos.request.remittance;
 
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
 
 public class RemittanceMWRequestFixture {
@@ -18,6 +19,14 @@ public class RemittanceMWRequestFixture {
                 .jtsOidAccount("123456")
                 .codLanguage(1)
                 .codApplication(1)
+                .build();
+    }
+
+    public static MoneyOrderSentMWRequest withDefaultMoneyOrdersSent() {
+        return MoneyOrderSentMWRequest.builder()
+                .codPerson("161616")
+                .codLanguage(1)
+                .codApplication("1")
                 .build();
     }
 }

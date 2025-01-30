@@ -5,9 +5,11 @@ import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
 import bg.com.bo.bff.providers.interfaces.IRemittanceProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
@@ -43,5 +45,11 @@ public class RemittanceProvider extends MiddlewareProvider<RemittanceMiddlewareE
         String url = baseUrl + RemittanceMiddlewareService.VALIDATE_ACCOUNT.getServiceURL();
         ApiDataResponse<ValidateAccountMWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, ApiDataResponse.class);
         return Util.stringToObject(Util.objectToString(mwResponse.getData()), ValidateAccountMWResponse.class);
+    }
+
+    @Override
+    public MoneyOrderSentMWResponse getMoneyOrdersSent(MoneyOrderSentMWRequest request) throws IOException {
+        String url = baseUrl + RemittanceMiddlewareService.GET_MONEY_ORDERS_SENT.getServiceURL();
+        return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, MoneyOrderSentMWResponse.class);
     }
 }

@@ -2,6 +2,7 @@ package bg.com.bo.bff.application.dtos.response.remittance;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.List;
 
 public class RemittanceResponseFixture {
     public static ListGeneralParametersResponse withDefaultGeneralParameters() {
@@ -47,5 +48,18 @@ public class RemittanceResponseFixture {
                         .build()
                 ))
                 .build();
+    }
+
+    public static List<MoneyOrderSentResponse> withDataDefaultListMoneyOrderSentResponse() {
+        return Collections.singletonList(MoneyOrderSentResponse.builder()
+                .orderId("129004")
+                .transactionId("8037118303")
+                .transactionType("D")
+                .fromHolderName("ROBERT")
+                .fromLastName("MOORE")
+                .toHolderName("")
+                .toPaternalLastName("")
+                .toMaternalLastName("")
+                .build());
     }
 }
