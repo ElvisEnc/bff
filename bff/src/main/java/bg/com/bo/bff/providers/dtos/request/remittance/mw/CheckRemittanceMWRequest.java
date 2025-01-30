@@ -13,11 +13,6 @@ public class CheckRemittanceMWRequest {
 
     private String codPerson;
     private String codApplication;
-    private String codLanguage;
     private String withGanaMobile;
     private String noRemittance;
-    private String amount;
-    private String currency;
-    private String fullName;
-    private String noAccount;
 }

@@ -16,6 +16,7 @@ public enum CodeError {
     FUNDS_REQUIRED("FUNDS_REQUIRED", "Es necesario indicar el origen y destino de los fondos"),
     ACCOUNT_BLOCKED("ACCOUNT_BLOCKED", "No es posible utilizar esta cuenta"),
     NO_FUNDS_AVAILABLE("NO_FUNDS_AVAILABLE", "Verifica el saldo disponible"),
+    ERROR_LOADING("ERROR_LOADING", "No se pudo cargar la información necesaria"),
     ERROR_TRANSFER_DUPLICATE("ERROR_TRANSFER_DUPLICATE", "Transferencia duplicada"),
     INVALID_PARAMS("INVALID_PARAMS", "Error en los parámetros, pueden ser los del header o path"),
     INVALID_DATA("INVALID_DATA", "Datos inválidos, ya sea desde el front o postman"),

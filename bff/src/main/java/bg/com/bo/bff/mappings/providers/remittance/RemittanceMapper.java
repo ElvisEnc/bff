@@ -2,10 +2,13 @@ package bg.com.bo.bff.mappings.providers.remittance;
 
 import bg.com.bo.bff.application.dtos.response.remittance.*;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.utils.UtilDate;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareEnums;
@@ -42,6 +45,16 @@ public class RemittanceMapper implements IRemittanceMapper {
                 .codLanguage(Integer.parseInt(RemittanceMiddlewareEnums.CODE_LANGUAGE.getCode()))
                 .codPerson(personId)
                 .codApplication(CanalMW.GANAMOVIL.getCanal())
+                .build();
+    }
+
+    @Override
+    public CheckRemittanceMWRequest mapperRequestRemittance(String personId, String remittanceId) {
+        return CheckRemittanceMWRequest.builder()
+                .codPerson(personId)
+                .codApplication(CanalMW.GANAMOVIL.getCanal())
+                .withGanaMobile(RemittanceMiddlewareEnums.GANAMOVIL.getCode())
+                .noRemittance(remittanceId)
                 .build();
     }
 
@@ -128,5 +141,30 @@ public class RemittanceMapper implements IRemittanceMapper {
                         .toMaternalLastName(mw.getRMaternalNameReceiver().trim())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public List<CheckRemittanceResponse> convertResponse(CheckRemittanceMWResponse mwResponse) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return Collections.emptyList();
+        return mwResponse.getData().stream()
+                .map(mw -> CheckRemittanceResponse.builder()
+                        .remittanceId(mw.getNoRemittance())
+                        .consultationId(mw.getNoConsult())
+                        .amount(mw.getAmountReceived())
+                        .currencyCode(Util.convertCurrency(mw.getCurrencyReceived()))
+                        .originCountry(mw.getCountryEmission())
+                        .originCity(mw.getPlazaOrigin())
+                        .holderName(mw.getPayer())
+                        .phone(mw.getNoTelephone())
+                        .recipientPhone(mw.getTelephoneBeneficiary())
+                        .recipientCountry(mw.getCountryDestination())
+                        .recipientCity(mw.getPlazaDestination())
+                        .recipientName(mw.getBeneficiary())
+                        .documentNumber(mw.getNoDocument())
+                        .documentType(mw.getDocumentType())
+                        .documentExtension(mw.getExtension())
+                        .build()
+                ).toList();
     }
 }

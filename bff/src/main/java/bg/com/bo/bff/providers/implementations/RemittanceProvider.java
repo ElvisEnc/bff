@@ -4,10 +4,12 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
@@ -17,6 +19,7 @@ import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMidd
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareService;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
+import bg.com.bo.bff.providers.models.middleware.response.handler.ByMwErrorResponseHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
@@ -51,5 +54,12 @@ public class RemittanceProvider extends MiddlewareProvider<RemittanceMiddlewareE
     public MoneyOrderSentMWResponse getMoneyOrdersSent(MoneyOrderSentMWRequest request) throws IOException {
         String url = baseUrl + RemittanceMiddlewareService.GET_MONEY_ORDERS_SENT.getServiceURL();
         return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, MoneyOrderSentMWResponse.class);
+    }
+
+    @Override
+    public CheckRemittanceMWResponse checkRemittance(CheckRemittanceMWRequest request) throws IOException {
+        String url = baseUrl + RemittanceMiddlewareService.CHECK_CUSTOMER_REMITTANCE.getServiceURL();
+        ByMwErrorResponseHandler<CheckRemittanceMWResponse> responseHandler = ByMwErrorResponseHandler.instance(RemittanceMiddlewareError.RM001);
+        return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, CheckRemittanceMWResponse.class, responseHandler);
     }
 }

@@ -9,9 +9,11 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.providers.dtos.request.remittance.RemittanceMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.RemittanceMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
@@ -124,5 +126,37 @@ class RemittanceMiddlewareProviderTest {
         // Assert
         assertNotNull(response);
         assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+    }
+
+    @Test
+    @DisplayName("Check remittance given personId and remittanceId")
+    void givenValidDataWhenCheckRemittanceThenExpectResponse() throws IOException {
+        // Arrange
+        CheckRemittanceMWRequest request = RemittanceMWRequestFixture.withDefaultCheckRemittance();
+        CheckRemittanceMWResponse expectedResponse = RemittanceMWResponseFixture.withDefaultCheckRemittance();
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        CheckRemittanceMWResponse response = provider.checkRemittance(request);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+    }
+
+    @Test
+    @DisplayName("Retorna una lista vacía cundo se intenta consultar una remesa con datos válidos")
+    void givenValidDataWhenCheckRemittanceThenErrorRM001Response() throws IOException {
+        // Arrange
+        CheckRemittanceMWRequest request = RemittanceMWRequestFixture.withDefaultCheckRemittance();
+        String jsonResponse = Util.objectToString(RemittanceMWResponseFixture.withErrorRM001());
+        stubFor(post(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
+
+        // Act
+        CheckRemittanceMWResponse response = provider.checkRemittance(request);
+
+        //Assert
+        assertNull(response.getData());
     }
 }

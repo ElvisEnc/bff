@@ -1,12 +1,14 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.RemittanceResponseFixture;
 import bg.com.bo.bff.mappings.providers.remittance.RemittanceMapper;
 import bg.com.bo.bff.providers.dtos.request.remittance.RemittanceMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.remittance.RemittanceMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
 import bg.com.bo.bff.providers.interfaces.IRemittanceProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareResponse;
@@ -20,6 +22,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,6 +91,60 @@ class RemittanceServiceTest {
         assertNotNull(response);
         assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
         verify(provider).getMoneyOrdersSent(any());
+        verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenValidDataWhenGetMoneyOrdersSentThenEmptyListResponse() throws IOException {
+        //Arrange
+        MoneyOrderSentMWResponse mwResponseMock = MoneyOrderSentMWResponse.builder().build();
+        List<MoneyOrderSentResponse> expectedResponse = new ArrayList<>(Collections.emptyList());
+        when(provider.getMoneyOrdersSent(any())).thenReturn(mwResponseMock);
+        when(mapper.convertResponse(mwResponseMock)).thenReturn(expectedResponse);
+
+        //Act
+        List<MoneyOrderSentResponse> response = service.getMoneyOrdersSent("123");
+
+        //Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(provider).getMoneyOrdersSent(any());
+        verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenValidDataWhenCheckRemittanceThenListCheckRemittanceResponse() throws IOException {
+        //Arrange
+        CheckRemittanceMWResponse mwResponseMock = RemittanceMWResponseFixture.withDefaultCheckRemittance();
+        List<CheckRemittanceResponse> expectedResponse = RemittanceResponseFixture.withDataDefaultListCheckRemittanceResponse();
+        when(provider.checkRemittance(any())).thenReturn(mwResponseMock);
+        when(mapper.convertResponse(mwResponseMock)).thenReturn(expectedResponse);
+
+        //Act
+        List<CheckRemittanceResponse> response = service.checkRemittance("123", "123456789");
+
+        //Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(provider).checkRemittance(any());
+        verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenValidRequestWhenCheckRemittanceThenEmptyListResponse() throws IOException {
+        //Arrange
+        CheckRemittanceMWResponse mwResponseMock = CheckRemittanceMWResponse.builder().build();
+        List<CheckRemittanceResponse> expectedResponse = new ArrayList<>(Collections.emptyList());
+        when(provider.checkRemittance(any())).thenReturn(mwResponseMock);
+        when(mapper.convertResponse(mwResponseMock)).thenReturn(expectedResponse);
+
+        //Act
+        List<CheckRemittanceResponse> response = service.checkRemittance("123", "123456789");
+
+        //Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(provider).checkRemittance(any());
         verify(mapper).convertResponse(mwResponseMock);
     }
 }

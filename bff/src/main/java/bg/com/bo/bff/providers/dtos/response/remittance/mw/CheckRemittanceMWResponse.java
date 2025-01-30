@@ -5,25 +5,37 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckRemittanceMWResponse {
 
-    private String noRemittance;
-    private String noConsult;
-    private String amountReceived;
-    private String currencyReceived;
-    private String countryEmission;
-    private String plazaOrigin;
-    private String payer;
-    private String noTelephone;
-    private String telephoneBeneficiary;
-    private String countryDestination;
-    private String plazaDestination;
-    private String beneficiary;
-    private String noDocument;
-    private String documentType;
-    private String extension;
+    private List<CheckRemittanceMW> data;
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CheckRemittanceMW {
+
+        private int noRemittance;
+        private int noConsult;
+        private BigDecimal amountReceived;
+        private String currencyReceived;
+        private String countryEmission;
+        private String plazaOrigin;
+        private String payer;
+        private String noTelephone;
+        private String telephoneBeneficiary;
+        private String countryDestination;
+        private String plazaDestination;
+        private String beneficiary;
+        private String noDocument;
+        private String documentType;
+        private String extension;
+    }
 }

@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum RemittanceMiddlewareService {
     GET_GENERAL_PARAMETERS("/bs/v1/general-parameters"),
     GET_MONEY_ORDERS_SENT("/bs/v1/get-money-order-sent"),
-    VALIDATE_ACCOUNT("/bs/v1/validate-account");
+    VALIDATE_ACCOUNT("/bs/v1/validate-account"),
+    CHECK_CUSTOMER_REMITTANCE("/bs/v1/consult-customer-remittance");
 
     private final String serviceURL;
 }
