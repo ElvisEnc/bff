@@ -28,6 +28,8 @@ public class AffiliatedServiceMWResponse {
         private String year;
         private String descriptionTag;
         private String stateContingency;
-        private String msjContingency;
+        private int idCategory;
+        private int idSubCategory;
+        private String subCategoryDesc;
     }
 }

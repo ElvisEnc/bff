@@ -1,21 +1,17 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.user.AppCodeResponseNet;
 import bg.com.bo.bff.mappings.providers.remittance.IRemittanceMapper;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.*;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.*;
 import bg.com.bo.bff.providers.interfaces.IRemittanceProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareResponse;
@@ -76,8 +72,15 @@ public class RemittanceService implements IRemittanceService {
 
     @Override
     public List<CheckRemittanceResponse> checkRemittance(String personId, String remittanceId) throws IOException {
-        CheckRemittanceMWRequest mwRequest = mapper.mapperRequestRemittance(personId,remittanceId);
+        CheckRemittanceMWRequest mwRequest = mapper.mapperRequestRemittance(personId, remittanceId);
         CheckRemittanceMWResponse mwResponse = provider.checkRemittance(mwRequest);
+        return new ArrayList<>(mapper.convertResponse(mwResponse));
+    }
+
+    @Override
+    public List<DepositRemittanceResponse> depositRemittance(String personId, String remittanceId, DepositRemittanceRequest request) throws IOException {
+        DepositRemittanceMWRequest mwRequest = mapper.mapperRequestDeposit(personId, remittanceId, request);
+        DepositRemittanceMWResponse mwResponse = provider.depositRemittance(mwRequest);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
 }

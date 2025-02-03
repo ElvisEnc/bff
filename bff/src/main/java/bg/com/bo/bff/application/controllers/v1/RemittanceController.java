@@ -1,8 +1,10 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -80,5 +83,19 @@ public class RemittanceController extends AbstractBFFController {
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(ApiDataResponse.of(service.checkRemittance(personId, remittanceId)));
+    }
+
+    @Operation(summary = "Depositar remesa cliente", description = "Deposita en cuenta la remesa de una persona", operationId = "depositRemittance")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener giros enviados")
+    })
+    @PostMapping(path = "/persons/{personId}/remittance/{remittanceId}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ApiDataResponse<List<DepositRemittanceResponse>>> depositRemittance(
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("remittanceId") @NotNull @Parameter(description = "Este es el remmitanceId de la remesa", example = "123456789") String remittanceId,
+            @Valid @RequestBody DepositRemittanceRequest request
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(ApiDataResponse.of(service.depositRemittance(personId, remittanceId, request)));
     }
 }

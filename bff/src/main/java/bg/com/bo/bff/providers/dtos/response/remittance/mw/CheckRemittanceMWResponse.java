@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CheckRemittanceMWResponse {
 
-    private List<CheckRemittanceMW> data;
+    private List<CheckRemittanceMWResponse.CheckRemittanceMW> data;
 
     @Getter
     @Builder

@@ -6,13 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AffiliatedServicesResponse {
+public class AffiliatedService {
 
     @Schema(description = "Código de categoría")
     private int categoryId;
@@ -29,9 +27,21 @@ public class AffiliatedServicesResponse {
     @Schema(description = "nombre del servicio")
     private String serviceName;
 
-    @Schema(description = "Lista de servicios afiliados")
-    private List<AffiliatedService> data;
+    @Schema(description = "id de la afiliación")
+    private String affiliateServiceId;
 
-    @Schema(description = "Registro total de afiliados por servicio")
-    private int total;
+    @Schema(description = "código o número de la afiliación")
+    private String internalCode;
+
+    @Schema(description = "referencia de la afiliación")
+    private String referenceName;
+
+    @Schema(description = "nombre del titular del servicio")
+    private String nameHolder;
+
+    @Schema(description = "gestion")
+    private String year;
+
+    @Schema(description = "estado de contingencia")
+    private Boolean contingency;
 }

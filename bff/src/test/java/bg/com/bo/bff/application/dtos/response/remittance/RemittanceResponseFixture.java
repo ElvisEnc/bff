@@ -82,4 +82,19 @@ public class RemittanceResponseFixture {
                         .documentExtension("SC")
                 .build());
     }
+
+    public static List<DepositRemittanceResponse> withDataDefaultListDepositRemittanceResponse() {
+        return Collections.singletonList(DepositRemittanceResponse.builder()
+                        .remittanceId(1)
+                        .accountingEntry(1)
+                        .time("14:00")
+                        .description("Test")
+                        .remittanceName("Juan Perez")
+                        .amountReceived(BigDecimal.valueOf(100.0))
+                        .currencyCode("068")
+                        .exchangeRate(BigDecimal.valueOf(1.0))
+                        .commission(BigDecimal.valueOf(0.0))
+                        .amountPaid(BigDecimal.valueOf(100.0))
+                .build());
+    }
 }

@@ -4,15 +4,9 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.*;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.*;
 import bg.com.bo.bff.providers.interfaces.IRemittanceProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareError;
@@ -61,5 +55,11 @@ public class RemittanceProvider extends MiddlewareProvider<RemittanceMiddlewareE
         String url = baseUrl + RemittanceMiddlewareService.CHECK_CUSTOMER_REMITTANCE.getServiceURL();
         ByMwErrorResponseHandler<CheckRemittanceMWResponse> responseHandler = ByMwErrorResponseHandler.instance(RemittanceMiddlewareError.RM001);
         return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, CheckRemittanceMWResponse.class, responseHandler);
+    }
+
+    @Override
+    public DepositRemittanceMWResponse depositRemittance(DepositRemittanceMWRequest request) throws IOException {
+        String url = baseUrl + RemittanceMiddlewareService.DEPOSIT_REMITTANCE.getServiceURL();
+        return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, DepositRemittanceMWResponse.class);
     }
 }

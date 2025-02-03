@@ -10,13 +10,12 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.providers.dtos.request.remittance.RemittanceMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.DepositRemittanceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.RemittanceMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.*;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +35,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
@@ -83,12 +81,13 @@ class RemittanceMiddlewareProviderTest {
     @DisplayName("Get general parameters given PersonCode")
     void givenPersonCodeWhenGetGeneralParametersThenExpectResponse() throws IOException {
         // Arrange
+        GeneralParametersMWRequest request = RemittanceMWRequestFixture.withDefaultGeneralParameters();
         ApiDataResponse<ListGeneralParametersMWResponse> expectedResponse = ApiDataResponse.of(RemittanceMWResponseFixture.withDefaultGeneralParameters());
         String jsonResponse = Util.objectToString(expectedResponse);
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        ListGeneralParametersMWResponse response = provider.getGeneralParameters(RemittanceMWRequestFixture.withDefaultGeneralParameters());
+        ListGeneralParametersMWResponse response = provider.getGeneralParameters(request);
 
         // Assert
         assertNotNull(response);
@@ -158,5 +157,22 @@ class RemittanceMiddlewareProviderTest {
 
         //Assert
         assertNull(response.getData());
+    }
+
+    @Test
+    @DisplayName("Deposit remittance given personId and remittanceId")
+    void givenValidDataWhenDepositRemittanceThenExpectResponse() throws IOException {
+        // Arrange
+        DepositRemittanceMWRequest request = RemittanceMWRequestFixture.withDefaultDepositRemittance();
+        DepositRemittanceMWResponse expectedResponse = RemittanceMWResponseFixture.withDefaultDepositRemittance();
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        DepositRemittanceMWResponse response = provider.depositRemittance(request);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
 }
