@@ -1,5 +1,6 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequestFixture;
 import bg.com.bo.bff.application.dtos.response.registry.RegistryResponse;
@@ -44,6 +45,10 @@ class RegistryServicesTests {
     private CacheManager cacheManager;
 
     @Mock
+    private MiddlewareConfig mdwConfig;
+
+
+    @Mock
     private Cache cache;
 
     @InjectMocks
@@ -57,10 +62,8 @@ class RegistryServicesTests {
         KeyPairGenerator generator = KeyPairGenerator.getInstance(EncryptionAlgorithm.RSA.getCode());
         generator.initialize(EncryptionAlgorithm.RSA.getKeySize());
         KeyPair keyPair = generator.generateKeyPair();
-        String appPublicKey = CipherUtils.encodeKeyToBase64(keyPair.getPublic());
 
         when(loginAGNProvider.login(request)).thenReturn(true);
-        when(encryptionService.createKeys()).thenReturn(keyPair);
         Mockito.doNothing().when(cache).evict(any(EncryptInfo.class));
         when(cacheManager.getCache(any())).thenReturn(cache);
         when(loginAGNProvider.registerDevice(eq(request), any())).thenReturn(true);
@@ -70,11 +73,9 @@ class RegistryServicesTests {
 
         // Assert
         verify(loginAGNProvider).login(request);
-        verify(encryptionService).createKeys();
         verify(loginAGNProvider).registerDevice(eq(request), any());
 
         assertEquals(request.getCredentials().getPersonId(), response.getPersonId());
-        assertEquals(appPublicKey, response.getAppKey());
     }
 
     @Test
@@ -84,11 +85,8 @@ class RegistryServicesTests {
 
         KeyPairGenerator generator = KeyPairGenerator.getInstance(EncryptionAlgorithm.RSA.getCode());
         generator.initialize(EncryptionAlgorithm.RSA.getKeySize());
-        KeyPair keyPair = generator.generateKeyPair();
-        String appPublicKey = CipherUtils.encodeKeyToBase64(keyPair.getPublic());
 
         when(loginAGNProvider.login(request)).thenReturn(true);
-        when(encryptionService.createKeys()).thenReturn(keyPair);
         when(cacheManager.getCache(any())).thenReturn(null);
         when(loginAGNProvider.registerDevice(eq(request), any())).thenReturn(true);
 
@@ -97,11 +95,9 @@ class RegistryServicesTests {
 
         // Assert
         verify(loginAGNProvider).login(request);
-        verify(encryptionService).createKeys();
         verify(loginAGNProvider).registerDevice(eq(request), any());
 
         assertEquals(request.getCredentials().getPersonId(), response.getPersonId());
-        assertEquals(appPublicKey, response.getAppKey());
     }
 
     @Test
@@ -131,7 +127,6 @@ class RegistryServicesTests {
         KeyPair keyPair = generator.generateKeyPair();
 
         when(loginAGNProvider.login(request)).thenReturn(true);
-        when(encryptionService.createKeys()).thenReturn(keyPair);
         when(loginAGNProvider.registerDevice(eq(request), any())).thenReturn(false);
 
         // Act
@@ -139,7 +134,6 @@ class RegistryServicesTests {
 
         // Assert
         verify(loginAGNProvider).login(request);
-        verify(encryptionService).createKeys();
         verify(loginAGNProvider).registerDevice(eq(request), any());
 
         assertEquals(HandledException.class, exception.getClass());
@@ -148,7 +142,6 @@ class RegistryServicesTests {
         assertEquals(RegistryControllerErrorResponse.INVALID_REGISTER.getDescription(), ((HandledException) exception).getMessage());
 
         verify(loginAGNProvider).login(request);
-        verify(encryptionService).createKeys();
         verify(loginAGNProvider).registerDevice(eq(request), any());
     }
 }

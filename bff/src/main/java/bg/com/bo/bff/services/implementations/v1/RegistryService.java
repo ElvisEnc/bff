@@ -1,5 +1,6 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.request.registry.RegistryRequest;
 import bg.com.bo.bff.application.dtos.response.registry.BffHandshakeResponse;
 import bg.com.bo.bff.application.dtos.response.registry.RegistryResponse;
@@ -25,16 +26,18 @@ import java.security.NoSuchAlgorithmException;
 
 @Service
 public class RegistryService implements IRegistryService {
+    private final MiddlewareConfig mdwConfig;
     private final ILoginAGNProvider loginAGNProvider;
     private final IEncryptionService encryptionService;
 
     CacheManager cacheManager;
 
     @Autowired
-    public RegistryService(ILoginAGNProvider loginAGNProvider, IEncryptionService encryptionProvider, CacheManager cacheManager, IAnonymousKeyProvider anonymousKeyProvider) {
+    public RegistryService(ILoginAGNProvider loginAGNProvider, IEncryptionService encryptionProvider, CacheManager cacheManager, IAnonymousKeyProvider anonymousKeyProvider, MiddlewareConfig mdwConfig) {
         this.loginAGNProvider = loginAGNProvider;
         this.encryptionService = encryptionProvider;
         this.cacheManager = cacheManager;
+        this.mdwConfig = mdwConfig;
     }
 
     @Override
@@ -42,9 +45,8 @@ public class RegistryService implements IRegistryService {
         Boolean authenticationResult = loginAGNProvider.login(registryRequest);
 
         if (authenticationResult) {
-            KeyPair keyPair = encryptionService.createKeys();
-            String appPublicKey = CipherUtils.encodeKeyToBase64(keyPair.getPublic());
-            String appPrivateKey = CipherUtils.encodeKeyToBase64(keyPair.getPrivate());
+            String appPublicKey = mdwConfig.getPublicKey();
+            String appPrivateKey = mdwConfig.getPrivateKey();
             UserEncryptionKeys userEncryptionKeys = new UserEncryptionKeys(appPublicKey, appPrivateKey, registryRequest.getUserKey());
 
             Boolean registerResult = loginAGNProvider.registerDevice(registryRequest, userEncryptionKeys);
