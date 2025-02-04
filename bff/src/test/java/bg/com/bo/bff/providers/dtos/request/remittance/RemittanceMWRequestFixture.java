@@ -1,9 +1,6 @@
 package bg.com.bo.bff.providers.dtos.request.remittance;
 
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.*;
 
 public class RemittanceMWRequestFixture {
     public static GeneralParametersMWRequest withDefaultGeneralParameters() {
@@ -37,6 +34,16 @@ public class RemittanceMWRequestFixture {
                 .codApplication("1")
                 .withGanaMobile("1")
                 .noRemittance("123456789")
+                .build();
+    }
+
+    public static DepositRemittanceMWRequest withDefaultDepositRemittance() {
+        return DepositRemittanceMWRequest.builder()
+                .codPerson("161616")
+                .codApplication("1")
+                .remittanceNumber("123456789")
+                .queryNumber("123456789")
+                .jtsOidAccount("123456")
                 .build();
     }
 }

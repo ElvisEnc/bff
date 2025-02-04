@@ -111,4 +111,21 @@ public class RemittanceMWResponseFixture {
                 .errorDetailResponse(list)
                 .build();
     }
+
+    public static DepositRemittanceMWResponse withDefaultDepositRemittance() {
+        return DepositRemittanceMWResponse.builder()
+                .data(Collections.singletonList(DepositRemittanceMWResponse.DepositRemittanceMW.builder()
+                        .remittanceCode(123456789)
+                        .accountingEntry(123456789)
+                        .startTime("2021-05-11T04:00:00.000+00:00")
+                        .description("Test")
+                        .remittanceName("Test")
+                        .receivedAmount(BigDecimal.valueOf(1000.0))
+                        .receivedCurrency("0")
+                        .exchangeRate(BigDecimal.valueOf(1.0))
+                        .commission(BigDecimal.valueOf(0.0))
+                        .creditedAmount(BigDecimal.valueOf(1000.0))
+                        .build()))
+                .build();
+    }
 }

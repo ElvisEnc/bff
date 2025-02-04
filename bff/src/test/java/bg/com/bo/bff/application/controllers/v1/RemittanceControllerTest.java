@@ -1,11 +1,10 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.RemittanceRequestFixture;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.RemittanceResponseFixture;
+import bg.com.bo.bff.application.dtos.response.remittance.*;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareResponse;
@@ -146,5 +145,31 @@ class RemittanceControllerTest {
         assertNotNull(result);
         assertEquals(expected, actual);
         verify(service).checkRemittance(any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenDepositRemittanceThenListDepositRemittanceResponse() throws Exception {
+        // Arrange
+        List<DepositRemittanceResponse> expectedResponse = RemittanceResponseFixture.withDataDefaultListDepositRemittanceResponse();
+        DepositRemittanceRequest request = RemittanceRequestFixture.withDefaultDepositRemittanceRequest();
+        when(service.depositRemittance(any(), any(), any())).thenReturn(expectedResponse);
+
+        // Act
+        String URL_DEPOSIT_REMITTANCE = "/api/v1/remittances/persons/{personId}/remittance/{remittanceId}";
+        MvcResult result = mockMvc.perform(post(URL_DEPOSIT_REMITTANCE, "123456", "123456789")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        String expected = Util.objectToString(ApiDataResponse.of(expectedResponse));
+        String actual = result.getResponse().getContentAsString();
+
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).depositRemittance(any(), any(), any());
     }
 }

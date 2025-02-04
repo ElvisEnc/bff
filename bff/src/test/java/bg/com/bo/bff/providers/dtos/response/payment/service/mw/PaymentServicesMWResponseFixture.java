@@ -236,7 +236,6 @@ public class PaymentServicesMWResponseFixture {
                 .year("123")
                 .descriptionTag("test")
                 .stateContingency("test")
-                .msjContingency("test")
                 .build();
     }
 
@@ -257,7 +256,6 @@ public class PaymentServicesMWResponseFixture {
                 .year("123")
                 .descriptionTag("test")
                 .stateContingency("N")
-                .msjContingency("N")
                 .build();
     }
 

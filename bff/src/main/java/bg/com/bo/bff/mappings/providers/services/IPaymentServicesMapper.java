@@ -23,9 +23,9 @@ public interface IPaymentServicesMapper {
 
     SubCategoryCitiesResponse convertResponse(SubCategoryCitiesMWResponse response);
 
-    List<AffiliatedServicesResponse.Service> convertResponse(AffiliatedServiceMWResponse mwResponse);
+    List<AffiliatedService> convertResponse(AffiliatedServiceMWResponse mwResponse);
 
-    List<AffiliatedServicesResponse> convertResponse(List<AffiliatedServicesResponse.Service> response);
+    List<AffiliatedServicesResponse> convertResponse(List<AffiliatedService> response);
 
     DebtsConsultationMWRequest mapperRequest(Integer personId, Integer affiliateServiceId, AffiliationDebtsRequest request);
 

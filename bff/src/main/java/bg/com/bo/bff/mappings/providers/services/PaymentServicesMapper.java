@@ -55,11 +55,14 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
     }
 
     @Override
-    public List<AffiliatedServicesResponse.Service> convertResponse(AffiliatedServiceMWResponse mwResponse) {
+    public List<AffiliatedService> convertResponse(AffiliatedServiceMWResponse mwResponse) {
         if (mwResponse == null || mwResponse.getData() == null)
             return Collections.emptyList();
         return mwResponse.getData().stream()
-                .map(mw -> AffiliatedServicesResponse.Service.builder()
+                .map(mw -> AffiliatedService.builder()
+                        .categoryId(mw.getIdCategory())
+                        .subCategoryId(mw.getIdSubCategory())
+                        .subCategoryName(mw.getSubCategoryDesc())
                         .affiliateServiceId(mw.getAffiliationCode())
                         .serviceCode(mw.getServiceCode())
                         .serviceName(mw.getServiceDesc())
@@ -73,11 +76,11 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
     }
 
     @Override
-    public List<AffiliatedServicesResponse> convertResponse(List<AffiliatedServicesResponse.Service> response) {
-        Map<String, Map<String, List<AffiliatedServicesResponse.Service>>> groupedMap = response.stream()
+    public List<AffiliatedServicesResponse> convertResponse(List<AffiliatedService> response) {
+        Map<String, Map<String, List<AffiliatedService>>> groupedMap = response.stream()
                 .collect(Collectors.groupingBy(
-                        AffiliatedServicesResponse.Service::getServiceCode,
-                        Collectors.groupingBy(AffiliatedServicesResponse.Service::getServiceName)
+                        AffiliatedService::getServiceCode,
+                        Collectors.groupingBy(AffiliatedService::getServiceName)
                 ));
 
         return (groupedMap.entrySet().stream()
@@ -88,10 +91,18 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                             groupedData.setServiceName(serviceNameEntry.getKey());
                             groupedData.setData(serviceNameEntry.getValue());
                             groupedData.setTotal(serviceNameEntry.getValue().size());
+
+                            if (!serviceNameEntry.getValue().isEmpty()) {
+                                AffiliatedService firstService = serviceNameEntry.getValue().get(0);
+                                groupedData.setCategoryId(firstService.getCategoryId());
+                                groupedData.setSubCategoryId(firstService.getSubCategoryId());
+                                groupedData.setSubCategoryName(firstService.getSubCategoryName());
+                            }
+
                             return groupedData;
                         })
                 )
-                .sorted(Comparator.comparing(AffiliatedServicesResponse::getServiceName))
+                .sorted(Comparator.comparing(AffiliatedServicesResponse::getSubCategoryName))
                 .toList());
     }
 

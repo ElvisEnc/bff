@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class PaymentServiceResponseFixture {
-    public static AffiliatedServicesResponse.Service withDefaultAffiliateServiceDetailResponse() {
-        return AffiliatedServicesResponse.Service.builder()
+    public static AffiliatedService withDefaultAffiliateServiceDetailResponse() {
+        return AffiliatedService.builder()
                 .affiliateServiceId("123")
                 .serviceCode("123")
                 .serviceName("test")
