@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum DestinationAccountType {
+    CUENTA_PROPIA(0, "CUENTA PROPIA"),
     CUENTA_TERCERO(1, "CUENTA DE TERCEROS"),
     CUENTA_ACH(2, "CUENTAS ACH"),
     BILLETERA(3, "BILLETERA YOLO");

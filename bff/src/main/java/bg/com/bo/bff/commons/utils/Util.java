@@ -358,6 +358,18 @@ public class Util {
         }
     }
 
+    public static String normalizeProductDescription(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        if (input.toUpperCase().endsWith("GANADOBLE")) {
+            return "GANADOBLE";
+        }
+
+        return input;
+    }
+
     public static boolean IsDevLogConfigurationFile() {
         String logConfigurationFileByEnv = System.getenv("log4j.configurationFile");
         String logConfigurationFileByProperty = System.getProperty("log4j.configurationFile");

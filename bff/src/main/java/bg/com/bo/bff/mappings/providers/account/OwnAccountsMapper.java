@@ -3,6 +3,7 @@ package bg.com.bo.bff.mappings.providers.account;
 import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementsRequest;
 import bg.com.bo.bff.application.dtos.request.own.account.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.application.dtos.response.own.account.OwnAccountsResponse;
 import bg.com.bo.bff.application.dtos.response.own.account.TransactionLimitsResponse;
 import bg.com.bo.bff.commons.enums.account.statement.AccountStatementType;
@@ -15,6 +16,7 @@ import bg.com.bo.bff.providers.dtos.response.own.account.mw.OwnAccountsListMWRes
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.TransactionLimitsMWResponse;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +38,7 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
                         .currencyCode(mw.getCurrencyCode())
                         .currencyDescription(mw.getCurrencyDescription())
                         .productDescription(mw.getProductDescription())
+                        .productShortDescription(Util.normalizeProductDescription(mw.getProductDescription()))
                         .accountManagementCode(mw.getAccountManagementCode())
                         .accountType(mw.getAccountType())
                         .availiableBalance(Util.scaleToTwoDecimals(mw.getAvailiableBalance()))
@@ -107,6 +110,24 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
                         .movementTime(mw.getAccountingTime())
                         .channel(mw.getBranchOffice())
                         .seatNumber(String.valueOf(mw.getSeatNumber()))
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public List<DestinationAccount> convertOwnAccountToDestinationAccount(OwnAccountsListMWResponse mwResponse, Integer type, String name) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return Collections.emptyList();
+        return mwResponse.getData().stream()
+                .map(mw -> DestinationAccount.builder()
+                        .accountId(Long.valueOf(mw.getAccountId()))
+                        .accountNumber(new BigInteger(mw.getAccountNumber().trim()))
+                        .currencyCode(mw.getCurrencyCode())
+                        .currencyAcronym(mw.getCurrencyDescription())
+                        .clientName(mw.getClientName())
+                        .bankName(name)
+                        .accountAliases(mw.getClientName())
+                        .destinationAccountType(type)
                         .build())
                 .toList();
     }
