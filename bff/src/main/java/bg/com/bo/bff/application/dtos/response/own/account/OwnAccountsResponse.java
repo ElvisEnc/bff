@@ -34,6 +34,9 @@ public class OwnAccountsResponse {
     @Schema(description = "Este es la descripción del producto")
     private String productDescription;
 
+    @Schema(description = "Este es la descripción corta del producto")
+    private String productShortDescription;
+
     @Schema(description = "Este es el código del manejo de la cuenta")
     private String accountManagementCode;
 

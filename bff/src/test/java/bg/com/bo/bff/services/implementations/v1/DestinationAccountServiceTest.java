@@ -6,6 +6,7 @@ import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.destination.account.AccountType;
 import bg.com.bo.bff.mappings.providers.account.AchAccountsMapper;
+import bg.com.bo.bff.mappings.providers.account.IOwnAccountsMapper;
 import bg.com.bo.bff.mappings.providers.account.IThirdAccountsMapper;
 import bg.com.bo.bff.mappings.services.DestinationAccountServiceMapper;
 import bg.com.bo.bff.models.ClientToken;
@@ -18,6 +19,7 @@ import bg.com.bo.bff.providers.dtos.response.ach.account.mw.AchAccountsMWRespons
 import bg.com.bo.bff.providers.dtos.response.third.account.mw.ThirdAccountMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.third.account.mw.ThirdAccountsMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
+import bg.com.bo.bff.providers.interfaces.IOwnAccountsProvider;
 import bg.com.bo.bff.providers.interfaces.IThirdAccountProvider;
 import bg.com.bo.bff.mappings.providers.account.IAchAccountsMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.third.account.ThirdAccountMiddlewareError;
@@ -54,16 +56,20 @@ class DestinationAccountServiceTest {
     @Mock
     private IThirdAccountProvider thirdAccountProvider;
     @Mock
+    private IOwnAccountsProvider ownAccountProvider;
+    @Mock
     private IAchAccountProvider achAccountProvider;
     private final DestinationAccountServiceMapper mapper = DestinationAccountServiceMapper.INSTANCE;
     @Spy
     private IAchAccountsMapper iAchAccountsMapper = new AchAccountsMapper();
     @Mock
     private IThirdAccountsMapper thirdMapper;
+    @Mock
+    private IOwnAccountsMapper ownMapper;
 
     @BeforeEach
     void init() {
-        service = new DestinationAccountService(thirdAccountProvider, achAccountProvider, mapper, iAchAccountsMapper, thirdMapper);
+        service = new DestinationAccountService(thirdAccountProvider, achAccountProvider, ownAccountProvider, mapper, iAchAccountsMapper, thirdMapper, ownMapper);
     }
 
     @Test
@@ -324,6 +330,7 @@ class DestinationAccountServiceTest {
 
         when(thirdMapper.convertThirdAccountToDestinationAccount(any(), any(), any())).thenReturn(thirdDestinationAccount);
         when(thirdMapper.convertThirdAccountToDestinationAccount(any(), any(), any())).thenReturn(walletDestinationAccount);
+        when(iAchAccountsMapper.convertAchAccountToDestinationAccount(any())).thenReturn(achDestinationAccount);
 
         // Act
         List<DestinationAccount> result = service.getListDestinationAccount(personId, parameter, isInitial);

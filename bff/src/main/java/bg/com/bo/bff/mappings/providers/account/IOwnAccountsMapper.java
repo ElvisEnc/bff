@@ -3,6 +3,7 @@ package bg.com.bo.bff.mappings.providers.account;
 import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementsRequest;
 import bg.com.bo.bff.application.dtos.request.own.account.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.application.dtos.response.own.account.OwnAccountsResponse;
 import bg.com.bo.bff.application.dtos.response.own.account.TransactionLimitsResponse;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
@@ -23,4 +24,7 @@ public interface IOwnAccountsMapper {
     AccountStatementsMWRequest mapperRequest(String accountId, String personId, String init, String total, AccountStatementsRequest request);
 
     List<AccountStatementsResponse> convertResponse(AccountStatementsMWResponse mwResponse);
+
+    List<DestinationAccount> convertOwnAccountToDestinationAccount(OwnAccountsListMWResponse mwResponse, Integer type, String name);
+
 }
