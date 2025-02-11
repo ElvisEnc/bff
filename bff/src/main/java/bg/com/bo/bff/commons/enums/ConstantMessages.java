@@ -18,9 +18,10 @@ public enum ConstantMessages {
     TRANSACTION_NOT_ALLOWED("Las transacciones en moneda extranjera están temporalmente deshabilitadas.", "Transacción no disponible"),
     INVALID_LOGIN_DATA("No se pudo validar los datos, acércate a una agencia cercana.", "Datos inválidos"),
     INVALID_USER_DATA("Verifica tu código de persona y contraseña.", "Datos de usuario inválidos"),
+    INVALID_ACCOUNT("La cuenta es inválida para este flujo.", "Cuenta inválida"),
     MAX_ATTEMPTS("Se ha alcanzado el número máximo de intentos permitidos. Inténtalo nuevamente más tarde.", "Intentos máximos alcanzados"),
     NO_FOUND_DATA("No se encontraron registros para la petición.", "Datos no encontrados"),
-    SOFTTOKEN_DISABLED("GanaPin deshabilitado", "Usuario sin ganapin habilitado, presentando algun error");
+    SOFTTOKEN_DISABLED("Usuario sin ganapin habilitado, presentando algun error", "GanaPin deshabilitado");
 
     private final String message;
     private final String title;

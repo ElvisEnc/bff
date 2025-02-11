@@ -363,10 +363,16 @@ public class Util {
             return input;
         }
 
-        String upperInput = input.toUpperCase();
+        String normalizedInput = input.replaceAll("\\s+", " ").trim().toUpperCase();
+        String prefix = "CAJA DE AHORRO GANADOBLE";
+        String description = "GANADOBLE";
 
-        if (upperInput.equals("CAJA DE AHORRO GANADOBLE") || upperInput.contains("GANADOBLE")) {
-            return "GANADOBLE";
+        if (normalizedInput.startsWith(prefix)) {
+            return description + normalizedInput.substring(prefix.length());
+        }
+
+        if (normalizedInput.contains(description)) {
+            return description;
         }
 
         return input;
