@@ -363,7 +363,9 @@ public class Util {
             return input;
         }
 
-        if (input.toUpperCase().endsWith("GANADOBLE")) {
+        String upperInput = input.toUpperCase();
+
+        if (upperInput.equals("CAJA DE AHORRO GANADOBLE") || upperInput.contains("GANADOBLE")) {
             return "GANADOBLE";
         }
 
