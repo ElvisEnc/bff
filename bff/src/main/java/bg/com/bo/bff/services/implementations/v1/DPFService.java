@@ -9,6 +9,8 @@ import bg.com.bo.bff.services.interfaces.IDPFService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -28,9 +30,11 @@ public class DPFService implements IDPFService {
                 deviceId,
                 parameters
         );
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DpfListResponse dpfListResponse = idpfMapper.mapToDPFListResponse(mWResponse);
-        dpfListResponse.getData().sort(Comparator.comparing(DpfDataResponse::getExpirationDate));
+        dpfListResponse.getData().sort(Comparator
+                .comparing((DpfDataResponse d) -> LocalDate.parse(d.getExpirationDate(), formatter))
+        );
 
         return dpfListResponse;
     }
