@@ -9,6 +9,7 @@ import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.DPFMiddlewareError;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
+import bg.com.bo.bff.providers.models.middleware.response.handler.ByMwErrorResponseHandler;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class DPFMiddlewareProvider extends MiddlewareProvider<DPFMiddlewareError
     @Override
     public DpfMWResponse getDPFsList(String personId, String deviceId, Map<String, String> parameters) throws IOException {
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.DPF_MANAGER.getName() + String.format(URL_PATH_COMPLEMENT_PDF_LIST, personId, personId);
-        return get(url, HeadersMW.getDefaultHeaders(parameters), DpfMWResponse.class);
+        ByMwErrorResponseHandler<DpfMWResponse> responseHandler = ByMwErrorResponseHandler.instance(DPFMiddlewareError.MDWDPF_002);
+        return get(url, HeadersMW.getDefaultHeaders(parameters), DpfMWResponse.class, responseHandler);
     }
 }

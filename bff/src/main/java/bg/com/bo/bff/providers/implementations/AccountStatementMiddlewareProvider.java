@@ -29,7 +29,7 @@ public class AccountStatementMiddlewareProvider extends MiddlewareProvider<Accou
     @Override
     public AccountStatementsMWResponse getAccountStatements(AccountStatementsMWRequest request, Map<String, String> parameter) throws IOException {
         String url = baseUrl + AccountStatementMiddlewareServices.POST_ACCOUNT_STATEMENT.getServiceURL();
-        ByMwErrorResponseHandler<AccountStatementsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(AccountStatementMiddlewareError.MDWACM_008);
+        ByMwErrorResponseHandler<AccountStatementsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(AccountStatementMiddlewareError.MDWACM_009);
         return post(url, HeadersMW.getDefaultHeaders(parameter), request, AccountStatementsMWResponse.class, responseHandler);
     }
 }

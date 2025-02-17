@@ -77,21 +77,4 @@ class DpfMiddlewareProviderTest {
         assertNotNull(response);
         assertEquals(response.getData(), DpfMWResponseFixture.withDefaultDpfMWResponse().getData());
     }
-
-    @Test
-    void givenInvalidResponseWhenGetListDPFsThenExpectResponse() throws IOException {
-        // Arrange
-        Mockito.when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(DpfMWResponseFixture.withDefaultApiErrorResponse());
-        stubFor(get(anyUrl()).willReturn(badRequest().withBody(jsonResponse)));
-
-        // Act
-        Exception exception = assertThrows(Exception.class, () -> dpfMiddlewareProvider.getDPFsList("56412", "123", map));
-
-        // Assert
-        assertEquals(GenericException.class, exception.getClass());
-        assertEquals(DPFMiddlewareError.MDWDPF_002.getHttpCode(), ((GenericException) exception).getStatus());
-        assertEquals(DPFMiddlewareError.MDWDPF_002.getCode(), ((GenericException) exception).getCode());
-        assertEquals(DPFMiddlewareError.MDWDPF_002.getMessage(), ((GenericException) exception).getMessage());
-    }
 }

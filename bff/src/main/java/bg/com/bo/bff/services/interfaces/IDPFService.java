@@ -7,5 +7,6 @@ import java.util.Map;
 
 @Service
 public interface IDPFService {
+
     DpfListResponse getDPFsList(String personId, String deviceId, Map<String, String> parameter) throws Exception;
 }
