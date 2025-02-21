@@ -30,7 +30,6 @@ import bg.com.bo.bff.providers.interfaces.IQrTransactionProvider;
 import bg.com.bo.bff.mappings.providers.qr.IQrMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.qr.QRMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.qr.QRTransactionMiddlewareError;
-import bg.com.bo.bff.services.interfaces.ICryptoService;
 import bg.com.bo.bff.services.interfaces.IQrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
@@ -50,7 +49,6 @@ import java.util.stream.Collectors;
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class QrService implements IQrService {
-    private final ICryptoService cryptoService;
     private final IAchAccountProvider iAchAccountProvider;
     private final IQrTransactionProvider qrTransactionProvider;
     private final IQRProvider qrProvider;
@@ -58,8 +56,7 @@ public class QrService implements IQrService {
     @Autowired
     private QrService self;
 
-    public QrService(ICryptoService cryptoService, IAchAccountProvider iAchAccountProvider, IQrMapper iQrMapper, IQRProvider qrProvider, IQrTransactionProvider qrTransactionProvider) {
-        this.cryptoService = cryptoService;
+    public QrService(IAchAccountProvider iAchAccountProvider, IQrMapper iQrMapper, IQRProvider qrProvider, IQrTransactionProvider qrTransactionProvider) {
         this.iAchAccountProvider = iAchAccountProvider;
         this.iQrMapper = iQrMapper;
         this.qrProvider = qrProvider;
@@ -122,16 +119,12 @@ public class QrService implements IQrService {
 
     @Override
     public QRCodeGenerateResponse generateQR(QRCodeGenerateRequest request, Map<String, String> parameters) throws IOException {
-        if (request.getReference().length() > 2)
-            cryptoService.validateCrypto(request.getReference(), parameters);
         QRCodeGenerateMWRequest requestMW = iQrMapper.convert(request);
         return qrProvider.generate(requestMW, parameters);
     }
 
     @Override
     public QRCodeGenerateResponse regenerateQR(QRCodeRegenerateRequest request, Map<String, String> parameter) throws IOException {
-        if (request.getReference().length() > 2)
-            cryptoService.validateCrypto(request.getReference(), parameter);
         QRCodeRegenerateMWRequest requestMW = this.iQrMapper.convert(request);
         return this.qrProvider.regenerate(requestMW, parameter);
     }
@@ -149,8 +142,6 @@ public class QrService implements IQrService {
 
     @Override
     public QRPaymentMWResponse qrPayment(QRPaymentRequest request, String personId, String accountId, Map<String, String> parameter) throws IOException {
-        if (request.getSupplementaryData().getDescription().length() > 2)
-            cryptoService.validateCrypto(request.getSupplementaryData().getDescription(), parameter);
         QRPaymentMWRequest requestMW = iQrMapper.convert(request, personId, accountId);
         QRPaymentMWResponse result = this.qrTransactionProvider.qrPayment(requestMW, parameter);
         result.getData().getReceiptDetail().setAccountingDate(UtilDate.formatDate(result.getData().getReceiptDetail().getAccountingDate()));

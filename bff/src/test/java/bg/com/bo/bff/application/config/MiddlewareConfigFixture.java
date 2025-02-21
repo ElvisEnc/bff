@@ -4,6 +4,8 @@ public class MiddlewareConfigFixture {
 
     public static MiddlewareConfig withDefault() {
         return MiddlewareConfig.builder()
+                .privateKey("privateKey")
+                .publicKey("publicKey")
                 .urlBase("http://localhost:8080/")
                 .tokenPath("/path")
                 .clientLogin("clientLogin")

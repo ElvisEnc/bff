@@ -212,12 +212,4 @@ public class TransferMWResponseFixture {
                         .build())
                 .build();
     }
-
-    public static CryptoMWResponse withDefaultCryptoMWResponse(){
-        return CryptoMWResponse.builder()
-                .code("0")
-                .cryptoName(new ArrayList<String>())
-                .message("Tiene cripto")
-                .build();
-    }
 }

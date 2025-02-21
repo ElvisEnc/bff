@@ -10,7 +10,7 @@ public enum PaymentServicesMiddlewareServices {
     GET_CATEGORIES("/bs/v1/categories"),
     GET_SUBCATEGORY_CITIES("/bs/v1/sub-categories/%s/cities"),
     GET_AFFILIATIONS_SERVICES("/bs/v1/affiliations-services/persons/%d"),
-    DEBTS("/bs/v1/payment/debts"),
+    DEBTS("/bs/v1/debts/consultation"),
     POST_PAYMENTS_DEBTS("/bs/v1/payments/debts"),
     GET_SERVICES("/bs/v1/sub-categories/%s/cities/%s"),
     POST_SERVICE_AFFILIATION("/bs/v1/affiliations-services"),

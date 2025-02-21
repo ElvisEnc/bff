@@ -37,12 +37,6 @@ public class TransferMWRequestFixture {
                 .build();
     }
 
-    public static CryptoMWRequest withDefaultCryptoMWRequest(){
-        return CryptoMWRequest.builder()
-                .description("Test")
-                .build();
-    }
-
     public static Pcc01MWResponse withDefaultPcc01MWResponse() {
         Pcc01MWResponse response = new Pcc01MWResponse();
         response.setData(new Pcc01Data("S"));

@@ -17,8 +17,6 @@ import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.transfer.*;
 import bg.com.bo.bff.providers.interfaces.ITransferACHProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferProvider;
-import bg.com.bo.bff.providers.models.enums.middleware.transfer.TransferMiddlewareError;
-import bg.com.bo.bff.services.interfaces.ICryptoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,8 +36,6 @@ import static org.mockito.Mockito.*;
 class TransferServiceTest {
     @InjectMocks
     private TransferService service;
-    @Mock
-    private ICryptoService cryptoService;
     @Mock
     private ITransferProvider transferProvider;
     @Mock
@@ -61,21 +57,7 @@ class TransferServiceTest {
                 DeviceMW.GEO_POSITION_Y.getCode(), "121.11",
                 DeviceMW.APP_VERSION.getCode(), "1.0.0"
         );
-        this.service = new TransferService(cryptoService, transferProvider, transferACHProvider, transferMapper, mapper);
-    }
-
-    @Test
-    void givenDescriptionWhenTransferOwnAccountThenReturnCrytoFound() throws IOException {
-        TransferRequest transferRequest = TransferRequestFixture.withDefault();
-        doThrow(new GenericException(TransferMiddlewareError.MDWTRM_CRYPTO)).when(cryptoService).validateCrypto("Test", map);
-
-        // Act
-        GenericException exception = assertThrows(GenericException.class, () -> {
-            service.transferOwnAccount("123456", "123", transferRequest, map);
-        });
-
-        // Assert
-        assertEquals(TransferMiddlewareError.MDWTRM_CRYPTO.getCode(), exception.getCode());
+        this.service = new TransferService(transferProvider, transferACHProvider, transferMapper, mapper);
     }
 
     @Test
@@ -88,7 +70,6 @@ class TransferServiceTest {
         when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
         when(transferProvider.transferOwnAccount((requestMW), (map))).thenReturn(expectedMW);
         when(mapper.convert((expectedMW))).thenReturn(expected);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         TransferResponse response = service.transferOwnAccount("123456", "123", transferRequest, map);
 
@@ -106,7 +87,6 @@ class TransferServiceTest {
 
         when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
         when(transferProvider.transferOwnAccount((requestMW), (map))).thenReturn(expectedMW);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () ->
@@ -128,7 +108,6 @@ class TransferServiceTest {
         when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
         when(transferProvider.transferOwnAccount((requestMW), (map))).thenReturn(expectedMW);
         when(mapper.convert((expectedMW))).thenReturn(expected);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         // Act
         TransferResponse response = service.transferOwnAccount("123456", "123", transferRequest, map);
@@ -137,21 +116,6 @@ class TransferServiceTest {
         assertNotNull(response);
         assertEquals(expected, response);
         verify(transferProvider).transferOwnAccount(any(), any());
-    }
-
-    @Test
-    void givenDescriptionWhenTransferThirdAccountThenReturnCrytoFound() throws IOException {
-        TransferRequest transferRequest = TransferRequestFixture.withDefault();
-
-        doThrow(new GenericException(TransferMiddlewareError.MDWTRM_CRYPTO)).when(cryptoService).validateCrypto("Test", map);
-
-        // Act
-        GenericException exception = assertThrows(GenericException.class, () -> {
-            service.transferThirdAccount("123456", "123", transferRequest, map);
-        });
-
-        // Assert
-        assertEquals(TransferMiddlewareError.MDWTRM_CRYPTO.getCode(), exception.getCode());
     }
 
     @Test
@@ -164,7 +128,6 @@ class TransferServiceTest {
         when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
         when(transferProvider.transferThirdAccount((requestMW), (map))).thenReturn(expectedMW);
         when(mapper.convert((expectedMW))).thenReturn(expected);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         TransferResponse response = service.transferThirdAccount("123456", "123", transferRequest, map);
 
@@ -182,7 +145,6 @@ class TransferServiceTest {
 
         when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
         when(transferProvider.transferThirdAccount((requestMW), (map))).thenReturn(expectedMW);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
@@ -204,7 +166,6 @@ class TransferServiceTest {
         when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
         when(transferProvider.transferThirdAccount((requestMW), (map))).thenReturn(expectedMW);
         when(mapper.convert((expectedMW))).thenReturn(expected);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         // Act
         TransferResponse response = service.transferThirdAccount("123456", "123", transferRequest, map);
@@ -213,20 +174,6 @@ class TransferServiceTest {
         assertNotNull(response);
         assertEquals(expected, response);
         verify(transferProvider).transferThirdAccount(any(), any());
-    }
-
-    @Test
-    void givenDescriptionWhenTransferAchThenReturnCrytoFound() throws IOException {
-        TransferRequest transferRequest = TransferRequestFixture.withDefault();
-
-        doThrow(new GenericException(TransferMiddlewareError.MDWTRM_CRYPTO)).when(cryptoService).validateCrypto("Test", map);
-        // Act
-        GenericException exception = assertThrows(GenericException.class, () -> {
-            service.transferAchAccount("123456", "123", transferRequest, map);
-        });
-
-        // Assert
-        assertEquals(TransferMiddlewareError.MDWTRM_CRYPTO.getCode(), exception.getCode());
     }
 
     @Test
@@ -239,7 +186,6 @@ class TransferServiceTest {
         when(transferMapper.convert(("ach"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
         when(transferACHProvider.transferAchAccount((requestMW), (map))).thenReturn(expectedMW);
         when(mapper.convert((expectedMW))).thenReturn(expected);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         TransferResponse response = service.transferAchAccount("123456", "123", transferRequest, map);
 
@@ -259,7 +205,6 @@ class TransferServiceTest {
         when(transferMapper.convert(("ach"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
         when(transferACHProvider.transferAchAccount((requestMW), (map))).thenReturn(expectedMW);
         when(mapper.convert((expectedMW))).thenReturn(expected);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         // Act
         TransferResponse response = service.transferAchAccount("123456", "123", transferRequest, map);
@@ -268,20 +213,6 @@ class TransferServiceTest {
         assertNotNull(response);
         assertEquals(expected, response);
         verify(transferACHProvider).transferAchAccount(any(), any());
-    }
-
-    @Test
-    void givenDescriptionWhenTransferWalletThenReturnCrytoFound() throws IOException {
-        TransferRequest transferRequest = TransferRequestFixture.withDefault();
-        doThrow(new GenericException(TransferMiddlewareError.MDWTRM_CRYPTO)).when(cryptoService).validateCrypto("Test", map);
-
-        // Act
-        GenericException exception = assertThrows(GenericException.class, () -> {
-            service.transferWallet("123456", "123", transferRequest, map);
-        });
-
-        // Assert
-        assertEquals(TransferMiddlewareError.MDWTRM_CRYPTO.getCode(), exception.getCode());
     }
 
     @Test
@@ -294,7 +225,6 @@ class TransferServiceTest {
         when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
         when(transferProvider.transferWalletAccount((requestMW), (map))).thenReturn(expectedMW);
         when(mapper.convert((expectedMW))).thenReturn(expected);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         TransferResponse response = service.transferWallet("123456", "123", transferRequest, map);
 
@@ -311,7 +241,6 @@ class TransferServiceTest {
         TransferWalletMWResponse expectedMW = TransferMWResponseFixture.withDefaultWalletPending();
         when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
         when(transferProvider.transferWalletAccount((requestMW), (map))).thenReturn(expectedMW);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () -> {
@@ -333,7 +262,6 @@ class TransferServiceTest {
         when(transferMapper.convert(("own"), ("123456"), ("123"), (transferRequest))).thenReturn(requestMW);
         when(transferProvider.transferWalletAccount((requestMW), (map))).thenReturn(expectedMW);
         when(mapper.convert((expectedMW))).thenReturn(expected);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         // Act
         TransferResponse response = service.transferWallet("123456", "123", transferRequest, map);
