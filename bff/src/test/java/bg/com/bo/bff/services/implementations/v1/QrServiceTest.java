@@ -4,20 +4,15 @@ import bg.com.bo.bff.application.dtos.request.qr.*;
 import bg.com.bo.bff.application.dtos.response.qr.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.qr.QrMapper;
-import bg.com.bo.bff.providers.dtos.request.transfer.TransferMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRCodeGenerateResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QRPaymentMWResponse;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.QrGeneratedPaidMW;
 import bg.com.bo.bff.providers.dtos.response.ach.account.mw.QrListMWResponse;
 import bg.com.bo.bff.providers.dtos.response.qr.mw.QrMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.transfer.CryptoMWResponse;
-import bg.com.bo.bff.providers.dtos.response.transfer.TransferMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IAchAccountProvider;
 import bg.com.bo.bff.providers.interfaces.IQRProvider;
 import bg.com.bo.bff.providers.interfaces.IQrTransactionProvider;
 import bg.com.bo.bff.mappings.providers.qr.IQrMapper;
-import bg.com.bo.bff.providers.models.enums.middleware.transfer.TransferMiddlewareError;
-import bg.com.bo.bff.services.interfaces.ICryptoService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,8 +34,6 @@ import static org.mockito.Mockito.*;
 class QrServiceTest {
     @InjectMocks
     private QrService service;
-    @Mock
-    private ICryptoService cryptoService;
     @Mock
     private IAchAccountProvider achAccountProvider;
     @Mock
@@ -89,30 +82,12 @@ class QrServiceTest {
     }
 
     @Test
-    void givenReferenceWhenGenerateQRThenReturnCrytoFound() throws IOException {
-        QRCodeGenerateRequest request = QrRequestFixture.whitDefaultQRCodeGenerateRequest();
-        CryptoMWResponse cryptoMWResponse = TransferMWResponseFixture.withDefaultCryptoMWResponse();
-        cryptoMWResponse.setCode("1");
-
-        doThrow(new GenericException(TransferMiddlewareError.MDWTRM_CRYPTO)).when(cryptoService).validateCrypto("Test", map);
-
-        // Act
-        GenericException exception = assertThrows(GenericException.class, () -> {
-            service.generateQR(request, map);
-        });
-
-        // Assert
-        assertEquals(TransferMiddlewareError.MDWTRM_CRYPTO.getCode(), exception.getCode());
-    }
-
-    @Test
     void givenQRCodeGenerateRequestWhenGenerateQRThenQRCodeGenerateResponse() throws IOException {
         // Arrange
         QRCodeGenerateResponse expected = QrResponseFixture.withDefaultQRCodeGenerateResponse();
         QRCodeGenerateRequest request = QrRequestFixture.whitDefaultQRCodeGenerateRequest();
 
         when(qrProvider.generate(any(), any())).thenReturn(expected);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         // Act
         QRCodeGenerateResponse actual = service.generateQR(request, map);
@@ -173,24 +148,6 @@ class QrServiceTest {
     }
 
     @Test
-    void givenReferenceWhenQRPaymentThenReturnCrytoFound() throws IOException {
-        // Arrange
-        QRPaymentRequest request = QrRequestFixture.withDefaultQRPaymentRequest();
-        CryptoMWResponse cryptoMWResponse = TransferMWResponseFixture.withDefaultCryptoMWResponse();
-        cryptoMWResponse.setCode("1");
-
-        doThrow(new GenericException(TransferMiddlewareError.MDWTRM_CRYPTO)).when(cryptoService).validateCrypto("Test", map);
-
-        // Act
-        GenericException exception = assertThrows(GenericException.class, () -> {
-            service.qrPayment(request, "123456", "123", map);
-        });
-
-        // Assert
-        assertEquals(TransferMiddlewareError.MDWTRM_CRYPTO.getCode(), exception.getCode());
-    }
-
-    @Test
     void givenQRPaymentRequestWhenQrPaymentThenQRPaymentMWResponse() throws IOException {
         // Arrange
         final String personId = "12333";
@@ -199,9 +156,8 @@ class QrServiceTest {
         QRPaymentRequest request = QrRequestFixture.withDefaultQRPaymentRequest();
 
         when(qrTransactionProvider.qrPayment(any(), any())).thenReturn(expected);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
-        // Acteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+        // Act
         final QRPaymentMWResponse actual = service.qrPayment(request, personId, accountId, map);
 
         //Assert
@@ -216,7 +172,6 @@ class QrServiceTest {
         QRPaymentMWResponse expected = QrResponseFixture.withDefaultQrPaymentMWResponsePending();
 
         when(qrTransactionProvider.qrPayment(any(), any())).thenReturn(expected);
-        doNothing().when(cryptoService).validateCrypto(TransferMWRequestFixture.withDefaultCryptoMWRequest().getDescription(), map);
 
         // Act
         GenericException exception = assertThrows(GenericException.class, () ->

@@ -6,11 +6,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MiddlewareConfigFactory {
+
     @Value("${encryption.private.key}")
     private String privateKey;
 
     @Value("${encryption.public.key}")
     private String publicKey;
+
     @Value("${mw.token}")
     private String tokenPath;
 
@@ -77,6 +79,8 @@ public class MiddlewareConfigFactory {
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
+                .privateKey(privateKey)
+                .publicKey(publicKey)
                 .urlBase(urlBase)
                 .tokenPath(tokenPath)
                 .clientLogin(clientSecretLogin)

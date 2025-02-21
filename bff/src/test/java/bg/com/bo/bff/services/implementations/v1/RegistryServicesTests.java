@@ -8,10 +8,8 @@ import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.enums.config.provider.EncryptionAlgorithm;
 import bg.com.bo.bff.providers.models.enums.middleware.response.GenericControllerErrorResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.response.RegistryControllerErrorResponse;
-import bg.com.bo.bff.commons.utils.CipherUtils;
 import bg.com.bo.bff.providers.dtos.request.encryption.EncryptInfo;
 import bg.com.bo.bff.providers.interfaces.ILoginAGNProvider;
-import bg.com.bo.bff.services.interfaces.IEncryptionService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +20,6 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 
-import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 
@@ -35,8 +32,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RegistryServicesTests {
-    @Mock
-    private IEncryptionService encryptionService;
 
     @Mock
     private ILoginAGNProvider loginAGNProvider;
@@ -45,11 +40,10 @@ class RegistryServicesTests {
     private CacheManager cacheManager;
 
     @Mock
-    private MiddlewareConfig mdwConfig;
-
+    private Cache cache;
 
     @Mock
-    private Cache cache;
+    private MiddlewareConfig mdwConfig;
 
     @InjectMocks
     private RegistryService service;
@@ -61,7 +55,6 @@ class RegistryServicesTests {
 
         KeyPairGenerator generator = KeyPairGenerator.getInstance(EncryptionAlgorithm.RSA.getCode());
         generator.initialize(EncryptionAlgorithm.RSA.getKeySize());
-        KeyPair keyPair = generator.generateKeyPair();
 
         when(loginAGNProvider.login(request)).thenReturn(true);
         Mockito.doNothing().when(cache).evict(any(EncryptInfo.class));
@@ -124,7 +117,6 @@ class RegistryServicesTests {
 
         KeyPairGenerator generator = KeyPairGenerator.getInstance(EncryptionAlgorithm.RSA.getCode());
         generator.initialize(EncryptionAlgorithm.RSA.getKeySize());
-        KeyPair keyPair = generator.generateKeyPair();
 
         when(loginAGNProvider.login(request)).thenReturn(true);
         when(loginAGNProvider.registerDevice(eq(request), any())).thenReturn(false);

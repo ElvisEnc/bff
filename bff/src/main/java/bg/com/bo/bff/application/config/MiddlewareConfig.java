@@ -6,6 +6,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class MiddlewareConfig {
+
     private String privateKey;
 
     private String publicKey;

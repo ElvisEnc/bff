@@ -242,7 +242,6 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
                 String jsonResponse = EntityUtils.toString(httpResponse.getEntity());
-
                 if (responseHandler != null && responseHandler.getEvaluator().evaluate(jsonResponse, statusCode, this::mapProviderIError))
                     return responseHandler.getResolver().resolve(jsonResponse, classType, this::mapProviderIError);
 
@@ -259,7 +258,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
             }
         } catch (GenericException ex) {
             throw ex;
-        } catch (UnknownHostException e){
+        } catch (UnknownHostException e) {
             log.error(e);
             throw new GenericException(DefaultMiddlewareError.MW_SERVICE_UNAVAILABLE);
         } catch (Exception e) {

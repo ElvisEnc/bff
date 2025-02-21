@@ -152,7 +152,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
             }
         } catch (GenericException e) {
             throw e;
-        } catch (UnknownHostException e){
+        } catch (UnknownHostException e) {
             log.error(e);
             throw new GenericException(DefaultMiddlewareError.KC_UNAVAILABLE);
         } catch (Exception e) {
@@ -237,11 +237,10 @@ public class JwtKeyCloakProvider implements IJwtProvider {
                         log.error(response);
                         throw new GenericException(DefaultMiddlewareError.KC_FAILURE);
                 }
-
                 return createTokenResponse;
             } catch (GenericException e) {
                 throw e;
-            } catch (UnknownHostException e){
+            } catch (UnknownHostException e) {
                 log.error(e);
                 throw new GenericException(DefaultMiddlewareError.KC_UNAVAILABLE);
             } catch (Exception e) {
@@ -347,7 +346,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
             return keyCloakMapper.getJsonMapper().convertToJwtAccess(token, keyList);
         } catch (ExpiredJwtException e) {
             throw new GenericException(DefaultMiddlewareError.EXPIRED_ACCESS_JWT);
-        }catch(InvalidKeyException | SignatureException e){
+        } catch (InvalidKeyException | SignatureException e) {
             throw new GenericException(DefaultMiddlewareError.INVALID_ACCESS_JWT);
         } catch (Exception e) {
             log.error("Hubo un error al obtener el Access JWT.");
@@ -456,7 +455,7 @@ public class JwtKeyCloakProvider implements IJwtProvider {
             }
         } catch (GenericException e) {
             throw e;
-        } catch (UnknownHostException e){
+        } catch (UnknownHostException e) {
             log.error(e);
             throw new GenericException(DefaultMiddlewareError.KC_UNAVAILABLE);
         } catch (Exception e) {
