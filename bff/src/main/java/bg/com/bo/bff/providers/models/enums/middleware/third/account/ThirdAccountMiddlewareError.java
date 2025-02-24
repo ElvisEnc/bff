@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.models.enums.middleware.third.account;
 
 import bg.com.bo.bff.commons.enums.CategoryError;
+import bg.com.bo.bff.commons.enums.ConstantMessages;
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public enum ThirdAccountMiddlewareError implements IMiddlewareError {
     MDWACTM_0005(HttpStatus.CONFLICT, "ACCOUNT_REGISTERED", "MDWACTM-0005", "La cuenta ya se encuentra registrada.", "Cuenta registrada", CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
     MDWACTM_0006(HttpStatus.CONFLICT, "INVALID_ACCOUNT", "MDWACTM-0006", "No se encontró la cuenta especificada. Revisa los datos e intenta nuevamente.", "Cuenta no encontrada", CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
     MDWACTM_0007(HttpStatus.CONFLICT, "ACCOUNT_BLOCKED", "MDWACTM-0007", "La cuenta que intentas agendar no está habilitada para recibir depósitos.", "Cuenta no disponible", CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
-    MDWACTM_0008(HttpStatus.CONFLICT, "INVALID_ACCOUNT", "MDWACTM-0008", "No se encontró la cuenta especificada. Revisa los datos e intenta nuevamente.", "Cuenta no encontrada", CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
+    MDWACTM_0008(HttpStatus.CONFLICT, "INVALID_ACCOUNT", "MDWACTM-0008", "No es posible agregar una cuenta propia.", ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
     MDWACTM_0009(HttpStatus.CONFLICT, "ACCOUNT_KO", "MDWACTM-0009", "La cuenta especificada ha sido cancelada y no está disponible para operaciones.", "Cuenta cancelada", CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
     MDWACTM_0010(HttpStatus.CONFLICT, "ACCOUNT_REGISTERED", "MDWACTM-0010", "La cuenta ya se encuentra registrada.", "Cuenta registrada", CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
     MDWACTM_0011(HttpStatus.NOT_ACCEPTABLE, "ERROR_PROCEDURE", "MDWACTM-0011", "No se pudo agregar la cuenta. Inténtalo nuevamente.", "Ocurrió un problema", CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
