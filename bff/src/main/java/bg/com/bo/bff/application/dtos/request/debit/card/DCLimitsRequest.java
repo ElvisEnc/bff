@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DCLimitsRequest {
+
     @NotNull(message = "El monto límite es obligatorio")
     @DecimalMin(value = "500", inclusive = true, message = "El monto debe ser al menos 500")
     @DecimalMax(value = "1000", inclusive = true, message = "El monto debe ser como máximo 1000")

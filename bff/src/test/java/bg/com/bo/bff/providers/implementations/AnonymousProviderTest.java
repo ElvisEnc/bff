@@ -4,7 +4,6 @@ import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.config.provider.EncryptionAlgorithm;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.models.encryptor.AnonymousSetKey;
 import bg.com.bo.bff.models.payload.encryption.EncryptionKey;
 import bg.com.bo.bff.providers.fixtures.anonymous.key.provider.AnonymousKeyProviderFixture;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
@@ -13,13 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
