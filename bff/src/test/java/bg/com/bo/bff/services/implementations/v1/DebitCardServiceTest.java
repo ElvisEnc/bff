@@ -50,9 +50,10 @@ class DebitCardServiceTest {
         String cardId = "169494";
         DCLimitsRequest request = DebitCardRequestFixture.withDefaultDCLimitsRequest();
         DCLimitsMWRequest expectedRequest = DebitCardMWRequestFixture.withDefault();
+        DCLimitsMWResponse mwResponseMock = DebitCardMWResponseFixture.withDefaultDCLimitsMWResponse();
         GenericResponse expected = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT);
 
-        when(provider.changeAmount(any())).thenReturn(GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT));
+        when(provider.changeAmount(any())).thenReturn(mwResponseMock);
         when(mapper.mapToLimitsRequest(request, personId, cardId)).thenReturn(expectedRequest);
 
         // Act

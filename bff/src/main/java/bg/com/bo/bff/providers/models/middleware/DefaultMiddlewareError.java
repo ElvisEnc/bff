@@ -16,7 +16,7 @@ public enum DefaultMiddlewareError implements IMiddlewareError {
     MDWPGL_0001(HttpStatus.NOT_IMPLEMENTED, "ERROR_PROCEDURE", "MDWPGL-0001", "No se encontraron datos", "Datos no encontrados", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()), // Not data found
     MDWPGL_0002(HttpStatus.NOT_IMPLEMENTED, "INVALID_DATA", "MDWPGL-0002", "Datos invalidos", "Datos invalidos", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()), // Json invalid
     MDWPGL_003(HttpStatus.NOT_IMPLEMENTED, "ERROR_PROCEDURE", "MDWPGL-003", "Ocurrió un problema, error interno.", "Datos invalidos", CategoryError.MW_UNEXPECTED_FORMAT.getCategoryId()), // Error converting date format
-
+    MDWPGL_004(HttpStatus.NOT_ACCEPTABLE, "ERROR_PROCEDURE", "MDWPGL-004", "No se encontraron registros.", "Datos no encontrados", CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()), // Error data not found
     MDWPGL_900(HttpStatus.NOT_IMPLEMENTED, "ERROR_PROCEDURE", "MDWPGL-900", "Ocurrió un problema, error interno.", "Ocurrio un problema", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()), // No connection to BD
 
     MDWRLIB_0001(HttpStatus.NOT_IMPLEMENTED, "INVALID_PARAMS", "MDWRLIB-0001", "Los parámetros deben ser los mismos para el canal 2.", "Parámetros inválidos", CategoryError.NO_HEADER_PARAMS_MW_ERROR.getCategoryId()),

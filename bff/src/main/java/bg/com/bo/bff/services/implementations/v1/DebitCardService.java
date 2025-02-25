@@ -10,21 +10,18 @@ import bg.com.bo.bff.application.dtos.response.debit.card.InternetAuthorizationR
 import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.providers.dtos.request.debit.card.mw.*;
-import bg.com.bo.bff.providers.dtos.response.debit.card.mw.AccountsDebitCardMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.mw.ListDebitCardMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.mw.CreateAuthorizationOnlinePurchaseMWResponse;
-import bg.com.bo.bff.providers.dtos.response.debit.card.mw.DCInternetAuthorizationNWResponse;
+import bg.com.bo.bff.providers.dtos.response.debit.card.mw.*;
 import bg.com.bo.bff.providers.interfaces.IDebitCardProvider;
 import bg.com.bo.bff.mappings.providers.card.IDebitCardMapper;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.CreateAuthorizationOnlinePurchaseResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
+import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
 import bg.com.bo.bff.services.interfaces.IDebitCardService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class DebitCardService implements IDebitCardService {
@@ -40,7 +37,11 @@ public class DebitCardService implements IDebitCardService {
     @Override
     public GenericResponse changeAmount(String personId, String cardId, DCLimitsRequest request) throws IOException {
         DCLimitsMWRequest mwRequest = idcMapper.mapToLimitsRequest(request, personId, cardId);
-        return idcProvider.changeAmount(mwRequest);
+        DCLimitsMWResponse response = idcProvider.changeAmount(mwRequest);
+        if (response.getData().getPciId() != null) {
+            return GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT);
+        }
+        return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_CHANGE_AMOUNT);
     }
 
     @Override
@@ -86,16 +87,12 @@ public class DebitCardService implements IDebitCardService {
     }
 
     @Override
-    public GenericResponse createAuthorizationOnlinePurchase(String personId,
-                                                             String cardId,
-                                                             CreateAuthorizationOnlinePurchaseRequest request) throws IOException {
+    public GenericResponse createAuthorizationOnlinePurchase(String personId, String cardId, CreateAuthorizationOnlinePurchaseRequest request) throws IOException {
         LocalDate startPeriod = LocalDate.parse(request.getPeriod().getStart());
         LocalDate endPeriod = LocalDate.parse(request.getPeriod().getEnd());
 
         if (endPeriod.isBefore(startPeriod)) {
-            throw new GenericException(DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getMessage(),
-                    DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getHttpCode(),
-                    DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE.getCode());
+            throw new GenericException(DebitCardMiddlewareError.END_DATE_MUST_BE_GREATER_THAN_START_DATE);
         }
         CreateAuthorizationOnlinePurchaseMWRequest requestMW = idcMapper.mapToCreateAuthorizationOnlinePurchaseMWRequest(request, cardId,
                 startPeriod.getDayOfMonth(),
