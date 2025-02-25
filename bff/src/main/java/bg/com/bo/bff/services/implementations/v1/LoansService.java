@@ -55,7 +55,7 @@ public class LoansService implements ILoansService {
         boolean desc = (request.getFilters().getOrder() != null) && request.getFilters().getOrder().getDesc();
         Map<String, Function<ListLoansResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("LOAN_NUMBER", ListLoansResponse::getLoanNumber);
-        comparatorOptions.put("EXPIRATION_DATE", response -> LocalDate.parse(response.getExpirationDate(), UtilDate.getDateFormatter()));
+        comparatorOptions.put("EXPIRATION_DATE", response -> LocalDate.parse(UtilDate.getDateGenericFormat(response.getExpirationDate()), UtilDate.getDateFormatter()));
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getPagination() != null) {
