@@ -14,7 +14,7 @@ public enum DefaultMiddlewareError implements IMiddlewareError {
     MDWPGL_400(HttpStatus.NOT_IMPLEMENTED, "INVALID_PARAMS", "MDWPGL-400", "Los parámetros proporcionados no son válidos.", "Parámetros inválidos", CategoryError.MW_UNEXPECTED_FORMAT.getCategoryId()),
     MDWPGL_404(HttpStatus.NOT_IMPLEMENTED, "INVALID_REQUEST", "MDWPGL-404", "Petición no permitida, verifica e intenta nuevamente.", "Petición no permitida", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
     MDWPGL_405(HttpStatus.NOT_IMPLEMENTED, "INVALID_METHOD", "MDWPGL-405", "Método no permitido, verifica e intenta nuevamente.", "Método no permitido", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
-    MDWPGL_500(HttpStatus.NOT_IMPLEMENTED, "UNKNOWN_ERROR", "MDWPGL-500", ConstantMessages.GENERIC.getMessage(), "Servicio no disponible", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()),
+    MDWPGL_500(HttpStatus.NOT_IMPLEMENTED, "UNKNOWN_ERROR", "MDWPGL-500", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.UNKNOWN_MW_ERROR.getCategoryId()),
     MDWPGL_0001(HttpStatus.NOT_IMPLEMENTED, CodeError.ERROR_PROCEDURE.getCode(), "MDWPGL-0001", "No se encontraron datos", "Datos no encontrados", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()), // Not data found
     MDWPGL_0002(HttpStatus.NOT_IMPLEMENTED, "INVALID_DATA", "MDWPGL-0002", "Datos inválidos en la petición", ConstantMessages.INVALID_LOGIN_DATA.getTitle(), CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()), // Json invalid
     MDWPGL_003(HttpStatus.NOT_IMPLEMENTED, CodeError.ERROR_PROCEDURE.getCode(), "MDWPGL-003", ConstantMessages.GENERIC.getMessage(), ConstantMessages.INVALID_LOGIN_DATA.getTitle(), CategoryError.MW_UNEXPECTED_FORMAT.getCategoryId()), // Error converting date format
@@ -23,9 +23,9 @@ public enum DefaultMiddlewareError implements IMiddlewareError {
 
     MDWRLIB_0001(HttpStatus.NOT_IMPLEMENTED, "INVALID_PARAMS", "MDWRLIB-0001", "Los parámetros deben ser los mismos para el canal 2.", "Parámetros inválidos", CategoryError.NO_HEADER_PARAMS_MW_ERROR.getCategoryId()),
     MDWRLIB_0003(HttpStatus.NOT_IMPLEMENTED, "DATA_NOT_FOUND", "MDWRLIB-0003", "Registros no encontrados.", ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
-    MDWRLIB_0009(HttpStatus.NOT_IMPLEMENTED, "UNKNOWN_ERROR", "MDWRLIB-0009", ConstantMessages.GENERIC.getMessage(), "Servicio no disponible", CategoryError.UNKNOWN_MW_ERROR.getCategoryId()),
+    MDWRLIB_0009(HttpStatus.NOT_IMPLEMENTED, "UNKNOWN_ERROR", "MDWRLIB-0009", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.UNKNOWN_MW_ERROR.getCategoryId()),
     MDWRLIB_0011(HttpStatus.NOT_IMPLEMENTED, "INVALID_PARAMS", "MDWRLIB-0011", "Parámetro inválido en la cabecera de id aplicación.", "Parámetros inválidos", CategoryError.NO_HEADER_PARAMS_MW_ERROR.getCategoryId()),
-    MDWRLIB_0012(HttpStatus.NOT_IMPLEMENTED, "INVALID_CANAL", "MDWRLIB-0012", ConstantMessages.GENERIC.getMessage(), "Servicio no disponible", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
+    MDWRLIB_0012(HttpStatus.NOT_IMPLEMENTED, "INVALID_CANAL", "MDWRLIB-0012", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
 
     MDWRLIB_003(HttpStatus.NOT_IMPLEMENTED, "DATA_NOT_FOUND", "MDWRLIB-003", "Registros no encontrados.", ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     MDWRLIB_0014(HttpStatus.NOT_IMPLEMENTED, "ACCESS_DENIED", "MDWRLIB-0014", "Error token invalido", "Token Inválido", CategoryError.INVALID_REQUEST_MW_ERROR.getCategoryId()),
