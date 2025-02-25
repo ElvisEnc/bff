@@ -1,7 +1,6 @@
 package bg.com.bo.bff.providers.dtos.response.transfer;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 public class TransferMWResponseFixture {
     public static TransferMWResponse withDefault() {
