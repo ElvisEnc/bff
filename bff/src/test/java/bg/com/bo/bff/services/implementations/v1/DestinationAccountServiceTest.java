@@ -327,21 +327,24 @@ class DestinationAccountServiceTest {
         List<DestinationAccount> thirdDestinationAccount = DestinationAccountResponseFixture.getDestinationAccountDefault();
         List<DestinationAccount> walletDestinationAccount = DestinationAccountResponseFixture.getDestinationAccountDefault();
         List<DestinationAccount> achDestinationAccount = DestinationAccountResponseFixture.getDestinationAccountDefault();
+        List<DestinationAccount> ownDestionationAccount = DestinationAccountResponseFixture.getDestinationAccountDefault();
 
         when(thirdMapper.convertThirdAccountToDestinationAccount(any(), any(), any())).thenReturn(thirdDestinationAccount);
         when(thirdMapper.convertThirdAccountToDestinationAccount(any(), any(), any())).thenReturn(walletDestinationAccount);
         when(iAchAccountsMapper.convertAchAccountToDestinationAccount(any())).thenReturn(achDestinationAccount);
+        when(ownMapper.convertOwnAccountToDestinationAccount(any(), any(), any())).thenReturn(ownDestionationAccount);
 
         // Act
         List<DestinationAccount> result = service.getListDestinationAccount(personId, parameter, isInitial);
 
         // Assert
-        assertEquals(3, result.size());
+        assertEquals(4, result.size());
         verify(thirdAccountProvider).getThirdAccounts(personId, parameter);
         verify(thirdAccountProvider).getWalletAccounts(personId, parameter);
         verify(achAccountProvider).getAchAccounts(personId, parameter);
         verify(thirdMapper, times(2)).convertThirdAccountToDestinationAccount(any(), any(), any());
         verify(iAchAccountsMapper).convertAchAccountToDestinationAccount(any());
+        verify(ownMapper).convertOwnAccountToDestinationAccount(any(), any(), any());
     }
 
     @Test

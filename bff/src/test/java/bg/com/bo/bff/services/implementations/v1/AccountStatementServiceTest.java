@@ -11,7 +11,6 @@ import bg.com.bo.bff.providers.dtos.request.own.account.mw.OwnAccountMWRequestFi
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.OwnAccountMWResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
-import bg.com.bo.bff.providers.interfaces.IOwnAccountsProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
