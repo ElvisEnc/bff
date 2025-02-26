@@ -1,7 +1,9 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementsRequest;
+import bg.com.bo.bff.application.dtos.request.account.statement.TransferMovementsRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.TransferMovementsResponse;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IAccountStatementService;
@@ -49,6 +51,29 @@ public class AccountStatementController {
             @Valid @RequestBody AccountStatementsRequest request
     ) throws IOException {
         return ResponseEntity.ok(ApiDataResponse.of(iAccountStatementService.getAccountStatement(accountId, personId, request, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion))));
+    }
+
+    @Operation(summary = "Movimientos de transferencias", description = "Obtiene los movimientos de una cuenta")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ultimos movimientos")
+    })
+    @PostMapping("/{accountId}/persons/{personId}/movements")
+    public ResponseEntity<ApiDataResponse<List<TransferMovementsResponse>>> getTransferMovements(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @PathVariable("accountId") @NotBlank @Parameter(description = "id de la cuenta", example = "654654678") String accountId,
+            @PathVariable("personId") @NotBlank @Parameter(description = "código de persona", example = "12345") String personId,
+            @Valid @RequestBody TransferMovementsRequest request
+    ) throws IOException {
+        return ResponseEntity.ok(ApiDataResponse.of(iAccountStatementService.getTransferMovements(accountId, personId, request, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,

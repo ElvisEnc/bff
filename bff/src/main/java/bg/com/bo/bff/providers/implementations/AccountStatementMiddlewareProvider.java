@@ -4,7 +4,9 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
+import bg.com.bo.bff.providers.dtos.request.own.account.mw.ReportTransfersMWRequest;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.ReportTransfersMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.account.statement.AccountStatementMiddlewareError;
@@ -31,5 +33,12 @@ public class AccountStatementMiddlewareProvider extends MiddlewareProvider<Accou
         String url = baseUrl + AccountStatementMiddlewareServices.POST_ACCOUNT_STATEMENT.getServiceURL();
         ByMwErrorResponseHandler<AccountStatementsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(AccountStatementMiddlewareError.MDWACM_009);
         return post(url, HeadersMW.getDefaultHeaders(parameter), request, AccountStatementsMWResponse.class, responseHandler);
+    }
+
+    @Override
+    public ReportTransfersMWResponse getTransferMovements(ReportTransfersMWRequest request, Map<String, String> parameter) throws IOException {
+        String url = baseUrl + AccountStatementMiddlewareServices.REPORT_TRANSFERS.getServiceURL();
+        ByMwErrorResponseHandler<ReportTransfersMWResponse> responseHandler = ByMwErrorResponseHandler.instance(AccountStatementMiddlewareError.MDWACM_012);
+        return post(url, HeadersMW.getDefaultHeaders(parameter), request, ReportTransfersMWResponse.class, responseHandler);
     }
 }
