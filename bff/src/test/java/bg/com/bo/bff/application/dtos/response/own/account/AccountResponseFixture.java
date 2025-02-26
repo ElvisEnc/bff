@@ -1,7 +1,5 @@
 package bg.com.bo.bff.application.dtos.response.own.account;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-
 public class AccountResponseFixture {
     public static TransactionLimitsResponse withDefaultGetTransactionLimitResponse() {
         return TransactionLimitsResponse.builder()

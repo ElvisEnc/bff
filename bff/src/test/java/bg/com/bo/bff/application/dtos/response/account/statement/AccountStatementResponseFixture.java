@@ -21,6 +21,25 @@ public class AccountStatementResponseFixture {
                 .build());
     }
 
+    public static List<TransferMovementsResponse> getDefaultTransferMovementsResponse() {
+        return Collections.singletonList(TransferMovementsResponse.builder()
+                .movementDate("19/07/2024")
+                .movementTime("09:23:36")
+                .operationNumber("7941")
+                .toBankCode("1018")
+                .accountId("123456788")
+                .accountEntry("9990000000")
+                .toAccountNumber("123456789")
+                .toHolder("PERSONA JURIDICA")
+                .description("Transferencia a 1213145. \r\nLOPEZnullPEREZnullCARLOSnullSAUL \r\nPCC01 ")
+                .amount(BigDecimal.valueOf(80001.00))
+                .abbreviated("0")
+                .status("SUCCESS")
+                .toBankName("BANCO GANADERO S.A.")
+                .clientId("482307123")
+                .build());
+    }
+
     public static List<AccountStatementsResponse> getDefaultAccountStatementsResponseExport() {
         return Arrays.asList(AccountStatementsResponse.builder()
                         .status("1")
