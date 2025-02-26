@@ -9,7 +9,6 @@ import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Service
 public interface IDebitCardService {

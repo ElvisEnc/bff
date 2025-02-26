@@ -31,7 +31,7 @@ public class AesPayloadResolver {
         return new AesPayloadResolver(payloadAlgorithm);
     }
 
-    public EncryptionPayloadResult encrypt(String body, String contentType) throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, IOException {
+    public EncryptionPayloadResult encrypt(String body, String contentType) throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         SecretKey secret = CipherUtils.generateKey(encryptionAlgorithm);
         IvParameterSpec iv = CipherUtils.generateIv();
         String encryptedBody = encryptor.encrypt(encryptionAlgorithm, body, secret, iv);
