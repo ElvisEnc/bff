@@ -125,8 +125,36 @@ public class OwnAccountMWResponseFixture {
                 .build();
     }
 
+    public static ReportTransfersMWResponse withDefaultTransferMovementsResponse() {
+        return ReportTransfersMWResponse.builder()
+                .data(Collections.singletonList(ReportTransfersMWResponse.TransferMW.builder()
+                        .transactionDate("19/07/2024")
+                        .createdTime("09:23:36")
+                        .operation("7941")
+                        .toBankCode("1018")
+                        .accountId("123456788")
+                        .accountEntry("9990000000")
+                        .toAccount("123456789")
+                        .toHolderName("PERSONA JURIDICA")
+                        .gloss("Transferencia a 1213145. \r\nLOPEZnullPEREZnullCARLOSnullSAUL \r\nPCC01 ")
+                        .amount(BigDecimal.valueOf(1))
+                        .abbreviated("0")
+                        .status("ACEP")
+                        .toBankName("BANCO GANADERO S.A.")
+                        .clientId("482307123")
+                        .build()
+                ))
+                .build();
+    }
+
     public static AccountStatementsMWResponse withDefaultAccountReportBasicResponseNull() {
         return AccountStatementsMWResponse.builder()
+                .data(null)
+                .build();
+    }
+
+    public static ReportTransfersMWResponse withDefaultTransferMovementsResponseNull() {
+        return ReportTransfersMWResponse.builder()
                 .data(null)
                 .build();
     }

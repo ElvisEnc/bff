@@ -17,4 +17,12 @@ public class OwnAccountMWRequestFixture {
                 .totalCount("100")
                 .build();
     }
+
+    public static ReportTransfersMWRequest withDefaultTransferMovementsMWRequest() {
+        return ReportTransfersMWRequest.builder()
+                .accountId("123")
+                .startDate("2024-08-08")
+                .endDate("2024-08-08")
+                .build();
+    }
 }

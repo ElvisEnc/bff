@@ -1,10 +1,12 @@
 package bg.com.bo.bff.application.dtos.request.account.statement;
 
+import bg.com.bo.bff.application.dtos.request.commons.SearchCriteriaRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.PaginationRequest;
 import bg.com.bo.bff.application.dtos.request.qr.OrderRequest;
 import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class AccountStatementRequestFixture {
     public static AccountStatementsRequest getDefaultAccountStatementsRequest() {
@@ -21,6 +23,35 @@ public class AccountStatementRequestFixture {
                 .order(getDefaultOrderRequest())
                 .amount(getDefaultAmountRange())
                 .movementType("1")
+                .build();
+    }
+    public static TransferMovementsRequest getDefaultTransferMovementsRequest() {
+        return TransferMovementsRequest.builder()
+                .filters(getDefaultDateFilter())
+                .refreshData(false)
+                .build();
+    }
+
+    public static TransferMovementsRequest.MovementsFilter getDefaultDateFilter() {
+        return TransferMovementsRequest.MovementsFilter .builder()
+                .period(getDefaultPeriodRequest())
+                .pagination(getDefaultPaginationRequest())
+                .order(getDefaultOrderRequest())
+                .build();
+    }
+
+    public static TransferMovementsRequest.MovementsFilter getFiltersFillFilter() {
+        return TransferMovementsRequest.MovementsFilter .builder()
+                .period(getDefaultPeriodRequest())
+                .pagination(getDefaultPaginationRequest())
+                .searchCriteria(SearchCriteriaRequest.builder()
+                        .parameters(List.of("AMOUNT", "DESCRIPTION"))
+                        .value("123")
+                        .build())
+                .order(OrderRequest.builder()
+                        .field("TIME")
+                        .desc(false)
+                        .build())
                 .build();
     }
 
