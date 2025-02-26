@@ -66,7 +66,7 @@ public class DebitCardController extends AbstractBFFController {
     @GetMapping("/persons/{personId}/cards/{cardId}/accounts")
     public ResponseEntity<ListAccountTDResponse> getListAccount(
             @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") Integer personId,
-            @PathVariable() @NotNull @Parameter(description = "Este es el pciId de la tarjeta", example = "12345") Integer cardId
+            @PathVariable("cardId") @NotNull @Parameter(description = "Este es el pciId de la tarjeta", example = "12345") Integer cardId
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.getAccountsTD(personId, cardId));
@@ -91,9 +91,9 @@ public class DebitCardController extends AbstractBFFController {
     })
     @DeleteMapping("/persons/{personId}/cards/{cardId}/authorizations/{authId}")
     public ResponseEntity<GenericResponse> deleteAuthOnlinePurchases(
-            @PathVariable() @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") Integer personId,
-            @PathVariable() @NotNull @Parameter(description = "Este es el pciId de la tarjeta", example = "12345") Integer cardId,
-            @PathVariable() @NotNull @Parameter(description = "Este es el id de la compra por internet", example = "12345") Integer authId
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") Integer personId,
+            @PathVariable("cardId") @NotNull @Parameter(description = "Este es el pciId de la tarjeta", example = "12345") Integer cardId,
+            @PathVariable("authId") @NotNull @Parameter(description = "Este es el id de la compra por internet", example = "12345") Integer authId
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.deleteAuthOnlinePurchases(personId, cardId, authId));
@@ -132,8 +132,8 @@ public class DebitCardController extends AbstractBFFController {
     })
     @PutMapping("/persons/{personId}/cards/{cardId}/assurance")
     public ResponseEntity<GenericResponse> activeDebitCardAssurance(
-            @PathVariable() @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") Integer personId,
-            @PathVariable() @NotNull @Parameter(description = "Este es el pciId de la tarjeta", example = "12345") Integer cardId,
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") Integer personId,
+            @PathVariable("cardId") @NotNull @Parameter(description = "Este es el pciId de la tarjeta", example = "12345") Integer cardId,
             @Valid @RequestBody UpdateDebitCardAssuranceRequest request
     ) throws IOException {
         getDeviceDataHeader();

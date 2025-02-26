@@ -29,14 +29,9 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
     }
 
     @Override
-    public GenericResponse changeAmount(DCLimitsMWRequest request) throws IOException {
+    public DCLimitsMWResponse changeAmount(DCLimitsMWRequest request) throws IOException {
         String url = middlewareConfig.getUrlBase() + ProjectNameMW.DEBIT_CARD_MANAGER.getName() + DebitCardMiddlewareServices.CHANGE_AMOUNT.getServiceURL();
-        DCLimitsMWResponse response = patch(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, DCLimitsMWResponse.class);
-        if (response.getData().getPciId() != null) {
-            return GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT);
-        } else {
-            return GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_CHANGE_AMOUNT);
-        }
+        return patch(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, DCLimitsMWResponse.class);
     }
 
     @Override

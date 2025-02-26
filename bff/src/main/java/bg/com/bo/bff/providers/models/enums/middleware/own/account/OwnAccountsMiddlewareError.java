@@ -11,9 +11,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum OwnAccountsMiddlewareError implements IMiddlewareError {
+
     MDWACM_002(HttpStatus.CONFLICT, CodeError.DATA_NOT_FOUND.getCode(), "MDWACM-002", ConstantMessages.NO_FOUND_DATA.getMessage(), ConstantMessages.NO_FOUND_DATA.getTitle(), CategoryError.MW_NO_DATA_FAIL_RESPONSE.getCategoryId()),
     MDWACM_008(HttpStatus.CONFLICT, CodeError.DATA_NOT_FOUND.getCode(), "MDWACM-008", "No se encontraron registros de los extractos.", ConstantMessages.NO_FOUND_DATA.getTitle(), CategoryError.MW_NO_DATA_FAIL_RESPONSE.getCategoryId()),
-    MDWACM_012(HttpStatus.CONFLICT, CodeError.INVALID_DATA.getCode(), "MDWACM-012", "No se pudo actualizar los límites, tipo de cuenta inválida.", ConstantMessages.INVALID_ACCOUNT.getTitle(), CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
+    MDWACM_012(HttpStatus.CONFLICT, CodeError.INVALID_DATA.getCode(), "MDWACM-012", "No es posible cambiar los límites transaccionales en cuentas conjuntas.", "Cambios no permitidos", CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
     MDWACM_013(HttpStatus.NOT_ACCEPTABLE, CodeError.ERROR_DB_PROCEDURE.getCode(), "MDWACM-013", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     MDWACM_028(HttpStatus.NOT_IMPLEMENTED, CodeError.ERROR_LOG.getCode(), "MDWACM-028", "El registro de Log no puede ser procesado", "Error log", CategoryError.MW_UNEXPECTED_FORMAT.getCategoryId()),
     MDWACM_009(HttpStatus.CONFLICT, CodeError.DATA_NOT_FOUND.getCode(), "MDWACM-009", ConstantMessages.NO_FOUND_DATA.getMessage(), ConstantMessages.NO_FOUND_DATA.getTitle(), CategoryError.MW_NO_DATA_FAIL_RESPONSE.getCategoryId()),
@@ -28,6 +29,7 @@ public enum OwnAccountsMiddlewareError implements IMiddlewareError {
     MDWACM_026(HttpStatus.NOT_IMPLEMENTED, CodeError.INVALID_DATA.getCode(), "MDWACM-026", "No se encontró la cuenta para la persona.", ConstantMessages.NO_FOUND_DATA.getTitle(), CategoryError.MW_UNEXPECTED_FORMAT.getCategoryId()),
     MDWACM_029(HttpStatus.NOT_IMPLEMENTED, "ERROR_CONVERT", "MDWACM-029", "Error al convertir el importe", "Error al convertir", CategoryError.MW_UNEXPECTED_FORMAT.getCategoryId()),
     MDWACM_014(HttpStatus.CONFLICT, CodeError.INVALID_DATA.getCode(), "MDWACM-014", "No se encontraron cuentas asociadas.", ConstantMessages.NO_FOUND_DATA.getTitle(), CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId());
+
     private final HttpStatus httpCode;
     private final String code;
     private final String codeMiddleware;

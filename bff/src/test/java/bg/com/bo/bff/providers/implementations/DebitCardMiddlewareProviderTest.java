@@ -89,11 +89,11 @@ class DebitCardMiddlewareProviderTest {
         stubFor(patch(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        GenericResponse response = debitCardMiddlewareProvider.changeAmount(DebitCardMWRequestFixture.withDefault());
+        DCLimitsMWResponse response = debitCardMiddlewareProvider.changeAmount(DebitCardMWRequestFixture.withDefault());
 
         // Assert
         assertNotNull(response);
-        assertEquals(response, GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT));
+        assertEquals(response, DebitCardMWResponseFixture.withDefault());
     }
 
     @Test
@@ -510,7 +510,7 @@ class DebitCardMiddlewareProviderTest {
         });
 
         // Assert
-        assertEquals("NOT_ACCEPTABLE", exception.getCode());
+        assertEquals("ERROR_PROCEDURE", exception.getCode());
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
@@ -572,7 +572,7 @@ class DebitCardMiddlewareProviderTest {
         });
 
         // Assert
-        assertEquals("NOT_ACCEPTABLE", exception.getCode());
+        assertEquals("ERROR_ACTIVATE_INSURANCE", exception.getCode());
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }

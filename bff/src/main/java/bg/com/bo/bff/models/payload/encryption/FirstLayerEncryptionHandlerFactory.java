@@ -1,10 +1,6 @@
 package bg.com.bo.bff.models.payload.encryption;
 
 import bg.com.bo.bff.application.config.encryption.payload.EncryptionPayloadFilter;
-import bg.com.bo.bff.models.payload.encryption.FirstLayerEncryptionAnonymousUserHandler;
-import bg.com.bo.bff.models.payload.encryption.FirstLayerEncryptionKnowUserHandler;
-import bg.com.bo.bff.models.payload.encryption.IFirstLayerEncryptionHandler;
-import bg.com.bo.bff.models.payload.encryption.RequestCompare;
 import bg.com.bo.bff.services.interfaces.IEncryptionService;
 import jakarta.servlet.http.HttpServletRequest;
 
