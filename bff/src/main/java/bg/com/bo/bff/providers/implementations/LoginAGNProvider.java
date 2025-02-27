@@ -117,13 +117,11 @@ public class LoginAGNProvider implements ILoginAGNProvider {
                     throw new HandledException(GenericControllerErrorResponse.NOT_HANDLED_RESPONSE);
                 }
             } catch (HandledException e) {
-                e.printStackTrace();
                 throw e;
             } catch (Exception e) {
                 throw new HandledException(GenericControllerErrorResponse.REQUEST_EXCEPTION, e);
             }
         } catch (HandledException e) {
-            e.printStackTrace();
             throw e;
         } catch (Exception e) {
             throw new HandledException(GenericControllerErrorResponse.HTTP_CLIENT_CREATION_EXCEPTION, e);
