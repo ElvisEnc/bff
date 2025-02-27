@@ -11,6 +11,7 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.OwnAccountMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.own.account.mw.ReportTransfersMWRequest;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.UpdateTransactionLimitMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.*;
@@ -79,6 +80,22 @@ class AccountStatementMiddlewareProviderTest {
 
         //Act
         AccountStatementsMWResponse response = provider.getAccountStatements(requestMock, map);
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(response, responseExpected);
+    }
+
+    @Test
+    void givenTransferMovementsRequestWhenGetTransferMovementsThenReturnListTransferMovementsResponse() throws IOException {
+        // Arrange
+        ReportTransfersMWRequest requestMock = OwnAccountMWRequestFixture.withDefaultTransferMovementsMWRequest();
+        ReportTransfersMWResponse responseExpected = OwnAccountMWResponseFixture.withDefaultTransferMovementsResponse();
+        String jsonResponse = Util.objectToString(responseExpected);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        //Act
+        ReportTransfersMWResponse response = provider.getTransferMovements(requestMock, map);
 
         //Assert
         assertNotNull(response);
