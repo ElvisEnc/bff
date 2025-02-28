@@ -145,6 +145,7 @@ public class LoansMapper implements ILoansMapper {
                 .status(mwResponse.getStatus())
                 .balanceSecure(Double.parseDouble(mwResponse.getBalanceSecure()))
                 .accruedCharges(Double.parseDouble(mwResponse.getAccruedCharges()))
+                .penaltyInterest(Double.parseDouble(mwResponse.getPenaltyInterest()))
                 .interestCurrent(Double.parseDouble(mwResponse.getInterestCurrent()))
                 .capital(Double.parseDouble(mwResponse.getCapital()))
                 .form(Integer.parseInt(mwResponse.getForm()))
