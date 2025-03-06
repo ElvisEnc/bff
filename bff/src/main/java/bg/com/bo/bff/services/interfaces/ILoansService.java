@@ -1,7 +1,9 @@
 package bg.com.bo.bff.services.interfaces;
 
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
+import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
+import bg.com.bo.bff.application.dtos.request.loans.Pcc01Request;
 import bg.com.bo.bff.application.dtos.response.loans.*;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +23,7 @@ public interface ILoansService {
 
     LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId) throws IOException;
 
-    LoanPaymentResponse payLoanInstallment(String personId, String accountId, String correlativeId) throws IOException;
+    LoanPaymentResponse payLoanInstallment(String personId, String accountId, LoanPaymentRequest request) throws IOException;
+
+    Pcc01Response makeControl(String personId, String accountId, Pcc01Request request) throws IOException;
 }

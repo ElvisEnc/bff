@@ -71,4 +71,7 @@ public class LoanDetailPaymentResponse {
 
     @Schema(description = "Monto seguro obligatorio")
     private double amountSecureMandatory;
+
+    @Schema(description = "Préstamo pagado")
+    private boolean paid;
 }

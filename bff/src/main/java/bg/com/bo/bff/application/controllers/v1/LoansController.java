@@ -2,7 +2,9 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
+import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
+import bg.com.bo.bff.application.dtos.request.loans.Pcc01Request;
 import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
@@ -107,13 +109,26 @@ public class LoansController extends AbstractBFFController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Resultado de la operación y su descripción.", content = @Content(schema = @Schema(implementation = LoanPaymentResponse.class), mediaType = "application/json"))
     })
-    @PutMapping("/persons/{personId}/accounts/{accountId}/payments/{correlativeId}")
+    @PostMapping("/persons/{personId}/accounts/{accountId}/payment")
     public ResponseEntity<LoanPaymentResponse> payLoanInstallment(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("accountId") @OnlyNumber @Parameter(description = "Este es el accountId de la cuenta de la persona", example = "12345") String accountId,
-            @PathVariable("correlativeId") @OnlyNumber @Parameter(description = "Este es el correlativeId del préstamo", example = "12345") String correlativeId
+            @Valid @RequestBody LoanPaymentRequest request
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(service.payLoanInstallment(personId, accountId, correlativeId));
+        return ResponseEntity.ok(service.payLoanInstallment(personId, accountId, request));
+    }
+
+    @Operation(summary = "Validación PCC01", description = "Se realiza el control de lavado de dinero.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Devuelve si requiere o no el control de lavado de dinero.", content = @Content(schema = @Schema(implementation = Pcc01Response.class), mediaType = "application/json"))
+    })
+    @PostMapping("/persons/{personId}/accounts/{accountId}/validate-digital")
+    public ResponseEntity<Pcc01Response> control(
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("accountId") @OnlyNumber @Parameter(description = "Este es el accountId de la cuenta de la persona", example = "12345") String accountId,
+            @Valid @RequestBody Pcc01Request request
+    ) throws IOException {
+        return ResponseEntity.ok(service.makeControl(personId, accountId,request));
     }
 }
