@@ -11,7 +11,6 @@ import bg.com.bo.bff.providers.interfaces.ILoansProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.loans.LoansMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.loans.LoansMiddlewareServices;
-import bg.com.bo.bff.providers.models.enums.middleware.transfer.TransferMiddlewareServices;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
 import bg.com.bo.bff.providers.models.middleware.response.handler.ByMwErrorResponseHandler;

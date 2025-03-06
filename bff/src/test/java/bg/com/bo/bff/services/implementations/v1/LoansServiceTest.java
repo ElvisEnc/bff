@@ -7,6 +7,7 @@ import bg.com.bo.bff.mappings.providers.loans.LoansMapper;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
 import bg.com.bo.bff.providers.interfaces.ILoansTransactionProvider;
+import bg.com.bo.bff.providers.models.enums.middleware.loans.LoansTransactionMiddlewareError;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -498,6 +499,25 @@ class LoansServiceTest {
     }
 
     @Test
+    void givenPersonIdAccountWhenPayLoanRequestServicesThenLoanPaymentPendingResponse() throws IOException {
+        //Arrange
+        LoanPaymentMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultLoanPaymentMWResponse();
+        mwResponseMock.setStatus("PENDING");
+        LoanPaymentRequest request = LoansRequestFixture.withDefaultLoanPaymentRequest();
+        when(transactionProvider.payLoanInstallment(any())).thenReturn(mwResponseMock);
+
+        //Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.payLoanInstallment("123", "123", request)
+        );
+
+        //Assert
+        assertNotNull(exception);
+        assertEquals(LoansTransactionMiddlewareError.MDWLTM_PENDING.getCode(), exception.getCode());
+        verify(transactionProvider).payLoanInstallment(any());
+    }
+
+    @Test
     void givenValidDataWhenValidatePC001ThenPcc01Response() throws IOException {
         //Arrange
         Pcc01MWResponse mwResponseMock = LoansMWResponseFixture.withDefaultPcc01MWResponse();
@@ -513,4 +533,6 @@ class LoansServiceTest {
         assertThat(response).isEqualTo(expectedResponse);
         verify(provider).validateControl(any());
     }
+
+
 }
