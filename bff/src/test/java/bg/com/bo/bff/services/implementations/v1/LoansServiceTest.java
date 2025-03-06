@@ -1,13 +1,9 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
-import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
-import bg.com.bo.bff.application.dtos.request.loans.LoansRequestFixture;
+import bg.com.bo.bff.application.dtos.request.loans.*;
 import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.loans.LoansMapper;
-import bg.com.bo.bff.providers.dtos.request.loans.mw.LoanPaymentMWRequest;
-import bg.com.bo.bff.providers.dtos.request.loans.mw.LoansMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
 import bg.com.bo.bff.providers.interfaces.ILoansTransactionProvider;
@@ -485,20 +481,36 @@ class LoansServiceTest {
     @Test
     void givenPersonIdAccountWhenPayLoanRequestServicesThenLoanPaymentResponse() throws IOException {
         //Arrange
-        LoanPaymentMWRequest mwRequest = LoansMWRequestFixture.withDefaultLoanPaymentMWRequest();
         LoanPaymentMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultLoanPaymentMWResponse();
         LoanPaymentResponse expectedResponse = LoansResponseFixture.withDataDefaultLoanPaymentResponse();
+        LoanPaymentRequest request = LoansRequestFixture.withDefaultLoanPaymentRequest();
         when(transactionProvider.payLoanInstallment(any())).thenReturn(mwResponseMock);
         when(mapper.convertResponse(mwResponseMock)).thenReturn(expectedResponse);
-        when(mapper.mapperRequest(any(), any(), any())).thenReturn(mwRequest);
 
         //Act
-        LoanPaymentResponse response = service.payLoanInstallment("123", "123", "123");
+        LoanPaymentResponse response = service.payLoanInstallment("123", "123456", request);
 
         //Assert
         assertNotNull(response);
         assertThat(response).isEqualTo(expectedResponse);
         verify(transactionProvider).payLoanInstallment(any());
         verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenValidDataWhenValidatePC001ThenPcc01Response() throws IOException {
+        //Arrange
+        Pcc01MWResponse mwResponseMock = LoansMWResponseFixture.withDefaultPcc01MWResponse();
+        Pcc01Response expectedResponse = LoansResponseFixture.withDefaultPcc01Response();
+        Pcc01Request request = LoansRequestFixture.withDefaultPcc01Request();
+        when(provider.validateControl(any())).thenReturn(mwResponseMock);
+
+        //Act
+        Pcc01Response response = service.makeControl("123", "123456", request);
+
+        //Assert
+        assertNotNull(response);
+        assertThat(response).isEqualTo(expectedResponse);
+        verify(provider).validateControl(any());
     }
 }
