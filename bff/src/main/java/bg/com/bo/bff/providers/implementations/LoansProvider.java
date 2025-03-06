@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.request.loans.mw.Pcc01MWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
@@ -63,5 +64,12 @@ public class LoansProvider extends MiddlewareProvider<LoansMiddlewareError> impl
         String url = baseUrl + String.format(LoansMiddlewareServices.GET_LOAN_DETAIL_PAYMENT.getServiceURL(), loanId, clientId);
         ApiDataResponse<LoanDetailPaymentMWResponse> mwResponse = get(url, HeadersMW.getDefaultHeaders(httpServletRequest), ApiDataResponse.class);
         return Util.stringToObject(Util.objectToString(mwResponse.getData()), LoanDetailPaymentMWResponse.class);
+    }
+
+    @Override
+    public Pcc01MWResponse validateControl(Pcc01MWRequest request) throws IOException {
+        String url = baseUrl + LoansMiddlewareServices.VALIDATE_PCC01.getServiceURL();
+        ApiDataResponse<Pcc01MWResponse> mwResponse = post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, ApiDataResponse.class);
+        return Util.stringToObject(Util.objectToString(mwResponse.getData()), Pcc01MWResponse.class);
     }
 }

@@ -1,14 +1,18 @@
 package bg.com.bo.bff.mappings.providers.loans;
 
+import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentRequest;
+import bg.com.bo.bff.application.dtos.request.loans.Pcc01Request;
 import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.loans.mw.LoanPaymentMWRequest;
+import bg.com.bo.bff.providers.dtos.request.loans.mw.Pcc01MWRequest;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class LoansMapper implements ILoansMapper {
@@ -143,6 +147,7 @@ public class LoansMapper implements ILoansMapper {
                 .dateValue(UtilDate.formatDate(mwResponse.getDateValue()))
                 .currentBalance(Double.parseDouble(mwResponse.getCurrentBalance()))
                 .status(mwResponse.getStatus())
+                .paid(!mwResponse.getErrorCode().equals("0"))
                 .balanceSecure(Double.parseDouble(mwResponse.getBalanceSecure()))
                 .accruedCharges(Double.parseDouble(mwResponse.getAccruedCharges()))
                 .penaltyInterest(Double.parseDouble(mwResponse.getPenaltyInterest()))
@@ -156,7 +161,7 @@ public class LoansMapper implements ILoansMapper {
     }
 
     @Override
-    public LoanPaymentMWRequest mapperRequest(String personId, String accountId, String correlativeId) {
+    public LoanPaymentMWRequest mapperRequest(String personId, String accountId, LoanPaymentRequest request) {
         return LoanPaymentMWRequest.builder()
                 .ownerAccountRequest(LoanPaymentMWRequest.OwnAccount.builder()
                         .schemaName("PersonId")
@@ -169,8 +174,14 @@ public class LoansMapper implements ILoansMapper {
                         .build())
                 .creditorAccountRequest(LoanPaymentMWRequest.CreditorAccount.builder()
                         .schemaName("SessionId")
-                        .sessionId(correlativeId)
+                        .sessionId(request.getCorrelativeId())
                         .build())
+                .supplementaryData(Optional.ofNullable(request.getSupplementaryData())
+                        .map(suppData -> LoanPaymentMWRequest.SupplementaryData.builder()
+                                .sourceOfFunds(suppData.getSourceOfFunds())
+                                .destinationOfFunds(suppData.getDestinationOfFunds())
+                                .build())
+                        .orElseGet(() -> LoanPaymentMWRequest.SupplementaryData.builder().build()))
                 .build();
     }
 
@@ -203,6 +214,16 @@ public class LoansMapper implements ILoansMapper {
                 .nextDueDate(UtilDate.formatDate(mwResponse.getNextDueDate()))
                 .totalInstallments(mwResponse.getTotalInstallments())
                 .paidInstallments(mwResponse.getPaidInstallments())
+                .build();
+    }
+
+    @Override
+    public Pcc01MWRequest mapperRequest(String personId, String accountId, Pcc01Request request) {
+        return Pcc01MWRequest.builder()
+                .currency(request.currency())
+                .amount(request.amount())
+                .accountId(accountId)
+                .personId(personId)
                 .build();
     }
 }

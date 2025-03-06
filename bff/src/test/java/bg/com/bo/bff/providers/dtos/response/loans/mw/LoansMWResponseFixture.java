@@ -228,4 +228,10 @@ public class LoansMWResponseFixture {
                 .branch("branch123")
                 .build();
     }
+
+    public static Pcc01MWResponse withDefaultPcc01MWResponse() {
+        return Pcc01MWResponse.builder()
+                .requireUif("S")
+                .build();
+    }
 }

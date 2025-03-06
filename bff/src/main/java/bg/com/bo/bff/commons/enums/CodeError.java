@@ -25,6 +25,7 @@ public enum CodeError {
     INVALID_ACTION("INVALID_ACTION", "Acción inválida de la petición"),
     INVALID_USER_DATA("INVALID_USER_DATA", "Datos inválidos del usuario, ya sea desde el front o postman"),
     ERROR_PROCEDURE("ERROR_PROCEDURE", "Error ocurrido en el proceso"),
+    ERROR_MAE("ERROR_MAE", "Error ocurrido en el proceso MAE"),
     MAX_ATTEMPTS("MAX_ATTEMPTS", "Limite de intentos máximos alcanzados"),
     ACCESS_DENIED("ACCESS_DENIED", "Acceso denegado"),
     BLOCKED_USER("BLOCKED_USER", "Usuario Bloqueado"),

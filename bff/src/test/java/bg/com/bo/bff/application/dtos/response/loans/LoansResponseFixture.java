@@ -196,4 +196,10 @@ public class LoansResponseFixture {
                 .paidInstallments(1)
                 .build();
     }
+
+    public static Pcc01Response withDefaultPcc01Response() {
+        return Pcc01Response.builder()
+                .requiresPcc01("S")
+                .build();
+    }
 }
