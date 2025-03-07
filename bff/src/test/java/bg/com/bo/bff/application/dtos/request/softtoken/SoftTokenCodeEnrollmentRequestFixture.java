@@ -19,6 +19,12 @@ public class SoftTokenCodeEnrollmentRequestFixture {
                 .email("")
                 .build();
     }
+    public static SoftTokenCodeEnrollmentRequest withDefaultNullEmpty2() {
+        return SoftTokenCodeEnrollmentRequest.builder()
+                .phone(null)
+                .email("")
+                .build();
+    }
     public static SoftTokenValidateCodeEnrollmentRequest withDefaultValidation() {
         return SoftTokenValidateCodeEnrollmentRequest.builder()
                 .code("frkgjreogeroghmer")

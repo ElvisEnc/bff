@@ -134,6 +134,35 @@ class SoftTokenServiceTest {
         verify(provider).getValidationEnrollment(any());
     }
 
+    @Test
+    void givenValidQuestionResponse() throws IOException {
+        //Arrange
+        SoftTokenValidationQuestionRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultValidationQuestion();
+        SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultNotValidate();
+        when(provider.validateQuestionSecurity(any())).thenReturn(expectedResponse);
+
+        //Act
+        GenericResponse response = service.validateQuestionSecurity("123", "iphone", request);
+
+        //Assert
+        assertNotNull(response);
+        verify(provider).validateQuestionSecurity(any());
+    }
+
+    @Test
+    void givenQuestionResponseError() throws IOException {
+        //Arrange
+        SoftTokenValidationQuestionRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultValidationQuestion();
+        SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultError();
+        when(provider.validateQuestionSecurity(any())).thenReturn(expectedResponse);
+
+        //Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.validateQuestionSecurity("123", "iphone", request)
+        );
+        //Assert
+        assertEquals("ERROR_PROCEDURE", exception.getCode());
+    }
 
     @Test
     void givenValidDataWhenPostCodeEnrollmentResponse() throws IOException {
@@ -178,6 +207,18 @@ class SoftTokenServiceTest {
     }
 
     @Test
+    void givenValidDataWhenPostCodeEnrollmentRequestEmptyNull() {
+        //Arrange
+        SoftTokenCodeEnrollmentRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultNullEmpty2();
+        // Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.postCodeEnrollment("123", request)
+        );
+        //Assert
+        assertEquals("SHIPPING_OPTION", exception.getCode());
+    }
+
+    @Test
     void givenValidDataWhenPostCodeEnrollmentRequestNull() {
         //Arrange
         SoftTokenCodeEnrollmentRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultNull();
@@ -190,30 +231,30 @@ class SoftTokenServiceTest {
     }
 
     @Test
-    void givenValidQuestionResponse() throws IOException {
+    void givenValidateCodeEnrollmentResponse() throws IOException {
         //Arrange
-        SoftTokenValidationQuestionRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultValidationQuestion();
+        SoftTokenValidateCodeEnrollmentRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultValidation();
         SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultNotValidate();
-        when(provider.validateQuestionSecurity(any())).thenReturn(expectedResponse);
+        when(provider.validateCodeEnrollment(any())).thenReturn(expectedResponse);
 
         //Act
-        GenericResponse response = service.validateQuestionSecurity("123", "iphone", request);
+        GenericResponse response = service.validateCodeEnrollment("123", request);
 
         //Assert
         assertNotNull(response);
-        verify(provider).validateQuestionSecurity(any());
+        verify(provider).validateCodeEnrollment(any());
     }
 
     @Test
-    void givenQuestionResponseError() throws IOException {
+    void givenValidateCodeEnrollmentResponseError() throws IOException {
         //Arrange
-        SoftTokenValidationQuestionRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultValidationQuestion();
+        SoftTokenValidateCodeEnrollmentRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultValidation();
         SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultError();
-        when(provider.validateQuestionSecurity(any())).thenReturn(expectedResponse);
+        when(provider.validateCodeEnrollment(any())).thenReturn(expectedResponse);
 
         //Act
         GenericException exception = assertThrows(GenericException.class, () ->
-                service.validateQuestionSecurity("123", "iphone", request)
+                service.validateCodeEnrollment("123", request)
         );
         //Assert
         assertEquals("ERROR_PROCEDURE", exception.getCode());
