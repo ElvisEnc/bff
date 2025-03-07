@@ -20,4 +20,34 @@ public class SoftTokenCodeEnrollmentRequestFixture {
                 .email("")
                 .build();
     }
+    public static SoftTokenValidateCodeEnrollmentRequest withDefaultValidation() {
+        return SoftTokenValidateCodeEnrollmentRequest.builder()
+                .code("frkgjreogeroghmer")
+                .build();
+    }
+
+    public static SoftTokenValidationQuestionRequest withDefaultValidationQuestion() {
+        return SoftTokenValidationQuestionRequest.builder()
+                .answerQuestion("frkgjreogeroghmer")
+                .build();
+    }
+
+    public static SoftTokenCodeTokenRequest withDefaultToken() {
+        return SoftTokenCodeTokenRequest.builder()
+                .token("frkgjreogeroghmer")
+                .build();
+    }
+
+    public static SoftTokenEnrollmentRequest withDefaultEnrollment() {
+        return SoftTokenEnrollmentRequest.builder()
+                .phone("74587458")
+                .build();
+    }
+
+    public static SoftTokenCodeTokenRequest withDefaultCode() {
+        return SoftTokenCodeTokenRequest.builder()
+                .token("74587458")
+                .build();
+    }
+
 }

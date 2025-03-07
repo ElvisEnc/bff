@@ -2,6 +2,7 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.softtoken.SoftTokenCodeEnrollmentRequest;
 import bg.com.bo.bff.application.dtos.request.softtoken.SoftTokenCodeEnrollmentRequestFixture;
+import bg.com.bo.bff.application.dtos.request.softtoken.SoftTokenValidationQuestionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenDataEnrollmentResponse;
 import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenQuestionEnrollmentResponse;
@@ -98,6 +99,21 @@ class SoftTokenServiceTest {
     }
 
     @Test
+    void givenValidDataWhenGetQuestionEnrollmentResponseNull() throws IOException {
+        //Arrange
+        SoftTokenQuestionEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultQuestionNull();
+        when(provider.getQuestionEnrollment(any())).thenReturn(expectedResponse);
+
+        //Act
+        List<SoftTokenQuestionEnrollmentResponse> response = service.getQuestionEnrollment("123");
+
+        //Assert
+        assertNotNull(response);
+        verify(provider).getQuestionEnrollment(any());
+        verify(mapper).convertResponse(expectedResponse);
+    }
+
+    @Test
     void givenValidDataWhenGetValidationEnrollment() throws IOException {
         //Arrange
         SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultValidate();
@@ -121,27 +137,13 @@ class SoftTokenServiceTest {
         GenericResponse response = service.getValidationEnrollment("1234");
 
         assertNotNull(response);
-        assertEquals(SoftTokenMiddlewareResponse.NOT_ENROLLMENT.getMessage(), response.getMessage());
+        assertEquals(SoftTokenMiddlewareResponse.NOT_ENROLLED.getMessage(), response.getMessage());
         verify(provider).getValidationEnrollment(any());
     }
 
-    @Test
-    void givenValidDataWhenGetQuestionEnrollmentResponseNull() throws IOException {
-        //Arrange
-        SoftTokenQuestionEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultQuestionNull();
-        when(provider.getQuestionEnrollment(any())).thenReturn(expectedResponse);
-
-        //Act
-        List<SoftTokenQuestionEnrollmentResponse> response = service.getQuestionEnrollment("123");
-
-        //Assert
-        assertNotNull(response);
-        verify(provider).getQuestionEnrollment(any());
-        verify(mapper).convertResponse(expectedResponse);
-    }
 
     @Test
-    void givenValidDataWhenPostCodeEnrollmentResponseNull() throws IOException {
+    void givenValidDataWhenPostCodeEnrollmentResponse() throws IOException {
         //Arrange
         SoftTokenCodeEnrollmentRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefault();
         SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultNotValidate();
@@ -156,7 +158,7 @@ class SoftTokenServiceTest {
     }
 
     @Test
-    void givenValidDataWhenPostCodeEnrollmentResponse() throws IOException {
+    void givenValidDataWhenPostCodeEnrollmentResponseError() throws IOException {
         //Arrange
         SoftTokenCodeEnrollmentRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefault();
         SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultError();
@@ -167,7 +169,7 @@ class SoftTokenServiceTest {
                 service.postCodeEnrollment("123", request)
         );
         //Assert
-        assertEquals("DATA_NOT_FOUND", exception.getCode());
+        assertEquals("Error al validar enrolamiento de GanaPin Digital.", exception.getMessage());
     }
 
     @Test
@@ -192,5 +194,35 @@ class SoftTokenServiceTest {
         );
         //Assert
         assertEquals("BAD_REQUEST", exception.getCode());
+    }
+
+    @Test
+    void givenValidQuestionResponse() throws IOException {
+        //Arrange
+        SoftTokenValidationQuestionRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultValidationQuestion();
+        SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultNotValidate();
+        when(provider.validateQuestionSecurity(any())).thenReturn(expectedResponse);
+
+        //Act
+        GenericResponse response = service.validateQuestionSecurity("123", "iphone", request);
+
+        //Assert
+        assertNotNull(response);
+        verify(provider).validateQuestionSecurity(any());
+    }
+
+    @Test
+    void givenQuestionResponseError() throws IOException {
+        //Arrange
+        SoftTokenValidationQuestionRequest request = SoftTokenCodeEnrollmentRequestFixture.withDefaultValidationQuestion();
+        SoftTokenEnrollmentMWResponse expectedResponse = SoftTokenMWResponseFixture.withDefaultError();
+        when(provider.validateQuestionSecurity(any())).thenReturn(expectedResponse);
+
+        //Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.validateQuestionSecurity("123", "iphone", request)
+        );
+        //Assert
+        assertEquals("DATA_NOT_FOUND", exception.getCode());
     }
 }

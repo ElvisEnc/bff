@@ -1,9 +1,6 @@
 package bg.com.bo.bff.providers.dtos.response.softtoken;
 
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenDataEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenQuestionEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenWelcomeMWResponse;
+import bg.com.bo.bff.providers.dtos.response.softtoken.mw.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +81,36 @@ public class SoftTokenMWResponseFixture {
         return SoftTokenEnrollmentMWResponse.builder()
                 .codeError("COD003")
                 .status("error")
+                .build();
+    }
+
+    public static SoftTokenEnrollmentMWResponse withDefaultValidationQuestion() {
+        return SoftTokenEnrollmentMWResponse.builder()
+                .codeError("COD000")
+                .status("ok")
+                .build();
+    }
+
+    public static SoftTokenObtainParametersMWResponse withDefaultParameter() {
+        return SoftTokenObtainParametersMWResponse.builder()
+                .codeError("COD000")
+                .tokenSize(6)
+                .tokenDuration(30)
+                .processDate("test")
+                .serialNumber("744111")
+                .build();
+    }
+
+    public static SoftTokenCodeTokenMWResponse withDefaultCod000() {
+        return SoftTokenCodeTokenMWResponse.builder()
+                .codeError("COD000")
+                .build();
+    }
+    public static SoftTokenGenerateTokenMWResponse withDefaultGenerateToken() {
+        return SoftTokenGenerateTokenMWResponse.builder()
+                .codeError("COD000")
+                .codeToken("1234")
+                .durationToken(30)
                 .build();
     }
 
