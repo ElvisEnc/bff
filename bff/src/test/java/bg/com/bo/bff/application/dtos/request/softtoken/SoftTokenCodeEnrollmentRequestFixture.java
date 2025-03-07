@@ -1,6 +1,8 @@
 package bg.com.bo.bff.application.dtos.request.softtoken;
 
 
+import bg.com.bo.bff.providers.dtos.request.softtoken.mw.SoftTokenValidateTokenMWRequest;
+
 public class SoftTokenCodeEnrollmentRequestFixture {
     public static SoftTokenCodeEnrollmentRequest withDefault() {
         return SoftTokenCodeEnrollmentRequest.builder()
@@ -45,6 +47,18 @@ public class SoftTokenCodeEnrollmentRequestFixture {
     }
 
     public static SoftTokenCodeTokenRequest withDefaultCode() {
+        return SoftTokenCodeTokenRequest.builder()
+                .token("74587458")
+                .build();
+    }
+
+    public static SoftTokenEnrollmentRequest withDefaultEnrollmentST() {
+        return SoftTokenEnrollmentRequest.builder()
+                .phone("74587458")
+                .build();
+    }
+
+    public static SoftTokenCodeTokenRequest withDefaultTokenST() {
         return SoftTokenCodeTokenRequest.builder()
                 .token("74587458")
                 .build();

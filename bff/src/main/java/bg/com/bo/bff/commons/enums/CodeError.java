@@ -33,7 +33,7 @@ public enum CodeError {
     ERROR_TOPAZ_PROCEDURE("ERROR_TOPAZ_PROCEDURE", "Error al ejecutar los servicios de topaz"),
     DATA_NOT_FOUND("DATA_NOT_FOUND", "Datos no encontrados"),
     ERROR_LOG("ERROR_LOG", "Error al registrar logs"),
-    SOFTTOKEN_DISABLED("SOFTOKEN_DISABLED", "Usuario sin GanaPin, con algún tipo de error");
+    SOFTTOKEN_INCORRECT_DATA("INCORRECT_DATA", "Datos incorrectos");
 
 
     private final String code;

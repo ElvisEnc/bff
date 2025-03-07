@@ -106,11 +106,30 @@ public class SoftTokenMWResponseFixture {
                 .codeError("COD000")
                 .build();
     }
+
+    public static SoftTokenCodeTokenMWResponse withDefaultErrorToken() {
+        return SoftTokenCodeTokenMWResponse.builder()
+                .codeError("COD003")
+                .build();
+    }
+
     public static SoftTokenGenerateTokenMWResponse withDefaultGenerateToken() {
         return SoftTokenGenerateTokenMWResponse.builder()
                 .codeError("COD000")
                 .codeToken("1234")
                 .durationToken(30)
+                .build();
+    }
+
+    public static SoftTokenCodeTokenMWResponse withDefaultPINDIG003() {
+        return SoftTokenCodeTokenMWResponse.builder()
+                .codeError("PINDIG003")
+                .build();
+    }
+
+    public static SoftTokenCodeTokenMWResponse withDefaultPINDIG002() {
+        return SoftTokenCodeTokenMWResponse.builder()
+                .codeError("PINDIG002")
                 .build();
     }
 
