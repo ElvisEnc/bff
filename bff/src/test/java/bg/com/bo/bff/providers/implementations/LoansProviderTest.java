@@ -8,6 +8,8 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
+import bg.com.bo.bff.providers.dtos.request.loans.mw.LoansMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.loans.mw.Pcc01MWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
@@ -163,6 +165,26 @@ class LoansProviderTest {
         assertNotNull(response);
         assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
         verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Validate money laudering PCC01")
+    void givenValidDataWhenValidatePCC01ThenExpectResponse() throws IOException {
+        // Arrange
+        Pcc01MWRequest request = LoansMWRequestFixture.withDefaultPcc01MWRequest();
+        Pcc01MWResponse expectedResponse = LoansMWResponseFixture.withDefaultPcc01MWResponse();
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+
+        String jsonResponse = Util.objectToString(ApiDataResponse.of(expectedResponse));
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        Pcc01MWResponse response = provider.validateControl(request);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).isEqualTo(expectedResponse);
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
 }

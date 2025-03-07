@@ -1,8 +1,10 @@
 package bg.com.bo.bff.mappings.providers.account;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementsRequest;
+import bg.com.bo.bff.application.dtos.request.account.statement.TransferMovementsRequest;
 import bg.com.bo.bff.application.dtos.request.own.account.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.TransferMovementsResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.application.dtos.response.own.account.OwnAccountsResponse;
 import bg.com.bo.bff.application.dtos.response.own.account.TransactionLimitsResponse;
@@ -10,9 +12,11 @@ import bg.com.bo.bff.commons.enums.account.statement.AccountStatementType;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
+import bg.com.bo.bff.providers.dtos.request.own.account.mw.ReportTransfersMWRequest;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.UpdateTransactionLimitMWRequest;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.OwnAccountsListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.ReportTransfersMWResponse;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.TransactionLimitsMWResponse;
 import org.springframework.stereotype.Component;
 
@@ -91,6 +95,15 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
     }
 
     @Override
+    public ReportTransfersMWRequest mapperRequest(String accountId, String personId, TransferMovementsRequest request) {
+        return ReportTransfersMWRequest.builder()
+                .accountId(accountId)
+                .startDate(UtilDate.adaptDateToMWFormat( request.getFilters().getPeriod().getStart()))
+                .endDate(UtilDate.adaptDateToMWFormat(request.getFilters().getPeriod().getEnd()))
+                .build();
+    }
+
+    @Override
     public List<AccountStatementsResponse> convertResponse(AccountStatementsMWResponse mwResponse) {
         if (mwResponse == null || mwResponse.getData() == null)
             return Collections.emptyList();
@@ -110,6 +123,34 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
                         .movementTime(mw.getAccountingTime())
                         .channel(mw.getBranchOffice())
                         .seatNumber(String.valueOf(mw.getSeatNumber()))
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public List<TransferMovementsResponse> convertResponse(ReportTransfersMWResponse mwResponse) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return Collections.emptyList();
+        HashMap<String, Integer> hashMap = new HashMap<>();
+        hashMap.put("ACEP", 1);
+        hashMap.put("ENPROC", 2);
+        hashMap.put("RECH", 3);
+        return mwResponse.getData().stream()
+                .map(mw -> TransferMovementsResponse.builder()
+                        .movementDate(UtilDate.formatDate(mw.getTransactionDate()))
+                        .movementTime(mw.getCreatedTime())
+                        .operationNumber(mw.getOperation())
+                        .status(String.valueOf(hashMap.get(mw.getStatus())))
+                        .clientId(mw.getClientId())
+                        .amount(Util.scaleToTwoDecimals(mw.getAmount()))
+                        .abbreviated(mw.getAbbreviated())
+                        .accountEntry(mw.getAccountEntry())
+                        .accountId(mw.getAccountId())
+                        .toAccountNumber(mw.getToAccount())
+                        .toBankCode(mw.getToBankCode())
+                        .toHolder(mw.getToHolderName())
+                        .toBankName(mw.getToBankName())
+                        .description(mw.getGloss())
                         .build())
                 .toList();
     }

@@ -4,6 +4,8 @@ import bg.com.bo.bff.application.dtos.request.destination.account.PaginationRequ
 import bg.com.bo.bff.application.dtos.request.qr.OrderRequest;
 import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
 
+import java.math.BigDecimal;
+
 public class LoansRequestFixture {
 
     public static ListLoansRequest withDefaultListLoansRequest() {
@@ -244,6 +246,27 @@ public class LoansRequestFixture {
         return PeriodRequest.builder()
                 .start("2024-07-01")
                 .end("2024-06-01")
+                .build();
+    }
+
+    public static LoanPaymentRequest.SupplementaryData withDefaultSupplementaryData() {
+        return LoanPaymentRequest.SupplementaryData.builder()
+                .sourceOfFunds("Fuente de fondos para la transferencia")
+                .destinationOfFunds("Destino de fondos para la transferencia")
+                .build();
+    }
+
+    public static LoanPaymentRequest withDefaultLoanPaymentRequest() {
+        return LoanPaymentRequest.builder()
+                .correlativeId("12345")
+                .supplementaryData(withDefaultSupplementaryData())
+                .build();
+    }
+
+    public static Pcc01Request withDefaultPcc01Request() {
+        return Pcc01Request.builder()
+                .currency("840")
+                .amount(new BigDecimal("10000"))
                 .build();
     }
 }

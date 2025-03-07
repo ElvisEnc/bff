@@ -1,7 +1,9 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
+import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentRequest;
 import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
+import bg.com.bo.bff.application.dtos.request.loans.Pcc01Request;
 import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
@@ -9,10 +11,12 @@ import bg.com.bo.bff.commons.filters.*;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.mappings.providers.loans.ILoansMapper;
 import bg.com.bo.bff.providers.dtos.request.loans.mw.LoanPaymentMWRequest;
+import bg.com.bo.bff.providers.dtos.request.loans.mw.Pcc01MWRequest;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import bg.com.bo.bff.providers.interfaces.ILoansProvider;
 import bg.com.bo.bff.providers.interfaces.ILoansTransactionProvider;
-import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
+import bg.com.bo.bff.providers.models.enums.middleware.loans.LoansMiddlewareError;
+import bg.com.bo.bff.providers.models.enums.middleware.loans.LoansTransactionMiddlewareError;
 import bg.com.bo.bff.services.interfaces.ILoansService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
@@ -24,10 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -55,7 +56,7 @@ public class LoansService implements ILoansService {
         boolean desc = (request.getFilters().getOrder() != null) && request.getFilters().getOrder().getDesc();
         Map<String, Function<ListLoansResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("LOAN_NUMBER", ListLoansResponse::getLoanNumber);
-        comparatorOptions.put("EXPIRATION_DATE", response -> LocalDate.parse(response.getExpirationDate(), UtilDate.getDateFormatter()));
+        comparatorOptions.put("EXPIRATION_DATE", response -> LocalDate.parse(UtilDate.getDateGenericFormat(response.getExpirationDate()), UtilDate.getDateFormatter()));
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getPagination() != null) {
@@ -90,7 +91,7 @@ public class LoansService implements ILoansService {
         Map<String, Function<LoanPaymentsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("INTEREST_PAID", LoanPaymentsResponse::getInterestAmountPaid);
         comparatorOptions.put("CAPITAL_PAID", LoanPaymentsResponse::getCapitalPaid);
-        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getDate(), UtilDate.getDateFormatter()));
+        comparatorOptions.put("DATE", response -> LocalDate.parse(UtilDate.getDateGenericFormat(response.getDate()), UtilDate.getDateFormatter()));
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getPagination() != null) {
@@ -139,8 +140,7 @@ public class LoansService implements ILoansService {
         List<ListLoansResponse> list = self.getServiceCache(personId, false);
         boolean existData = list.stream().anyMatch(response -> response.getLoanId().equals(loanId) && response.getClientId().equals(clientId));
         if (!existData) {
-            DefaultMiddlewareError error = DefaultMiddlewareError.NOT_VALID_DATA;
-            throw new GenericException(error.getMessage(), error.getHttpCode(), error.getCode());
+            throw new GenericException(LoansMiddlewareError.MDWPRE_NOT_FOUND);
         }
         LoanDetailPaymentMWResponse mwResponse = provider.getLoanDetailPayment(loanId, clientId);
         return mapper.convertResponse(mwResponse);
@@ -160,9 +160,19 @@ public class LoansService implements ILoansService {
     }
 
     @Override
-    public LoanPaymentResponse payLoanInstallment(String personId, String accountId, String correlativeId) throws IOException {
-        LoanPaymentMWRequest mwRequest = mapper.mapperRequest(personId, accountId, correlativeId);
+    public LoanPaymentResponse payLoanInstallment(String personId, String accountId, LoanPaymentRequest request) throws IOException {
+        LoanPaymentMWRequest mwRequest = mapper.mapperRequest(personId, accountId, request);
         LoanPaymentMWResponse mwResponse = transactionProvider.payLoanInstallment(mwRequest);
+        if (Objects.equals(mwResponse.getStatus(), "PENDING")) {
+            throw new GenericException(LoansTransactionMiddlewareError.MDWLTM_PENDING);
+        }
         return mapper.convertResponse(mwResponse);
+    }
+
+    @Override
+    public Pcc01Response makeControl(String personId, String accountId, Pcc01Request request) throws IOException {
+        Pcc01MWRequest mwRequest = mapper.mapperRequest(personId, accountId, request);
+        Pcc01MWResponse mwResponse = provider.validateControl(mwRequest);
+        return Pcc01Response.builder().requiresPcc01(mwResponse.getRequireUif()).build();
     }
 }

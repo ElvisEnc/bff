@@ -7,7 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AccountStatementMiddlewareServices {
 
-    POST_ACCOUNT_STATEMENT("/bs/v1/accounts/reports/generate-basic");
+    POST_ACCOUNT_STATEMENT("/bs/v1/accounts/reports/generate-basic"),
+    REPORT_TRANSFERS("/bs/v1/accounts/reports/transfer"),
+    ;
 
     private final String serviceURL;
 }

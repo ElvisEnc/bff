@@ -16,7 +16,6 @@ import bg.com.bo.bff.providers.models.enums.middleware.debit.card.CreateAuthoriz
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareResponse;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,8 +25,6 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,15 +47,40 @@ class DebitCardServiceTest {
         String cardId = "169494";
         DCLimitsRequest request = DebitCardRequestFixture.withDefaultDCLimitsRequest();
         DCLimitsMWRequest expectedRequest = DebitCardMWRequestFixture.withDefault();
+        DCLimitsMWResponse mwResponseMock = DebitCardMWResponseFixture.withDefaultDCLimitsMWResponse();
         GenericResponse expected = GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT);
 
-        when(provider.changeAmount(any())).thenReturn(GenericResponse.instance(DebitCardMiddlewareResponse.SUCCESS_CHANGE_AMOUNT));
+        when(provider.changeAmount(any())).thenReturn(mwResponseMock);
         when(mapper.mapToLimitsRequest(request, personId, cardId)).thenReturn(expectedRequest);
 
         // Act
         GenericResponse response = service.changeAmount(personId, cardId, request);
 
         // Assert
+        Assertions.assertNotNull(response);
+        assertEquals(expected, response);
+        verify(provider).changeAmount(expectedRequest);
+        verify(mapper).mapToLimitsRequest(request, personId, cardId);
+    }
+
+    @Test
+    void givenValidDataWhenChangeAmountThenReturnErrorChangeAmount() throws IOException {
+        // Arrange
+        String personId = "169494";
+        String cardId = "169494";
+        DCLimitsRequest request = DebitCardRequestFixture.withDefaultDCLimitsRequest();
+        DCLimitsMWRequest expectedRequest = DebitCardMWRequestFixture.withDefault();
+        DCLimitsMWResponse mwResponseMock = DebitCardMWResponseFixture.withDefaultDCLimitsMWResponse();
+        mwResponseMock.getData().setPciId(null);
+        GenericResponse expected = GenericResponse.instance(DebitCardMiddlewareResponse.ERROR_CHANGE_AMOUNT);
+
+        when(provider.changeAmount(any())).thenReturn(mwResponseMock);
+        when(mapper.mapToLimitsRequest(request, personId, cardId)).thenReturn(expectedRequest);
+
+        // Act
+        GenericResponse response = service.changeAmount(personId, cardId, request);
+
+        //Assert
         Assertions.assertNotNull(response);
         assertEquals(expected, response);
         verify(provider).changeAmount(expectedRequest);
