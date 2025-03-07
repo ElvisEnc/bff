@@ -5,7 +5,6 @@ import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.softtoken.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.softtoken.SoftTokenMapper;
-import bg.com.bo.bff.providers.dtos.request.softtoken.mw.SoftTokenValidateTokenMWRequest;
 import bg.com.bo.bff.providers.dtos.response.softtoken.SoftTokenMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.softtoken.mw.*;
 import bg.com.bo.bff.providers.interfaces.ISoftTokenProvider;
