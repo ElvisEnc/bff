@@ -19,6 +19,7 @@ public class MiddlewareConfigFixture {
                 .clientQrTransactionManager("clientQrTransactionManager")
                 .clientDebitCardManager("clientDebitCardManager")
                 .clientPaymentServicesManager("clientPaymentServicesManager")
+                .clientCertificationsManager("clientCertificationsManager")
                 .build();
     }
 }
