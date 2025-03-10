@@ -2,6 +2,7 @@ package bg.com.bo.bff.providers.dtos.response.certificates;
 
 import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CertificatesTypeListMWResponseFixture {
@@ -20,6 +21,12 @@ public class CertificatesTypeListMWResponseFixture {
                                 .description("description")
                                 .build()
                 ))
+                .build();
+    }
+
+    public static CertificatesTypeListMWResponse withEmptyData() {
+        return CertificatesTypeListMWResponse.builder()
+                .data(null)
                 .build();
     }
 }
