@@ -11,10 +11,7 @@ import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.providers.dtos.request.softtoken.SoftTokenMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.softtoken.SoftTokenMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenDataEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenQuestionEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenWelcomeMWResponse;
+import bg.com.bo.bff.providers.dtos.response.softtoken.mw.*;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -155,5 +152,133 @@ class SoftTokenMiddlewareProviderTest {
         // Assert
         assertNotNull(response);
         assertThat(response).usingRecursiveComparison().isEqualTo(SoftTokenMWResponseFixture.withDefaultValidate());
+    }
+
+    @Test
+    @DisplayName("validation code enrollment")
+    void givenPersonCodeWhenPostValidateCodeEnrollmentWhenExpectResponse() throws IOException {
+        // Arrange
+        ApiDataResponse<SoftTokenEnrollmentMWResponse> expectedResponse = ApiDataResponse.of(SoftTokenMWResponseFixture.withDefaultValidate());
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        SoftTokenEnrollmentMWResponse response = provider.validateCodeEnrollment(SoftTokenMWRequestFixture.withDefaultValidationCode());
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(SoftTokenMWResponseFixture.withDefaultValidate());
+    }
+
+    @Test
+    @DisplayName("validation question security")
+    void givenPersonCodeWhenPostValidateSecurityEnrollmentWhenExpectResponse() throws IOException {
+        // Arrange
+        ApiDataResponse<SoftTokenEnrollmentMWResponse> expectedResponse = ApiDataResponse.of(SoftTokenMWResponseFixture.withDefaultValidationQuestion());
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        SoftTokenEnrollmentMWResponse response = provider.validateQuestionSecurity(SoftTokenMWRequestFixture.withDefaultValidationQuestion());
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(SoftTokenMWResponseFixture.withDefaultValidationQuestion());
+    }
+
+    @Test
+    @DisplayName("Parameter token")
+    void givenPersonCodeWhenParameterWhenExpectResponse() throws IOException {
+        // Arrange
+        ApiDataResponse<SoftTokenObtainParametersMWResponse> expectedResponse = ApiDataResponse.of(SoftTokenMWResponseFixture.withDefaultParameter());
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        SoftTokenObtainParametersMWResponse response = provider.getParameters(SoftTokenMWRequestFixture.withDefaultParameter());
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(SoftTokenMWResponseFixture.withDefaultParameter());
+    }
+
+    @Test
+    @DisplayName("Registration token")
+    void givenPersonCodeWhenRegistrationTokenWhenExpectResponse() throws IOException {
+        // Arrange
+        ApiDataResponse<SoftTokenCodeTokenMWResponse> expectedResponse = ApiDataResponse.of(SoftTokenMWResponseFixture.withDefaultCod000());
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        SoftTokenCodeTokenMWResponse response = provider.postRegistrationToken(SoftTokenMWRequestFixture.withDefaultRegistrationToken());
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(SoftTokenMWResponseFixture.withDefaultCod000());
+    }
+
+    @Test
+    @DisplayName("Registration validation")
+    void givenPersonCodeWhenRegistrationValidationWhenExpectResponse() throws IOException {
+        // Arrange
+        ApiDataResponse<SoftTokenCodeTokenMWResponse> expectedResponse = ApiDataResponse.of(SoftTokenMWResponseFixture.withDefaultCod000());
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        SoftTokenCodeTokenMWResponse response = provider.getRegistrationValidation(SoftTokenMWRequestFixture.withDefaultTokenValidation());
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(SoftTokenMWResponseFixture.withDefaultCod000());
+    }
+
+    @Test
+    @DisplayName("Generate token")
+    void givenPersonCodeWhenTokenGenerateWhenExpectResponse() throws IOException {
+        // Arrange
+        ApiDataResponse<SoftTokenGenerateTokenMWResponse> expectedResponse = ApiDataResponse.of(SoftTokenMWResponseFixture.withDefaultGenerateToken());
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        SoftTokenGenerateTokenMWResponse response = provider.postTokenGenerate(SoftTokenMWRequestFixture.withDefaultGenerateToken());
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(SoftTokenMWResponseFixture.withDefaultGenerateToken());
+    }
+
+    @Test
+    @DisplayName("Enrollemnt")
+    void givenPersonCodeWhenEnrollmentWhenExpectResponse() throws IOException {
+        // Arrange
+        ApiDataResponse<SoftTokenCodeTokenMWResponse> expectedResponse = ApiDataResponse.of(SoftTokenMWResponseFixture.withDefaultCod000());
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        SoftTokenCodeTokenMWResponse response = provider.postEnrollment(SoftTokenMWRequestFixture.withDefaultEnrollment());
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(SoftTokenMWResponseFixture.withDefaultCod000());
+    }
+
+    @Test
+    @DisplayName("Validation token")
+    void givenPersonCodeWhenValidationTokenWhenExpectResponse() throws IOException {
+        // Arrange
+        ApiDataResponse<SoftTokenCodeTokenMWResponse> expectedResponse = ApiDataResponse.of(SoftTokenMWResponseFixture.withDefaultCod000());
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        SoftTokenCodeTokenMWResponse response = provider.validationToken(SoftTokenMWRequestFixture.withDefaultValidateToken());
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(SoftTokenMWResponseFixture.withDefaultCod000());
     }
 }

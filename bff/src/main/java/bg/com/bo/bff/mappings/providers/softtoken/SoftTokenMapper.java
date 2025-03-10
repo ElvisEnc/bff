@@ -1,26 +1,16 @@
 package bg.com.bo.bff.mappings.providers.softtoken;
 
-import bg.com.bo.bff.application.dtos.request.softtoken.SoftTokenCodeEnrollmentRequest;
-import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenDataEnrollmentResponse;
-import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenQuestionEnrollmentResponse;
-import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenValidationEnrollmentResponse;
-import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenWelcomeResponse;
+import bg.com.bo.bff.application.dtos.request.softtoken.*;
+import bg.com.bo.bff.application.dtos.response.softtoken.*;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
-import bg.com.bo.bff.providers.dtos.request.softtoken.mw.SoftTokenMWRequest;
-import bg.com.bo.bff.providers.dtos.request.softtoken.mw.SoftTokenSentCodeMWRequest;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenDataEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenQuestionEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenEnrollmentMWResponse;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenWelcomeMWResponse;
-import bg.com.bo.bff.providers.models.enums.middleware.softtoken.SoftTokenMiddlewareResponse;
+import bg.com.bo.bff.providers.dtos.request.softtoken.mw.*;
+import bg.com.bo.bff.providers.dtos.response.softtoken.mw.*;
+import bg.com.bo.bff.providers.models.enums.middleware.softtoken.SoftTokenMiddlewareEnums;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-
-import static bg.com.bo.bff.commons.enums.user.AppCodeResponseNet.SUCCESS_CODE_STRING;
 
 
 @Component
@@ -32,7 +22,7 @@ public class SoftTokenMapper implements ISoftTokenMapper {
                 .codPerson(Integer.valueOf(personId))
                 .codApplication(Integer.valueOf(CanalMW.GANAMOVIL.getCanal()))
                 .codCanal(Integer.valueOf(CanalMW.GANAMOVIL.getCanal()))
-                .codLanguage(1)
+                .codLanguage(SoftTokenMiddlewareEnums.CODE_LANGUAGE.getCode())
                 .build();
     }
 
@@ -42,9 +32,85 @@ public class SoftTokenMapper implements ISoftTokenMapper {
                 .codPerson(Integer.valueOf(personId))
                 .codApplication(Integer.valueOf(CanalMW.GANAMOVIL.getCanal()))
                 .codCanal(Integer.valueOf(CanalMW.GANAMOVIL.getCanal()))
-                .codLanguage(1)
+                .codLanguage(SoftTokenMiddlewareEnums.CODE_LANGUAGE.getCode())
                 .telephone(request.getPhone())
                 .email(request.getEmail())
+                .build();
+    }
+
+    @Override
+    public SoftTokenValidateCodeMWRequest mapperRequest(String personId, SoftTokenValidateCodeEnrollmentRequest request) {
+        return SoftTokenValidateCodeMWRequest.builder()
+                .codPerson(Integer.valueOf(personId))
+                .codApplication(Integer.valueOf(CanalMW.GANAMOVIL.getCanal()))
+                .codCanal(Integer.valueOf(CanalMW.GANAMOVIL.getCanal()))
+                .codLanguage(SoftTokenMiddlewareEnums.CODE_LANGUAGE.getCode())
+                .enrollmentSecurityCode(request.getCode())
+                .build();
+    }
+
+    @Override
+    public SoftTokenValidateQuestionMWRequest mapperRequest(String personId, String deviceModel, SoftTokenValidationQuestionRequest request) {
+        return SoftTokenValidateQuestionMWRequest.builder()
+                .codPerson(Integer.valueOf(personId))
+                .codApplication(Integer.valueOf(CanalMW.GANAMOVIL.getCanal()))
+                .codCanal(Integer.valueOf(CanalMW.GANAMOVIL.getCanal()))
+                .codLanguage(SoftTokenMiddlewareEnums.CODE_LANGUAGE.getCode())
+                .answerQuestionSecurityEnrollment(request.getAnswerQuestion())
+                .model(deviceModel)
+                .build();
+    }
+
+    @Override
+    public SoftTokenMWRequest mapperRequestST(String personId) {
+        return SoftTokenMWRequest.builder()
+                .codPerson(Integer.valueOf(personId))
+                .codApplication(Integer.valueOf(CanalMW.GANAMOVIL.getCanal()))
+                .codCanal(Integer.valueOf(CanalMW.WEB.getCanal()))
+                .codLanguage(SoftTokenMiddlewareEnums.CODE_LANGUAGE.getCode())
+                .build();
+    }
+
+    @Override
+    public SoftTokenRegistrationTokenMWRequest mapperRequest(String personId, SoftTokenCodeTokenRequest request) {
+        return SoftTokenRegistrationTokenMWRequest.builder()
+                .codPerson(Integer.valueOf(personId))
+                .codApplication(Integer.valueOf(CanalMW.GANAMOVIL.getCanal()))
+                .codCanal(Integer.valueOf(CanalMW.WEB.getCanal()))
+                .codLanguage(SoftTokenMiddlewareEnums.CODE_LANGUAGE.getCode())
+                .token(request.getToken())
+                .build();
+    }
+
+    @Override
+    public SofTokenValidateMWRequest mapperRequestValidate(String personId) {
+        return SofTokenValidateMWRequest.builder()
+                .personId(personId)
+                .build();
+    }
+
+    @Override
+    public SofTokenGenerateTokenMWRequest mapperRequestGenerate(String personId) {
+        return SofTokenGenerateTokenMWRequest.builder()
+                .personId(personId)
+                .codCanal(CanalMW.WEB.getCanal())
+                .build();
+    }
+
+    @Override
+    public SofTokenEnrollmentMWRequest mapperRequestEnrollment(String personId, String deviceModel, SoftTokenEnrollmentRequest request) {
+        return SofTokenEnrollmentMWRequest.builder()
+                .personId(personId)
+                .deviceModel(deviceModel)
+                .telephone(request.getPhone())
+                .build();
+    }
+
+    @Override
+    public SoftTokenValidateTokenMWRequest mapperRequestToken(String personId, SoftTokenCodeTokenRequest request) {
+        return SoftTokenValidateTokenMWRequest.builder()
+                .personId(personId)
+                .token(request.getToken())
                 .build();
     }
 
@@ -78,6 +144,24 @@ public class SoftTokenMapper implements ISoftTokenMapper {
                         .textHelp(mw.getTextHelp())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public SoftTokenObtainParametersResponse convertResponse(SoftTokenObtainParametersMWResponse mwResponse) {
+        return SoftTokenObtainParametersResponse.builder()
+                .tokenSize(mwResponse.getTokenSize())
+                .tokenDuration(mwResponse.getTokenDuration())
+                .serialNumber(mwResponse.getSerialNumber())
+                .dateProcessed(mwResponse.getProcessDate())
+                .build();
+    }
+
+    @Override
+    public SoftTokenGenerateTokenResponse convertResponse(SoftTokenGenerateTokenMWResponse mwResponse) {
+        return SoftTokenGenerateTokenResponse.builder()
+                .token(mwResponse.getCodeToken())
+                .tokenDuration(mwResponse.getDurationToken())
+                .build();
     }
 
 }
