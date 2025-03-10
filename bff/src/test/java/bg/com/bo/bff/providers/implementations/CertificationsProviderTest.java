@@ -8,7 +8,9 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
+import bg.com.bo.bff.providers.dtos.response.certificates.CertificatesAccountsListMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.certificates.CertificatesTypeListMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
 import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -44,7 +46,7 @@ class CertificationsProviderTest {
     private final ClientToken clientTokenMock = ClientTokenFixture.withDefault();
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         httpClientFactoryMock = Mockito.mock(HttpClientConfig.class);
         tokenMiddlewareProviderMock = Mockito.mock(TokenMiddlewareProvider.class);
         middlewareConfig = MiddlewareConfigFixture.withDefault();
@@ -65,7 +67,7 @@ class CertificationsProviderTest {
                 DeviceMW.APP_VERSION.getCode()
         )));
         when(httpClientFactoryMock.create()).thenReturn(HttpClientBuilder.create().useSystemProperties().build());
-
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         provider = new CertificationsProvider(tokenMiddlewareProviderMock, middlewareConfig, httpClientFactoryMock, httpServletRequest);
         setField(provider, "middlewareConfig", middlewareConfig);
     }
@@ -73,7 +75,6 @@ class CertificationsProviderTest {
     @Test
     void getCertsTypes() throws IOException {
         CertificatesTypeListMWResponse expected = CertificatesTypeListMWResponseFixture.withDefaults();
-        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
         String jsonResponse = Util.objectToString(expected);
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
@@ -82,4 +83,18 @@ class CertificationsProviderTest {
 
         assertEquals(jsonResponse, json);
     }
+
+    @Test
+    void getAccountsOK() throws IOException {
+        CertificatesAccountsListMWResponse expected = CertificatesAccountsListMWResponseFixture.withDefaults();
+        String jsonResponse = Util.objectToString(expected);
+        stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        CertificatesAccountsListMWResponse response = provider.getAccountsList("1234");
+        String json = Util.objectToString(response);
+
+        assertEquals(jsonResponse, json);
+    }
+
+
 }

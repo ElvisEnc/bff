@@ -1,12 +1,17 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationAccountsResponse;
 import bg.com.bo.bff.application.dtos.response.certifications.CertificationTypesResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.ICertificationsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +36,11 @@ public class CertificationsController extends AbstractBFFController {
     }
 
     @Operation(summary = "Get Certificates Types", description = "Endpoint to get the certificates types")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Certification types list", content = @Content(schema = @Schema(implementation = CertificationTypesResponse.class, type = "array")))
+            }
+    )
     @GetMapping("/persons/{personId}/application/{appCode}")
     public ResponseEntity<ApiDataResponse<List<CertificationTypesResponse>>> getCertsTypes(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el numero de persona", example = "12345") String personId,
@@ -41,5 +51,19 @@ public class CertificationsController extends AbstractBFFController {
                 personId,
                 appCode
         )));
+    }
+
+    @Operation(summary = "Get Accounts List", description = "Endpoint to get a client´s accounts")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Accounts List", content = @Content(schema = @Schema(implementation = CertificationTypesResponse.class, type = "array")))
+            }
+    )
+    @GetMapping("accounts/persons/{personId}")
+    public ResponseEntity<ApiDataResponse<List<CertificationAccountsResponse>>> getAccountsList(
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el numero de persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(ApiDataResponse.of(service.getAccounts(personId)));
     }
 }

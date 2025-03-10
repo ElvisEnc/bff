@@ -1,5 +1,6 @@
 package bg.com.bo.bff.services.interfaces;
 
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationAccountsResponse;
 import bg.com.bo.bff.application.dtos.response.certifications.CertificationTypesResponse;
 
 import java.io.IOException;
@@ -9,5 +10,7 @@ import java.util.Map;
 public interface ICertificationsService {
 
     List<CertificationTypesResponse> getCertificateTypes(String personId, String appCode) throws IOException;
+
+    List<CertificationAccountsResponse> getAccounts(String personId) throws IOException;
 
 }

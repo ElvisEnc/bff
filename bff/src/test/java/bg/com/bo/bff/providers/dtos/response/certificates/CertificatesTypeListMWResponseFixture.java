@@ -22,4 +22,10 @@ public class CertificatesTypeListMWResponseFixture {
                 ))
                 .build();
     }
+
+    public static CertificatesTypeListMWResponse withEmptyData() {
+        return CertificatesTypeListMWResponse.builder()
+                .data(null)
+                .build();
+    }
 }

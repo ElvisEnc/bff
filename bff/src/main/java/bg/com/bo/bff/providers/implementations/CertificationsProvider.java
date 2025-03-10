@@ -3,6 +3,7 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
 import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
 import bg.com.bo.bff.providers.interfaces.ICertificationsProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
@@ -36,5 +37,14 @@ public class CertificationsProvider extends MiddlewareProvider<CertificationsMid
                 appCode
         );
         return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), CertificatesTypeListMWResponse.class);
+    }
+
+    @Override
+    public CertificatesAccountsListMWResponse getAccountsList(String personId) throws IOException {
+        String url = baseURL + String.format(
+                CertificationsMiddlewareService.GET_ACCOUNTS.getServiceURL(),
+                personId
+        );
+        return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), CertificatesAccountsListMWResponse.class);
     }
 }
