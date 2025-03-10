@@ -2,7 +2,6 @@ package bg.com.bo.bff.providers.dtos.response.certificates;
 
 import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CertificatesTypeListMWResponseFixture {
