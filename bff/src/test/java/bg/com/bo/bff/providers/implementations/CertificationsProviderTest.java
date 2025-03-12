@@ -10,8 +10,12 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.providers.dtos.response.certificates.CertificatesAccountsListMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.certificates.CertificatesTypeListMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.certificates.CertificationsHistoryMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.certificates.CertificationsPreferredExchMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
 import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsHistoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsPreferredExchMWResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -94,6 +98,30 @@ class CertificationsProviderTest {
         String json = Util.objectToString(response);
 
         assertEquals(jsonResponse, json);
+    }
+
+    @Test
+    void getPreferredExchangeRateOK() throws IOException {
+        CertificationsPreferredExchMWResponse expected = CertificationsPreferredExchMWResponseFixture.withDefaults();
+        String jsonExpected = Util.objectToString(expected);
+        stubFor(get(anyUrl()).willReturn(okJson(jsonExpected)));
+
+        CertificationsPreferredExchMWResponse response = provider.getPreferredExRate("1234");
+        String json = Util.objectToString(response);
+
+        assertEquals(jsonExpected, json);
+    }
+
+    @Test
+    void getCertificationsHistoryOK() throws IOException {
+        CertificationsHistoryMWResponse expected = CertificationsHistoryMWResponseFixture.withDefaults();
+        String jsonExpected = Util.objectToString(expected);
+        stubFor(get(anyUrl()).willReturn(okJson(jsonExpected)));
+
+        CertificationsHistoryMWResponse reponse = provider.getCertificationsHistory("1234");
+        String json = Util.objectToString(reponse);
+
+        assertEquals(jsonExpected, json);
     }
 
 
