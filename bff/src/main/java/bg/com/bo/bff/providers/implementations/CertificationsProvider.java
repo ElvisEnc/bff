@@ -5,6 +5,8 @@ import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
 import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsHistoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsPreferredExchMWResponse;
 import bg.com.bo.bff.providers.interfaces.ICertificationsProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.certifications.CertificationsMiddlewareError;
@@ -46,5 +48,23 @@ public class CertificationsProvider extends MiddlewareProvider<CertificationsMid
                 personId
         );
         return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), CertificatesAccountsListMWResponse.class);
+    }
+
+    @Override
+    public CertificationsPreferredExchMWResponse getPreferredExRate(String personId) throws IOException {
+        String url = baseURL + String.format(
+                CertificationsMiddlewareService.GET_PREFERRED_EXCHANGE_RATE.getServiceURL(),
+                personId
+        );
+        return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), CertificationsPreferredExchMWResponse.class);
+    }
+
+    @Override
+    public CertificationsHistoryMWResponse getCertificationsHistory(String personId) throws IOException {
+        String url = baseURL + String.format(
+                CertificationsMiddlewareService.GET_CERTIFICATION_HISTORY.getServiceURL(),
+                personId
+        );
+        return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), CertificationsHistoryMWResponse.class);
     }
 }

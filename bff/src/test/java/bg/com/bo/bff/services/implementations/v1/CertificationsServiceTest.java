@@ -1,13 +1,15 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationAccountsResponse;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationTypesResponse;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationResponseFixture;
+import bg.com.bo.bff.application.dtos.response.certifications.*;
 import bg.com.bo.bff.mappings.providers.certifications.implementation.CertificationsMapper;
 import bg.com.bo.bff.providers.dtos.response.certificates.CertificatesAccountsListMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.certificates.CertificatesTypeListMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.certificates.CertificationsHistoryMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.certificates.CertificationsPreferredExchMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
 import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsHistoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsPreferredExchMWResponse;
 import bg.com.bo.bff.providers.interfaces.ICertificationsProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -106,5 +108,74 @@ class CertificationsServiceTest {
         assertEquals(expected.size(), response.size());
     }
 
+    @Test
+    void getPrefExchRateOK() throws IOException {
+        List<CertificationPrefExchRateResponse> expected = CertificationResponseFixture.withDefaultsPrefExchRate();
+        CertificationsPreferredExchMWResponse mdwExpected = CertificationsPreferredExchMWResponseFixture.withDefaults();
+        when(provider.getPreferredExRate(any())).thenReturn(mdwExpected);
+        when(certsMapper.convertCertsPreferredExChaRate(mdwExpected)).thenReturn(expected);
+
+        List<CertificationPrefExchRateResponse> response = service.getPreferredExchRate("1234");
+
+        assertEquals(expected.size(), response.size());
+    }
+
+    @Test
+    void getPrefExchRateEmptyData() throws IOException {
+        List<CertificationPrefExchRateResponse> expected = CertificationResponseFixture.withDefaultsPrefExchRate();
+        CertificationsPreferredExchMWResponse mdwExpected = CertificationsPreferredExchMWResponseFixture.withEmptyData();
+        when(provider.getPreferredExRate(any())).thenReturn(mdwExpected);
+        when(certsMapper.convertCertsPreferredExChaRate(mdwExpected)).thenReturn(expected);
+
+        List<CertificationPrefExchRateResponse> response = service.getPreferredExchRate("1234");
+
+        assertEquals(expected.size(), response.size());
+    }
+
+    @Test
+    void getPrefExchRateNull() throws IOException {
+        List<CertificationPrefExchRateResponse> expected = CertificationResponseFixture.withDefaultsPrefExchRate();
+        when(provider.getPreferredExRate(any())).thenReturn(null);
+        when(certsMapper.convertCertsPreferredExChaRate(any())).thenReturn(expected);
+
+        List<CertificationPrefExchRateResponse> response = service.getPreferredExchRate("1234");
+
+        assertEquals(expected.size(), response.size());
+    }
+
+    @Test
+    void getCertsHistoryOK() throws IOException {
+        List<CertificationHistoryResponse> expected = CertificationResponseFixture.withDefaultsHistory();
+        CertificationsHistoryMWResponse mdwExpected = CertificationsHistoryMWResponseFixture.withDefaults();
+        when(provider.getCertificationsHistory(any())).thenReturn(mdwExpected);
+        when(certsMapper.convertCertificationHistory(mdwExpected)).thenReturn(expected);
+
+        List<CertificationHistoryResponse> response = service.getCertificationsHistory("1234");
+
+        assertEquals(expected.size(), response.size());
+    }
+
+    @Test
+    void getCertsHistoryEmptyData() throws IOException {
+        List<CertificationHistoryResponse> expected = CertificationResponseFixture.withDefaultsHistory();
+        CertificationsHistoryMWResponse mdwExpected = CertificationsHistoryMWResponseFixture.withEmptyData();
+        when(provider.getCertificationsHistory(any())).thenReturn(mdwExpected);
+        when(certsMapper.convertCertificationHistory(mdwExpected)).thenReturn(expected);
+
+        List<CertificationHistoryResponse> response = service.getCertificationsHistory("1234");
+
+        assertEquals(expected.size(), response.size());
+    }
+
+    @Test
+    void getCertsHistoryNull() throws IOException {
+        List<CertificationHistoryResponse> expected = CertificationResponseFixture.withDefaultsHistory();
+        when(provider.getCertificationsHistory(any())).thenReturn(null);
+        when(certsMapper.convertCertificationHistory(any())).thenReturn(expected);
+
+        List<CertificationHistoryResponse> response = service.getCertificationsHistory("1234");
+
+        assertEquals(expected.size(), response.size());
+    }
 
 }

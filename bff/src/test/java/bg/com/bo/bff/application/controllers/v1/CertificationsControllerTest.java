@@ -1,9 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationAccountsResponse;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationResponseFixture;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationTypesResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.*;
 import bg.com.bo.bff.services.interfaces.ICertificationsService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,18 +36,11 @@ class CertificationsControllerTest {
     private ICertificationsService service;
 
     private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .build();
-
-        this.objectMapper = new ObjectMapper()
-                .findAndRegisterModules()
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false)
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
 
         MockHttpServletRequest mockRequest = HeadersDataFixture.getMockHttpServletRequest();
 
@@ -70,7 +61,6 @@ class CertificationsControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
-
         verify(service).getCertificateTypes(any(), any());
     }
 
@@ -88,8 +78,41 @@ class CertificationsControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
-
         verify(service).getAccounts(any());
+    }
+
+    @Test
+    void getPrefExchRateOK() throws Exception {
+        List<CertificationPrefExchRateResponse> expected = CertificationResponseFixture.withDefaultsPrefExchRate();
+        when(service.getPreferredExchRate(any())).thenReturn(expected);
+
+        String url = "/api/v1/certifications/pref-exchange/persons/1234";
+        mockMvc.perform(get(url)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        verify(service).getPreferredExchRate(any());
+    }
+
+    @Test
+    void getHistoricOK() throws Exception {
+        List<CertificationHistoryResponse> expected = CertificationResponseFixture.withDefaultsHistory();
+        when(service.getCertificationsHistory(any())).thenReturn(expected);
+
+        String url = "/api/v1/certifications/historic-certs/persons/1234";
+        mockMvc.perform(get(url)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        verify(service).getCertificationsHistory(any());
     }
 
 }
