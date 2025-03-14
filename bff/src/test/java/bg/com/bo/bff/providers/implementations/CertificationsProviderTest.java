@@ -8,14 +8,9 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
-import bg.com.bo.bff.providers.dtos.response.certificates.CertificatesAccountsListMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.certificates.CertificatesTypeListMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.certificates.CertificationsHistoryMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.certificates.CertificationsPreferredExchMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsHistoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsPreferredExchMWResponse;
+import bg.com.bo.bff.providers.dtos.request.certifications.*;
+import bg.com.bo.bff.providers.dtos.response.certificates.*;
+import bg.com.bo.bff.providers.dtos.response.certifications.*;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -118,11 +113,49 @@ class CertificationsProviderTest {
         String jsonExpected = Util.objectToString(expected);
         stubFor(get(anyUrl()).willReturn(okJson(jsonExpected)));
 
-        CertificationsHistoryMWResponse reponse = provider.getCertificationsHistory("1234");
-        String json = Util.objectToString(reponse);
+        CertificationsHistoryMWResponse response = provider.getCertificationsHistory("1234");
+        String json = Util.objectToString(response);
 
         assertEquals(jsonExpected, json);
     }
 
+    @Test
+    void getConfigOK() throws IOException {
+        CertificationConfigMWRequest request = CertificationConfigMWRequestFixture.withDefaults();
+        CertificationConfigMWResponse expected = CertificationConfigMWResponseFixture.withDefaults();
+        String jsonExpected = Util.objectToString(expected);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonExpected)));
+
+        CertificationConfigMWResponse response = provider.getConfig(request);
+        String json = Util.objectToString(response);
+
+        assertEquals(jsonExpected, json);
+    }
+
+    @Test
+    void getPriceOK() throws IOException {
+        CertificationPriceMWRequest request = CertificationPriceMWRequestFixture.withDefaults();
+        CertificationPriceMWResponse expected = CertificationPriceMWResponseFixture.withDefaults();
+        String jsonExpected = Util.objectToString(expected);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonExpected)));
+
+        CertificationPriceMWResponse response = provider.getCertificationPrice(request);
+        String json = Util.objectToString(response);
+
+        assertEquals(jsonExpected, json);
+    }
+
+    @Test
+    void saveRequestOK() throws IOException {
+        SaveCertificationMWRequest request = SaveCertificationMWRequestFixture.withDefaults();
+        CertificationSaveRequestMWResponse expected = CertificationSaveRequestMWResponseFixture.withDefaults();
+        String jsonExpected = Util.objectToString(expected);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonExpected)));
+
+        CertificationSaveRequestMWResponse  response = provider.saveCertificateRequest(request);
+        String json = Util.objectToString(response);
+
+        assertEquals(jsonExpected, json);
+    }
 
 }

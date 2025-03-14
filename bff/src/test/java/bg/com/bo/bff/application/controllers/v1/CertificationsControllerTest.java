@@ -1,11 +1,12 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
+import bg.com.bo.bff.application.dtos.request.certifications.CertificationConfigRequestFixture;
+import bg.com.bo.bff.application.dtos.request.certifications.CertificationPriceRequestFixture;
+import bg.com.bo.bff.application.dtos.request.certifications.SaveCertificationRequestFixture;
 import bg.com.bo.bff.application.dtos.response.certifications.*;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.interfaces.ICertificationsService;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -113,6 +115,62 @@ class CertificationsControllerTest {
                 .andReturn();
 
         verify(service).getCertificationsHistory(any());
+    }
+
+    @Test
+    void getConfigOK() throws Exception {
+        String request = Util.objectToString(CertificationConfigRequestFixture.withDefaults());
+        CertificationConfigResponse expected = CertificationResponseFixture.withDefaultsConfig();
+        when(service.getConfig(any())).thenReturn(expected);
+
+        String url = "/api/v1/certifications/configs";
+        mockMvc.perform(post(url)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        verify(service).getConfig(any());
+    }
+
+    @Test
+    void getPriceOK() throws Exception {
+        String request = Util.objectToString(CertificationPriceRequestFixture.withDefaults());
+        CertificationPriceResponse expected = CertificationResponseFixture.withDefaultsPrice();
+        when(service.getCertificationPrice(any())).thenReturn(expected);
+
+        String url = "/api/v1/certifications/price";
+        mockMvc.perform(post(url)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        verify(service).getCertificationPrice(any());
+    }
+
+    @Test
+    void saveOK() throws Exception {
+        String request = Util.objectToString(SaveCertificationRequestFixture.withDefaults());
+        SaveCertificationResponse expected = CertificationResponseFixture.withDefaultsSave();
+        when(service.saveCertRequest(any())).thenReturn(expected);
+
+        String url = "/api/v1/certifications/save-request";
+        mockMvc.perform(post(url)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        verify(service).saveCertRequest(any());
     }
 
 }

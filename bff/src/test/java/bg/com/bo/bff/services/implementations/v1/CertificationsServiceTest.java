@@ -1,15 +1,10 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.certifications.*;
 import bg.com.bo.bff.application.dtos.response.certifications.*;
 import bg.com.bo.bff.mappings.providers.certifications.implementation.CertificationsMapper;
-import bg.com.bo.bff.providers.dtos.response.certificates.CertificatesAccountsListMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.certificates.CertificatesTypeListMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.certificates.CertificationsHistoryMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.certificates.CertificationsPreferredExchMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsHistoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsPreferredExchMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certificates.*;
+import bg.com.bo.bff.providers.dtos.response.certifications.*;
 import bg.com.bo.bff.providers.interfaces.ICertificationsProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -176,6 +171,58 @@ class CertificationsServiceTest {
         List<CertificationHistoryResponse> response = service.getCertificationsHistory("1234");
 
         assertEquals(expected.size(), response.size());
+    }
+
+    @Test
+    void getConfigOk() throws IOException {
+        CertificationConfigRequest request = CertificationConfigRequestFixture.withDefaults();
+        CertificationConfigMWResponse mdwExpected = CertificationConfigMWResponseFixture.withDefaults();
+        CertificationConfigResponse expected = CertificationResponseFixture.withDefaultsConfig();
+        when(provider.getConfig(any())).thenReturn(mdwExpected);
+        when(certsMapper.convertCertificationConfig(mdwExpected)).thenReturn(expected);
+
+        CertificationConfigResponse response = service.getConfig(request);
+
+        assertEquals(expected.getMessage(), response.getMessage());
+    }
+
+    @Test
+    void getPriceOk() throws IOException {
+        CertificationPriceRequest request = CertificationPriceRequestFixture.withDefaults();
+        CertificationPriceMWResponse mdwExpected = CertificationPriceMWResponseFixture.withDefaults();
+        CertificationPriceResponse expected = CertificationResponseFixture.withDefaultsPrice();
+        when(provider.getCertificationPrice(any())).thenReturn(mdwExpected);
+        when(certsMapper.convertCertificationPrice(mdwExpected)).thenReturn(expected);
+
+        CertificationPriceResponse response = service.getCertificationPrice(request);
+
+        assertEquals(expected.getAmount(), response.getAmount());
+    }
+
+    @Test
+    void saveRequestOk() throws IOException {
+        SaveCertificationRequest request = SaveCertificationRequestFixture.withDefaults();
+        CertificationSaveRequestMWResponse mdwExpected = CertificationSaveRequestMWResponseFixture.withDefaults();
+        SaveCertificationResponse expected = CertificationResponseFixture.withDefaultsSave();
+        when(provider.saveCertificateRequest(any())).thenReturn(mdwExpected);
+        when(certsMapper.convertSaveCertification(mdwExpected)).thenReturn(expected);
+
+        SaveCertificationResponse response = service.saveCertRequest(request);
+
+        assertEquals(expected.getMessage(), response.getMessage());
+    }
+
+    @Test
+    void saveRequestError() throws IOException {
+        SaveCertificationRequest request = SaveCertificationRequestFixture.withDefaults();
+        CertificationSaveRequestMWResponse mdwExpected = CertificationSaveRequestMWResponseFixture.withError();
+        SaveCertificationResponse expected = CertificationResponseFixture.withDefaultsSave();
+        when(provider.saveCertificateRequest(any())).thenReturn(mdwExpected);
+        when(certsMapper.convertSaveCertification(mdwExpected)).thenReturn(expected);
+
+        SaveCertificationResponse response = service.saveCertRequest(request);
+
+        assertEquals(expected.getMessage(), response.getMessage());
     }
 
 }

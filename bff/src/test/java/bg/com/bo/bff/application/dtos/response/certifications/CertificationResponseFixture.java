@@ -1,5 +1,6 @@
 package bg.com.bo.bff.application.dtos.response.certifications;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class CertificationResponseFixture {
         );
     }
 
-    public static List<CertificationPrefExchRateResponse> withDefaultsPrefExchRate(){
+    public static List<CertificationPrefExchRateResponse> withDefaultsPrefExchRate() {
         return Arrays.asList(
                 CertificationPrefExchRateResponse.builder()
                         .buyRateUFV("2.58274")
@@ -63,7 +64,7 @@ public class CertificationResponseFixture {
         );
     }
 
-    public static List<CertificationHistoryResponse> withDefaultsHistory(){
+    public static List<CertificationHistoryResponse> withDefaultsHistory() {
         return Arrays.asList(
                 CertificationHistoryResponse.builder()
                         .requestNumber("1268870")
@@ -86,6 +87,32 @@ public class CertificationResponseFixture {
                         .mail("carlos.g.cruz.a3@gmail.com")
                         .build()
         );
+    }
+
+    public static CertificationConfigResponse withDefaultsConfig() {
+        return CertificationConfigResponse.builder()
+                .certPrice(new BigDecimal(123))
+                .message("message")
+                .build();
+    }
+
+    public static CertificationPriceResponse withDefaultsPrice() {
+        return CertificationPriceResponse.builder()
+                .roleId(1)
+                .eventId(8)
+                .amount(123)
+                .currencyDes("BS")
+                .currencyCode(1)
+                .rangeFrom(2)
+                .rangeTo(2)
+                .rangeType("text")
+                .build();
+    }
+
+    public static SaveCertificationResponse withDefaultsSave(){
+        return SaveCertificationResponse.builder()
+                .message("success")
+                .build();
     }
 
 }

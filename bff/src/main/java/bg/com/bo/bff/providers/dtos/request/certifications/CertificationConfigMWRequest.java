@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CertificateTypeMWRequest {
+public class CertificationConfigMWRequest {
 
-    private Integer requestCode;
-    private Integer typeCode;
-    private String description;
+    private String personId;
+    private String languageCode;
+    private String requestCode;
+    private String requestTypeCode;
 
 }
