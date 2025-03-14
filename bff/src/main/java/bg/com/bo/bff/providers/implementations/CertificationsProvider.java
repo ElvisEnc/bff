@@ -3,8 +3,10 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
+import bg.com.bo.bff.providers.dtos.request.certifications.CertificationConfigMWRequest;
+import bg.com.bo.bff.providers.dtos.request.certifications.CertificationPriceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.certifications.SaveCertificationMWRequest;
+import bg.com.bo.bff.providers.dtos.response.certifications.*;
 import bg.com.bo.bff.providers.interfaces.ICertificationsProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.certifications.CertificationsMiddlewareError;
@@ -46,5 +48,41 @@ public class CertificationsProvider extends MiddlewareProvider<CertificationsMid
                 personId
         );
         return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), CertificatesAccountsListMWResponse.class);
+    }
+
+    @Override
+    public CertificationsPreferredExchMWResponse getPreferredExRate(String personId) throws IOException {
+        String url = baseURL + String.format(
+                CertificationsMiddlewareService.GET_PREFERRED_EXCHANGE_RATE.getServiceURL(),
+                personId
+        );
+        return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), CertificationsPreferredExchMWResponse.class);
+    }
+
+    @Override
+    public CertificationsHistoryMWResponse getCertificationsHistory(String personId) throws IOException {
+        String url = baseURL + String.format(
+                CertificationsMiddlewareService.GET_CERTIFICATION_HISTORY.getServiceURL(),
+                personId
+        );
+        return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), CertificationsHistoryMWResponse.class);
+    }
+
+    @Override
+    public CertificationConfigMWResponse getConfig(CertificationConfigMWRequest request) throws IOException {
+        String url = baseURL + CertificationsMiddlewareService.GET_CONFIGS.getServiceURL();
+        return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, CertificationConfigMWResponse.class);
+    }
+
+    @Override
+    public CertificationPriceMWResponse getCertificationPrice(CertificationPriceMWRequest request) throws IOException {
+        String url = baseURL + CertificationsMiddlewareService.GET_CERTIFICATION_PRICE.getServiceURL();
+        return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, CertificationPriceMWResponse.class);
+    }
+
+    @Override
+    public CertificationSaveRequestMWResponse saveCertificateRequest(SaveCertificationMWRequest request) throws IOException {
+        String url = baseURL + CertificationsMiddlewareService.SAVE_CERTIFICATE_REQUEST.getServiceURL();
+        return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, CertificationSaveRequestMWResponse.class);
     }
 }

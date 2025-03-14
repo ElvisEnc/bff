@@ -1,11 +1,12 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationAccountsResponse;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationTypesResponse;
+import bg.com.bo.bff.application.dtos.request.certifications.CertificationConfigRequest;
+import bg.com.bo.bff.application.dtos.request.certifications.CertificationPriceRequest;
+import bg.com.bo.bff.application.dtos.request.certifications.SaveCertificationRequest;
+import bg.com.bo.bff.application.dtos.response.certifications.*;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public interface ICertificationsService {
 
@@ -13,4 +14,13 @@ public interface ICertificationsService {
 
     List<CertificationAccountsResponse> getAccounts(String personId) throws IOException;
 
+    List<CertificationPrefExchRateResponse> getPreferredExchRate(String personId) throws IOException;
+
+    List<CertificationHistoryResponse> getCertificationsHistory(String personId) throws IOException;
+
+    CertificationConfigResponse getConfig(CertificationConfigRequest request) throws IOException;
+
+    CertificationPriceResponse getCertificationPrice(CertificationPriceRequest request) throws IOException;
+
+    SaveCertificationResponse saveCertRequest(SaveCertificationRequest request) throws IOException;
 }
