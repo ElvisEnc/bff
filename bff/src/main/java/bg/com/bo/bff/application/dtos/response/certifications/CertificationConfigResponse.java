@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.mapstruct.ap.internal.util.Message;
 
 import java.math.BigDecimal;
 

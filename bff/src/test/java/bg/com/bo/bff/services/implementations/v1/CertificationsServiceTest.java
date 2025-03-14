@@ -3,8 +3,6 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.certifications.*;
 import bg.com.bo.bff.application.dtos.response.certifications.*;
 import bg.com.bo.bff.mappings.providers.certifications.implementation.CertificationsMapper;
-import bg.com.bo.bff.providers.dtos.request.certifications.CertificationConfigMWRequest;
-import bg.com.bo.bff.providers.dtos.request.certifications.CertificationConfigMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.certificates.*;
 import bg.com.bo.bff.providers.dtos.response.certifications.*;
 import bg.com.bo.bff.providers.interfaces.ICertificationsProvider;

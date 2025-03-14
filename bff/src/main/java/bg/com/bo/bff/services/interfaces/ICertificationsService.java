@@ -4,7 +4,6 @@ import bg.com.bo.bff.application.dtos.request.certifications.CertificationConfig
 import bg.com.bo.bff.application.dtos.request.certifications.CertificationPriceRequest;
 import bg.com.bo.bff.application.dtos.request.certifications.SaveCertificationRequest;
 import bg.com.bo.bff.application.dtos.response.certifications.*;
-import bg.com.bo.bff.providers.dtos.request.certifications.SaveCertificationMWRequest;
 
 import java.io.IOException;
 import java.util.List;
