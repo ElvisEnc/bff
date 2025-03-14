@@ -12,28 +12,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificationPriceResponse {
 
-    @Schema(description = "")
+    @Schema(description = "Identificador del rol")
     private Integer roleId;
 
-    @Schema(description = "")
+    @Schema(description = "Identificador del evento")
     private Integer eventId;
 
-    @Schema(description = "")
+    @Schema(description = "Monto que se debe pagar")
     private Integer amount;
 
-    @Schema(description = "")
+    @Schema(description = "Descripcion de la moneda")
     private String currencyDes;
 
-    @Schema(description = "")
+    @Schema(description = "Codigo de la moneda")
     private Integer currencyCode;
 
-    @Schema(description = "")
+    @Schema(description = "Rango desde")
     private Integer rangeFrom;
 
-    @Schema(description = "")
+    @Schema(description = "Rango hasta")
     private Integer rangeTo;
 
-    @Schema(description = "")
+    @Schema(description = "Tipo de rango")
     private String rangeType;
 
 }

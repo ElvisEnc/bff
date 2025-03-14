@@ -2,9 +2,10 @@ package bg.com.bo.bff.application.dtos.request.certifications;
 
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder

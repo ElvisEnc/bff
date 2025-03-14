@@ -12,31 +12,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SaveCertificationRequest {
 
-    @Schema(description = "")
+    @Schema(description = "Numero de Persona")
     private String personId;
 
-    @Schema(description = "")
+    @Schema(description = "Identificador de la cuenta")
     private String accountId;
 
-    @Schema(description = "")
+    @Schema(description = "Codigo de Cargo de Tarifa")
     private String chargeFeeId;
 
-    @Schema(description = "")
+    @Schema(description = "Codigo de tipo de solicitud")
     private String typeCode;
 
-    @Schema(description = "")
+    @Schema(description = "Codigo de la solicitud")
     private String requestCode;
 
-    @Schema(description = "")
+    @Schema(description = "Numero de NIT del cliente")
     private String nit;
 
-    @Schema(description = "")
+    @Schema(description = "Nombre del cliente")
     private String clientName;
 
-    @Schema(description = "")
+    @Schema(description = "Fecha de inicio")
     private String initDate;
 
-    @Schema(description = "")
+    @Schema(description = "Fecha de fin")
     private String endDate;
 
 }
