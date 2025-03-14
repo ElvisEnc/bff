@@ -1,10 +1,10 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationAccountsResponse;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationHistoryResponse;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationPrefExchRateResponse;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationTypesResponse;
+import bg.com.bo.bff.application.dtos.request.certifications.CertificationConfigRequest;
+import bg.com.bo.bff.application.dtos.request.certifications.CertificationPriceRequest;
+import bg.com.bo.bff.application.dtos.request.certifications.SaveCertificationRequest;
+import bg.com.bo.bff.application.dtos.response.certifications.*;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.ICertificationsService;
@@ -15,12 +15,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -86,7 +84,7 @@ public class CertificationsController extends AbstractBFFController {
     @Operation(summary = "Get Preferred Exchange Rate", description = "Endpoint to get the preferred exchange rate")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Accounts List", content = @Content(schema = @Schema(implementation = CertificationPrefExchRateResponse.class, type = "array")))
+                    @ApiResponse(responseCode = "200", description = "Accounts List", content = @Content(schema = @Schema(implementation = CertificationHistoryResponse.class, type = "array")))
             }
     )
     @GetMapping("historic-certs/persons/{personId}")
@@ -96,4 +94,47 @@ public class CertificationsController extends AbstractBFFController {
         getDeviceDataHeader();
         return ResponseEntity.ok(ApiDataResponse.of(service.getCertificationsHistory(personId)));
     }
+
+    @Operation(summary = "Get Certifications Configs", description = "Endpoint to obtain the configurations")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Accounts List", content = @Content(schema = @Schema(implementation = CertificationPrefExchRateResponse.class)))
+            }
+    )
+    @PostMapping("/configs")
+    public ResponseEntity<ApiDataResponse<CertificationConfigResponse>> getConfig(
+            @RequestBody @Valid CertificationConfigRequest request
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(ApiDataResponse.of(service.getConfig(request)));
+    }
+
+    @Operation(summary = "Get Certifications Price", description = "Endpoint to calculate certifications price")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Accounts List", content = @Content(schema = @Schema(implementation = CertificationPriceResponse.class)))
+            }
+    )
+    @PostMapping("/price")
+    public ResponseEntity<ApiDataResponse<CertificationPriceResponse>> getCertificationPrice(
+            @RequestBody @Valid CertificationPriceRequest request
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(ApiDataResponse.of(service.getCertificationPrice(request)));
+    }
+
+    @Operation(summary = "Save Certification Request", description = "Endpoint save a certification request")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Accounts List", content = @Content(schema = @Schema(implementation = SaveCertificationResponse.class)))
+            }
+    )
+    @PostMapping("/save-request")
+    public ResponseEntity<ApiDataResponse<SaveCertificationResponse>> saveRequest(
+            @RequestBody @Valid SaveCertificationRequest request
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(ApiDataResponse.of(service.saveCertRequest(request)));
+    }
+
 }

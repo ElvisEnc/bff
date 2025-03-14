@@ -1,14 +1,8 @@
 package bg.com.bo.bff.mappings.providers.certifications.implementation;
 
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationAccountsResponse;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationHistoryResponse;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationPrefExchRateResponse;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationTypesResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.*;
 import bg.com.bo.bff.mappings.providers.certifications.interfaces.ICertificationsMapper;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsHistoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsPreferredExchMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -94,6 +88,39 @@ public class CertificationsMapper implements ICertificationsMapper {
                         .mail(mdw.getMail())
                         .build()
                 ).toList();
+    }
+
+    @Override
+    public CertificationConfigResponse convertCertificationConfig(CertificationConfigMWResponse mdwResponse) {
+        return CertificationConfigResponse.builder()
+                .certPrice(mdwResponse.getData().getCertPrice())
+                .message(mdwResponse.getData().getMessage())
+                .build();
+    }
+
+    @Override
+    public CertificationPriceResponse convertCertificationPrice(CertificationPriceMWResponse mdwResponse) {
+        return CertificationPriceResponse.builder()
+                .roleId(mdwResponse.getRoleId())
+                .eventId(mdwResponse.getEventId())
+                .amount(mdwResponse.getAmount())
+                .currencyDes(mdwResponse.getCurrencyDes())
+                .currencyCode(mdwResponse.getCurrencyCode())
+                .rangeFrom(mdwResponse.getRangeFrom())
+                .rangeTo(mdwResponse.getRangeTo())
+                .rangeType(mdwResponse.getRangeType())
+                .build();
+    }
+
+    @Override
+    public SaveCertificationResponse convertSaveCertification(CertificationSaveRequestMWResponse mdwResponse) {
+        if (!mdwResponse.getResponseCode().equals("COD000"))
+            return SaveCertificationResponse.builder()
+                    .message("Hubo un error al realizar la solicitud del certificado.")
+                    .build();
+        return SaveCertificationResponse.builder()
+                .message("La solicitud fue registrada correctamente.")
+                .build();
     }
 
 }

@@ -1,12 +1,11 @@
 package bg.com.bo.bff.providers.interfaces;
 
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsHistoryMWResponse;
-import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsPreferredExchMWResponse;
+import bg.com.bo.bff.providers.dtos.request.certifications.CertificationConfigMWRequest;
+import bg.com.bo.bff.providers.dtos.request.certifications.CertificationPriceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.certifications.SaveCertificationMWRequest;
+import bg.com.bo.bff.providers.dtos.response.certifications.*;
 
 import java.io.IOException;
-import java.util.Map;
 
 public interface ICertificationsProvider {
 
@@ -16,6 +15,12 @@ public interface ICertificationsProvider {
 
     CertificationsPreferredExchMWResponse getPreferredExRate(String personId) throws IOException;
 
-    CertificationsHistoryMWResponse getCertificationsHistory(String personId)  throws IOException;
+    CertificationsHistoryMWResponse getCertificationsHistory(String personId) throws IOException;
+
+    CertificationConfigMWResponse getConfig(CertificationConfigMWRequest request) throws IOException;
+
+    CertificationPriceMWResponse getCertificationPrice(CertificationPriceMWRequest request) throws IOException;
+
+    CertificationSaveRequestMWResponse saveCertificateRequest(SaveCertificationMWRequest request) throws IOException;
 
 }
