@@ -48,9 +48,9 @@ public class LoansService implements ILoansService {
     }
 
     @Override
-    public List<ListLoansResponse> getListLoansByPerson(String personId, ListLoansRequest request) throws IOException {
+    public List<ListLoansResponse> getListLoansByPerson(String personId, String clientId, ListLoansRequest request) throws IOException {
         Boolean refreshData = request.getRefreshData();
-        List<ListLoansResponse> list = self.getServiceCache(personId, refreshData);
+        List<ListLoansResponse> list = self.getServiceCache(personId, clientId, refreshData);
 
         String field = (request.getFilters().getOrder() != null) ? request.getFilters().getOrder().getField() : "EXPIRATION_DATE";
         boolean desc = (request.getFilters().getOrder() != null) && request.getFilters().getOrder().getDesc();
@@ -70,8 +70,8 @@ public class LoansService implements ILoansService {
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loans:' + #personId", condition = "#refreshData == false")},
             put = {@CachePut(value = CacheConstants.USER_DATA, key = "'loans:' + #personId", condition = "#refreshData == true")})
-    protected List<ListLoansResponse> getServiceCache(String personId, Boolean refreshData) throws IOException {
-        ListLoansMWResponse mwResponse = provider.getListLoansByPerson(personId);
+    protected List<ListLoansResponse> getServiceCache(String personId, String clientId, Boolean refreshData) throws IOException {
+        ListLoansMWResponse mwResponse = provider.getListLoansByPerson(personId, clientId);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
 
@@ -137,7 +137,7 @@ public class LoansService implements ILoansService {
 
     @Override
     public LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId) throws IOException {
-        List<ListLoansResponse> list = self.getServiceCache(personId, false);
+        List<ListLoansResponse> list = self.getServiceCache(personId, clientId,false);
         boolean existData = list.stream().anyMatch(response -> response.getLoanId().equals(loanId) && response.getClientId().equals(clientId));
         if (!existData) {
             throw new GenericException(LoansMiddlewareError.MDWPRE_NOT_FOUND);

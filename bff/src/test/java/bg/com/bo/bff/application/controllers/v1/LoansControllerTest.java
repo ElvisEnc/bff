@@ -63,11 +63,11 @@ class LoansControllerTest {
         // Arrange
         ListLoansRequest requestMock = LoansRequestFixture.withDefaultListLoansRequest();
         List<ListLoansResponse> expectedResponse = LoansResponseFixture.withDataDefaultListLoansResponse();
-        when(service.getListLoansByPerson(any(), any())).thenReturn(expectedResponse);
+        when(service.getListLoansByPerson(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/loans/persons/{personId}";
-        MvcResult result = mockMvc.perform(post(path, "123456")
+        String path = "/api/v1/loans/persons/1234/clients/4321";
+        MvcResult result = mockMvc.perform(post(path)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Util.objectToString(requestMock)))
@@ -81,7 +81,7 @@ class LoansControllerTest {
 
         assertNotNull(result);
         assertEquals(expectedJsonResponse, response);
-        verify(service).getListLoansByPerson(any(), any());
+        verify(service).getListLoansByPerson(any(), any(), any());
     }
 
     @Test

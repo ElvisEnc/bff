@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public interface ILoansService {
 
-    List<ListLoansResponse> getListLoansByPerson(String personId, ListLoansRequest request) throws IOException;
+    List<ListLoansResponse> getListLoansByPerson(String personId, String clientId, ListLoansRequest request) throws IOException;
 
     List<LoanPaymentsResponse> getLoanPayments(String loanId, String personId, LoanPaymentsRequest request) throws IOException;
 

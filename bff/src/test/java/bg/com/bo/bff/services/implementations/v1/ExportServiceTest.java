@@ -49,11 +49,11 @@ class ExportServiceTest {
         when(statementService.getAccountStatementsCache(any(), any(), any(), any())).thenReturn(expectedResponse);
         when(pdfProvider.generatePdf(any(), any(), any())).thenReturn("data".getBytes());
         // Act
-        AccountStatementExportResponse response = service.generateReport(requestMock, "123", new HashMap<>());
+        AccountStatementExportResponse response = service.generateReport(requestMock, "123","321", new HashMap<>());
 
         // Assert
         assertNotNull(response);
-        verify(mapper).mapperRequest(any(), any(), any(), any());
+        verify(mapper).mapperRequest(any(), any(), any(), any(), any());
         verify(statementService).getAccountStatementsCache(any(), any(), any(), any());
     }
 
@@ -66,11 +66,11 @@ class ExportServiceTest {
         when(statementService.getAccountStatementsCache(any(), any(), any(), any())).thenReturn(expectedResponse);
         when(csvProvider.generateCsv(any())).thenReturn("data".getBytes());
         // Act
-        AccountStatementExportResponse response = service.generateReport(requestMock, "123", new HashMap<>());
+        AccountStatementExportResponse response = service.generateReport(requestMock, "123", "321", new HashMap<>());
 
         // Assert
         assertNotNull(response);
-        verify(mapper).mapperRequest(any(), any(), any(), any());
+        verify(mapper).mapperRequest(any(), any(), any(), any(), any());
         verify(statementService).getAccountStatementsCache(any(), any(), any(), any());
     }
 
@@ -83,11 +83,11 @@ class ExportServiceTest {
         when(statementService.getAccountStatementsCache(any(), any(), any(), any())).thenReturn(expectedResponse);
         when(csvProvider.generateCsv(any())).thenReturn("data".getBytes());
         // Act
-        AccountStatementExportResponse response = service.generateReport(requestMock, "123", new HashMap<>());
+        AccountStatementExportResponse response = service.generateReport(requestMock, "123", "321", new HashMap<>());
 
         // Assert
         assertNotNull(response);
-        verify(mapper).mapperRequest(any(), any(), any(), any());
+        verify(mapper).mapperRequest(any(), any(), any(), any(), any());
         verify(statementService).getAccountStatementsCache(any(), any(), any(), any());
     }
 }

@@ -13,9 +13,11 @@ import java.util.Objects;
 @Component
 public class ExportMapper implements  IExportMapper{
     @Override
-    public AccountStatementsMWRequest mapperRequest(String accountId, String init, String total, AccountStatementExportRequest request) {
+    public AccountStatementsMWRequest mapperRequest(String personId, String accountId, String init, String total, AccountStatementExportRequest request) {
         return AccountStatementsMWRequest.builder()
                 .accountId(accountId)
+                .personId(personId)
+                .companyId(personId)
                 .startDate(request.getFilters().getDate().getStart())
                 .endDate(request.getFilters().getDate().getEnd())
                 .initCount(init)
