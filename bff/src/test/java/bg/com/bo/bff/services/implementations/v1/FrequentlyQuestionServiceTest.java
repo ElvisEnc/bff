@@ -2,7 +2,6 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.response.frequently.question.ListFrequentlyQuestionResponseFixture;
 import bg.com.bo.bff.application.dtos.response.frequently.questions.ListFrequentlyQuestionResponse;
-import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.frequentlyquestion.FrequentlyQuestionMapper;
 import bg.com.bo.bff.providers.dtos.response.frequently.question.mw.FrequentlyQuestionMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.frequently.question.mw.ListFrequentlyQuestionMWResponse;

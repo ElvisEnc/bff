@@ -1,18 +1,9 @@
 package bg.com.bo.bff.providers.dtos.response.frequently.question.mw;
 
-import bg.com.bo.bff.application.exceptions.GenericException;
-import bg.com.bo.bff.providers.dtos.response.softtoken.mw.SoftTokenCodeTokenMWResponse;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class FrequentlyQuestionMWResponseFixture {
-    public static ListFrequentlyQuestionMWResponse withDefaultFrequentlyQuestionMWResponseEmpty() {
-        return ListFrequentlyQuestionMWResponse.builder()
-                .data(null)
-                .build();
-
-    }
     public static ListFrequentlyQuestionMWResponse withDefaultFrequentlyQuestionMWResponse() {
         List<ListFrequentlyQuestionMWResponse.FrequentlyQuestionMW> response = new ArrayList<>();
         response.add(withDefaultFrequentlyQuestionMWData());
