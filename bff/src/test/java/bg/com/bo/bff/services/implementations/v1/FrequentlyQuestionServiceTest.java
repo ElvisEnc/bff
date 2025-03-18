@@ -59,5 +59,20 @@ class FrequentlyQuestionServiceTest {
         verify(provider).getFrequentlyQuestions();
         verify(mapper).convertResponse(any(ListFrequentlyQuestionMWResponse.class));
     }
+
+    @Test
+    void givenValidPetitionWhenGetListAttentionPointsThenExpectResponseDetailNull() throws IOException {
+        //Arrange
+        ListFrequentlyQuestionMWResponse mwResponseMock = FrequentlyQuestionMWResponseFixture.withDefaultFrequentlyQuestionMWResponseNullDetail();
+        when(provider.getFrequentlyQuestions()).thenReturn(mwResponseMock);
+
+        //Act
+        ListFrequentlyQuestionResponse response = service.getFrequentlyQuestions();
+
+        //Assert
+        assertNotNull(response);
+        verify(provider).getFrequentlyQuestions();
+        verify(mapper).convertResponse(any(ListFrequentlyQuestionMWResponse.class));
+    }
 }
 

@@ -16,8 +16,8 @@ public class FrequentlyQuestionMWResponseFixture {
         return ListFrequentlyQuestionMWResponse.builder()
                 .data(response)
                 .build();
-
     }
+
     public static ListFrequentlyQuestionMWResponse.FrequentlyQuestionMW withDefaultFrequentlyQuestionMWData() {
         List<ListFrequentlyQuestionMWResponse.FrequentlyQuestionDetailMW> response = new ArrayList<>();
         response.add(withDefaultFrequentlyQuestionMWDetail());
@@ -35,6 +35,26 @@ public class FrequentlyQuestionMWResponseFixture {
                 .orden(1)
                 .response("test")
                 .archive("test")
+                .build();
+
+    }
+    public static ListFrequentlyQuestionMWResponse withDefaultFrequentlyQuestionMWResponseNullDetail() {
+        List<ListFrequentlyQuestionMWResponse.FrequentlyQuestionMW> response = new ArrayList<>();
+        response.add(withDefaultFrequentlyQuestionMWDataNull());
+        return ListFrequentlyQuestionMWResponse.builder()
+                .data(response)
+                .build();
+    }
+
+
+    public static ListFrequentlyQuestionMWResponse.FrequentlyQuestionMW withDefaultFrequentlyQuestionMWDataNull() {
+        List<ListFrequentlyQuestionMWResponse.FrequentlyQuestionDetailMW> response = new ArrayList<>();
+        response.add(withDefaultFrequentlyQuestionMWDetail());
+        return ListFrequentlyQuestionMWResponse.FrequentlyQuestionMW.builder()
+                .identifier(1)
+                .title("test")
+                .question("test")
+                .data(new ArrayList<>())
                 .build();
 
     }
