@@ -92,7 +92,7 @@ class LoansControllerTest {
         when(service.getLoanPayments(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments";
+        String path = "/api/v1/loans/{loanId}/clients/{clientId}/payments";
         MvcResult result = mockMvc.perform(post(path, "123", "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -120,7 +120,7 @@ class LoansControllerTest {
                 .refreshData(false)
                 .build();
         // Act
-        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments";
+        String path = "/api/v1/loans/{loanId}/clients/{clientId}/payments";
         mockMvc.perform(post(path, "123", "123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestMock)))
@@ -138,7 +138,7 @@ class LoansControllerTest {
                 .refreshData(false)
                 .build();
         // Act
-        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments";
+        String path = "/api/v1/loans/{loanId}/clients/{clientId}/payments";
         mockMvc.perform(post(path, "123", "123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestMock)))

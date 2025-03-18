@@ -7,7 +7,9 @@ import bg.com.bo.bff.application.dtos.request.loans.Pcc01Request;
 import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
-import bg.com.bo.bff.commons.filters.*;
+import bg.com.bo.bff.commons.filters.DateFilter;
+import bg.com.bo.bff.commons.filters.OrderFilter;
+import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.mappings.providers.loans.ILoansMapper;
 import bg.com.bo.bff.providers.dtos.request.loans.mw.LoanPaymentMWRequest;
@@ -76,9 +78,9 @@ public class LoansService implements ILoansService {
     }
 
     @Override
-    public List<LoanPaymentsResponse> getLoanPayments(String loanId, String personId, LoanPaymentsRequest request) throws IOException {
+    public List<LoanPaymentsResponse> getLoanPayments(String loanId, String clientId, LoanPaymentsRequest request) throws IOException {
         Boolean refreshData = request.getRefreshData();
-        List<LoanPaymentsResponse> list = new ArrayList<>(self.getLoanPaymentsCache(loanId, personId, request.getLoanNumber(), refreshData));
+        List<LoanPaymentsResponse> list = new ArrayList<>(self.getLoanPaymentsCache(loanId, clientId, request.getLoanNumber(), refreshData));
 
         if (request.getFilters().getDate() != null) {
             String start = request.getFilters().getDate().getStart();
@@ -104,15 +106,15 @@ public class LoansService implements ILoansService {
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loan-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == false")},
             put = {@CachePut(value = CacheConstants.USER_DATA, key = "'loan-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == true")})
-    protected List<LoanPaymentsResponse> getLoanPaymentsCache(String loanId, String personId, String loamNumber, Boolean refreshData) throws IOException {
-        LoanPaymentsMWResponse mwResponse = provider.getListLoanPayments(loanId, loamNumber);
+    protected List<LoanPaymentsResponse> getLoanPaymentsCache(String loanId, String clientId, String loamNumber, Boolean refreshData) throws IOException {
+        LoanPaymentsMWResponse mwResponse = provider.getListLoanPayments(loanId, loamNumber, clientId);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
 
     @Override
-    public List<LoanInsurancePaymentsResponse> getLoanInsurancePayments(String loanId, String personId, LoanPaymentsRequest request) throws IOException {
+    public List<LoanInsurancePaymentsResponse> getLoanInsurancePayments(String loanId, String clientId, LoanPaymentsRequest request) throws IOException {
         Boolean refreshData = request.getRefreshData();
-        List<LoanInsurancePaymentsResponse> list = new ArrayList<>(self.getLoanInsurancePaymentsCache(loanId, personId, request.getLoanNumber(), refreshData));
+        List<LoanInsurancePaymentsResponse> list = new ArrayList<>(self.getLoanInsurancePaymentsCache(loanId, clientId, request.getLoanNumber(), refreshData));
 
         if (request.getFilters().getDate() != null) {
             String start = request.getFilters().getDate().getStart();
@@ -148,14 +150,14 @@ public class LoansService implements ILoansService {
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == false")},
             put = {@CachePut(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == true")})
-    protected List<LoanInsurancePaymentsResponse> getLoanInsurancePaymentsCache(String loanId, String personId, String loamNumber, Boolean refreshData) throws IOException {
-        LoanInsurancePaymentsMWResponse mwResponse = provider.getListLoanInsurancePayments(loanId, loamNumber);
+    protected List<LoanInsurancePaymentsResponse> getLoanInsurancePaymentsCache(String loanId, String clientId, String loamNumber, Boolean refreshData) throws IOException {
+        LoanInsurancePaymentsMWResponse mwResponse = provider.getListLoanInsurancePayments(loanId, loamNumber, clientId);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
 
     @Override
-    public List<LoanPlanResponse> getLoanPlans(String loanId, String personId) throws IOException {
-        LoanPlanMWResponse mwResponse = provider.getLoanPlansPayments(loanId, personId);
+    public List<LoanPlanResponse> getLoanPlans(String loanId, String clientId) throws IOException {
+        LoanPlanMWResponse mwResponse = provider.getLoanPlansPayments(loanId, clientId);
         return mapper.convertResponse(mwResponse);
     }
 

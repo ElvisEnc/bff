@@ -102,7 +102,7 @@ class LoansProviderTest {
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        LoanPaymentsMWResponse response = provider.getListLoanPayments("123", "123");
+        LoanPaymentsMWResponse response = provider.getListLoanPayments("321","123", "123");
 
         // Assert
         assertNotNull(response);
@@ -121,7 +121,7 @@ class LoansProviderTest {
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        LoanInsurancePaymentsMWResponse response = provider.getListLoanInsurancePayments("123", "123");
+        LoanInsurancePaymentsMWResponse response = provider.getListLoanInsurancePayments("321","123", "123");
 
         // Assert
         assertNotNull(response);
