@@ -34,8 +34,8 @@ public class LoansProvider extends MiddlewareProvider<LoansMiddlewareError> impl
     }
 
     @Override
-    public ListLoansMWResponse getListLoansByPerson(String personId) throws IOException {
-        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOANS.getServiceURL(), personId);
+    public ListLoansMWResponse getListLoansByPerson(String personId, String clientId) throws IOException {
+        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOANS.getServiceURL(), personId, clientId);
         return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), ListLoansMWResponse.class);
     }
 

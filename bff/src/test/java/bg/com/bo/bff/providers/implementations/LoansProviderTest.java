@@ -83,7 +83,7 @@ class LoansProviderTest {
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        ListLoansMWResponse response = provider.getListLoansByPerson("123");
+        ListLoansMWResponse response = provider.getListLoansByPerson("123", "321");
 
         // Assert
         assertNotNull(response);

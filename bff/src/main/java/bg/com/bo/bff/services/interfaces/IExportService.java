@@ -7,5 +7,5 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface IExportService {
-    AccountStatementExportResponse generateReport(AccountStatementExportRequest request, String account, Map<String, String> parameter) throws IOException;
+    AccountStatementExportResponse generateReport(AccountStatementExportRequest request, String accountId, String personId, Map<String, String> parameter) throws IOException;
 }
