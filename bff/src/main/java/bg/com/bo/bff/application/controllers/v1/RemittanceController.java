@@ -98,4 +98,13 @@ public class RemittanceController extends AbstractBFFController {
         getDeviceDataHeader();
         return ResponseEntity.ok(ApiDataResponse.of(service.depositRemittance(personId, remittanceId, request)));
     }
+    @PostMapping(path = "/persons/{personId}/remittance/wu/{remittanceId}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ApiDataResponse<List<DepositRemittanceResponse>>> depositRemittanceWU(
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("remittanceId") @NotNull @Parameter(description = "Este es el remmitanceId de la remesa", example = "123456789") String remittanceId,
+            @Valid @RequestBody DepositRemittanceRequest request
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(ApiDataResponse.of(service.depositRemittanceWU(personId, remittanceId, request)));
+    }
 }

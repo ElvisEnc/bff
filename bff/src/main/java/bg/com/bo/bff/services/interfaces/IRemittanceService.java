@@ -23,4 +23,6 @@ public interface IRemittanceService {
     List<CheckRemittanceResponse> checkRemittance(String personId, String remittanceId) throws IOException;
 
     List<DepositRemittanceResponse> depositRemittance(String personId, String remittanceId, DepositRemittanceRequest request) throws IOException;
+
+    List<DepositRemittanceResponse> depositRemittanceWU(String personId, String remittanceId, DepositRemittanceRequest request) throws IOException;
 }

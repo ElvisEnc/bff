@@ -83,4 +83,11 @@ public class RemittanceService implements IRemittanceService {
         DepositRemittanceMWResponse mwResponse = provider.depositRemittance(mwRequest);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
+
+    @Override
+    public List<DepositRemittanceResponse> depositRemittanceWU(String personId, String remittanceId, DepositRemittanceRequest request) throws IOException {
+        DepositRemittanceMWRequest mwRequest = mapper.mapperRequestDeposit(personId, remittanceId, request);
+        DepositRemittanceMWResponse mwResponse = provider.depositRemittance(mwRequest);
+        return new ArrayList<>(mapper.convertResponse(mwResponse));
+    }
 }
