@@ -53,5 +53,7 @@ public class MiddlewareConfig {
 
     private String clientSoftTokenManager;
 
+    private String clientCertificationsManager;
+
     private String clientFrequentlyQuestionManager;
 }
