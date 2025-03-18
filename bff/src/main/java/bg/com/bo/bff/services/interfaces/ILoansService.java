@@ -15,11 +15,11 @@ public interface ILoansService {
 
     List<ListLoansResponse> getListLoansByPerson(String personId, String clientId, ListLoansRequest request) throws IOException;
 
-    List<LoanPaymentsResponse> getLoanPayments(String loanId, String personId, LoanPaymentsRequest request) throws IOException;
+    List<LoanPaymentsResponse> getLoanPayments(String loanId, String clientId, LoanPaymentsRequest request) throws IOException;
 
-    List<LoanInsurancePaymentsResponse> getLoanInsurancePayments(String loanId, String personId, LoanPaymentsRequest request) throws IOException;
+    List<LoanInsurancePaymentsResponse> getLoanInsurancePayments(String loanId, String clientId, LoanPaymentsRequest request) throws IOException;
 
-    List<LoanPlanResponse> getLoanPlans(String loanId, String personId) throws IOException;
+    List<LoanPlanResponse> getLoanPlans(String loanId, String clientId) throws IOException;
 
     LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId) throws IOException;
 

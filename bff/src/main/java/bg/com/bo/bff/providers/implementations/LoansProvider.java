@@ -40,22 +40,22 @@ public class LoansProvider extends MiddlewareProvider<LoansMiddlewareError> impl
     }
 
     @Override
-    public LoanPaymentsMWResponse getListLoanPayments(String loanId, String loamNumber) throws IOException {
-        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOAN_PAYMENTS.getServiceURL(), loanId, loamNumber);
+    public LoanPaymentsMWResponse getListLoanPayments(String loanId, String loamNumber, String clientId) throws IOException {
+        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOAN_PAYMENTS.getServiceURL(), loanId, loamNumber, clientId);
         ByMwErrorResponseHandler<LoanPaymentsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(LoansMiddlewareError.MDWPRE_001);
         return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), LoanPaymentsMWResponse.class, responseHandler);
     }
 
     @Override
-    public LoanInsurancePaymentsMWResponse getListLoanInsurancePayments(String loanId, String loamNumber) throws IOException {
-        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOAN_INSURANCE_PAYMENTS.getServiceURL(), loanId, loamNumber, totalRecords);
+    public LoanInsurancePaymentsMWResponse getListLoanInsurancePayments(String loanId, String loamNumber, String clientId) throws IOException {
+        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOAN_INSURANCE_PAYMENTS.getServiceURL(), loanId, loamNumber, clientId, totalRecords);
         ByMwErrorResponseHandler<LoanInsurancePaymentsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(LoansMiddlewareError.MDWPRE_004);
         return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), LoanInsurancePaymentsMWResponse.class, responseHandler);
     }
 
     @Override
-    public LoanPlanMWResponse getLoanPlansPayments(String loanId, String personId) throws IOException {
-        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOAN_PLANS.getServiceURL(), loanId, personId);
+    public LoanPlanMWResponse getLoanPlansPayments(String loanId, String clientId) throws IOException {
+        String url = baseUrl + String.format(LoansMiddlewareServices.GET_LIST_LOAN_PLANS.getServiceURL(), loanId, clientId);
         return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), LoanPlanMWResponse.class);
     }
 
