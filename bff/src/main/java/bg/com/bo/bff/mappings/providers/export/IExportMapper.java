@@ -7,7 +7,7 @@ import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRe
 import java.util.List;
 
 public interface IExportMapper {
-    AccountStatementsMWRequest mapperRequest(String accountId, String init, String total, AccountStatementExportRequest request);
+    AccountStatementsMWRequest mapperRequest(String personId, String accountId, String init, String total, AccountStatementExportRequest request);
 
     List<AccountStatementsResponse> convertResponse(List<AccountStatementsResponse> reportData);
 }

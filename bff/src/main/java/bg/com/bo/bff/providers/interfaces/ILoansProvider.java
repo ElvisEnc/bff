@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public interface ILoansProvider {
 
-    ListLoansMWResponse getListLoansByPerson(String personId) throws IOException;
+    ListLoansMWResponse getListLoansByPerson(String personId, String clientId) throws IOException;
 
     LoanPaymentsMWResponse getListLoanPayments(String loanId, String loamNumber) throws IOException;
 

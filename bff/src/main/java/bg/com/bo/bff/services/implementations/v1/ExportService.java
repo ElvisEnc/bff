@@ -44,9 +44,9 @@ public class ExportService implements IExportService {
     }
 
     @Override
-    public AccountStatementExportResponse generateReport(AccountStatementExportRequest request, String accountId, Map<String, String> parameter) throws IOException {
+    public AccountStatementExportResponse generateReport(AccountStatementExportRequest request, String accountId, String personId, Map<String, String> parameter) throws IOException {
         String key = accountId + "|" + request.getFilters().getDate().getStart() + "|" + request.getFilters().getDate().getEnd();
-        AccountStatementsMWRequest mwRequest = mapper.mapperRequest(accountId, init, total, request);
+        AccountStatementsMWRequest mwRequest = mapper.mapperRequest(personId, accountId, init, total, request);
 
         List<AccountStatementsResponse> list = statementService.getAccountStatementsCache(mwRequest, parameter, key, true);
 
