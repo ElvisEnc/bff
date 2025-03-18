@@ -1,11 +1,8 @@
 package bg.com.bo.bff.services.interfaces;
 
-import bg.com.bo.bff.application.dtos.request.softtoken.SoftTokenCodeEnrollmentRequest;
+import bg.com.bo.bff.application.dtos.request.softtoken.*;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenDataEnrollmentResponse;
-import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenQuestionEnrollmentResponse;
-import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenValidationEnrollmentResponse;
-import bg.com.bo.bff.application.dtos.response.softtoken.SoftTokenWelcomeResponse;
+import bg.com.bo.bff.application.dtos.response.softtoken.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,4 +20,21 @@ public interface ISoftTokenService {
     GenericResponse getValidationEnrollment(String personId) throws IOException;
 
     GenericResponse postCodeEnrollment(String personId, SoftTokenCodeEnrollmentRequest request) throws IOException;
+
+    GenericResponse validateCodeEnrollment(String personId, SoftTokenValidateCodeEnrollmentRequest request) throws IOException;
+
+    GenericResponse validateQuestionSecurity(String personId, String deviceModel, SoftTokenValidationQuestionRequest request) throws IOException;
+
+    SoftTokenObtainParametersResponse getParameters(String personId) throws IOException;
+
+    GenericResponse postRegistrationToken(String personId, SoftTokenCodeTokenRequest request) throws IOException;
+
+    GenericResponse getRegistrationValidation(String personId) throws IOException;
+
+    SoftTokenGenerateTokenResponse postTokenGenerate(String personId) throws IOException;
+
+    GenericResponse postEnrollment(String personId, String deviceModel, SoftTokenEnrollmentRequest request) throws IOException;
+
+    GenericResponse validationToken(String personId,  SoftTokenCodeTokenRequest request) throws IOException;
+
 }

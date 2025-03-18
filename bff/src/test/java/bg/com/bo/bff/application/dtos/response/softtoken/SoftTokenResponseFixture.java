@@ -25,11 +25,6 @@ public class SoftTokenResponseFixture {
                 .build();
     }
 
-    public static SoftTokenValidationEnrollmentResponse withDefaultValidate() {
-        return SoftTokenValidationEnrollmentResponse.builder()
-                .status("ENROLLMENT")
-                .build();
-    }
 
     public static GenericResponse withDefaultGeneric() {
         return GenericResponse.builder()
@@ -46,4 +41,21 @@ public class SoftTokenResponseFixture {
                 .title("")
                 .build();
     }
+
+    public static SoftTokenObtainParametersResponse withDefaultParameter() {
+        return SoftTokenObtainParametersResponse.builder()
+                .tokenSize(6)
+                .tokenDuration(30)
+                .serialNumber("test")
+                .dateProcessed("2024-02-18")
+                .build();
+    }
+
+    public static SoftTokenGenerateTokenResponse withDefaultTokenGeneration() {
+        return SoftTokenGenerateTokenResponse.builder()
+                .token("test")
+                .tokenDuration(4)
+                .build();
+    }
+
 }

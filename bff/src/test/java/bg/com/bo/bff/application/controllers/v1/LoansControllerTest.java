@@ -1,9 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
-import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
-import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
-import bg.com.bo.bff.application.dtos.request.loans.LoansRequestFixture;
+import bg.com.bo.bff.application.dtos.request.loans.*;
 import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
 import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.commons.utils.Util;
@@ -221,14 +219,16 @@ class LoansControllerTest {
     @Test
     void givenLoanIdAccountIdPersonIdWhenPayLoanRequestThenResponseLoanPaymentResponse() throws Exception {
         //Arrange
+        LoanPaymentRequest requestMock = LoansRequestFixture.withDefaultLoanPaymentRequest();
         LoanPaymentResponse expectedResponse = LoansResponseFixture.withDataDefaultLoanPaymentResponse();
         when(service.payLoanInstallment(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/loans/persons/{personId}/accounts/{accountId}/payments/{correlativeId}";
-        MvcResult result = mockMvc.perform(put(path, "123", "123", "123")
+        String path = "/api/v1/loans/persons/{personId}/accounts/{accountId}/payment";
+        MvcResult result = mockMvc.perform(post(path, "123", "123")
                         .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                .content(Util.objectToString(requestMock)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -239,5 +239,30 @@ class LoansControllerTest {
         assertNotNull(result);
         assertEquals(response, actual);
         verify(service).payLoanInstallment(any(), any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenValidatePCC01ThenResponsePcc01Response() throws Exception {
+        //Arrange
+        Pcc01Request requestMock = LoansRequestFixture.withDefaultPcc01Request();
+        Pcc01Response expectedResponse = LoansResponseFixture.withDefaultPcc01Response();
+        when(service.makeControl(any(), any(), any())).thenReturn(expectedResponse);
+
+        // Act
+        String path = "/api/v1/loans/persons/{personId}/accounts/{accountId}/validate-digital";
+        MvcResult result = mockMvc.perform(post(path, "123", "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                .content(Util.objectToString(requestMock)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expectedResponse);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).makeControl(any(), any(), any());
     }
 }

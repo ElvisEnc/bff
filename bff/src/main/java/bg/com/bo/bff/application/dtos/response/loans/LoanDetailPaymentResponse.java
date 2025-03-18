@@ -54,6 +54,9 @@ public class LoanDetailPaymentResponse {
     @Schema(description = "Intereses corrientes")
     private double interestCurrent;
 
+    @Schema(description = "Intereses penales")
+    private double penaltyInterest;
+
     @Schema(description = "Capital")
     private double capital;
 
@@ -68,4 +71,7 @@ public class LoanDetailPaymentResponse {
 
     @Schema(description = "Monto seguro obligatorio")
     private double amountSecureMandatory;
+
+    @Schema(description = "Préstamo pagado")
+    private boolean paid;
 }

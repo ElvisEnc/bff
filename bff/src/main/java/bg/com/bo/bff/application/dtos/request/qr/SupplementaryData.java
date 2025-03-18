@@ -1,8 +1,6 @@
 package bg.com.bo.bff.application.dtos.request.qr;
 
 import bg.com.bo.bff.commons.annotations.generics.DescriptionChars;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

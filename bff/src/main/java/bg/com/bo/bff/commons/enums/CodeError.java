@@ -25,6 +25,7 @@ public enum CodeError {
     INVALID_ACTION("INVALID_ACTION", "Acción inválida de la petición"),
     INVALID_USER_DATA("INVALID_USER_DATA", "Datos inválidos del usuario, ya sea desde el front o postman"),
     ERROR_PROCEDURE("ERROR_PROCEDURE", "Error ocurrido en el proceso"),
+    ERROR_MAE("ERROR_MAE", "Error ocurrido en el proceso MAE"),
     MAX_ATTEMPTS("MAX_ATTEMPTS", "Limite de intentos máximos alcanzados"),
     ACCESS_DENIED("ACCESS_DENIED", "Acceso denegado"),
     BLOCKED_USER("BLOCKED_USER", "Usuario Bloqueado"),
@@ -32,7 +33,7 @@ public enum CodeError {
     ERROR_TOPAZ_PROCEDURE("ERROR_TOPAZ_PROCEDURE", "Error al ejecutar los servicios de topaz"),
     DATA_NOT_FOUND("DATA_NOT_FOUND", "Datos no encontrados"),
     ERROR_LOG("ERROR_LOG", "Error al registrar logs"),
-    SOFTTOKEN_DISABLED("SOFTOKEN_DISABLED", "Usuario sin GanaPin, con algún tipo de error");
+    SOFTTOKEN_INCORRECT_DATA("INCORRECT_DATA", "Datos incorrectos");
 
 
     private final String code;
