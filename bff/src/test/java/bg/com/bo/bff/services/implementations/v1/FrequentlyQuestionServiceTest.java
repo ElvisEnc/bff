@@ -2,6 +2,7 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.response.frequently.question.ListFrequentlyQuestionResponseFixture;
 import bg.com.bo.bff.application.dtos.response.frequently.questions.ListFrequentlyQuestionResponse;
+import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.frequentlyquestion.FrequentlyQuestionMapper;
 import bg.com.bo.bff.providers.dtos.response.frequently.question.mw.FrequentlyQuestionMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.frequently.question.mw.ListFrequentlyQuestionMWResponse;
@@ -14,9 +15,9 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-
+import java.util.ArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -61,18 +62,33 @@ class FrequentlyQuestionServiceTest {
     }
 
     @Test
-    void givenValidPetitionWhenGetListAttentionPointsThenExpectResponseDetailNull() throws IOException {
-        //Arrange
-        ListFrequentlyQuestionMWResponse mwResponseMock = FrequentlyQuestionMWResponseFixture.withDefaultFrequentlyQuestionMWResponseNullDetail();
-        when(provider.getFrequentlyQuestions()).thenReturn(mwResponseMock);
+    void givenNullDetailsWhenConvertResponseThenAnswersListEmpty() {
+        // Arrange
+        ListFrequentlyQuestionMWResponse mwResponse = FrequentlyQuestionMWResponseFixture.withDefaultFrequentlyQuestionMWResponseNullDetail();
+        // Act
+        ListFrequentlyQuestionResponse response = mapper.convertResponse(mwResponse);
 
-        //Act
-        ListFrequentlyQuestionResponse response = service.getFrequentlyQuestions();
-
-        //Assert
+        // Assert
         assertNotNull(response);
-        verify(provider).getFrequentlyQuestions();
-        verify(mapper).convertResponse(any(ListFrequentlyQuestionMWResponse.class));
+        assertEquals(1, response.getData().size());
+        assertNotNull(response.getData().get(0).getAnswer());
+        assertTrue(response.getData().get(0).getAnswer().isEmpty());
     }
+
+    @Test
+    void givenNullResponseWhenConvertResponseThenReturnEmptyList() {
+        // Arrange
+        ListFrequentlyQuestionResponse expectedResponse = ListFrequentlyQuestionResponse.builder()
+                .data(new ArrayList<>())
+                .build();
+
+        // Act
+        ListFrequentlyQuestionResponse response = mapper.convertResponse(null);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+    }
+ 
 }
 
