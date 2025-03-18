@@ -24,7 +24,9 @@ public enum ProjectNameMW {
     CREDIT_CARD_TRANSACTION_MANAGER("/creditcard-transaction-manager", "CREDIT CARD TRANSACTION MANAGER", "Secret"),
     POINT_ATTENTION_MANAGER("/point-attention-manager", "POINT ATTENTION MANAGER", "Secret"),
     REMITTANCE_MANAGER("/remittance-manager", "REMITTANCE MANAGER", "Secret"),
-    SOFT_TOKEN_MANAGER("/softtoken-manager", "SOFT TOKEN MANAGER", "Secret"),;
+    SOFT_TOKEN_MANAGER("/softtoken-manager", "SOFT TOKEN MANAGER", "Secret"),
+    FREQUENTLY_QUESTION_MANAGER("/users-questions-manager", "USER QUESTION MANAGER", "Secret"),
+    ;
 
     private final String name;
     private final String description;

@@ -76,6 +76,9 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.softtoken.manager}")
     private String clientSoftTokenManager;
 
+    @Value("${client.secret.frequently.question.manager}")
+    private String clientFrequentlyQuestionManager;
+
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
@@ -102,6 +105,7 @@ public class MiddlewareConfigFactory {
                 .clientAccountStatementManager(clientAccountStatementManager)
                 .clientRemittanceManager(clientRemittanceManager)
                 .clientSoftTokenManager(clientSoftTokenManager)
+                .clientFrequentlyQuestionManager(clientFrequentlyQuestionManager)
                 .build();
     }
 }
