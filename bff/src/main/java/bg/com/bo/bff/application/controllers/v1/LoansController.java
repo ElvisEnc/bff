@@ -55,14 +55,14 @@ public class LoansController extends AbstractBFFController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de prestamos pagados")
     })
-    @PostMapping("{loanId}/persons/{personId}/payments")
+    @PostMapping("{loanId}/clients/{clientId}/payments")
     public ResponseEntity<ApiDataResponse<List<LoanPaymentsResponse>>> getListLoanPayments(
             @PathVariable("loanId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String loanId,
-            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("clientId") @OnlyNumber @Parameter(description = "Este es el codigo de cliente de la persona", example = "12345") String clientId,
             @Valid @RequestBody LoanPaymentsRequest request
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(ApiDataResponse.of(service.getLoanPayments(loanId, personId, request)));
+        return ResponseEntity.ok(ApiDataResponse.of(service.getLoanPayments(loanId, clientId, request)));
     }
 
     @Operation(summary = "Lista de pagos de Seguro", description = "Obtiene el listado de los pagos del seguro")
@@ -83,13 +83,13 @@ public class LoansController extends AbstractBFFController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Plan de pagos")
     })
-    @GetMapping("{loanId}/persons/{personId}")
+    @GetMapping("{loanId}/persons/{clientId}")
     public ResponseEntity<ApiDataResponse<List<LoanPlanResponse>>> getLoanPlans(
-            @PathVariable("loanId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String loanId,
-            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+            @PathVariable("loanId") @OnlyNumber @Parameter(description = "Este es el identificador del prestamo", example = "12345") String loanId,
+            @PathVariable("clientId") @OnlyNumber @Parameter(description = "Este es el clientId de la persona", example = "12345") String clientId
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(ApiDataResponse.of(service.getLoanPlans(loanId, personId)));
+        return ResponseEntity.ok(ApiDataResponse.of(service.getLoanPlans(loanId, clientId)));
     }
 
     @Operation(summary = "Solicitud de pago préstamo", description = "Obtiene la solicitud de un pago de préstamo")
