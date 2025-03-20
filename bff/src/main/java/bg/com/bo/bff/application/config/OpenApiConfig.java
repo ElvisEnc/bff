@@ -68,7 +68,8 @@ public class OpenApiConfig {
                 path.equals("/api/v1/attention-points/points") ||
                 path.equals("/api/v1/attention-points/points/{pointId}") ||
                 path.equals("/api/v1/attention-points/points/{pointId}/tickets") ||
-                path.equals("/api/v1/registry/device/handshake");
+                path.equals("/api/v1/registry/device/handshake")||
+                path.equals("/api/v1/frequently-question/questions");
     }
 
     private boolean shouldExcludePathFromDeviceHeaders(String path) {
@@ -78,7 +79,8 @@ public class OpenApiConfig {
                 path.equals("/api/v1/attention-points/points") ||
                 path.equals("/api/v1/attention-points/points/{pointId}") ||
                 path.equals("/api/v1/attention-points/points/{pointId}/tickets") ||
-                path.equals("/api/v1/registry/device/handshake");
+                path.equals("/api/v1/registry/device/handshake")||
+                path.equals("/api/v1/frequently-question/questions");
     }
 
     private void addGenericErrors(Operation operation) {
