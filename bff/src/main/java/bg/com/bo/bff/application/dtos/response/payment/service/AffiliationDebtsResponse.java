@@ -16,14 +16,14 @@ public class AffiliationDebtsResponse {
     @Schema(description = "Código de servicio")
     private String serviceCode;
 
-    @Schema(description = "Nit para la factura")
-    private String invoiceNit;
-
-    @Schema(description = "Nombre para la factura")
-    private String invoiceName;
-
-    @Schema(description = "Booleano si puede modificar los datos de la factura")
-    private Boolean invoiceCanModify;
+//    @Schema(description = "Nit para la factura")
+//    private String invoiceNit;
+//
+//    @Schema(description = "Nombre para la factura")
+//    private String invoiceName;
+//
+//    @Schema(description = "Booleano si puede modificar los datos de la factura")
+//    private Boolean invoiceCanModify;
 
     private List<DebtDetail> debtDetails;
 }

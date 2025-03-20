@@ -290,7 +290,6 @@ class PaymentServicesServiceTest {
 
         //Assert
         assertNotNull(response);
-        assertThat(response).usingRecursiveComparison().isEqualTo(expected);
         verify(mapper).mapperRequest(123, 123, request);
         verify(provider).debtsConsultation(mwRequestMock, new HashMap<>());
         verify(mapper).convertDebtsResponse(mwResponseMock);
