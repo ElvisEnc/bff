@@ -16,12 +16,9 @@ public class DebtsConsultationMWResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class DebtsConsultationMW{
+    public static class DebtsConsultationMW {
         private String affiliationCode;
         private String serviceCode;
-        private String invoiceTaxId;
-        private String invoiceName;
-        private String invoiceCanModifyData;
         private List<DebtsConsultationDetail> debtDetails;
     }
 
@@ -30,6 +27,11 @@ public class DebtsConsultationMWResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DebtsConsultationDetail {
+        private String invoiceCanModifyData;
+        private String invoiceName;
+        private String invoiceId;
+        private String invoiceComplementId;
+        private String invoiceEmail;
         private String description;
         private String referenceCode;
         private Integer monthPeriod;

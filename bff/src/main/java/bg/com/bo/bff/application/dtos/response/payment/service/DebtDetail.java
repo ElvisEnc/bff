@@ -10,6 +10,22 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DebtDetail {
+
+    @Schema(description = "Permite modificacion")
+    private String invoiceCanModifyData;
+
+    @Schema(description = "Nombre para la factura")
+    private String invoiceName;
+
+    @Schema(description = "Identificador de la factura")
+    private String invoiceId;
+
+    @Schema(description = "Complemento de la factura")
+    private String invoiceComplementId;
+
+    @Schema(description = "e-mail para la factura")
+    private String invoiceEmail;
+
     @Schema(description = "descripción")
     private String description;
 
