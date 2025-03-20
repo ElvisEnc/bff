@@ -46,15 +46,16 @@ public class DebitCardMiddlewareProvider extends MiddlewareProvider<DebitCardMid
         String path = middlewareConfig.getUrlBase() +
                 ProjectNameMW.DEBIT_CARD_MANAGER.getName() +
                 String.format(DebitCardMiddlewareServices.ACCOUNT_LIST_DEBIT_CARD.getServiceURL(), cardId, personId);
-        return get(path, HeadersMW.getDefaultHeaders(httpServletRequest), AccountsDebitCardMWResponse.class);
+        ByMwErrorResponseHandler<AccountsDebitCardMWResponse> responseHandler = ByMwErrorResponseHandler.instance(DebitCardMiddlewareError.MDWPGL_004);
+        return get(path, HeadersMW.getDefaultHeaders(httpServletRequest), AccountsDebitCardMWResponse.class, responseHandler);
     }
 
     @Override
     public DCInternetAuthorizationNWResponse getListAuthorizations(String personId, String cardId) throws IOException {
         String path = String.format(DebitCardMiddlewareServices.GET_LIST_INTERNET_AUTHORIZATION.getServiceURL(), cardId, personId);
         String url = String.format("%s%s%s", middlewareConfig.getUrlBase(), ProjectNameMW.DEBIT_CARD_MANAGER.getName(), path);
-
-        return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), DCInternetAuthorizationNWResponse.class);
+        ByMwErrorResponseHandler<DCInternetAuthorizationNWResponse> responseHandler = ByMwErrorResponseHandler.instance(DebitCardMiddlewareError.MDWTJD_005);
+        return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), DCInternetAuthorizationNWResponse.class, responseHandler);
     }
 
     @Override

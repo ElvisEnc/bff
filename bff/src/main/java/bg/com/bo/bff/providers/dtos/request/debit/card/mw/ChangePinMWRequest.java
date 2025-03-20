@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChangePinMWRequest {
-    private String pinBlock;
     private String personId;
     private String idPci;
+    private String newPin;
 }
