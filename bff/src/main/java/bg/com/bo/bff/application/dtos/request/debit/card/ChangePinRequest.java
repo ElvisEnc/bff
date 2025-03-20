@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ChangePinRequest {
 
     @NotNull(message = "El PIN es obligatorio")
-    @Size(min = 1, max = 16, message = "El PIN debe tener entre 1 y 16 dígitos")
+    @Size(min = 1, max = 4, message = "El PIN debe tener entre 1 y 4 dígitos")
     @Schema(description = "Pin block generado por el cliente", example = "Q7498QWS133")
     private String pin;
 }
