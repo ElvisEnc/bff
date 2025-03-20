@@ -26,13 +26,11 @@ import java.util.Map;
 @Service
 public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesMiddlewareError> implements IPaymentServicesProvider {
     private final String baseUrl;
-    private final String baseUrl2;
     private static final String URL_FORMAT = "%s%s";
 
     public PaymentServicesProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
         super(ProjectNameMW.PAYMENT_SERVICES, PaymentServicesMiddlewareError.class, tokenMiddlewareProvider, middlewareConfig, httpClientFactory, middlewareConfig.getClientPaymentServicesManager());
         this.baseUrl = middlewareConfig.getUrlBase() + ProjectNameMW.PAYMENT_SERVICES.getName();
-        baseUrl2 = "http://172.1.16.155:8069/payment-services-manager";
     }
 
     @Override
@@ -64,7 +62,7 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
 
     @Override
     public DebtsConsultationMWResponse debtsConsultation(DebtsConsultationMWRequest request, Map<String, String> parameters) throws IOException {
-        String url = baseUrl2 + PaymentServicesMiddlewareServices.DEBTS.getServiceURL();
+        String url = baseUrl + PaymentServicesMiddlewareServices.DEBTS.getServiceURL();
         return post(url, HeadersMW.getDefaultHeaders(parameters), request, DebtsConsultationMWResponse.class);
     }
 
