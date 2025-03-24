@@ -1,21 +1,16 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementRequestFixture;
-import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementsRequest;
-import bg.com.bo.bff.application.dtos.request.account.statement.TransferMovementsRequest;
+import bg.com.bo.bff.application.dtos.request.account.statement.*;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementResponseFixture;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.RegenerateVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.account.statement.TransferMovementsResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.mappings.providers.account.IOwnAccountsMapper;
 import bg.com.bo.bff.mappings.providers.account.OwnAccountsMapper;
-import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
-import bg.com.bo.bff.providers.dtos.request.own.account.mw.OwnAccountMWRequestFixture;
-import bg.com.bo.bff.providers.dtos.request.own.account.mw.ReportTransfersMWRequest;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.OwnAccountMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.ReportTransfersMWResponse;
+import bg.com.bo.bff.providers.dtos.request.own.account.mw.*;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.*;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.account.statement.AccountStatementMiddlewareError;
 import org.junit.jupiter.api.BeforeEach;
@@ -224,5 +219,17 @@ class AccountStatementServiceTest {
         // Assert
         assertNotNull(response);
         verify(provider).getTransferMovements(any(), any());
+    }
+
+    @Test
+    void regenerateVoucherOK() throws IOException {
+        RegenerateVoucherRequest request = RegenerateVoucherRequestFixture.withDefaults();
+        RegenerateVoucherMWResponse mdwExpected = RegenerateVoucherMWResponseFixture.withDefaults();
+        when(provider.regenerateVoucher(any(), any())).thenReturn(mdwExpected);
+
+        RegenerateVoucherResponse response = service.getVoucher(request, map);
+
+        assertNotNull(response);
+        verify(provider).regenerateVoucher(any(), any());
     }
 }

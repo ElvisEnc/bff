@@ -1,8 +1,12 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementRequestFixture;
+import bg.com.bo.bff.application.dtos.request.account.statement.RegenerateVoucherRequest;
+import bg.com.bo.bff.application.dtos.request.account.statement.RegenerateVoucherRequestFixture;
 import bg.com.bo.bff.application.dtos.request.account.statement.TransferMovementsRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementResponseFixture;
+import bg.com.bo.bff.application.dtos.response.account.statement.RegenerateVoucherResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.RegenerateVoucherResponseFixture;
 import bg.com.bo.bff.application.dtos.response.account.statement.TransferMovementsResponse;
 import bg.com.bo.bff.commons.enums.config.provider.DeviceMW;
 import bg.com.bo.bff.commons.utils.Util;
@@ -95,5 +99,31 @@ class AccountStatementControllerTest {
         assertNotNull(result);
         assertEquals(response, actual);
         verify(service).getTransferMovements(any(), any(), any(), any());
+    }
+
+    @Test
+    void getVoucher() throws Exception {
+        RegenerateVoucherResponse expectedMock = RegenerateVoucherResponseFixture.withDefaults();
+        RegenerateVoucherRequest requestMock = RegenerateVoucherRequestFixture.withDefaults();
+        when(service.getVoucher(any(), any())).thenReturn(expectedMock);
+
+        // Act
+        String path = "/api/v1/account-statement/voucher";
+        MvcResult result = mockMvc.perform(post(path)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(requestMock))
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String response = objectMapper.writeValueAsString(ApiDataResponse.of(expectedMock));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).getVoucher(any(), any());
     }
 }
