@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatement
 import bg.com.bo.bff.application.dtos.request.account.statement.TransferMovementsRequest;
 import bg.com.bo.bff.application.dtos.request.own.account.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.RegenerateVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.account.statement.TransferMovementsResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.application.dtos.response.own.account.OwnAccountsResponse;
@@ -12,12 +13,10 @@ import bg.com.bo.bff.commons.enums.account.statement.AccountStatementType;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
+import bg.com.bo.bff.providers.dtos.request.own.account.mw.RegenerateVoucherMWRequest;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.ReportTransfersMWRequest;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.UpdateTransactionLimitMWRequest;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.OwnAccountsListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.ReportTransfersMWResponse;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.TransactionLimitsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.*;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -98,7 +97,7 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
     public ReportTransfersMWRequest mapperRequest(String accountId, String personId, TransferMovementsRequest request) {
         return ReportTransfersMWRequest.builder()
                 .accountId(accountId)
-                .startDate(UtilDate.adaptDateToMWFormat( request.getFilters().getPeriod().getStart()))
+                .startDate(UtilDate.adaptDateToMWFormat(request.getFilters().getPeriod().getStart()))
                 .endDate(UtilDate.adaptDateToMWFormat(request.getFilters().getPeriod().getEnd()))
                 .build();
     }
@@ -171,5 +170,41 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
                         .destinationAccountType(type)
                         .build())
                 .toList();
+    }
+
+    @Override
+    public RegenerateVoucherResponse convertVoucher(RegenerateVoucherMWResponse mdwResponse) {
+        RegenerateVoucherMWResponse.Voucher obj = mdwResponse.getData().get(0);
+        return RegenerateVoucherResponse.builder()
+                .qrId(obj.getQrId())
+                .identificationNumber(obj.getIdentificationNumber())
+                .businessName(obj.getBusinessName())
+                .expirationDate(obj.getExpirationDate())
+                .freeField(obj.getFreeField())
+                .singleUse(obj.getSingleUse())
+                .qrCurrency(obj.getQrCurrency())
+                .serialNumber(obj.getSerialNumber())
+                .payableAccountNumber(obj.getPayableAccountNumber())
+                .eifCode(obj.getEifCode())
+                .transactionType(obj.getTransactionType())
+                .transactionNumber(obj.getTransactionNumber())
+                .amount(obj.getAmount())
+                .amountCurrency(obj.getAmountCurrency())
+                .equivalentCreditCurrency(obj.getEquivalentCreditCurrency())
+                .equivalentDebitCurrency(obj.getEquivalentDebitCurrency())
+                .originatingHolder(obj.getOriginatingHolder())
+                .originatingAccountNumber(obj.getOriginatingAccountNumber())
+                .originJtsNumber(obj.getOriginJtsNumber())
+                .recipientHolder(obj.getRecipientHolder())
+                .destinationJtsNumber(obj.getDestinationJtsNumber())
+                .destinationAccountNumber(obj.getDestinationAccountNumber())
+                .equivalentDebitAmount(obj.getEquivalentDebitAmount())
+                .debitExchangeRate(obj.getDebitExchangeRate())
+                .equivalentCreditAmount(obj.getEquivalentCreditAmount())
+                .creditExchangeRate(obj.getCreditExchangeRate())
+                .description(obj.getDescription())
+                .postingTime(obj.getPostingTime())
+                .listIdAccount(obj.getListIdAccount())
+                .build();
     }
 }
