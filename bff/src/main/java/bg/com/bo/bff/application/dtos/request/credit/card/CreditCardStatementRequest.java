@@ -19,8 +19,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreditCardStatementRequest {
     @NotBlank
-    @Pattern(regexp = "13-\\d{2}-10-\\d{10}", message = "Formato inválido para cmsCard")
-    @Schema(description = "número compuesto de la Tarjeta", example = "13-07-10-0000000005")
+    @Pattern(regexp = "13-\\d{2}-10-\\d{6}", message = "Formato inválido para cmsCard")
+    @Schema(description = "número compuesto de la Tarjeta", example = "13-07-10-000005")
     private String cmsCard;
 
     @Valid

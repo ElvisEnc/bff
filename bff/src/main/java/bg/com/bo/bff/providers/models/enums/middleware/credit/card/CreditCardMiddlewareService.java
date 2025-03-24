@@ -16,7 +16,7 @@ public enum CreditCardMiddlewareService {
     PAY_CREDIT_CARD("/bs/v1/payment/execute"),
     GET_DETAIL_PREPAID_CARD("/bs/v1/cards/persons/%s/prepaids/%s"),
     CASH_ADVANCE_CREDIT_CARD("/bs/v1/cards/advances/cash"),
-    GET_MOVEMENTS("/bs/v1/cards/movements?cmsCardNumber=%s&initDate=%s&endDate=%s"),
+    GET_MOVEMENTS("/bs/v1/cards/movements?cmsAccountNumber=%s&initDate=%s&endDate=%s"),
     GET_AUTHS("/bs/v1/cards/%s/persons/%s/limits"),
     POST_AUTHORIZATION_CREDIT_CARD("/bs/v1/purchases/online"),
     GET_FEE_PREPAID_CARD("/bs/v1/cards/advances/commissions/prepaid");
