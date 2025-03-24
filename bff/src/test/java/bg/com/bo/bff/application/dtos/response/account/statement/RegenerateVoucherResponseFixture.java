@@ -1,7 +1,5 @@
 package bg.com.bo.bff.application.dtos.response.account.statement;
 
-import bg.com.bo.bff.application.dtos.response.account.statement.RegenerateVoucherResponse;
-
 import java.math.BigDecimal;
 
 public class RegenerateVoucherResponseFixture {

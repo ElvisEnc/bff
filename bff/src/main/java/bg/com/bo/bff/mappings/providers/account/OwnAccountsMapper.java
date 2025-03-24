@@ -13,7 +13,6 @@ import bg.com.bo.bff.commons.enums.account.statement.AccountStatementType;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
-import bg.com.bo.bff.providers.dtos.request.own.account.mw.RegenerateVoucherMWRequest;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.ReportTransfersMWRequest;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.UpdateTransactionLimitMWRequest;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.*;
