@@ -36,7 +36,7 @@ public class CreditCardRequestFixture {
 
     public static CreditCardStatementRequest withDefaultCreditCardStatementRequest() {
         return CreditCardStatementRequest.builder()
-                .cmsCard("13-07-10-0000000005")
+                .cmsCard("13-07-10-000005")
                 .filters(CreditCardStatementRequest.CreditCardFilter.builder()
                         .pagination(withDefaultPaginationRequest())
                         .date(withDefaultPeriodRequest())

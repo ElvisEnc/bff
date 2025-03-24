@@ -272,11 +272,12 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .map(mw -> PurchaseAuthResponse.builder()
                         .processDate(UtilDate.formatDate(mw.getProcessDate()))
                         .type(mw.getType())
-                        .description(mw.getDescription())
                         .amount(mw.getAmount())
                         .currency(mw.getCurrency())
                         .status(mw.getStatus())
                         .origin(mw.getOrigin())
+                        .initDate(mw.getInitDate())
+                        .endDate(mw.getEndDate())
                         .build())
                 .toList();
     }
