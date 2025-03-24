@@ -50,9 +50,21 @@ public class DetailCreditCardResponse {
     @Schema(description = "monto dispobible")
     private String amountAvailable;
 
+    @Schema(description = "Monto límite.")
+    private String amountLimit;
+
     @Schema(description = "límite minimo")
     private String limitMin;
 
     @Schema(description = "límite máximo")
     private String limitMax;
+
+    @Schema(description = "Debito cerrado.")
+    private String debtClose;
+
+    @Schema(description = "FechaVencimiento pago")
+    private String dueDatePeriod;
+
+    @Schema(description = "DuePayment Date Perio")
+    private String duePaymentDatePeriod;
 }
