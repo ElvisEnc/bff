@@ -27,6 +27,9 @@ public class DetailsCreditCardMWResponse {
     private String statusCard;
     private String statusAccount;
     private String insurance;
-    private String limitMin;
+    private String limMin;
     private String limitMax;
+    private String debtClose;
+    private String dueDatePeriod;
+    private String duePaymentDatePeriod;
 }
