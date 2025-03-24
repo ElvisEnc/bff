@@ -74,6 +74,10 @@ public class CreditCardResponseFixture {
                 .amountAvailable("2000")
                 .limitMin("100")
                 .limitMax("5000")
+                .debtClose("close")
+                .amountLimit("5000")
+                .duePaymentDatePeriod("31/12/2022")
+                .dueDatePeriod("20/12/2024")
                 .build();
     }
 
