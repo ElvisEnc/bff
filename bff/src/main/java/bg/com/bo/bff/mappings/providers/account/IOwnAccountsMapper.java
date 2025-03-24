@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatement
 import bg.com.bo.bff.application.dtos.request.account.statement.TransferMovementsRequest;
 import bg.com.bo.bff.application.dtos.request.own.account.UpdateTransactionLimitRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.RegenerateVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.account.statement.TransferMovementsResponse;
 import bg.com.bo.bff.application.dtos.response.destination.account.DestinationAccount;
 import bg.com.bo.bff.application.dtos.response.own.account.OwnAccountsResponse;
@@ -11,10 +12,7 @@ import bg.com.bo.bff.application.dtos.response.own.account.TransactionLimitsResp
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.ReportTransfersMWRequest;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.UpdateTransactionLimitMWRequest;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.AccountStatementsMWResponse;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.OwnAccountsListMWResponse;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.ReportTransfersMWResponse;
-import bg.com.bo.bff.providers.dtos.response.own.account.mw.TransactionLimitsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.*;
 
 import java.util.List;
 
@@ -34,5 +32,7 @@ public interface IOwnAccountsMapper {
     List<TransferMovementsResponse> convertResponse(ReportTransfersMWResponse mwResponse);
 
     List<DestinationAccount> convertOwnAccountToDestinationAccount(OwnAccountsListMWResponse mwResponse, Integer type, String name);
+
+    RegenerateVoucherResponse convertVoucher(RegenerateVoucherMWResponse mdwResponse);
 
 }

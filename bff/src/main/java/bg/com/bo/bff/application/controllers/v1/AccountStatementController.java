@@ -1,8 +1,10 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementsRequest;
+import bg.com.bo.bff.application.dtos.request.account.statement.RegenerateVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.account.statement.TransferMovementsRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.RegenerateVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.account.statement.TransferMovementsResponse;
 import bg.com.bo.bff.commons.utils.Headers;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
@@ -74,6 +76,27 @@ public class AccountStatementController {
             @Valid @RequestBody TransferMovementsRequest request
     ) throws IOException {
         return ResponseEntity.ok(ApiDataResponse.of(iAccountStatementService.getTransferMovements(accountId, personId, request, Headers.getParameter(httpServletRequest,
+                deviceId,
+                deviceName,
+                geoPositionX,
+                geoPositionY,
+                appVersion))));
+    }
+
+    @Operation(summary = "Regeneracion de Comprobante", description = "Obtiene el comprobante de una transaccion")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Comprobante de transaccion")
+    })
+    @PostMapping("/voucher")
+    public ResponseEntity<ApiDataResponse<RegenerateVoucherResponse>> getVoucher(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @Valid @RequestBody RegenerateVoucherRequest request
+    ) throws IOException {
+        return ResponseEntity.ok(ApiDataResponse.of(iAccountStatementService.getVoucher(request, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,
