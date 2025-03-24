@@ -239,11 +239,12 @@ public class CreditCardResponseFixture {
         return PurchaseAuthResponse.builder()
                 .processDate("09/08/2024")
                 .type("Temporal")
-                .description("Habilitacion de compras por internet: Fecha Inicio: 10/08/2024 - Fecha Fin: 11/08/2024")
                 .amount("45.00")
                 .currency("840")
                 .status("PENDIENTE")
                 .origin("GMV")
+                .initDate("01/01/2025")
+                .endDate("01/01/2025")
                 .build();
     }
 
