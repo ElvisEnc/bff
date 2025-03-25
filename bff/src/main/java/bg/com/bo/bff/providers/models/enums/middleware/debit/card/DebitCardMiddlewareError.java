@@ -30,9 +30,9 @@ public enum DebitCardMiddlewareError implements IMiddlewareError {
     MDWTJD_014(HttpStatus.NOT_ACCEPTABLE, CodeError.ERROR_PROCEDURE.getCode(), "MDWTJD-014", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     MDWTJD_015(HttpStatus.CONFLICT, CodeError.DATA_NOT_FOUND.getCode(), "MDWTJD-015", ConstantMessages.NO_FOUND_DATA.getMessage(), ConstantMessages.NO_FOUND_DATA.getTitle(), CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
     MDWTJD_900(HttpStatus.NOT_ACCEPTABLE, CodeError.ERROR_DB_PROCEDURE.getCode(), "MDWTJD-900", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
-    MDWTJD_3002(HttpStatus.NOT_ACCEPTABLE, "ERROR_ACTIVATE_INSURANCE", "MDWTJD-3002",
-            "No se pudo activar el seguro, no tiene cuenta asociada.",
-            ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
+    MDWTJD_3002(HttpStatus.NOT_ACCEPTABLE, "ERROR_ACTIVATE_INSURANCE", "MDWTJD-3002", "No se pudo activar el seguro, no tiene cuenta asociada.", ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
+    MDWTJD_016(HttpStatus.NOT_ACCEPTABLE, "Monto no disponible", "MDWTJD-016", "Detectamos que ya dispones de una habilitación con el mismo monto. Por favor, prueba con otro valor o cancela la habilitación anterior.", ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
+    MDWTJD_017(HttpStatus.CONFLICT, "Fecha no válida", "MDWTJD-017", "La fecha final debe ser mayor que la fecha actual del sistema.", "", CategoryError.INVALID_FORMAT.getCategoryId()),
     END_DATE_MUST_BE_GREATER_THAN_START_DATE(HttpStatus.BAD_REQUEST, "BAD_REQUEST", null, "la fecha fin debe ser mayor o igual a la fecha inicio", "", CategoryError.INVALID_FORMAT.getCategoryId());
 
     private final HttpStatus httpCode;

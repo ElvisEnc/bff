@@ -79,7 +79,7 @@ public class DebitCardMapper implements IDebitCardMapper {
                         .cardNumber(Util.obfuscateCardNumber(mw.getCardId()))
                         .holderName(mw.getCardName())
                         .expiryDate(UtilDate.formatDate(mw.getExpirationDate()))
-                        .status(mw.getStatusDescription())
+                        .status(Util.getStatusDebitCard(mw.getStatus()))
                         .build())
                 .toList();
     }
