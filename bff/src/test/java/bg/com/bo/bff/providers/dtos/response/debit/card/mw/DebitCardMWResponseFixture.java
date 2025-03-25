@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.dtos.response.debit.card.mw;
 
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.debit.card.DebitCardMiddlewareError;
@@ -192,7 +193,9 @@ public class DebitCardMWResponseFixture {
                 .deliveryDate("123")
                 .expirationDate("2024-12-12")
                 .statusDescription("123")
-                .status("Undefined")
+                .status(Util.getStatusDebitCard("B"))
+                .status(Util.getStatusDebitCard("C"))
+                .status(Util.getStatusDebitCard("S"))
                 .protectionInsurance("123")
                 .insuranceAccountId("123")
                 .insuranceAccountNumber("123")
