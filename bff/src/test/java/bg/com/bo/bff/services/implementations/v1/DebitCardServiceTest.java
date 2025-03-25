@@ -92,8 +92,8 @@ class DebitCardServiceTest {
     void givenPersonCodeWhenGetListDebitCardThenSuccess() throws IOException {
         // Arrange
         ListDebitCardMWResponse mwResponseMock = DebitCardMWResponseFixture.withDefaultListDebitCardMWResponse();
-        ListDebitCardResponse expectedResponse = DebitCardResponseFixture.withDefaultListDebitCardResponse();
         when(provider.listDebitCard(any())).thenReturn(mwResponseMock);
+        ListDebitCardResponse expectedResponse = DebitCardResponseFixture.withDefaultListDebitCardResponse();
 
         // Act
         ListDebitCardResponse response = service.getListDebitCard(123);
