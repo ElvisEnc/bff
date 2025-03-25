@@ -45,9 +45,10 @@ public class CreditCardMapper implements ICreditCardMapper {
     }
 
     private ListCreditCardResponse.CreditCardResponse mapCreditCard(ListCreditCardMWResponse.CreditCardMWResponse ccMW) {
+        String[] words = ccMW.getProduct().split(" ");
         return ListCreditCardResponse.CreditCardResponse.builder()
                 .cardId(ccMW.getAccountMaster())
-                .product(ccMW.getProduct())
+                .product(words[words.length -1])
                 .cardNumber(Util.obfuscateCardNumber(ccMW.getPanNumber()))
                 .cmsAccount(ccMW.getCmsAccountNumber())
                 .holderName(ccMW.getHolderName())
@@ -60,9 +61,10 @@ public class CreditCardMapper implements ICreditCardMapper {
     }
 
     private ListCreditCardResponse.PrepaidCardResponse mapPrepaidCard(ListCreditCardMWResponse.PrepaidCardMWResponse pcMW) {
+        String[] words = pcMW.getProduct().split(" ");
         return ListCreditCardResponse.PrepaidCardResponse.builder()
                 .cardId(pcMW.getAccountMaster())
-                .product(pcMW.getProduct())
+                .product(words[words.length - 1])
                 .cardNumber(Util.obfuscateCardNumber(pcMW.getPanNumber()))
                 .cmsAccount(pcMW.getCmsAccountNumber())
                 .holderName(pcMW.getHolderName())
@@ -190,7 +192,8 @@ public class CreditCardMapper implements ICreditCardMapper {
         if (mwResponse == null || mwResponse.getData() == null)
             return Collections.emptyList();
         return mwResponse.getData().stream()
-                .map(mw -> LinkserCreditCardResponse.builder()
+                .map(mw ->
+                        LinkserCreditCardResponse.builder()
                         .cmsCard(mw.getCmsCardNumber())
                         .cardNumber(Util.obfuscateCardNumber(mw.getPanNumber()))
                         .holderName(mw.getHolderName().trim())
@@ -198,9 +201,14 @@ public class CreditCardMapper implements ICreditCardMapper {
                         .branch(mw.getBranch())
                         .cardType(mw.getCardType().trim())
                         .statusCode(mw.getStatusCode())
-                        .statusDescription(mw.getStatusDescription())
+                        .statusDescription(getLastWord(mw.getStatusDescription()))
                         .build())
                 .toList();
+    }
+
+    private String getLastWord(String text){
+        String[] words = text.split(" ");
+        return words[words.length - 1];
     }
 
     private String convertDueDateCreditCard(String dueDate) {
