@@ -2,6 +2,7 @@ package bg.com.bo.bff.application.dtos.response.debit.card;
 
 import bg.com.bo.bff.application.dtos.request.debit.card.DCLimitsPeriod;
 
+import bg.com.bo.bff.commons.utils.Util;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class DebitCardResponseFixture {
                 .cardNumber("**** **** **** 1234")
                 .holderName("123")
                 .expiryDate("12/12/2024")
-                .status("Undefined")
+                .status(Util.getStatusDebitCard("Undefined"))
                 .build();
     }
 
@@ -29,7 +30,7 @@ public class DebitCardResponseFixture {
                 .cardNumber("1234567890")
                 .holderName("John Doe")
                 .expirationDate("2024-08-04")
-                .status("A")
+                .status(Util.getStatusDebitCard("A"))
                 .assured(true)
                 .build();
     }
