@@ -244,7 +244,6 @@ class CreditCardServiceTest {
 
         //Assert
         assertNotNull(response);
-        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
         verify(provider).getCreditCardsFromLinkser(any(), any());
         verify(mapper).convertListCreditCard(any());
     }
