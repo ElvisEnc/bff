@@ -105,8 +105,7 @@ class DebitCardControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         String expected = Util.objectToString(responseExpected);
-        byte[] responseBytes = result.getResponse().getContentAsByteArray();
-        String actual = new String(responseBytes, StandardCharsets.UTF_8);
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertNotNull(result);
@@ -128,8 +127,7 @@ class DebitCardControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         String expected = Util.objectToString(responseExpected);
-        byte[] responseBytes = result.getResponse().getContentAsByteArray();
-        String actual = new String(responseBytes, StandardCharsets.UTF_8);
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertNotNull(result);
@@ -154,8 +152,7 @@ class DebitCardControllerTest {
                 .andReturn();
 
         String response = objectMapper.writeValueAsString(expected);
-        byte[] responseBytes = result.getResponse().getContentAsByteArray();
-        String actual = new String(responseBytes, StandardCharsets.UTF_8);
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertEquals(response, actual);
@@ -181,8 +178,7 @@ class DebitCardControllerTest {
                 .andReturn();
 
         String response = objectMapper.writeValueAsString(expected);
-        byte[] responseBytes = result.getResponse().getContentAsByteArray();
-        String actual = new String(responseBytes, StandardCharsets.UTF_8);
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
         // Assert
         assertEquals(response, actual);
         verify(service).createAuthorizationOnlinePurchase(any(), any(), any());
@@ -204,8 +200,7 @@ class DebitCardControllerTest {
                 .andReturn();
 
         String response = objectMapper.writeValueAsString(expectedResponse);
-        byte[] responseBytes = result.getResponse().getContentAsByteArray();
-        String actual = new String(responseBytes, StandardCharsets.UTF_8);
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertEquals(response, actual);
@@ -230,8 +225,7 @@ class DebitCardControllerTest {
                 .andReturn();
 
         String response = objectMapper.writeValueAsString(expectedResponse);
-        byte[] responseBytes = result.getResponse().getContentAsByteArray();
-        String actual = new String(responseBytes, StandardCharsets.UTF_8);
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertEquals(response, actual);
@@ -303,8 +297,7 @@ class DebitCardControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         String response = objectMapper.writeValueAsString(mockResponse);
-        byte[] responseBytes = result.getResponse().getContentAsByteArray();
-        String actual = new String(responseBytes, StandardCharsets.UTF_8);
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertNotNull(result);
@@ -331,8 +324,7 @@ class DebitCardControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         String response = objectMapper.writeValueAsString(mockResponse);
-        byte[] responseBytes = result.getResponse().getContentAsByteArray();
-        String actual = new String(responseBytes, StandardCharsets.UTF_8);
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertNotNull(result);
@@ -358,8 +350,7 @@ class DebitCardControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         String response = objectMapper.writeValueAsString(mockResponse);
-        byte[] responseBytes = result.getResponse().getContentAsByteArray();
-        String actual = new String(responseBytes, StandardCharsets.UTF_8);
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertNotNull(result);
