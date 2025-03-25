@@ -192,7 +192,7 @@ public class DebitCardMWResponseFixture {
                 .deliveryDate("123")
                 .expirationDate("2024-12-12")
                 .statusDescription("123")
-                .status("123")
+                .status("Undefined")
                 .protectionInsurance("123")
                 .insuranceAccountId("123")
                 .insuranceAccountNumber("123")

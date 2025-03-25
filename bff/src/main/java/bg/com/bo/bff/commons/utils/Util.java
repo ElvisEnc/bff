@@ -397,4 +397,14 @@ public class Util {
         } else
             return false;
     }
+
+    public static String getStatusDebitCard(String status){
+        switch (status) {
+            case "S", "T", "Z": return "Pendiente";
+            case "B": return "Bloqueada";
+            case "C": return "Eliminada";
+            case "A": return "Activo";
+            default: return "Undefined";
+        }
+    }
 }

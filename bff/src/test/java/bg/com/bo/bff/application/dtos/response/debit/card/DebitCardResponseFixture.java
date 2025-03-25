@@ -12,7 +12,7 @@ public class DebitCardResponseFixture {
                 .cardNumber("**** **** **** 1234")
                 .holderName("123")
                 .expiryDate("12/12/2024")
-                .status("123")
+                .status("Undefined")
                 .build();
     }
 
