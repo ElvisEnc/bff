@@ -43,6 +43,17 @@ public class Util {
     private static final Map<String, Map<String, String>> schemeNameMap = new HashMap<>();
     private static final Pattern EIF_PATTERN = Pattern.compile("^\\D*(\\d+)");
     private static final Validator validator;
+    public static final String CODE_DEBITCARD_PENDING_S = "S";
+    public static final String CODE_DEBITCARD_PENDING_T = "T";
+    public static final String CODE_DEBITCARD_PENDING_Z = "Z";
+    public static final String CODE_DEBIDCARD_BLOQUED = "B";
+    public static final String CODE_DEBITCARD_DELETED = "C";
+    public static final String CODE_DEBITCARD_ACTIVE = "A";
+    public static final String STATUS_DEBITCARD_UNDEFINED = "Undefined";
+    public static final String STATUS_DEBITCARD_PENDING = "Pendiente";
+    public static final String STATUS_DEBITCARD_BLOQUED = "Bloqueada";
+    public static final String STATUS_DEBITCARD_DELETED = "Eliminada";
+    public static final String STATUS_DEBITCARD_ACTIVE = "Activada";
 
     static {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -400,11 +411,11 @@ public class Util {
 
     public static String getStatusDebitCard(String status){
         switch (status) {
-            case "S", "T", "Z": return "Pendiente";
-            case "B": return "Bloqueada";
-            case "C": return "Eliminada";
-            case "A": return "Activo";
-            default: return "Undefined";
+            case CODE_DEBITCARD_PENDING_S, CODE_DEBITCARD_PENDING_T, CODE_DEBITCARD_PENDING_Z: return STATUS_DEBITCARD_PENDING;
+            case CODE_DEBIDCARD_BLOQUED: return STATUS_DEBITCARD_BLOQUED;
+            case CODE_DEBITCARD_DELETED: return STATUS_DEBITCARD_DELETED;
+            case CODE_DEBITCARD_ACTIVE: return STATUS_DEBITCARD_ACTIVE;
+            default: return STATUS_DEBITCARD_UNDEFINED;
         }
     }
 }

@@ -11,7 +11,7 @@ public enum DebitCardMiddlewareResponse implements IGenericControllerResponse {
 
     SUCCESS_CHANGE_AMOUNT(ConstantMessages.SUCCESS.getTitle(), "Límites diarios guardados","Se modificó correctamente el límite de su tarjeta."),
     ERROR_CHANGE_AMOUNT(ConstantMessages.ERROR.getTitle(), ConstantMessages.GENERIC.getTitle(),ConstantMessages.MODIFY_ERROR.getMessage()),
-    SUCCESS_UPDATE_STATUS_LOCK(ConstantMessages.SUCCESS.getTitle(), "Tarjeta reactivada","Se modificó correctamente el estado de su tarjeta."),
+    SUCCESS_UPDATE_STATUS_LOCK(ConstantMessages.SUCCESS.getTitle(), "Tarjeta reactivada","Ahora puedes usar tu tarjeta nuevamente para compras y retiros."),
     ERROR_UPDATE_STATUS_LOCK(ConstantMessages.ERROR.getTitle(), ConstantMessages.GENERIC.getTitle(),ConstantMessages.MODIFY_ERROR.getMessage()),
     SUCCESS_MODIFY_ACCOUNTS_ORDER(ConstantMessages.SUCCESS.getTitle(), "Cuenta asociada actualizada","Has cambiado la cuenta vinculada a tu tarjeta de débito. A partir de ahora, todas las transacciones se debitarán de la nueva cuenta seleccionada."),
     ERROR_MODIFY_ACCOUNTS_ORDER(ConstantMessages.ERROR.getTitle(), ConstantMessages.GENERIC.getTitle(),ConstantMessages.MODIFY_ERROR.getMessage()),
