@@ -49,11 +49,11 @@ public class Util {
     public static final String CODE_DEBIDCARD_BLOQUED = "B";
     public static final String CODE_DEBITCARD_DELETED = "C";
     public static final String CODE_DEBITCARD_ACTIVE = "A";
-    public static final String STATUS_DEBIDCART_UNDEFINED = "Undefined";
-    public static final String STATUS_DEBIDCART_PENDING = "Pendiente";
-    public static final String STATUS_DEBIDCART_BLOQUED = "Bloqueada";
-    public static final String STATUS_DEBIDCART_DETELED = "Eliminada";
-    public static final String STATUS_DEBIDCART_ACTIVE = "Activo";
+    public static final String STATUS_DEBITCARD_UNDEFINED = "Undefined";
+    public static final String STATUS_DEBITCARD_PENDING = "Pendiente";
+    public static final String STATUS_DEBITCARD_BLOQUED = "Bloqueada";
+    public static final String STATUS_DEBITCARD_DELETED = "Eliminada";
+    public static final String STATUS_DEBITCARD_ACTIVE = "Activada";
 
     static {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -411,11 +411,11 @@ public class Util {
 
     public static String getStatusDebitCard(String status){
         switch (status) {
-            case CODE_DEBITCARD_PENDING_S, CODE_DEBITCARD_PENDING_T, CODE_DEBITCARD_PENDING_Z: return STATUS_DEBIDCART_PENDING;
-            case CODE_DEBIDCARD_BLOQUED: return STATUS_DEBIDCART_BLOQUED;
-            case CODE_DEBITCARD_DELETED: return STATUS_DEBIDCART_DETELED;
-            case CODE_DEBITCARD_ACTIVE: return STATUS_DEBIDCART_ACTIVE;
-            default: return STATUS_DEBIDCART_UNDEFINED;
+            case CODE_DEBITCARD_PENDING_S, CODE_DEBITCARD_PENDING_T, CODE_DEBITCARD_PENDING_Z: return STATUS_DEBITCARD_PENDING;
+            case CODE_DEBIDCARD_BLOQUED: return STATUS_DEBITCARD_BLOQUED;
+            case CODE_DEBITCARD_DELETED: return STATUS_DEBITCARD_DELETED;
+            case CODE_DEBITCARD_ACTIVE: return STATUS_DEBITCARD_ACTIVE;
+            default: return STATUS_DEBITCARD_UNDEFINED;
         }
     }
 }
