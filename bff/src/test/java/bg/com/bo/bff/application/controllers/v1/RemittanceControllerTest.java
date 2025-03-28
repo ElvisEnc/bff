@@ -60,8 +60,8 @@ class RemittanceControllerTest {
         when(service.getGeneralParameters(any())).thenReturn(responseExpected);
 
         // Act
-        String url_general_parameter = "/api/v1/remittances/persons/{personId}/parameters";
-        MvcResult result = mockMvc.perform(get(url_general_parameter, "123")
+        String urlRemittance = "/api/v1/remittances/persons/{personId}/parameters";
+        MvcResult result = mockMvc.perform(get(urlRemittance, "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -83,8 +83,8 @@ class RemittanceControllerTest {
         when(service.validateAccount(any(), any())).thenReturn(responseExpected);
 
         // Act
-        String url_validate_Account = "/api/v1/remittances/persons/{personId}/accounts/{accountId}/validate";
-        MvcResult result = mockMvc.perform(get(url_validate_Account, "123", "123456")
+        String urlRemittance = "/api/v1/remittances/persons/{personId}/accounts/{accountId}/validate";
+        MvcResult result = mockMvc.perform(get(urlRemittance, "123", "123456")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -107,8 +107,8 @@ class RemittanceControllerTest {
         when(service.getMoneyOrdersSent(any())).thenReturn(expectedResponse);
 
         // Act
-        String url_money_orders = "/api/v1/remittances/persons/{personId}/money-orders";
-        MvcResult result = mockMvc.perform(get(url_money_orders, "123456")
+        String urlRemittance = "/api/v1/remittances/persons/{personId}/money-orders";
+        MvcResult result = mockMvc.perform(get(urlRemittance, "123456")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
