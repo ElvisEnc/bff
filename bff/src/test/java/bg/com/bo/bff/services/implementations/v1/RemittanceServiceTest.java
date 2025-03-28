@@ -1,16 +1,21 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.RemittanceRequestFixture;
+import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.*;
 import bg.com.bo.bff.mappings.providers.remittance.RemittanceMapper;
 import bg.com.bo.bff.providers.dtos.request.remittance.RemittanceMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.ConsultWURemittanceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.remittance.RemittanceMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.ConsultWURemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.DepositRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.UpdateWURemittanceMWResponse;
 import bg.com.bo.bff.providers.interfaces.IRemittanceProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareResponse;
 import org.junit.jupiter.api.Assertions;
@@ -203,5 +208,54 @@ class RemittanceServiceTest {
         assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
         verify(provider).depositRemittance(any());
         verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void testConsultWURemittanceU() throws IOException {
+        //Given
+        ConsultWURemittanceRequest request = ConsultWURemittanceRequest
+                .builder()
+                .applicationId("2")
+                .jtsOidAccount("321321")
+                .build();
+        ConsultWURemittanceMWResponse mwResponseMock = RemittanceMWResponseFixture.withDefaultConsultWURemittance();
+        List<ConsultWURemittanceResponse> expectedResponse = RemittanceResponseFixture.withDataDefaultListConsultWURemittanceResponse();
+
+        //When
+        when(provider.consultWURemittance(any(ConsultWURemittanceMWRequest.class ))).thenReturn(mwResponseMock);
+        List<ConsultWURemittanceResponse> response = service.consultWURemittance("10", "20", request);
+
+        //Then
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(provider).consultWURemittance(any(ConsultWURemittanceMWRequest.class));
+
+    }
+
+    @Test
+    void testUpdateWURemittance() throws IOException {
+        //Given
+        UpdateWURemittanceRequest request = UpdateWURemittanceRequest
+                .builder()
+                .relation("Hermano")
+                .origin("Ahorros")
+                .transaction("789789")
+                .company("GANADERO")
+                .companyLevel("3")
+                .entryDate("2024-05-01")
+                .laborType("Arquitecto")
+                .build();
+        UpdateWURemittanceMWResponse mwResponseMock = RemittanceMWResponseFixture.withDefaultUpdateWURemittance();
+        UpdateWURemittanceResponse expectedResponse = RemittanceResponseFixture.withDataDefaultUpdateWURemittanceResponse();
+
+        //When
+        when(provider.updateWURemittance(any())).thenReturn(mwResponseMock);
+        UpdateWURemittanceResponse response = service.updateWURemittance("10", "2525",request);
+
+        //Then
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(provider).updateWURemittance(any());
+
     }
 }

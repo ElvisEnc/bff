@@ -1,5 +1,7 @@
 package bg.com.bo.bff.application.dtos.response.remittance;
 
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.ConsultWURemittanceMWResponse;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +13,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckRemittanceResponse {
+public class ConsultWURemittanceResponse {
 
     private String remittanceId;
     private int consultationId;
@@ -28,4 +30,5 @@ public class CheckRemittanceResponse {
     private String documentNumber;
     private String documentType;
     private String documentExtension;
+
 }

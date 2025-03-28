@@ -10,9 +10,11 @@ import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.providers.dtos.request.remittance.RemittanceMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.ConsultWURemittanceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.DepositRemittanceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.UpdateWURemittanceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.RemittanceMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.*;
@@ -170,6 +172,40 @@ class RemittanceMiddlewareProviderTest {
 
         // Act
         DepositRemittanceMWResponse response = provider.depositRemittance(request);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+    }
+
+    @Test
+    @DisplayName("List remittances Wester Union.")
+    void testConsultWURemittance() throws IOException {
+        // Arrange
+        ConsultWURemittanceMWRequest request = RemittanceMWRequestFixture.withDefaultConsultWURemittance();
+        ConsultWURemittanceMWResponse  expectedResponse = RemittanceMWResponseFixture.withDefaultConsultWURemittance();
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        ConsultWURemittanceMWResponse  response = provider.consultWURemittance(request);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+    }
+
+    @Test
+    @DisplayName("Update remittance Wester Union.")
+    void testUpdateWURemittance() throws IOException {
+        // Arrange
+        UpdateWURemittanceMWRequest request = RemittanceMWRequestFixture.withDefaultUpdateWURemittance();
+        UpdateWURemittanceMWResponse  expectedResponse = RemittanceMWResponseFixture.withDefaultUpdateWURemittance();
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        UpdateWURemittanceMWResponse  response = provider.updateWURemittance(request);
 
         // Assert
         assertNotNull(response);

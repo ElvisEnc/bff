@@ -7,4 +7,23 @@ public class RemittanceRequestFixture {
                 .consultationId("123456789")
                 .build();
     }
+
+    public static ConsultWURemittanceRequest withDefaultConsultWURemittanceRequest(){
+        return ConsultWURemittanceRequest.builder()
+                .applicationId("25")
+                .jtsOidAccount("363636")
+                .build();
+    }
+
+    public static UpdateWURemittanceRequest withDefaultUpdateWURemittanceRequest(){
+        return UpdateWURemittanceRequest.builder()
+                .relation("Hermano")
+                .origin("Remesas")
+                .transaction("12322")
+                .company("BANCO GANADERO")
+                .companyLevel("7")
+                .entryDate("2025-04-01")
+                .laborType("Arquitecto")
+                .build();
+    }
 }

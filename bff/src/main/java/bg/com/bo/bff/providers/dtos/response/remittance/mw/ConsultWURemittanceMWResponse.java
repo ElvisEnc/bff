@@ -12,15 +12,15 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckRemittanceMWResponse {
+public class ConsultWURemittanceMWResponse {
 
-    private List<CheckRemittanceMWResponse.CheckRemittanceMW> data;
+    private List<ConsultWURemittanceMWResponse.ConsultWURemittanceMW> data;
 
     @Getter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CheckRemittanceMW {
+    public static class ConsultWURemittanceMW {
 
         private String noRemittance;
         private int noConsult;
@@ -37,5 +37,6 @@ public class CheckRemittanceMWResponse {
         private String noDocument;
         private String documentType;
         private String extension;
+
     }
 }
