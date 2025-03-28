@@ -125,7 +125,7 @@ public class RemittanceResponseFixture {
                 .companyLevel("7")
                 .entryDate("2025-04-01")
                 .laborType("Arquitecto")
-                .message("Datos actualizados correctamente.")
+                .pcc01("Datos actualizados correctamente.")
                 .build();
     }
 

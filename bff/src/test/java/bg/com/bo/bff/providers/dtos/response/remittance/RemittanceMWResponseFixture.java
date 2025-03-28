@@ -158,6 +158,6 @@ public class RemittanceMWResponseFixture {
                         .companyLevel("7")
                         .entryDate("2025-04-01")
                         .laborType("Arquitecto")
-                        .message("Datos actualizados correctamente.").build()).build();
+                        .pcc01("Datos actualizados correctamente.").build()).build();
     }
 }
