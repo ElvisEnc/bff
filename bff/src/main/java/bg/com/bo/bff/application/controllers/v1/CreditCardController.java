@@ -186,7 +186,7 @@ public class CreditCardController extends AbstractBFFController {
             @Pattern(regexp = "13-\\d{2}-10-\\d{10}", message = "Formato inválido para cmsCard")
             @Schema(description = "número compuesto de la Tarjeta", example = "13-01-10-0000001234") String cmsCard,
             @RequestParam("type") @NotBlank
-            @Pattern(regexp = "^I|L+", message = "Parametro invalido para type")
+            @Pattern(regexp = "^[(I|L)]$", message = "Parametro inválido para type")
             @Schema(description = "Tipo de habilitacion", example = "13-01-10-0000001234") String type
 
     ) throws IOException {
