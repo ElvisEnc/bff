@@ -237,6 +237,25 @@ public class CreditCardMWResponseFixture {
                                 .origin("GMV")
                                 .initDate("01/01/2025")
                                 .endDate("01/01/2025")
+                                .typeSolicitude("Internet")
+                                .build()
+                ))
+                .build();
+    }
+
+    public static PurchaseAuthMWResponse withDefaultPurchaseAuthMWResponseSpecial() {
+        return PurchaseAuthMWResponse.builder()
+                .data(Arrays.asList(
+                        PurchaseAuthMWResponse.PurchaseAuthMW.builder()
+                                .processDate("09/08/2024")
+                                .type("Temporal")
+                                .amount("45.00")
+                                .currency("840")
+                                .status("PENDIENTE")
+                                .origin("GMV")
+                                .initDate("01/01/2025")
+                                .endDate("01/01/2025")
+                                .typeSolicitude("Liberacion Parametros")
                                 .build()
                 ))
                 .build();

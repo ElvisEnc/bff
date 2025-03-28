@@ -18,6 +18,10 @@ import java.util.Optional;
 
 @Component
 public class CreditCardMapper implements ICreditCardMapper {
+
+    private static final String TYPE_INTERNET = "Internet";
+    private static final String TYPE_SPECIAL = "Liberacion Parametros";
+
     @Override
     public ListCreditCardResponse convertResponse(ListCreditCardMWResponse mwResponse) {
         if (mwResponse == null)
@@ -48,7 +52,7 @@ public class CreditCardMapper implements ICreditCardMapper {
         String[] words = ccMW.getProduct().split(" ");
         return ListCreditCardResponse.CreditCardResponse.builder()
                 .cardId(ccMW.getAccountMaster())
-                .product(words[words.length -1])
+                .product(words[words.length - 1])
                 .cardNumber(Util.obfuscateCardNumber(ccMW.getPanNumber()))
                 .cmsAccount(ccMW.getCmsAccountNumber())
                 .holderName(ccMW.getHolderName())
@@ -194,19 +198,19 @@ public class CreditCardMapper implements ICreditCardMapper {
         return mwResponse.getData().stream()
                 .map(mw ->
                         LinkserCreditCardResponse.builder()
-                        .cmsCard(mw.getCmsCardNumber())
-                        .cardNumber(Util.obfuscateCardNumber(mw.getPanNumber()))
-                        .holderName(mw.getHolderName().trim())
-                        .dueDate(convertDueDateCreditCard(mw.getDueDate()))
-                        .branch(mw.getBranch())
-                        .cardType(mw.getCardType().trim())
-                        .statusCode(mw.getStatusCode())
-                        .statusDescription(getLastWord(mw.getStatusDescription()))
-                        .build())
+                                .cmsCard(mw.getCmsCardNumber())
+                                .cardNumber(Util.obfuscateCardNumber(mw.getPanNumber()))
+                                .holderName(mw.getHolderName().trim())
+                                .dueDate(convertDueDateCreditCard(mw.getDueDate()))
+                                .branch(mw.getBranch())
+                                .cardType(mw.getCardType().trim())
+                                .statusCode(mw.getStatusCode())
+                                .statusDescription(getLastWord(mw.getStatusDescription()))
+                                .build())
                 .toList();
     }
 
-    private String getLastWord(String text){
+    private String getLastWord(String text) {
         String[] words = text.split(" ");
         return words[words.length - 1];
     }
@@ -272,11 +276,11 @@ public class CreditCardMapper implements ICreditCardMapper {
     }
 
     @Override
-    public List<PurchaseAuthResponse> convertPurchase(PurchaseAuthMWResponse mwResponse) {
+    public List<PurchaseAuthResponse> convertPurchase(PurchaseAuthMWResponse mwResponse, String type) {
         if (mwResponse == null || mwResponse.getData() == null) {
             return Collections.emptyList();
         }
-        return mwResponse.getData().stream()
+        List<PurchaseAuthResponse> list = mwResponse.getData().stream()
                 .map(mw -> PurchaseAuthResponse.builder()
                         .processDate(UtilDate.formatDate(mw.getProcessDate()))
                         .type(mw.getType())
@@ -286,8 +290,20 @@ public class CreditCardMapper implements ICreditCardMapper {
                         .origin(mw.getOrigin())
                         .initDate(mw.getInitDate())
                         .endDate(mw.getEndDate())
-                        .build())
+                        .typeSolicitude(mw.getTypeSolicitude())
+                        .build()
+                )
                 .toList();
+
+        if (type.equals("I")) {
+            return list.stream().filter(
+                    obj -> obj.getTypeSolicitude().equals(TYPE_INTERNET)
+            ).toList();
+        }
+
+        return list.stream().filter(
+                obj -> obj.getTypeSolicitude().equals(TYPE_SPECIAL)
+        ).toList();
     }
 
     @Override

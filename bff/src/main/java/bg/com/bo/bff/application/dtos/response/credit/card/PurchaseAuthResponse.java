@@ -34,4 +34,7 @@ public class PurchaseAuthResponse {
 
     @Schema(description = "Fecha de fin")
     private String endDate;
+
+    @Schema(description = "Tipo de habilitacion")
+    private String typeSolicitude;
 }

@@ -289,11 +289,11 @@ class CreditCardControllerTest {
     void givenListPurchaseRequestWhenGetPurchasesAuthorizationsThenResponseExpected() throws Exception {
         // Arrange
         List<PurchaseAuthResponse> expectedResponse = Collections.singletonList(CreditCardResponseFixture.withDefaultPurchaseAuthResponse());
-        when(service.getPurchasesAuthorizations(any(), any())).thenReturn(expectedResponse);
+        when(service.getPurchasesAuthorizations(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/credit-cards/persons/{personId}/authorizations?cmsCard={cmsCard}";
-        MvcResult result = mockMvc.perform(get(path, "123", "13-01-10-0000000005")
+        String path = "/api/v1/credit-cards/persons/123/authorizations?cmsCard=13-01-10-0000000001&type=L";
+        MvcResult result = mockMvc.perform(get(path)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -305,7 +305,7 @@ class CreditCardControllerTest {
         // Assert
         assertNotNull(result);
         assertEquals(expectedJsonResponse, response);
-        verify(service).getPurchasesAuthorizations(any(), any());
+        verify(service).getPurchasesAuthorizations(any(), any(), any());
     }
 
     @Test

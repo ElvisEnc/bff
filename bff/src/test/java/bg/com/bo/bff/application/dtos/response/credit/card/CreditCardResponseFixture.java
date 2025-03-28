@@ -245,6 +245,21 @@ public class CreditCardResponseFixture {
                 .origin("GMV")
                 .initDate("01/01/2025")
                 .endDate("01/01/2025")
+                .typeSolicitude("Internet")
+                .build();
+    }
+
+    public static PurchaseAuthResponse withDefaultPurchaseAuthResponseSpecial() {
+        return PurchaseAuthResponse.builder()
+                .processDate("09/08/2024")
+                .type("Temporal")
+                .amount("45.00")
+                .currency("840")
+                .status("PENDIENTE")
+                .origin("GMV")
+                .initDate("01/01/2025")
+                .endDate("01/01/2025")
+                .typeSolicitude("Liberacion Parametros")
                 .build();
     }
 

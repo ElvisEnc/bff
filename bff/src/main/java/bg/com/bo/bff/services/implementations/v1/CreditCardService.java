@@ -132,8 +132,8 @@ public class CreditCardService implements ICreditCardService {
     }
 
     @Override
-    public List<PurchaseAuthResponse> getPurchasesAuthorizations(String personId, String cmsCard) throws IOException {
-        return mapper.convertPurchase(provider.getListPurchaseAuth(personId, cmsCard));
+    public List<PurchaseAuthResponse> getPurchasesAuthorizations(String personId, String cmsCard, String type) throws IOException {
+        return mapper.convertPurchase(provider.getListPurchaseAuth(personId, cmsCard), type);
     }
 
     @Override
