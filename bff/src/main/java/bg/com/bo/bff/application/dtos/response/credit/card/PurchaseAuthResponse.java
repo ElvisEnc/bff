@@ -36,5 +36,5 @@ public class PurchaseAuthResponse {
     private String endDate;
 
     @Schema(description = "Tipo de habilitacion")
-    private String typeSolicitude;
+    private String requestType;
 }

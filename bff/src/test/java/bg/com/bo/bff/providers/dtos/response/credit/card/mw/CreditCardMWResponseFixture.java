@@ -237,7 +237,7 @@ public class CreditCardMWResponseFixture {
                                 .origin("GMV")
                                 .initDate("01/01/2025")
                                 .endDate("01/01/2025")
-                                .typeSolicitude("Internet")
+                                .requestType("Internet")
                                 .build()
                 ))
                 .build();
@@ -255,7 +255,7 @@ public class CreditCardMWResponseFixture {
                                 .origin("GMV")
                                 .initDate("01/01/2025")
                                 .endDate("01/01/2025")
-                                .typeSolicitude("Liberacion Parametros")
+                                .requestType("Liberacion Parametros")
                                 .build()
                 ))
                 .build();

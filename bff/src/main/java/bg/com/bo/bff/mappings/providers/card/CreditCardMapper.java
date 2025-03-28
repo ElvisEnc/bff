@@ -19,6 +19,7 @@ import java.util.Optional;
 @Component
 public class CreditCardMapper implements ICreditCardMapper {
 
+    private static final String REQUEST_TYPE_INTERNET = "I";
     private static final String TYPE_INTERNET = "Internet";
     private static final String TYPE_SPECIAL = "Liberacion Parametros";
 
@@ -211,8 +212,7 @@ public class CreditCardMapper implements ICreditCardMapper {
     }
 
     private String getLastWord(String text) {
-        String[] words = text.split(" ");
-        return words[words.length - 1];
+        return text.substring(text.lastIndexOf(" ") + 1);
     }
 
     private String convertDueDateCreditCard(String dueDate) {
@@ -290,19 +290,19 @@ public class CreditCardMapper implements ICreditCardMapper {
                         .origin(mw.getOrigin())
                         .initDate(mw.getInitDate())
                         .endDate(mw.getEndDate())
-                        .typeSolicitude(mw.getTypeSolicitude())
+                        .requestType(mw.getRequestType())
                         .build()
                 )
                 .toList();
 
-        if (type.equals("I")) {
+        if (type.equals(REQUEST_TYPE_INTERNET)) {
             return list.stream().filter(
-                    obj -> obj.getTypeSolicitude().equals(TYPE_INTERNET)
+                    obj -> obj.getRequestType().equals(TYPE_INTERNET)
             ).toList();
         }
 
         return list.stream().filter(
-                obj -> obj.getTypeSolicitude().equals(TYPE_SPECIAL)
+                obj -> obj.getRequestType().equals(TYPE_SPECIAL)
         ).toList();
     }
 

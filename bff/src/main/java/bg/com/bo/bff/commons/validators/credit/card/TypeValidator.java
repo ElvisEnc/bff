@@ -10,6 +10,6 @@ public class TypeValidator implements ConstraintValidator<ValidType, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return "H".equals(value);
+        return "H".equals(value) || "T".equals(value);
     }
 }
