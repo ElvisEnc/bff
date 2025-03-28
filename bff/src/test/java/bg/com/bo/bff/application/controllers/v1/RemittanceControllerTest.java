@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class RemittanceControllerTest {
     private static final String GET_CONSULT_WESTERUNION_REMITTANCE = "/api/v1/remittances/persons/{personId}/remittance/{remittanceId}/wester-union";
-    private static final String PATCH_UPDATE_WESTERUNION_REMITTANCE = "/api/v1/remittances/persons/{personId}/wester-union/{consultId}";
+    private static final String PATCH_UPDATE_WESTERUNION_REMITTANCE = "/api/v1/remittances/persons/{personId}/wester-union/noconsult/{consultId}";
 
     private MockMvc mockMvc;
     @Spy

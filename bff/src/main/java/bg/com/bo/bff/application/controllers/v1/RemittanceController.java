@@ -151,7 +151,7 @@ public class RemittanceController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Actualizar giro enviado mediante Wester Union.")
     })
     @PatchMapping(
-            path = "/persons/{personId}/wester-union/{consultId}", produces = {MediaType.APPLICATION_JSON_VALUE})
+            path = "/persons/{personId}/wester-union/noconsult/{consultId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiDataResponse<UpdateWURemittanceResponse>> update(
             @PathVariable("personId") @NotNull
             @Parameter(description = "Este es el personId de la persona", example = "12345")
