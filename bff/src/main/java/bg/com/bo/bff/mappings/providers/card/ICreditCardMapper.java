@@ -35,7 +35,7 @@ public interface ICreditCardMapper {
 
     List<CreditCardStatementsResponse> convertStatements(CreditCardStatementsMWResponse mwResponse);
 
-    List<PurchaseAuthResponse> convertPurchase(PurchaseAuthMWResponse mwResponse);
+    List<PurchaseAuthResponse> convertPurchase(PurchaseAuthMWResponse mwResponse, String type);
 
     PayCreditCardMWRequest mapperRequest(String personId, String accountId, PayCreditCardRequest request);
 

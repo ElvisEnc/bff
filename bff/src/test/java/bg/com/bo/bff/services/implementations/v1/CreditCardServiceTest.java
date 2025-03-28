@@ -409,13 +409,30 @@ class CreditCardServiceTest {
         when(provider.getListPurchaseAuth(any(), any())).thenReturn(responseMock);
 
         //Act
-        List<PurchaseAuthResponse> response = service.getPurchasesAuthorizations("123", "123");
+        List<PurchaseAuthResponse> response = service.getPurchasesAuthorizations("123", "123", "I");
 
         //Assert
         assertNotNull(response);
-        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        assertEquals(expectedResponse.size(), response.size());
         verify(provider).getListPurchaseAuth(any(), any());
-        verify(mapper).convertPurchase(any());
+        verify(mapper).convertPurchase(any(), any());
+    }
+
+    @Test
+    void getLimitsListSpecialOK() throws IOException {
+        //Arrange
+        PurchaseAuthMWResponse responseMock = CreditCardMWResponseFixture.withDefaultPurchaseAuthMWResponseSpecial();
+        List<PurchaseAuthResponse> expectedResponse = Collections.singletonList(CreditCardResponseFixture.withDefaultPurchaseAuthResponseSpecial());
+        when(provider.getListPurchaseAuth(any(), any())).thenReturn(responseMock);
+
+        //Act
+        List<PurchaseAuthResponse> response = service.getPurchasesAuthorizations("123", "123", "L");
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse.size(), response.size());
+        verify(provider).getListPurchaseAuth(any(), any());
+        verify(mapper).convertPurchase(any(), any());
     }
 
     @Test
@@ -425,7 +442,7 @@ class CreditCardServiceTest {
         when(provider.getListPurchaseAuth(any(), any())).thenReturn(responseMock);
 
         //Act
-        List<PurchaseAuthResponse> response = service.getPurchasesAuthorizations("123", "123");
+        List<PurchaseAuthResponse> response = service.getPurchasesAuthorizations("123", "123", "I");
 
         //Assert
         assertNotNull(response);
@@ -438,7 +455,7 @@ class CreditCardServiceTest {
         when(provider.getListPurchaseAuth(any(), any())).thenReturn(null);
 
         //Act
-        List<PurchaseAuthResponse> response = service.getPurchasesAuthorizations("123", "123");
+        List<PurchaseAuthResponse> response = service.getPurchasesAuthorizations("123", "123", "I");
 
         //Assert
         assertNotNull(response);

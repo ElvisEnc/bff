@@ -184,10 +184,14 @@ public class CreditCardController extends AbstractBFFController {
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @RequestParam("cmsCard") @NotBlank
             @Pattern(regexp = "13-\\d{2}-10-\\d{10}", message = "Formato inválido para cmsCard")
-            @Schema(description = "número compuesto de la Tarjeta", example = "13-01-10-0000001234") String cmsCard
+            @Schema(description = "número compuesto de la Tarjeta", example = "13-01-10-0000001234") String cmsCard,
+            @RequestParam("type") @NotBlank
+            @Pattern(regexp = "^I|L+", message = "Parametro invalido para type")
+            @Schema(description = "Tipo de habilitacion", example = "13-01-10-0000001234") String type
+
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(ApiDataResponse.of(service.getPurchasesAuthorizations(personId, cmsCard)));
+        return ResponseEntity.ok(ApiDataResponse.of(service.getPurchasesAuthorizations(personId, cmsCard, type)));
     }
 
     @Operation(summary = "Pago de TC o TPP", description = "Realiza el pago de una tarjeta de crédito o recarga de una tarjeta prepagada")

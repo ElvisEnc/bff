@@ -27,5 +27,6 @@ public class PurchaseAuthMWResponse {
         private String origin;
         private String initDate;
         private String endDate;
+        private String typeSolicitude;
     }
 }
