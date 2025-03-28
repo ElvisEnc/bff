@@ -1,6 +1,5 @@
 package bg.com.bo.bff.application.dtos.request.remittance;
 
-import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.Valid;

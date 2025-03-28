@@ -1,6 +1,5 @@
 package bg.com.bo.bff.application.dtos.response.remittance;
 
-import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
