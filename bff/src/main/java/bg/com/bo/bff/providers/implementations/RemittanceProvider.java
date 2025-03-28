@@ -62,4 +62,9 @@ public class RemittanceProvider extends MiddlewareProvider<RemittanceMiddlewareE
         String url = baseUrl + RemittanceMiddlewareService.DEPOSIT_REMITTANCE.getServiceURL();
         return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, DepositRemittanceMWResponse.class);
     }
+    @Override
+    public DepositRemittanceMWResponse depositRemittanceWU(DepositRemittanceWUMWRequest request) throws IOException {
+        String url = baseUrl + RemittanceMiddlewareService.DEPOSIT_REMITTANCE_WU.getServiceURL();
+        return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, DepositRemittanceMWResponse.class);
+    }
 }

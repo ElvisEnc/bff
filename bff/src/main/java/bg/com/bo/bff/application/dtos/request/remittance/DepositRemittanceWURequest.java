@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotNull;
 @lombok.AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DepositRemittanceRequest {
+public class DepositRemittanceWURequest {
 
     @Valid
     @NotBlank(message = "El JTS_OID de la persona no puede ser vacío.")
@@ -25,4 +25,16 @@ public class DepositRemittanceRequest {
     @NotNull(message = "La consulta de la remesa no puede ser valor nulo.")
     @OnlyNumber(message = "La consulta de la remesa solo puede contener números.")
     private String consultationId;
+
+    @Valid
+    @NotBlank(message = "El PCC01 de la remesa no puede ser vacío.")
+    @NotNull(message = "El PCC01 de la remesa no puede ser valor nulo.")
+    private String pccType;
+
+    @Valid
+    private String originFunds;
+
+
+    @Valid
+    private String originDestiny;
 }

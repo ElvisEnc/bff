@@ -7,4 +7,14 @@ public class RemittanceRequestFixture {
                 .consultationId("123456789")
                 .build();
     }
+
+    public static DepositRemittanceWURequest withDefaultDepositRemittanceWURequest() {
+        return DepositRemittanceWURequest.builder()
+                .accountId("123456")
+                .consultationId("123456789")
+                .pccType("0")
+                .originFunds("1")
+                .originDestiny("1")
+                .build();
+    }
 }

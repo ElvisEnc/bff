@@ -85,7 +85,6 @@ public class RemittanceResponseFixture {
 
     public static List<DepositRemittanceResponse> withDataDefaultListDepositRemittanceResponse() {
         return Collections.singletonList(DepositRemittanceResponse.builder()
-                        .remittanceId(1)
                         .accountingEntry(1)
                         .time("14:00")
                         .description("Test")

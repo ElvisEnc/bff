@@ -2,6 +2,7 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceWURequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
@@ -76,7 +77,7 @@ public class RemittanceController extends AbstractBFFController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Obtener giros enviados")
     })
-    @GetMapping(path = "/persons/{personId}/remittance/{remittanceId}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(path = "/persons/{personId}/remittance/{remittanceId}/check", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiDataResponse<List<CheckRemittanceResponse>>> checkRemittance(
             @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("remittanceId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "123456789") String remittanceId
@@ -87,9 +88,9 @@ public class RemittanceController extends AbstractBFFController {
 
     @Operation(summary = "Depositar remesa cliente", description = "Deposita en cuenta la remesa de una persona", operationId = "depositRemittance")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Obtener giros enviados")
+            @ApiResponse(responseCode = "200", description = "Obtener la informacion del deposito realizado")
     })
-    @PostMapping(path = "/persons/{personId}/remittance/{remittanceId}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(path = "/persons/{personId}/remittance/{remittanceId}/deposit", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiDataResponse<List<DepositRemittanceResponse>>> depositRemittance(
             @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("remittanceId") @NotNull @Parameter(description = "Este es el remmitanceId de la remesa", example = "123456789") String remittanceId,
@@ -98,11 +99,16 @@ public class RemittanceController extends AbstractBFFController {
         getDeviceDataHeader();
         return ResponseEntity.ok(ApiDataResponse.of(service.depositRemittance(personId, remittanceId, request)));
     }
-    @PostMapping(path = "/persons/{personId}/remittance/wu/{remittanceId}", produces = {MediaType.APPLICATION_JSON_VALUE})
+
+    @Operation(summary = "Depositar remesa wester union", description = "Deposita en cuenta la remesa wester union de una persona", operationId = "depositRemittanceWU")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener la informacion del deposito realizado")
+    })
+    @PostMapping(path = "/persons/{personId}/remittance/{remittanceId}/deposit/wester-union", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiDataResponse<List<DepositRemittanceResponse>>> depositRemittanceWU(
             @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("remittanceId") @NotNull @Parameter(description = "Este es el remmitanceId de la remesa", example = "123456789") String remittanceId,
-            @Valid @RequestBody DepositRemittanceRequest request
+            @Valid @RequestBody DepositRemittanceWURequest request
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(ApiDataResponse.of(service.depositRemittanceWU(personId, remittanceId, request)));

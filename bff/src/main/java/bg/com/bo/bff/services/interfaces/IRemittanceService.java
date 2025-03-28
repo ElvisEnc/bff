@@ -1,6 +1,7 @@
 package bg.com.bo.bff.services.interfaces;
 
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceWURequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
@@ -24,5 +25,5 @@ public interface IRemittanceService {
 
     List<DepositRemittanceResponse> depositRemittance(String personId, String remittanceId, DepositRemittanceRequest request) throws IOException;
 
-    List<DepositRemittanceResponse> depositRemittanceWU(String personId, String remittanceId, DepositRemittanceRequest request) throws IOException;
+    List<DepositRemittanceResponse> depositRemittanceWU(String personId, String remittanceId, DepositRemittanceWURequest request) throws IOException;
 }
