@@ -16,12 +16,6 @@ import jakarta.validation.constraints.NotNull;
 public class ConsultWURemittanceRequest {
 
     @Valid
-    @NotBlank(message = "El  valor applicationId no puede ser vacío.")
-    @NotNull(message = "El valor applicationId no puede ser valor nulo.")
-    @OnlyNumber(message = "El valor applicationId solo puede contener números.")
-    private String applicationId;
-
-    @Valid
     @NotBlank(message = "La cuenta no puede ser vacío.")
     @NotNull(message = "La cuenta no puede ser valor nulo.")
     @OnlyNumber(message = "El identificador de la cuenta solo puede contener números.")

@@ -23,7 +23,7 @@ public interface IRemittanceService {
 
     List<DepositRemittanceResponse> depositRemittance(String personId, String remittanceId, DepositRemittanceRequest request) throws IOException;
 
-    List<ConsultWURemittanceResponse> consultWURemittance(String personId, String remittanceId, ConsultWURemittanceRequest body) throws IOException;
+    List<CheckRemittanceResponse> consultWURemittance(String personId, String remittanceId, ConsultWURemittanceRequest body) throws IOException;
 
     UpdateWURemittanceResponse updateWURemittance(String personId, String consultId, UpdateWURemittanceRequest request) throws IOException;
 

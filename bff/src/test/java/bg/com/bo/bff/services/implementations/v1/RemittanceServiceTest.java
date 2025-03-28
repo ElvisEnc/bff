@@ -11,7 +11,6 @@ import bg.com.bo.bff.providers.dtos.request.remittance.RemittanceMWRequestFixtur
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.ConsultWURemittanceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.remittance.RemittanceMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.ConsultWURemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.DepositRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
@@ -215,15 +214,14 @@ class RemittanceServiceTest {
         //Given
         ConsultWURemittanceRequest request = ConsultWURemittanceRequest
                 .builder()
-                .applicationId("2")
                 .jtsOidAccount("321321")
                 .build();
-        ConsultWURemittanceMWResponse mwResponseMock = RemittanceMWResponseFixture.withDefaultConsultWURemittance();
-        List<ConsultWURemittanceResponse> expectedResponse = RemittanceResponseFixture.withDataDefaultListConsultWURemittanceResponse();
+        CheckRemittanceMWResponse mwResponseMock = RemittanceMWResponseFixture.withDefaultConsultWURemittance();
+        List<CheckRemittanceResponse> expectedResponse = RemittanceResponseFixture.withDataDefaultListConsultWURemittanceResponse();
 
         //When
         when(provider.consultWURemittance(any(ConsultWURemittanceMWRequest.class ))).thenReturn(mwResponseMock);
-        List<ConsultWURemittanceResponse> response = service.consultWURemittance("10", "20", request);
+        List<CheckRemittanceResponse> response = service.consultWURemittance("10", "20", request);
 
         //Then
         assertNotNull(response);

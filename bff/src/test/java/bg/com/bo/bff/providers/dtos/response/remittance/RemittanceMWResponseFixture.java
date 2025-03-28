@@ -129,9 +129,9 @@ public class RemittanceMWResponseFixture {
                 .build();
     }
 
-    public static ConsultWURemittanceMWResponse withDefaultConsultWURemittance(){
-        return ConsultWURemittanceMWResponse.builder()
-                .data(Collections.singletonList(ConsultWURemittanceMWResponse.ConsultWURemittanceMW.builder()
+    public static CheckRemittanceMWResponse withDefaultConsultWURemittance(){
+        return CheckRemittanceMWResponse.builder()
+                .data(Collections.singletonList(CheckRemittanceMWResponse.CheckRemittanceMW.builder()
                         .noRemittance("1000")
                         .noConsult(10)
                         .amountReceived(BigDecimal.valueOf(350.0))

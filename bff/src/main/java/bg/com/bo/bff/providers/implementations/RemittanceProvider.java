@@ -74,8 +74,8 @@ public class RemittanceProvider extends MiddlewareProvider<RemittanceMiddlewareE
 
 
     @Override
-    public ConsultWURemittanceMWResponse consultWURemittance(ConsultWURemittanceMWRequest request) throws IOException {
+    public CheckRemittanceMWResponse consultWURemittance(ConsultWURemittanceMWRequest request) throws IOException {
         String url = baseUrl + RemittanceMiddlewareService.CONSULT_CUSTOMER_REMITTANCE_WU.getServiceURL();
-        return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, ConsultWURemittanceMWResponse.class);
+        return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, CheckRemittanceMWResponse.class);
     }
 }

@@ -10,7 +10,6 @@ public class RemittanceRequestFixture {
 
     public static ConsultWURemittanceRequest withDefaultConsultWURemittanceRequest(){
         return ConsultWURemittanceRequest.builder()
-                .applicationId("25")
                 .jtsOidAccount("363636")
                 .build();
     }

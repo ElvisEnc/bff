@@ -15,7 +15,6 @@ import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.ConsultWURemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.GPCurrencies;
 import bg.com.bo.bff.application.dtos.response.remittance.GPEconomicActivities;
@@ -33,7 +32,6 @@ import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWReq
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.ConsultWURemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.DepositRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
@@ -262,32 +260,5 @@ public class RemittanceMapper implements IRemittanceMapper {
                 .build();
 
     }
-
-    @Override
-    public List<ConsultWURemittanceResponse> convertResponse(ConsultWURemittanceMWResponse mwResponse) {
-
-        if (mwResponse == null || mwResponse.getData() == null)
-            return Collections.emptyList();
-        return mwResponse.getData().stream()
-                .map(mw -> ConsultWURemittanceResponse.builder()
-                        .remittanceId(mw.getNoRemittance())
-                        .consultationId(mw.getNoConsult())
-                        .amount(mw.getAmountReceived())
-                        .currencyCode(Util.convertCurrency(mw.getCurrencyReceived()))
-                        .originCountry(mw.getCountryEmission())
-                        .originCity(mw.getPlazaOrigin())
-                        .holderName(mw.getPayer())
-                        .phone(mw.getNoTelephone())
-                        .recipientPhone(mw.getTelephoneBeneficiary())
-                        .recipientCountry(mw.getCountryDestination())
-                        .recipientCity(mw.getPlazaDestination())
-                        .recipientName(mw.getBeneficiary())
-                        .documentNumber(mw.getNoDocument())
-                        .documentType(mw.getDocumentType())
-                        .documentExtension(mw.getExtension())
-                        .build()
-                ).toList();
-    }
-
 
 }

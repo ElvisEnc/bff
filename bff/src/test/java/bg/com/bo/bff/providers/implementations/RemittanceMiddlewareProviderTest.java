@@ -183,12 +183,12 @@ class RemittanceMiddlewareProviderTest {
     void testConsultWURemittance() throws IOException {
         // Arrange
         ConsultWURemittanceMWRequest request = RemittanceMWRequestFixture.withDefaultConsultWURemittance();
-        ConsultWURemittanceMWResponse  expectedResponse = RemittanceMWResponseFixture.withDefaultConsultWURemittance();
+        CheckRemittanceMWResponse  expectedResponse = RemittanceMWResponseFixture.withDefaultConsultWURemittance();
         String jsonResponse = Util.objectToString(expectedResponse);
         stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
 
         // Act
-        ConsultWURemittanceMWResponse  response = provider.consultWURemittance(request);
+        CheckRemittanceMWResponse  response = provider.consultWURemittance(request);
 
         // Assert
         assertNotNull(response);

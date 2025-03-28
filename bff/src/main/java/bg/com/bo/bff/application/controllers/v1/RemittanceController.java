@@ -8,7 +8,6 @@ import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.ConsultWURemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.UpdateWURemittanceResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
@@ -132,18 +131,18 @@ public class RemittanceController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtener giros enviados")
     })
     @GetMapping(
-            path = "/persons/{personId}/remittance/{remittanceId}/wester-union", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ApiDataResponse<List<ConsultWURemittanceResponse>>> consultWURemittance(
+            path = "/persons/{personId}/remittance/{noRemittance}/wester-union", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ApiDataResponse<List<CheckRemittanceResponse>>> consultWURemittance(
             @PathVariable("personId") @NotNull
             @Parameter(description = "Este es el personId de la persona", example = "12345")
             String personId,
-            @PathVariable("remittanceId") @NotNull
-            @Parameter( description = "Este es el remittanceId de la remesa", example = "123456789")
-            String remittanceId,
+            @PathVariable("noRemittance") @NotNull
+            @Parameter( description = "Este es el noRemittance de la remesa", example = "123456789")
+            String noRemittance,
             @Valid @RequestBody ConsultWURemittanceRequest request
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(ApiDataResponse.of(service.consultWURemittance(personId, remittanceId, request)));
+        return ResponseEntity.ok(ApiDataResponse.of(service.consultWURemittance(personId, noRemittance, request)));
     }
 
     @Operation(summary = "Actualizar remesa Wester Union",

@@ -84,10 +84,10 @@ public class RemittanceService implements IRemittanceService {
     }
 
     @Override
-    public List<ConsultWURemittanceResponse> consultWURemittance(String personId, String remittanceId,
+    public List<CheckRemittanceResponse> consultWURemittance(String personId, String remittanceId,
                                                                ConsultWURemittanceRequest request) throws IOException {
         ConsultWURemittanceMWRequest mwRequest = mapper.mapperRequestRemittanceWU(personId, remittanceId, request);
-        ConsultWURemittanceMWResponse mwResponse = provider.consultWURemittance(mwRequest);
+        CheckRemittanceMWResponse mwResponse = provider.consultWURemittance(mwRequest);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
 

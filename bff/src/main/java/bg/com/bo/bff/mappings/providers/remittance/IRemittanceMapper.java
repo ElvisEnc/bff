@@ -3,7 +3,6 @@ package bg.com.bo.bff.mappings.providers.remittance;
 import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.ConsultWURemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
@@ -41,6 +40,5 @@ public interface IRemittanceMapper {
 
     UpdateWURemittanceResponse convertResponse(UpdateWURemittanceMWResponse mwResponse);
 
-    List<ConsultWURemittanceResponse> convertResponse(ConsultWURemittanceMWResponse mwResponse);
 
 }

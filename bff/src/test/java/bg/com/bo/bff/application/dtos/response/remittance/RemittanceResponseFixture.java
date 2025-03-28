@@ -98,8 +98,8 @@ public class RemittanceResponseFixture {
                 .build());
     }
 
-    public static List<ConsultWURemittanceResponse> withDataDefaultListConsultWURemittanceResponse(){
-        return Collections.singletonList(ConsultWURemittanceResponse.builder()
+    public static List<CheckRemittanceResponse> withDataDefaultListConsultWURemittanceResponse(){
+        return Collections.singletonList(CheckRemittanceResponse.builder()
                 .remittanceId("1000")
                 .consultationId(10)
                 .amount(BigDecimal.valueOf(350.0))

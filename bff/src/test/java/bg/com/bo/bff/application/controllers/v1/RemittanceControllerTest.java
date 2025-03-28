@@ -183,7 +183,7 @@ class RemittanceControllerTest {
     @Test
     void testConsultWURemittance() throws Exception {
         // Arrange
-        List<ConsultWURemittanceResponse> expectedResponse = RemittanceResponseFixture.withDataDefaultListConsultWURemittanceResponse();
+        List<CheckRemittanceResponse> expectedResponse = RemittanceResponseFixture.withDataDefaultListConsultWURemittanceResponse();
         ConsultWURemittanceRequest request = RemittanceRequestFixture.withDefaultConsultWURemittanceRequest();
         when(service.consultWURemittance(any(), any(), any())).thenReturn(expectedResponse);
 
