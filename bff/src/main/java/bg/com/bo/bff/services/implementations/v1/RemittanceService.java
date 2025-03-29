@@ -1,11 +1,10 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
 import bg.com.bo.bff.commons.enums.user.AppCodeResponseNet;
@@ -83,4 +82,21 @@ public class RemittanceService implements IRemittanceService {
         DepositRemittanceMWResponse mwResponse = provider.depositRemittance(mwRequest);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
+
+    @Override
+    public List<CheckRemittanceResponse> consultWURemittance(String personId, String remittanceId,
+                                                               ConsultWURemittanceRequest request) throws IOException {
+        ConsultWURemittanceMWRequest mwRequest = mapper.mapperRequestRemittanceWU(personId, remittanceId, request);
+        CheckRemittanceMWResponse mwResponse = provider.consultWURemittance(mwRequest);
+        return new ArrayList<>(mapper.convertResponse(mwResponse));
+    }
+
+    @Override
+    public UpdateWURemittanceResponse updateWURemittance(String personId, String consultId, UpdateWURemittanceRequest request)
+            throws IOException {
+        UpdateWURemittanceMWRequest mwRequest = mapper.mapperRequestRemittanceWUUpdate(personId, consultId,request);
+        UpdateWURemittanceMWResponse mwResponse = provider.updateWURemittance(mwRequest);
+        return mapper.convertResponse(mwResponse);
+    }
+
 }

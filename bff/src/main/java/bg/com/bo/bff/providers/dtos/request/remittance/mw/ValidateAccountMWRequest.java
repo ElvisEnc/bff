@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ValidateAccountMWRequest {
 
-    private String codPerson;
+    private String personId;
     private int codLanguage;
-    private int codApplication;
+    private int applicationId;
     private String jtsOidAccount;
 }

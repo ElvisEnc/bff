@@ -20,21 +20,21 @@ public class MoneyOrderSentMWResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class MoneyOrderSentMW {
-        @JsonProperty("idNumber")
-        private String idNumber;
+        @JsonProperty("senderNumberId")
+        private String senderNumberId;
         @JsonProperty("mtcn")
         private String mtcn;
-        @JsonProperty("rNameTypeReceiver")
-        private String rNameTypeReceiver;
-        @JsonProperty("rFirstNameReceiver")
-        private String rFirstNameReceiver;
-        @JsonProperty("rLastNameReceiver")
-        private String rLastNameReceiver;
-        @JsonProperty("rGivenNameReceiver")
-        private String rGivenNameReceiver;
-        @JsonProperty("rPaternalNameReceiver")
-        private String rPaternalNameReceiver;
-        @JsonProperty("rMaternalNameReceiver")
-        private String rMaternalNameReceiver;
+        @JsonProperty("nameTypeReceiver")
+        private String nameTypeReceiver;
+        @JsonProperty("firstNameReceiver")
+        private String firstNameReceiver;
+        @JsonProperty("lastNameReceiver")
+        private String lastNameReceiver;
+        @JsonProperty("givenNameReceiver")
+        private String givenNameReceiver;
+        @JsonProperty("paternalNameReceiver")
+        private String paternalNameReceiver;
+        @JsonProperty("maternalNameReceiver")
+        private String maternalNameReceiver;
     }
 }

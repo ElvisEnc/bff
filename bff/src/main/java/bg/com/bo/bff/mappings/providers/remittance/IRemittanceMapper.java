@@ -1,15 +1,15 @@
 package bg.com.bo.bff.mappings.providers.remittance;
 
+import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
+import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
+import bg.com.bo.bff.application.dtos.response.remittance.UpdateWURemittanceResponse;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.*;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.DepositRemittanceMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.*;
 
 import java.util.List;
 
@@ -33,4 +33,12 @@ public interface IRemittanceMapper {
     List<CheckRemittanceResponse> convertResponse(CheckRemittanceMWResponse mwResponse);
 
     List<DepositRemittanceResponse> convertResponse(DepositRemittanceMWResponse mwResponse);
+
+    ConsultWURemittanceMWRequest mapperRequestRemittanceWU(String personId, String remittanceId, ConsultWURemittanceRequest body);
+
+    UpdateWURemittanceMWRequest mapperRequestRemittanceWUUpdate(String personId, String consultId, UpdateWURemittanceRequest request);
+
+    UpdateWURemittanceResponse convertResponse(UpdateWURemittanceMWResponse mwResponse);
+
+
 }

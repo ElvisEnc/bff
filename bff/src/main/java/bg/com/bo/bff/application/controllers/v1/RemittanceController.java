@@ -2,13 +2,17 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.UpdateWURemittanceResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IRemittanceService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,38 +39,50 @@ public class RemittanceController extends AbstractBFFController {
         this.service = service;
     }
 
-    @Operation(summary = "Obtener parámetros generales", description = "Obtiene el listado de parámetros generales de giros y remesas", operationId = "getGeneralParameters")
+    @Operation(summary = "Obtener parámetros generales",
+            description = "Obtiene el listado de parámetros generales de giros y remesas",
+            operationId = "getGeneralParameters")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de parámetros generales")
     })
     @GetMapping(path = "/persons/{personId}/parameters", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ListGeneralParametersResponse> getGeneralParameters(
-            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona",
+                    example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.getGeneralParameters(personId));
     }
 
-    @Operation(summary = "Validar cuenta", description = "Valida si la cuenta esta bloqueada o disponible", operationId = "validateAccount")
+    @Operation(summary = "Validar cuenta", description = "Valida si la cuenta esta bloqueada o disponible",
+            operationId = "validateAccount")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Valida la cuenta")
     })
-    @GetMapping(path = "/persons/{personId}/accounts/{accountId}/validate", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(path = "/persons/{personId}/accounts/{accountId}/validate",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<GenericResponse> validateAccount(
-            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
-            @PathVariable("accountId") @NotNull @Parameter(description = "Este es el accountId de la persona", example = "12345") String accountId
+            @PathVariable("personId") @NotNull
+            @Parameter(description = "Este es el personId de la persona", example = "12345")
+            String personId,
+            @PathVariable("accountId") @NotNull
+            @Parameter(description = "Este es el accountId de la persona", example = "12345")
+            String accountId
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.validateAccount(personId, accountId));
     }
 
-    @Operation(summary = "Obtener giros enviados", description = "Obtiene los giros enviados de una persona", operationId = "getMoneyOrdersSent")
+    @Operation(summary = "Obtener giros enviados",
+            description = "Obtiene los giros enviados de una persona",operationId = "getMoneyOrdersSent")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Obtener giros enviados")
     })
     @GetMapping(path = "/persons/{personId}/money-orders", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiDataResponse<List<MoneyOrderSentResponse>>> getMoneyOrdersSent(
-            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+            @PathVariable("personId") @NotNull
+            @Parameter(description = "Este es el personId de la persona",example = "12345")
+            String personId
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(ApiDataResponse.of(service.getMoneyOrdersSent(personId)));
@@ -78,24 +94,75 @@ public class RemittanceController extends AbstractBFFController {
     })
     @GetMapping(path = "/persons/{personId}/remittance/{remittanceId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiDataResponse<List<CheckRemittanceResponse>>> checkRemittance(
-            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
-            @PathVariable("remittanceId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "123456789") String remittanceId
+            @PathVariable("personId") @NotNull
+            @Parameter(description = "Este es el personId de la persona", example = "12345")
+            String personId,
+            @PathVariable("remittanceId")
+            @NotNull @Parameter(description = "Este es el personId de la persona", example = "123456789")
+            String remittanceId
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(ApiDataResponse.of(service.checkRemittance(personId, remittanceId)));
     }
 
-    @Operation(summary = "Depositar remesa cliente", description = "Deposita en cuenta la remesa de una persona", operationId = "depositRemittance")
+    @Operation(summary = "Depositar remesa cliente", description = "Deposíta en cuenta la remesa de una persona",
+            operationId = "depositRemittance")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Obtener giros enviados")
     })
     @PostMapping(path = "/persons/{personId}/remittance/{remittanceId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiDataResponse<List<DepositRemittanceResponse>>> depositRemittance(
-            @PathVariable("personId") @NotNull @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
-            @PathVariable("remittanceId") @NotNull @Parameter(description = "Este es el remmitanceId de la remesa", example = "123456789") String remittanceId,
+            @PathVariable("personId") @NotNull
+            @Parameter(description = "Este es el personId de la persona", example = "12345")
+            String personId,
+            @PathVariable("remittanceId") @NotNull
+            @Parameter(description = "Este es el remmitanceId de la remesa", example = "123456789")
+            String remittanceId,
             @Valid @RequestBody DepositRemittanceRequest request
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(ApiDataResponse.of(service.depositRemittance(personId, remittanceId, request)));
     }
+
+
+    @Operation(summary = "Consultar remesa cliente Wester Union",
+            description = "Consulta la remesa de una persona a Wester Union", operationId = "checkRemittance")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener giros enviados")
+    })
+    @GetMapping(
+            path = "/persons/{personId}/remittance/{noRemittance}/wester-union", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ApiDataResponse<List<CheckRemittanceResponse>>> consultWURemittance(
+            @PathVariable("personId") @NotNull
+            @Parameter(description = "Este es el personId de la persona", example = "12345")
+            String personId,
+            @PathVariable("noRemittance") @NotNull
+            @Parameter( description = "Este es el noRemittance de la remesa", example = "123456789")
+            String noRemittance,
+            @Valid @RequestBody ConsultWURemittanceRequest request
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(ApiDataResponse.of(service.consultWURemittance(personId, noRemittance, request)));
+    }
+
+    @Operation(summary = "Actualizar remesa Wester Union",
+            description = "Actualiza la remesa Wester Union de una persona.", operationId = "updateRemittanceWU")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Actualizar giro enviado mediante Wester Union.")
+    })
+    @PatchMapping(
+            path = "/persons/{personId}/wester-union/noconsult/{consultId}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ApiDataResponse<UpdateWURemittanceResponse>> update(
+            @PathVariable("personId") @NotNull
+            @Parameter(description = "Este es el personId de la persona", example = "12345")
+            String personId,
+            @PathVariable("consultId") @NotNull
+            @Parameter(description = "Este es el número de consulta de la remesa Wester Union", example = "12345")
+            String consultId,
+            @Valid @RequestBody UpdateWURemittanceRequest request
+    ) throws IOException {
+        getDeviceDataHeader();
+            return ResponseEntity.ok(ApiDataResponse.of(service.updateWURemittance(personId, consultId, request)));
+    }
+
 }
