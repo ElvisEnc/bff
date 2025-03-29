@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckRemittanceMWRequest {
+public class ConsultWURemittanceMWRequest {
 
     private String personId;
     private String applicationId;
-    private String withGanaMobile;
     private String noRemittance;
+    private String jtsOidAccount;
+
 }

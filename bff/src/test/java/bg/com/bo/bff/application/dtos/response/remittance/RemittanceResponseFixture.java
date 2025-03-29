@@ -65,7 +65,7 @@ public class RemittanceResponseFixture {
 
     public static List<CheckRemittanceResponse> withDataDefaultListCheckRemittanceResponse() {
         return Collections.singletonList(CheckRemittanceResponse.builder()
-                        .remittanceId(1)
+                        .remittanceId("1")
                         .consultationId(1)
                         .amount(BigDecimal.valueOf(100.0))
                         .currencyCode("068")
@@ -96,4 +96,36 @@ public class RemittanceResponseFixture {
                         .amountPaid(BigDecimal.valueOf(100.0))
                 .build());
     }
+
+    public static List<CheckRemittanceResponse> withDataDefaultListConsultWURemittanceResponse(){
+        return Collections.singletonList(CheckRemittanceResponse.builder()
+                .remittanceId("1000")
+                .consultationId(10)
+                .amount(BigDecimal.valueOf(350.0))
+                .currencyCode("10000")
+                .originCountry("USA")
+                .originCity("PlazaOrigen")
+                .holderName("Juan Perez")
+                .phone("7111111")
+                .recipientPhone("50499999999")
+                .recipientCountry("Bolivia")
+                .recipientCity("PlazaDestino")
+                .recipientName("Arnoldo Gonzales")
+                .documentNumber("353535")
+                .documentType("CI")
+                .documentExtension("SC")
+                .build());
+    }
+
+    public static UpdateWURemittanceResponse withDataDefaultUpdateWURemittanceResponse(){
+        return UpdateWURemittanceResponse.builder()
+                .codeError("1000")
+                .company("BANCO GANADERO")
+                .companyLevel("7")
+                .entryDate("2025-04-01")
+                .laborType("Arquitecto")
+                .pcc01("Datos actualizados correctamente.")
+                .build();
+    }
+
 }

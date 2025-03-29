@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class CheckRemittanceResponse {
 
-    private int remittanceId;
+    private String remittanceId;
     private int consultationId;
     private BigDecimal amount;
     private String currencyCode;

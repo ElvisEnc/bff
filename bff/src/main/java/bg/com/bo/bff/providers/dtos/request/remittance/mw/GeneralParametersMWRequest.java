@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GeneralParametersMWRequest {
 
-    private String codPerson;
+    private String personId;
     private int codLanguage;
-    private String codApplication;
+    private String applicationId;
 }

@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MoneyOrderSentMWRequest {
+    private String personId;
+    private String applicationId;
 
-    private String codPerson;
-    private int codLanguage;
-    private String codApplication;
 }

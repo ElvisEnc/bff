@@ -6,7 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ConstantMessages {
-
+    SUCCESS("SUCCESS", "SUCCESS"),
+    ERROR("ERROR", "ERROR"),
     GENERIC("Tuvimos un problema interno. Inténtalo nuevamente.", "Ocurrió un problema"),
     TRANSFER_DUPLICATE("Tienes un pago similar realizado hace poco. ¿Quieres repetir el pago con el mismo monto?", "Pago duplicado"),
     CRYPTO_FOUND("Estimado Cliente: las plataformas transaccionales y la compraventa de Activos Virtuales no está bajo control, supervisión ni regulación de ASFI. Estas transacciones son a riesgo del cliente. Gracias.", "Transacción no permitida"),
@@ -23,7 +24,8 @@ public enum ConstantMessages {
     INVALID_ACCOUNT("La cuenta es inválida para este flujo.", "Cuenta inválida"),
     MAX_ATTEMPTS("Se ha alcanzado el número máximo de intentos permitidos. Inténtalo nuevamente más tarde.", "Intentos máximos alcanzados"),
     NO_FOUND_DATA("No se encontraron registros para la petición.", "Datos no encontrados"),
-    SOFTTOKEN_DISABLED("Usuario sin ganapin habilitado, presentando algun error", "GanaPin deshabilitado");
+    SOFTTOKEN_DISABLED("Usuario sin ganapin habilitado, presentando algun error", "GanaPin deshabilitado"),
+    MODIFY_ERROR("No se pudo realizar la modificación, intente más tarde.", "Ocurrió un problema");
 
     private final String message;
     private final String title;

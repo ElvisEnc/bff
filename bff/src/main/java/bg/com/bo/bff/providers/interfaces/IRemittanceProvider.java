@@ -18,4 +18,8 @@ public interface IRemittanceProvider {
     DepositRemittanceMWResponse depositRemittance(DepositRemittanceMWRequest request) throws IOException;
 
     DepositRemittanceMWResponse depositRemittanceWU(DepositRemittanceWUMWRequest request) throws IOException;
+
+    UpdateWURemittanceMWResponse updateWURemittance(UpdateWURemittanceMWRequest request) throws IOException;
+
+    CheckRemittanceMWResponse consultWURemittance(ConsultWURemittanceMWRequest request) throws IOException;
 }

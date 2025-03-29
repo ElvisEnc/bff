@@ -92,8 +92,12 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .insurance(mwResponse.getInsurance().equals("S"))
                 .currency(mwResponse.getCurrencyCode())
                 .amountAvailable(mwResponse.getAmountAvailable())
-                .limitMin(mwResponse.getLimitMin())
+                .amountLimit(mwResponse.getAmountLimit())
+                .limitMin(mwResponse.getLimMin())
                 .limitMax(mwResponse.getLimitMax())
+                .debtClose(mwResponse.getDebtClose())
+                .dueDatePeriod(mwResponse.getDueDatePeriod())
+                .duePaymentDatePeriod(mwResponse.getDuePaymentDatePeriod())
                 .build();
     }
 

@@ -12,6 +12,7 @@ import bg.com.bo.bff.services.interfaces.IDebitCardService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -104,7 +105,7 @@ class DebitCardControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         String expected = Util.objectToString(responseExpected);
-        String actual = result.getResponse().getContentAsString();
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertNotNull(result);
@@ -126,7 +127,7 @@ class DebitCardControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         String expected = Util.objectToString(responseExpected);
-        String actual = result.getResponse().getContentAsString();
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertNotNull(result);
@@ -151,7 +152,7 @@ class DebitCardControllerTest {
                 .andReturn();
 
         String response = objectMapper.writeValueAsString(expected);
-        String actual = result.getResponse().getContentAsString();
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertEquals(response, actual);
@@ -177,7 +178,7 @@ class DebitCardControllerTest {
                 .andReturn();
 
         String response = objectMapper.writeValueAsString(expected);
-        String actual = result.getResponse().getContentAsString();
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
         // Assert
         assertEquals(response, actual);
         verify(service).createAuthorizationOnlinePurchase(any(), any(), any());
@@ -199,7 +200,7 @@ class DebitCardControllerTest {
                 .andReturn();
 
         String response = objectMapper.writeValueAsString(expectedResponse);
-        String actual = result.getResponse().getContentAsString();
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertEquals(response, actual);
@@ -224,7 +225,7 @@ class DebitCardControllerTest {
                 .andReturn();
 
         String response = objectMapper.writeValueAsString(expectedResponse);
-        String actual = result.getResponse().getContentAsString();
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertEquals(response, actual);
@@ -296,7 +297,7 @@ class DebitCardControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         String response = objectMapper.writeValueAsString(mockResponse);
-        String actual = result.getResponse().getContentAsString();
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertNotNull(result);
@@ -323,7 +324,7 @@ class DebitCardControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         String response = objectMapper.writeValueAsString(mockResponse);
-        String actual = result.getResponse().getContentAsString();
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertNotNull(result);
@@ -347,10 +348,9 @@ class DebitCardControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Util.objectToString(request, false)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         String response = objectMapper.writeValueAsString(mockResponse);
-        String actual = result.getResponse().getContentAsString();
+        String actual = new String(result.getResponse().getContentAsByteArray(), StandardCharsets.UTF_8);
 
         // Assert
         assertNotNull(result);

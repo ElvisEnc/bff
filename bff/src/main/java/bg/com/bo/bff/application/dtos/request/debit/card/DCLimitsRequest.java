@@ -23,8 +23,8 @@ public class DCLimitsRequest {
 
     @NotNull(message = "El monto límite es obligatorio")
     @DecimalMin(value = "500", inclusive = true, message = "El monto debe ser al menos 500")
-    @DecimalMax(value = "1000", inclusive = true, message = "El monto debe ser como máximo 1000")
-    @Digits(integer = 4, fraction = 2, message = "El monto puede tener hasta 4 dígitos enteros y 2 decimales")
+    @DecimalMax(value = "10000", inclusive = true, message = "El monto debe ser como máximo 10000")
+    @Digits(integer = 5, fraction = 2, message = "El monto puede tener hasta 4 dígitos enteros y 2 decimales")
     @Schema(description = "Monto límite a transacciones", example = "750.00")
     private BigDecimal dailyAmount;
 

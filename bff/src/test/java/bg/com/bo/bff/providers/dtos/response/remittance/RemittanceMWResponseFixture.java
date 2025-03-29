@@ -66,14 +66,14 @@ public class RemittanceMWResponseFixture {
     public static MoneyOrderSentMWResponse withDefaultMoneyOrdersSent() {
         return MoneyOrderSentMWResponse.builder()
                 .data(Collections.singletonList(MoneyOrderSentMWResponse.MoneyOrderSentMW.builder()
-                        .idNumber("129004")
+                        .senderNumberId("129004")
                         .mtcn("8037118303")
-                        .rNameTypeReceiver("D")
-                        .rFirstNameReceiver("ROBERT")
-                        .rLastNameReceiver("MOORE")
-                        .rGivenNameReceiver("")
-                        .rPaternalNameReceiver("")
-                        .rMaternalNameReceiver("")
+                        .nameTypeReceiver("D")
+                        .firstNameReceiver("ROBERT")
+                        .lastNameReceiver("MOORE")
+                        .givenNameReceiver("")
+                        .paternalNameReceiver("")
+                        .maternalNameReceiver("")
                         .build()))
                 .build();
     }
@@ -81,7 +81,7 @@ public class RemittanceMWResponseFixture {
     public static CheckRemittanceMWResponse withDefaultCheckRemittance() {
         return CheckRemittanceMWResponse.builder()
                 .data(Collections.singletonList(CheckRemittanceMWResponse.CheckRemittanceMW.builder()
-                        .noRemittance(123456789)
+                        .noRemittance("123456789")
                         .noConsult(123456789)
                         .amountReceived(BigDecimal.valueOf(1000.0))
                         .currencyReceived("0")
@@ -127,5 +127,37 @@ public class RemittanceMWResponseFixture {
                         .creditedAmount(BigDecimal.valueOf(1000.0))
                         .build()))
                 .build();
+    }
+
+    public static CheckRemittanceMWResponse withDefaultConsultWURemittance(){
+        return CheckRemittanceMWResponse.builder()
+                .data(Collections.singletonList(CheckRemittanceMWResponse.CheckRemittanceMW.builder()
+                        .noRemittance("1000")
+                        .noConsult(10)
+                        .amountReceived(BigDecimal.valueOf(350.0))
+                        .currencyReceived("Pepito Perez")
+                        .countryEmission("USA")
+                        .plazaOrigin("PlazaOrigen")
+                        .payer("Juan Perez")
+                        .noTelephone("7111111")
+                        .telephoneBeneficiary("50499999999")
+                        .countryDestination("Bolivia")
+                        .plazaDestination("PlazaDestino")
+                        .beneficiary("Arnoldo Gonzales")
+                        .noDocument("353535")
+                        .documentType("CI")
+                        .extension("SC")
+                        .build())).build();
+    }
+
+    public static UpdateWURemittanceMWResponse withDefaultUpdateWURemittance(){
+        return UpdateWURemittanceMWResponse.builder()
+                .data(UpdateWURemittanceMWResponse.UpdateWURemittanceMW.builder()
+                        .codeError("1000")
+                        .company("BANCO GANADERO")
+                        .companyLevel("7")
+                        .entryDate("2025-04-01")
+                        .laborType("Arquitecto")
+                        .pcc01("Datos actualizados correctamente.").build()).build();
     }
 }

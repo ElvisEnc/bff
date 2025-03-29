@@ -54,7 +54,7 @@ public enum DefaultMiddlewareError implements IMiddlewareError {
     FORBIDDEN(HttpStatus.FORBIDDEN, "BFF-F", null, "No permitido", "No permitido", CategoryError.AUTH.getCategoryId()),
     KC_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "BFF-KCF", null, "Error interno", "Error interno", CategoryError.UNHANDLED.getCategoryId()),
     KC_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "BFF-KCUA", null, "Error interno", "Error interno", CategoryError.BFF_COMPONENT_UNAVAILABLE.getCategoryId()),
-    MW_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "BFF-MWSU", null, "Error interno", "Error interno", CategoryError.BFF_COMPONENT_UNAVAILABLE.getCategoryId()),
+    MW_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "BFF-MWSU", null, "Servicio no disponible, inténtalo más tarde.", "Servicio no disponible", CategoryError.BFF_COMPONENT_UNAVAILABLE.getCategoryId()),
     MW_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "BFF-MWTF", null, "Error interno", "Error interno", CategoryError.UNHANDLED.getCategoryId());
 
     private final HttpStatus httpCode;
