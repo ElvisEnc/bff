@@ -1,11 +1,11 @@
 package bg.com.bo.bff.services.interfaces;
 
+import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceWURequest;
+import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
-import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,4 +23,11 @@ public interface IRemittanceService {
     List<CheckRemittanceResponse> checkRemittance(String personId, String remittanceId) throws IOException;
 
     List<DepositRemittanceResponse> depositRemittance(String personId, String remittanceId, DepositRemittanceRequest request) throws IOException;
+
+    List<DepositRemittanceResponse> depositRemittanceWU(String personId, String remittanceId, DepositRemittanceWURequest request) throws IOException;
+
+    List<CheckRemittanceResponse> consultWURemittance(String personId, String remittanceId, ConsultWURemittanceRequest body) throws IOException;
+
+    UpdateWURemittanceResponse updateWURemittance(String personId, String consultId, UpdateWURemittanceRequest request) throws IOException;
+
 }

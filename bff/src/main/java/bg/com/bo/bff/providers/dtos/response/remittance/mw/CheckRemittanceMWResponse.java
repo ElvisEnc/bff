@@ -22,7 +22,7 @@ public class CheckRemittanceMWResponse {
     @NoArgsConstructor
     public static class CheckRemittanceMW {
 
-        private int noRemittance;
+        private String noRemittance;
         private int noConsult;
         private BigDecimal amountReceived;
         private String currencyReceived;
