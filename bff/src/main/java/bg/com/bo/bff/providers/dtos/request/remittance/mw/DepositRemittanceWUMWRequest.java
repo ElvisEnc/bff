@@ -9,11 +9,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DepositRemittanceMWRequest {
+public class DepositRemittanceWUMWRequest {
 
     private String personId;
     private String applicationId;
     private String noRemittance;
     private String noConsult;
     private String jtsOidAccount;
+    private String pCType;
+    private String originFund;
+    private String originDestination;
 }

@@ -43,6 +43,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/api/v*/attention-points/points/{pointId:[0-9]+}").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v*/attention-points/points/{pointId:[0-9]+}/tickets").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v*/registry/device/handshake").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v*/frequently-question/questions").permitAll()
                         .anyRequest().hasAuthority(UserRole.LOGGED_USER.toString())
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

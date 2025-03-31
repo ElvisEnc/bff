@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class DepositRemittanceResponse {
 
-    private int remittanceId;
     private int accountingEntry;
     private String time;
     private String description;

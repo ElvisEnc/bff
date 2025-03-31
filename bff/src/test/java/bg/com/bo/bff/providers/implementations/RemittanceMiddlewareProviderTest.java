@@ -9,6 +9,7 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.providers.dtos.request.remittance.RemittanceMWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.*;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.ConsultWURemittanceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.remittance.mw.DepositRemittanceMWRequest;
@@ -172,6 +173,23 @@ class RemittanceMiddlewareProviderTest {
 
         // Act
         DepositRemittanceMWResponse response = provider.depositRemittance(request);
+
+        // Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+    }
+
+    @Test
+    @DisplayName("Deposit remittance wester union given personId and remittanceId")
+    void givenValidDataWhenDepositRemittanceWUThenExpectResponse() throws IOException {
+        // Arrange
+        DepositRemittanceWUMWRequest request = RemittanceMWRequestFixture.withDefaultDepositRemittanceWU();
+        DepositRemittanceMWResponse expectedResponse = RemittanceMWResponseFixture.withDefaultDepositRemittance();
+        String jsonResponse = Util.objectToString(expectedResponse);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        // Act
+        DepositRemittanceMWResponse response = provider.depositRemittanceWU(request);
 
         // Assert
         assertNotNull(response);

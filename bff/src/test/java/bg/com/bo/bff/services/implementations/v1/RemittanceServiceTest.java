@@ -2,6 +2,7 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceWURequest;
 import bg.com.bo.bff.application.dtos.request.remittance.RemittanceRequestFixture;
 import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
@@ -206,6 +207,44 @@ class RemittanceServiceTest {
         assertNotNull(response);
         assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
         verify(provider).depositRemittance(any());
+        verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenValidDataWhenDepositRemittanceWUThenListDepositRemittanceResponse() throws IOException {
+        //Arrange
+        DepositRemittanceMWResponse mwResponseMock = RemittanceMWResponseFixture.withDefaultDepositRemittance();
+        DepositRemittanceWURequest request = RemittanceRequestFixture.withDefaultDepositRemittanceWURequest();
+        List<DepositRemittanceResponse> expectedResponse = RemittanceResponseFixture.withDataDefaultListDepositRemittanceResponse();
+        when(provider.depositRemittanceWU(any())).thenReturn(mwResponseMock);
+        when(mapper.convertResponse(mwResponseMock)).thenReturn(expectedResponse);
+
+        //Act
+        List<DepositRemittanceResponse> response = service.depositRemittanceWU("123", "123456789", request);
+
+        //Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(provider).depositRemittanceWU(any());
+        verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void givenValidRequestWhenDepositRemittanceWUThenEmptyListResponse() throws IOException {
+        //Arrange
+        DepositRemittanceMWResponse mwResponseMock = DepositRemittanceMWResponse.builder().build();
+        DepositRemittanceWURequest request = RemittanceRequestFixture.withDefaultDepositRemittanceWURequest();
+        List<DepositRemittanceResponse> expectedResponse = new ArrayList<>(Collections.emptyList());
+        when(provider.depositRemittanceWU(any())).thenReturn(mwResponseMock);
+        when(mapper.convertResponse(mwResponseMock)).thenReturn(expectedResponse);
+
+        //Act
+        List<DepositRemittanceResponse> response = service.depositRemittanceWU("123", "123456789", request);
+
+        //Assert
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(provider).depositRemittanceWU(any());
         verify(mapper).convertResponse(mwResponseMock);
     }
 
