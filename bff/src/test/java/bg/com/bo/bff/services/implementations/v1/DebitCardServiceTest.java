@@ -28,6 +28,7 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -91,8 +92,8 @@ class DebitCardServiceTest {
     void givenPersonCodeWhenGetListDebitCardThenSuccess() throws IOException {
         // Arrange
         ListDebitCardMWResponse mwResponseMock = DebitCardMWResponseFixture.withDefaultListDebitCardMWResponse();
-        ListDebitCardResponse expectedResponse = DebitCardResponseFixture.withDefaultListDebitCardResponse();
         when(provider.listDebitCard(any())).thenReturn(mwResponseMock);
+        ListDebitCardResponse expectedResponse = DebitCardResponseFixture.withDefaultListDebitCardResponse();
 
         // Act
         ListDebitCardResponse response = service.getListDebitCard(123);
@@ -119,6 +120,33 @@ class DebitCardServiceTest {
         assertEquals(expectedResponse, response);
         verify(provider).accountListDebitCard(123, 123);
         verify(mapper).convertResponseAccountListTD(mwResponseMock);
+    }
+
+    @Test
+    void convertResponseAccountListTDWhenMWResponseNullTest() throws IOException{
+        //Arrange
+        when(provider.accountListDebitCard(any(), any())).thenReturn(null);
+
+        //Act
+        ListAccountTDResponse response = service.getAccountsTD(5432, 96511);
+
+        //Assert
+        assertNotNull(response);
+        verify(provider).accountListDebitCard(any(), any());
+    }
+
+
+    @Test
+    void mapToInternetAuthorizationResponseWhenMWResponseNullTest() throws IOException{
+        //Arrange
+        when(provider.getListAuthorizations(any(), any())).thenReturn(null);
+
+        //Act
+        InternetAuthorizationResponse response = service.getListAuthorizations("123", "54321");
+
+        //Assert
+        assertNotNull(response);
+        verify(provider).getListAuthorizations(any(), any());
     }
 
     @Test

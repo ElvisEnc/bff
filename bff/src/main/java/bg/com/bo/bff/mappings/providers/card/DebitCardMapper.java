@@ -14,6 +14,7 @@ import bg.com.bo.bff.application.dtos.response.debit.card.DCDetailResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.mw.AccountsDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.mw.ListDebitCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.debit.card.mw.DCDetailMWResponse;
+import java.util.Collections;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -78,13 +79,15 @@ public class DebitCardMapper implements IDebitCardMapper {
                         .cardNumber(Util.obfuscateCardNumber(mw.getCardId()))
                         .holderName(mw.getCardName())
                         .expiryDate(UtilDate.formatDate(mw.getExpirationDate()))
-                        .status(mw.getStatusDescription())
+                        .status(Util.getStatusDebitCard(mw.getStatus()))
                         .build())
                 .toList();
     }
 
     @Override
     public List<AccountTD> convertResponseAccountListTD(AccountsDebitCardMWResponse mwResponse) {
+        if (mwResponse == null || mwResponse.getData() == null)
+            return Collections.emptyList();
         return mwResponse.getData().stream()
                 .map(accountDebitCard -> AccountTD.builder()
                         .accountId(String.valueOf(accountDebitCard.getJtsOid()))
@@ -96,6 +99,10 @@ public class DebitCardMapper implements IDebitCardMapper {
 
     @Override
     public InternetAuthorizationResponse mapToInternetAuthorizationResponse(DCInternetAuthorizationNWResponse response) {
+
+        if (response == null || response.getData() == null)
+            return InternetAuthorizationResponse.builder().data(Collections.emptyList()).build();
+
         List<DCInternetAuthorization> result = response.getData().stream().map(x -> DCInternetAuthorization.builder()
                 .id(x.getInternetIdTjTD())
                 .amount(x.getAmount())
@@ -173,7 +180,7 @@ public class DebitCardMapper implements IDebitCardMapper {
     @Override
     public ChangePinMWRequest mapToChangePinRequest(String personId, String cardId, ChangePinRequest request) {
         return ChangePinMWRequest.builder()
-                .pinBlock(request.getPin())
+                .newPin(request.getPin())
                 .idPci(cardId)
                 .personId(personId)
                 .build();

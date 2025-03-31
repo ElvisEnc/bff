@@ -71,8 +71,11 @@ public class CreditCardMWResponseFixture {
                 .statusCard("Active")
                 .statusAccount("Active")
                 .insurance("S")
-                .limitMin("100")
+                .limMin("100")
                 .limitMax("5000")
+                .dueDatePeriod("20/12/2024")
+                .duePaymentDatePeriod("31/12/2022")
+                .debtClose("close")
                 .build();
     }
 
