@@ -83,7 +83,7 @@ public class LoansController extends AbstractBFFController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Plan de pagos")
     })
-    @GetMapping("{loanId}/persons/{clientId}")
+    @GetMapping("{loanId}/clients/{clientId}")
     public ResponseEntity<ApiDataResponse<List<LoanPlanResponse>>> getLoanPlans(
             @PathVariable("loanId") @OnlyNumber @Parameter(description = "Este es el identificador del prestamo", example = "12345") String loanId,
             @PathVariable("clientId") @OnlyNumber @Parameter(description = "Este es el clientId de la persona", example = "12345") String clientId
