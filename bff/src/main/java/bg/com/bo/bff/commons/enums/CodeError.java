@@ -36,7 +36,7 @@ public enum CodeError {
     SOFTTOKEN_INCORRECT_DATA("INCORRECT_DATA", "Datos incorrectos"),
     ERROR_REMITTANCE("REMITTANCE_ERROR", "Datos incorrectos"),
     REMITTANCE_COLLETED("REMITTANCE_COLLETED", "Remesa pagada"),
-    BAD_REQUEST("BAD_REQUEST", "Datos invalidos."),;
+    BAD_REQUEST("BAD_REQUEST", "Datos invalidos.");
 
 
     private final String code;
