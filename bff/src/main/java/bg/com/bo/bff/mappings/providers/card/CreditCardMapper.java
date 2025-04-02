@@ -21,6 +21,9 @@ public class CreditCardMapper implements ICreditCardMapper {
 
     private static final String REQUEST_TYPE_INTERNET = "I";
     private static final String TYPE_INTERNET = "Internet";
+    private static final String RESPONSE_TEXT_ACTIVE = "ACTIVA";
+    private static final String RESPONSE_TEXT_FORMATED = "ACTIVADA";
+    private static final String RESPONSE_TEXT_BLOCKED = "BLOQUEADA";
     private static final String TYPE_SPECIAL = "Liberacion Parametros";
 
     @Override
@@ -196,6 +199,7 @@ public class CreditCardMapper implements ICreditCardMapper {
     public List<LinkserCreditCardResponse> convertListCreditCard(LinkserCreditCardMWResponse mwResponse) {
         if (mwResponse == null || mwResponse.getData() == null)
             return Collections.emptyList();
+
         return mwResponse.getData().stream()
                 .map(mw ->
                         LinkserCreditCardResponse.builder()
@@ -206,7 +210,7 @@ public class CreditCardMapper implements ICreditCardMapper {
                                 .branch(mw.getBranch())
                                 .cardType(mw.getCardType().trim())
                                 .statusCode(mw.getStatusCode())
-                                .statusDescription(getLastWord(mw.getStatusDescription()))
+                                .statusDescription(getLastWord(mw.getStatusDescription().contains(RESPONSE_TEXT_ACTIVE) ? RESPONSE_TEXT_FORMATED : RESPONSE_TEXT_BLOCKED))
                                 .build())
                 .toList();
     }
@@ -262,7 +266,7 @@ public class CreditCardMapper implements ICreditCardMapper {
                         .currency(mw.getOriginalCurrency())
                         .mrAmount(Util.scaleToTwoDecimals(mw.getMrAmount()))
                         .mlAmount(Util.scaleToTwoDecimals(mw.getMlAmount()))
-                        .transactionDate(UtilDate.formatDate(mw.getTransactionDate()))
+                        .transactionDate(mw.getTransactionDate())
                         .processDate(UtilDate.formatDate(mw.getProcessDate()))
                         .clientName(mw.getClientName().trim())
                         .transactionType(mw.getTransactionType())

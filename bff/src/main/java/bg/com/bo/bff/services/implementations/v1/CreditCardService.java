@@ -110,7 +110,7 @@ public class CreditCardService implements ICreditCardService {
             BigDecimal localAmount = response.getMlAmount();
             return (localAmount != null && localAmount.compareTo(BigDecimal.ZERO) > 0) ? localAmount : foreignAmount;
         });
-        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getProcessDate(), UtilDate.getDateFormatter()));
+        comparatorOptions.put("DATE", CreditCardStatementsResponse::getProcessDate);
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getPagination() != null) {
