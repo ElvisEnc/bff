@@ -33,7 +33,9 @@ public enum CodeError {
     ERROR_TOPAZ_PROCEDURE("ERROR_TOPAZ_PROCEDURE", "Error al ejecutar los servicios de topaz"),
     DATA_NOT_FOUND("DATA_NOT_FOUND", "Datos no encontrados"),
     ERROR_LOG("ERROR_LOG", "Error al registrar logs"),
-    SOFTTOKEN_INCORRECT_DATA("INCORRECT_DATA", "Datos incorrectos");
+    SOFTTOKEN_INCORRECT_DATA("INCORRECT_DATA", "Datos incorrectos"),
+    ERROR_REMITTANCE("REMITTANCE_ERROR", "Datos incorrectos"),
+    REMITTANCE_COLLETED("REMITTANCE_COLLETED", "Remesa pagada");
 
 
     private final String code;
