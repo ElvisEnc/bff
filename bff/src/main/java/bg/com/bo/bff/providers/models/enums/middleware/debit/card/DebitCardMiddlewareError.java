@@ -32,8 +32,9 @@ public enum DebitCardMiddlewareError implements IMiddlewareError {
     MDWTJD_900(HttpStatus.NOT_ACCEPTABLE, CodeError.ERROR_DB_PROCEDURE.getCode(), "MDWTJD-900", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     MDWTJD_3002(HttpStatus.NOT_ACCEPTABLE, "ERROR_ACTIVATE_INSURANCE", "MDWTJD-3002", "No se pudo activar el seguro, no tiene cuenta asociada.", ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     MDWTJD_016(HttpStatus.NOT_ACCEPTABLE, CodeError.TRANSFER_DUPLICATE.getCode(), "MDWTJD-016", "Ya tienes una habilitación activa en las fechas seleccionadas. Ajusta el rango o espera a que termine la habilitación actual.", "Rango de fechas duplicado", CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
-    MDWTJD_017(HttpStatus.CONFLICT, "BAD_REQUEST", "MDWTJD-017", "La fecha final debe ser mayor que la fecha actual del sistema.", "Fecha no válida", CategoryError.INVALID_FORMAT.getCategoryId()),
-    END_DATE_MUST_BE_GREATER_THAN_START_DATE(HttpStatus.BAD_REQUEST, "BAD_REQUEST", null, "la fecha fin debe ser mayor o igual a la fecha inicio", "Fecha invalida", CategoryError.INVALID_FORMAT.getCategoryId());
+    MDWTJD_017(HttpStatus.CONFLICT, CodeError.BAD_REQUEST.getCode(), "MDWTJD-017", "La fecha final debe ser mayor que la fecha actual del sistema.", "Fecha no válida", CategoryError.INVALID_FORMAT.getCategoryId()),
+    MDWTJD_024(HttpStatus.CONFLICT, CodeError.BAD_REQUEST.getCode(), "MDWTJD-024", "El rango de fechas para compras por internet no puede ser mayor a 31 días. Ajusta el rango de fechas para continuar.", "Límite de rango excedido", CategoryError.INVALID_FORMAT.getCategoryId()),
+    END_DATE_MUST_BE_GREATER_THAN_START_DATE(HttpStatus.BAD_REQUEST, CodeError.BAD_REQUEST.getCode(), null, "la fecha fin debe ser mayor o igual a la fecha inicio", "Fecha invalida", CategoryError.INVALID_FORMAT.getCategoryId());
 
     private final HttpStatus httpCode;
     private final String code;
