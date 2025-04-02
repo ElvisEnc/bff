@@ -22,8 +22,6 @@ public class DepositRemittanceWURequest {
     private String accountId;
 
     @Valid
-    @NotNull(message = "La consulta de la remesa no puede ser valor nulo.")
-    @OnlyNumber(message = "La consulta de la remesa solo puede contener números.")
     private String consultationId;
 
     @Valid
