@@ -60,7 +60,7 @@ public class RemittanceService implements IRemittanceService {
         if (mwResponse.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return GenericResponse.instance(RemittanceMiddlewareResponse.ACCOUNT_ENABLED);
         }
-        throw new GenericException(RemittanceMiddlewareError.RM_031);
+        throw new GenericException(RemittanceMiddlewareError.RM031);
     }
 
     @Override
