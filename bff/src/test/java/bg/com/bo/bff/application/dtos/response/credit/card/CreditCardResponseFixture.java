@@ -197,6 +197,25 @@ public class CreditCardResponseFixture {
                 .build();
     }
 
+    public static CreditCardStatementsResponse withDefaultsRejected() {
+        return CreditCardStatementsResponse.builder()
+                .transactionDate("10/10/2023")
+                .processDate("10/10/2023")
+                .description("PAGO")
+                .currency("068")
+                .transactionTypeDesc("CREDIT")
+                .clientName("JOSE")
+                .transactionStatus("NOPOSTED")
+                .mrAmount(BigDecimal.valueOf(0.90).setScale(2, RoundingMode.DOWN))
+                .mlAmount(BigDecimal.valueOf(10.10).setScale(2, RoundingMode.DOWN))
+                .transactionType("PAGO")
+                .cardNumber("**** **** **** 3055")
+                .sequenceNumber(new BigDecimal("160203"))
+                .feeNumber("1/1")
+                .paramDate("12/09/2024")
+                .build();
+    }
+
     public static CreditCardStatementsResponse withDefaultCreditCardStatementsResponse2() {
         return CreditCardStatementsResponse.builder()
                 .transactionDate("2023-10-10")
