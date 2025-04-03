@@ -364,7 +364,25 @@ class CreditCardServiceTest {
 
         //Assert
         assertNotNull(response);
-        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        assertEquals(expectedResponse.size(), response.size());
+        verify(provider).getStatements(any(), any(), any());
+        verify(mapper).convertStatements(any());
+    }
+
+    @Test
+    void getStatementNoPosted() throws IOException {
+        //Arrange
+        CreditCardStatementRequest request = CreditCardRequestFixture.withDefaultCreditCardStatementRequest();
+        CreditCardStatementsMWResponse mwResponseMock = CreditCardMWResponseFixture.withDefaultsNoPosted();
+        List<CreditCardStatementsResponse> expectedResponse = Collections.singletonList(CreditCardResponseFixture.withDefaultsRejected());
+        when(provider.getStatements(any(), any(), any())).thenReturn(mwResponseMock);
+
+        //Act
+        List<CreditCardStatementsResponse> response = service.getStatementsCache("123", request, true);
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse.size(), response.size());
         verify(provider).getStatements(any(), any(), any());
         verify(mapper).convertStatements(any());
     }

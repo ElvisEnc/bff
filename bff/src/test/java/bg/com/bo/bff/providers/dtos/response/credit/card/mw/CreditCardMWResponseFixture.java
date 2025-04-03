@@ -225,6 +225,30 @@ public class CreditCardMWResponseFixture {
                 .build();
     }
 
+    public static CreditCardStatementsMWResponse withDefaultsNoPosted() {
+        return CreditCardStatementsMWResponse.builder()
+                .data(Arrays.asList(
+                        CreditCardStatementsMWResponse.CreditCardStatementMW.builder()
+                                .transactionDate("10/10/2023")
+                                .processDate("10/10/2023")
+                                .description("PAGO")
+                                .currency("068")
+                                .originalCurrency("068")
+                                .transactionTypeDesc("CREDIT")
+                                .clientName("JOSE          ")
+                                .transactionStatus("NOPOSTED")
+                                .mrAmount(new BigDecimal("0.9"))
+                                .mlAmount(new BigDecimal("10.1"))
+                                .transactionType("PAGO")
+                                .cardNumber("4099-11XX-XXXX-3055")
+                                .sequenceNumber(new BigDecimal("160203"))
+                                .feeNumber("1/1")
+                                .paramDate("12/09/2024")
+                                .build()
+                ))
+                .build();
+    }
+
     public static PurchaseAuthMWResponse withDefaultPurchaseAuthMWResponse() {
         return PurchaseAuthMWResponse.builder()
                 .data(Arrays.asList(

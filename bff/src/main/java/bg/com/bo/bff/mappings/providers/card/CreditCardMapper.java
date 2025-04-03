@@ -25,6 +25,9 @@ public class CreditCardMapper implements ICreditCardMapper {
     private static final String RESPONSE_TEXT_FORMATED = "ACTIVADA";
     private static final String RESPONSE_TEXT_BLOCKED = "BLOQUEADA";
     private static final String TYPE_SPECIAL = "Liberacion Parametros";
+    private static final String TRANSACTIONS_STATUS_POSTED = "POSTED";
+    private static final String TRANSACTIONS_STATUS_POSTED_FORMATTED = "PROCESADA";
+    private static final String TRANSACTIONS_STATUS_NO_POSTED_FORMATTED = "RECHAZADA";
 
     @Override
     public ListCreditCardResponse convertResponse(ListCreditCardMWResponse mwResponse) {
@@ -271,7 +274,7 @@ public class CreditCardMapper implements ICreditCardMapper {
                         .clientName(mw.getClientName().trim())
                         .transactionType(mw.getTransactionType())
                         .transactionTypeDesc(mw.getTransactionTypeDesc())
-                        .transactionStatus(mw.getTransactionStatus())
+                        .transactionStatus(mw.getTransactionStatus().equals(TRANSACTIONS_STATUS_POSTED) ? TRANSACTIONS_STATUS_POSTED_FORMATTED : TRANSACTIONS_STATUS_NO_POSTED_FORMATTED)
                         .sequenceNumber(mw.getSequenceNumber())
                         .feeNumber(mw.getFeeNumber())
                         .paramDate(UtilDate.formatDate(mw.getParamDate()))
