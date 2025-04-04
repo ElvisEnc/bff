@@ -20,6 +20,12 @@ public class ServiceResponse {
     @Schema(example = "1", description = "Id de la categoría")
     private String categoryId;
 
+    @Schema(example = "Colegios", description = "Descripcion de la categoría")
+    private String categoryDesc;
+
     @Schema(example = "16", description = "Id de la subcategoría")
     private String subCategoryId;
+
+    @Schema(example = "Colegios", description = "Descripcion de la subcategoría")
+    private String subCategoryDesc;
 }
