@@ -23,6 +23,8 @@ public class ListServicesMWResponse {
         private String serviceCode;
         private String serviceName;
         private String idCategory;
+        private String categoryDesc;
         private String idSubCategory;
+        private String subCategoryDesc;
     }
 }
