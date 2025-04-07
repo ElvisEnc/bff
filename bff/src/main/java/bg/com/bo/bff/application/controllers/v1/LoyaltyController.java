@@ -42,7 +42,7 @@ public class LoyaltyController extends AbstractBFFController {
     @GetMapping("/persons/{personId}/code-system/{codeSystem}/sum-points")
     public ResponseEntity<LoyaltySumPointResponse> getSumPoint(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
-            @PathVariable("codeSystem") @OnlyNumber @Parameter(description = "Este es el codigo de sistema de la persona", example = "12345") String codeSystem
+            @PathVariable("codeSystem") @Parameter(description = "Este es el codigo de sistema de la persona", example = "12345") String codeSystem
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.getSumPoint(personId, codeSystem));
