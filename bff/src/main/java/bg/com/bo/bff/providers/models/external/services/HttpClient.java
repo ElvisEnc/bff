@@ -3,6 +3,8 @@ package bg.com.bo.bff.providers.models.external.services;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.models.enums.middleware.response.GenericControllerErrorResponse;
+import bg.com.bo.bff.providers.models.external.services.exception.RequestBuildException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -48,24 +50,28 @@ public class HttpClient {
             return request;
         }, responseType);
     }
-
     private <T> T executeRequest(RequestBuilder builder, Class<T> responseType) throws IOException {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             HttpUriRequest request = builder.build();
-            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                return handleResponse(httpResponse, responseType);
-            } catch (HandledException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new HandledException(GenericControllerErrorResponse.REQUEST_EXCEPTION, e);
-            }
+            return executeAndHandleResponse(httpClient, request, responseType);
         } catch (HandledException e) {
             throw e;
+        } catch (RequestBuildException e) {
+            throw new HandledException(GenericControllerErrorResponse.REQUEST_EXCEPTION, e);
         } catch (Exception e) {
             throw new HandledException(GenericControllerErrorResponse.HTTP_CLIENT_CREATION_EXCEPTION, e);
         }
     }
 
+    private <T> T executeAndHandleResponse(CloseableHttpClient httpClient, HttpUriRequest request, Class<T> responseType) throws IOException {
+        try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+            return handleResponse(httpResponse, responseType);
+        } catch (HandledException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new HandledException(GenericControllerErrorResponse.REQUEST_EXCEPTION, e);
+        }
+    }
 
     private <T> T handleResponse(CloseableHttpResponse httpResponse, Class<T> responseType) throws IOException {
         int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -82,6 +88,6 @@ public class HttpClient {
 
     @FunctionalInterface
     private interface RequestBuilder {
-        HttpUriRequest build() throws Exception;
+        HttpUriRequest build() throws RequestBuildException, JsonProcessingException;
     }
 }
