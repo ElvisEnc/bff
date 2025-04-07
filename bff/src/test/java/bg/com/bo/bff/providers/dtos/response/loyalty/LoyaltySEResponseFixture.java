@@ -31,6 +31,13 @@ public class LoyaltySEResponseFixture {
                 .build();
     }
 
+    public static LoyaltyRegisterSubscriptionResponse withDefaultRegisterSubscriptionExistEmail() {
+        return LoyaltyRegisterSubscriptionResponse.builder()
+                .code(400)
+                .message("El email ya se encuentra registrado.")
+                .build();
+    }
+
     public static LoyaltyRegisterSubscriptionResponse withDefaultRegisterSubscriptionException() {
         return LoyaltyRegisterSubscriptionResponse.builder()
                 .code(406)

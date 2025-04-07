@@ -10,7 +10,8 @@ import org.springframework.http.HttpStatus;
 public enum LoyaltyError{
 
     REGISTER_ERROR(HttpStatus.CONFLICT, "REGISTER_ERROR", "Ocurrio algun problema al realizar la suscripción", "Error al suscribirse", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()),
-    ;
+    EMAIL_REGISTERED(HttpStatus.CONFLICT, "EMAIL_REGISTERED", "Ocurrio un error, el email ya se encuentra registrado.", "Email ya registrado", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId())
+     ;
     private final HttpStatus httpCode;
     private final String code;
     private final String message;

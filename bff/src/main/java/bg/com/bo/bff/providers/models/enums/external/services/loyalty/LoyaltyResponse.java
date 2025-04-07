@@ -9,7 +9,9 @@ import lombok.Getter;
 public enum LoyaltyResponse implements IGenericControllerResponse {
 
     REGISTERED_EXIT("SUCCESS", "Suscripcion realizada correctamente.", "Suscripcion registrada"),
-    REGISTRATION_EXISTS("REGISTERED", "La persona ya se encuentra inscrita a esta campaña", "Prsona ya registrada") ;
+    REGISTRATION_EXISTS("REGISTERED", "La persona ya se encuentra inscrita a esta campaña", "Pesona ya registrada"),
+    EMAIL_EXISTS("EMAIL_REGISTERED", "El email ya se encuentra registrado.", "Email ya registrada")
+    ;
 
     private final String code;
     private final String message;

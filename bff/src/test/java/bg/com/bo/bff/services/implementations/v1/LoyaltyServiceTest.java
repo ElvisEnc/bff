@@ -89,10 +89,11 @@ class LoyaltyServiceTest {
         when(provider.registerSubscription(any(), any())).thenReturn(expectedResponse);
 
         //Act
-        GenericResponse response = service.registerSubscription("1234", "123", request);
-
-        assertNotNull(response);
-        assertEquals(LoyaltyResponse.REGISTRATION_EXISTS.getMessage(), response.getMessage());
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.registerSubscription("123", "123", request)
+        );
+        //Assert
+        assertEquals("REGISTER_ERROR", exception.getCode());
         verify(provider).registerSubscription(any(), any());
     }
 
@@ -109,5 +110,22 @@ class LoyaltyServiceTest {
         );
         //Assert
         assertEquals("REGISTER_ERROR", exception.getCode());
+        verify(provider).registerSubscription(any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenRegisterSubscriptionEmailException() throws IOException {
+        //Arrange
+        RegisterSubscriptionRequest request = LoyaltySERequestFixture.withDefaultRegisterSubscription();
+        LoyaltyRegisterSubscriptionResponse expectedResponse = LoyaltySEResponseFixture.withDefaultRegisterSubscriptionExistEmail();
+        when(provider.registerSubscription(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.registerSubscription("123", "123", request)
+        );
+        //Assert
+        assertEquals("EMAIL_REGISTERED", exception.getCode());
+        verify(provider).registerSubscription(any(), any());
     }
 }

@@ -32,28 +32,30 @@ public class LoyaltyService implements ILoyaltyService {
 
     @Override
     public LoyaltySystemCodeResponse getSystemCode(String personId) throws IOException {
-        Map<String, String> requestService = mapper.mapperRequestGet(personId);
+        Map<String, String> requestService = mapper.mapperRequestService(personId);
         LoyaltySystemCodeServerResponse responseServer = provider.getSystemCode(personId, requestService);
         return mapper.convertResponse(responseServer);
     }
 
     @Override
     public LoyaltySumPointResponse getSumPoint(String personId, String codeSystem) throws IOException {
-        Map<String, String> requestService = mapper.mapperRequestGet(personId);
+        Map<String, String> requestService = mapper.mapperRequestService(personId);
         LoyaltySumPointServerResponse responseServer = provider.getSumPoint(codeSystem, requestService);
         return mapper.convertResponse(responseServer);
     }
 
     @Override
     public GenericResponse registerSubscription(String personId, String accountId, RegisterSubscriptionRequest request) throws IOException {
-        Map<String, String> requestService = mapper.mapperRequestPost(personId);
+        Map<String, String> requestService = mapper.mapperRequestService(personId);
         LoyaltyRegisterSubscriptionRequest requestServer = mapper.mapperRequest(personId, accountId, request);
         LoyaltyRegisterSubscriptionResponse responseServer = provider.registerSubscription(requestServer, requestService);
-
         if (responseServer.getCode() == 201) {
             return GenericResponse.instance(LoyaltyResponse.REGISTERED_EXIT);
         } else if (responseServer.getCode() == 400) {
-            return GenericResponse.instance(LoyaltyResponse.REGISTRATION_EXISTS);
+            if(responseServer.getMessage().equals(LoyaltyResponse.EMAIL_EXISTS.getMessage())){
+                throw new GenericException(LoyaltyError.EMAIL_REGISTERED);
+            }
+            throw new GenericException(LoyaltyError.REGISTER_ERROR);
         }
         throw new GenericException(LoyaltyError.REGISTER_ERROR);
     }

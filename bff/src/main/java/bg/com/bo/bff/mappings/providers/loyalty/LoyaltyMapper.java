@@ -29,33 +29,22 @@ public class LoyaltyMapper implements ILoyaltyMapper{
     }
 
     @Override
-    public Map<String, String> mapperRequestGet(String personId) {
+    public Map<String, String> mapperRequestService(String personId) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("sesion", "01042025154313ffe5a4bb00d20a5b");
+        headers.put("sesion", "010420251610164843e461ac6d9fdf");
         headers.put("idpersona", personId);
         return headers;
     }
-
-
-    @Override
-    public Map<String, String> mapperRequestPost(String personId) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("sesion", "01042025154313ffe5a4bb00d20a5b");
-        headers.put("idpersona", personId);
-        headers.put("Content-Type", "application/json");
-        return headers;
-    }
-
 
     @Override
     public LoyaltyRegisterSubscriptionRequest mapperRequest(String personId, String accountId, RegisterSubscriptionRequest request) {
         return LoyaltyRegisterSubscriptionRequest.builder()
-                .firmaDigital(true)
-                .idPersona(personId)
-                .codigoCampana("1")
-                .numeroCuentaJTS_OID(accountId)
+                .signatureDigital(true)
+                .idPerson(personId)
+                .codeCampaign("1")
+                .jtsOidAccountNumber(accountId)
                 .email(request.getEmail())
-                .suscripcionOrigen("GANAMOVIL")
+                .subscriptionOrigin("GANAMOVIL")
                 .build();
     }
 }

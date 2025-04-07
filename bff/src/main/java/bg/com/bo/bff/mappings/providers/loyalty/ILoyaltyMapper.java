@@ -15,9 +15,7 @@ public interface ILoyaltyMapper {
 
     LoyaltySumPointResponse convertResponse(LoyaltySumPointServerResponse response);
 
-    Map<String, String> mapperRequestGet(String personId);
-
-    Map<String, String> mapperRequestPost(String personId);
+    Map<String, String> mapperRequestService(String personId);
 
     LoyaltyRegisterSubscriptionRequest mapperRequest(String personId, String accountId, RegisterSubscriptionRequest request);
 }

@@ -12,12 +12,12 @@ public class LoyaltySERequestFixture {
 
     public static LoyaltyRegisterSubscriptionRequest withDefaultRegisterSubscriptionSE() {
         return LoyaltyRegisterSubscriptionRequest.builder()
-                .firmaDigital(true)
-                .idPersona("123")
-                .codigoCampana("1")
-                .numeroCuentaJTS_OID("1234")
+                .signatureDigital(true)
+                .idPerson("123")
+                .codeCampaign("1")
+                .jtsOidAccountNumber("1234")
                 .email("test@test.com")
-                .suscripcionOrigen("GANAMOVIL")
+                .subscriptionOrigin("GANAMOVIL")
                 .build();
     }
 }

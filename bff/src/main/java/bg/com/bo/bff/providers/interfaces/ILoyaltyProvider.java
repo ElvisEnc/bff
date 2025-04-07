@@ -1,5 +1,4 @@
 package bg.com.bo.bff.providers.interfaces;
- ;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRegisterSubscriptionResponse;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySumPointServerResponse;
