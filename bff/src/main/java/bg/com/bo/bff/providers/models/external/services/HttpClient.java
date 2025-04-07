@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -30,34 +31,27 @@ public class HttpClient {
     }
 
     public <T> T executeGetRequest(String url, Map<String, String> headers, Class<T> responseType) throws IOException {
-        try (CloseableHttpClient httpClient = httpClientFactory.create()) {
+        return executeRequest(() -> {
             HttpGet request = new HttpGet(url);
             headers.forEach(request::addHeader);
-
-            try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
-                return handleResponse(httpResponse, responseType);
-            } catch (HandledException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new HandledException(GenericControllerErrorResponse.REQUEST_EXCEPTION, e);
-            }
-
-        } catch (HandledException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new HandledException(GenericControllerErrorResponse.HTTP_CLIENT_CREATION_EXCEPTION, e);
-        }
+            return request;
+        }, responseType);
     }
 
     public <T> T executePostRequest(String url, Object requestBody, Map<String, String> headers, Class<T> responseType) throws IOException {
-        try (CloseableHttpClient httpClient = httpClientFactory.create()) {
+        return executeRequest(() -> {
             HttpPost request = new HttpPost(url);
             headers.forEach(request::addHeader);
-
             String json = objectMapper.writeValueAsString(requestBody);
             request.setEntity(new StringEntity(json, StandardCharsets.UTF_8));
             request.addHeader("Content-Type", "application/json");
+            return request;
+        }, responseType);
+    }
 
+    private <T> T executeRequest(RequestBuilder builder, Class<T> responseType) throws IOException {
+        try (CloseableHttpClient httpClient = httpClientFactory.create()) {
+            HttpUriRequest request = builder.build();
             try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
                 return handleResponse(httpResponse, responseType);
             } catch (HandledException e) {
@@ -65,13 +59,13 @@ public class HttpClient {
             } catch (Exception e) {
                 throw new HandledException(GenericControllerErrorResponse.REQUEST_EXCEPTION, e);
             }
-
         } catch (HandledException e) {
             throw e;
         } catch (Exception e) {
             throw new HandledException(GenericControllerErrorResponse.HTTP_CLIENT_CREATION_EXCEPTION, e);
         }
     }
+
 
     private <T> T handleResponse(CloseableHttpResponse httpResponse, Class<T> responseType) throws IOException {
         int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -81,10 +75,13 @@ public class HttpClient {
             return objectMapper.readValue(responseJson, responseType);
         } else if (statusCode == HttpStatus.UNAUTHORIZED.value()) {
             throw new HandledException(GenericControllerErrorResponse.UNAUTHORIZED);
-        }else {
-            throw new HandledException(
-                    GenericControllerErrorResponse.NOT_HANDLED_RESPONSE);
+        } else {
+            throw new HandledException(GenericControllerErrorResponse.NOT_HANDLED_RESPONSE);
         }
     }
 
+    @FunctionalInterface
+    private interface RequestBuilder {
+        HttpUriRequest build() throws Exception;
+    }
 }
