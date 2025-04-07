@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.exceptions;
 
 import bg.com.bo.bff.commons.enums.config.provider.AppError;
+import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyError;
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -62,6 +63,15 @@ public class GenericException extends RuntimeException {
     }
 
     public GenericException(IMiddlewareError error) {
+        super(error.getMessage());
+        this.status = error.getHttpCode();
+        this.code = error.getCode();
+        this.title = error.getTitle();
+        this.categoryId = error.getCategoryId();
+        fillTrace();
+    }
+
+    public GenericException(LoyaltyError error) {
         super(error.getMessage());
         this.status = error.getHttpCode();
         this.code = error.getCode();
