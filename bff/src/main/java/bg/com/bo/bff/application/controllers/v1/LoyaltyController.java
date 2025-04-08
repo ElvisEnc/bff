@@ -39,7 +39,7 @@ public class LoyaltyController extends AbstractBFFController {
         return ResponseEntity.ok(service.getSystemCode(personId));
     }
 
-    @GetMapping("/persons/{personId}/code-system/{codeSystem}/sum-points")
+    @GetMapping("/persons/{personId}/system-code/{codeSystem}/sum-points")
     public ResponseEntity<LoyaltySumPointResponse> getSumPoint(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("codeSystem") @Parameter(description = "Este es el codigo de sistema de la persona", example = "12345") String codeSystem

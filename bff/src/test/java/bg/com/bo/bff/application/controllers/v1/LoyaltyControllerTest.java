@@ -81,7 +81,7 @@ class LoyaltyControllerTest {
         when(service.getSumPoint(any(), any())).thenReturn(responseExpected);
 
         // Act
-        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/code-system/{codeSystem}/sum-points";
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/system-code/{codeSystem}/sum-points";
         MvcResult result = mockMvc.perform(get(urlLoyalty, "123", "1")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
