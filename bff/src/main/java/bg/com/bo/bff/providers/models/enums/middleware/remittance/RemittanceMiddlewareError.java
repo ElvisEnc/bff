@@ -68,6 +68,7 @@ public enum RemittanceMiddlewareError implements IMiddlewareError {
     RM_RIA002(HttpStatus.NOT_ACCEPTABLE, CodeError.REMITTANCE_COLLETED.getCode(), "RM-RIA002", "Estimado cliente, la remesa de RIA ya fue cobrada.",  CodeError.REMITTANCE_COLLETED.getDescription(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     RM_WU001(HttpStatus.NOT_ACCEPTABLE, CodeError.ERROR_PROCEDURE.getCode(), "RM-WU001", "Ocurrió un problema al obtener la información de la remesadora, intente más tarde.", ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     RM_WU004(HttpStatus.NOT_ACCEPTABLE, CodeError.ERROR_PROCEDURE.getCode(), "RM-WU004", "La remesa ya ha sido consultado, por favor inténtalo de nuevo en unos minutos","Consulta ya realizada.", CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
+    RM_WU008(HttpStatus.NOT_ACCEPTABLE, CodeError.ERROR_PROCEDURE.getCode(), "RM-WU008", "Ocurrió un problema al realizar el cobro de la remesa, intente más tarde.",ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     ;
     private final HttpStatus httpCode;
     private final String code;
