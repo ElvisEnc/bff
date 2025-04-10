@@ -5,6 +5,7 @@ import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionReques
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevel;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltySumPointResponse;
+import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.*;
@@ -87,7 +88,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .codeCampaign("1")
                 .jtsOidAccountNumber(accountId)
                 .email(request.getEmail())
-                .subscriptionOrigin("GANAMOVIL")
+                .subscriptionOrigin(CanalMW.GANAMOVIL.getDescription())
                 .build();
     }
 
