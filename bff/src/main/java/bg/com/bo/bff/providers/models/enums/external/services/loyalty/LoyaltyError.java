@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 public enum LoyaltyError implements IExternalError {
 
     GENERIC_ERROR(HttpStatus.NOT_ACCEPTABLE, "GENERIC_ERROR", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
+    LOYALTY_ERROR(HttpStatus.NOT_ACCEPTABLE, "GENERIC_ERROR", "Ocurrio un error al verificar Vamos", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     REGISTER_ERROR(HttpStatus.NOT_ACCEPTABLE, "REGISTER_ERROR", "Ocurrio algun problema al realizar la suscripción", "Ocurrio algun problema al realizar la suscripción", "Error al suscribirse", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()),
     EMAIL_REGISTERED(HttpStatus.CONFLICT, "EMAIL_REGISTERED",  "el email ya se encuentra registrado.", "Ocurrio un error, el email ya se encuentra registrado.", "Email ya registrado", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()),
     PERSON_REGISTERED(HttpStatus.CONFLICT, "PERSON_REGISTERED", "La persona ya se encuentra inscrita a esta campaña", "La persona ya se encuentra subscripta en el programa.", "Persona ya registrada", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()),
@@ -21,7 +22,7 @@ public enum LoyaltyError implements IExternalError {
      ;
     private final HttpStatus httpCode;
     private final String code;
-    private final String MsgError;
+    private final String msgError;
     private final String message;
     private final String title;
     private final int categoryId;
