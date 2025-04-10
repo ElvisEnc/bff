@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class OnboardingManagerServiceTest {
+class OnboardingManagerServiceTest {
     @InjectMocks
     private OnboardingManagerService service;
     @Spy

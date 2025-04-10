@@ -28,12 +28,12 @@ import java.util.List;
 @RequestMapping("api/v1/onboarding-manager")
 @Tag(name = "Onboarding Controller", description = "Controlador del módulo de Onboarding")
 public class OnboardingManagerController extends AbstractBFFController {
-    private final HttpServletRequest httpServletRequest;
+
     private IOnboardingManagerService service;
 
     public OnboardingManagerController(HttpServletRequest httpServletRequest,
                                        IOnboardingManagerService iOnboardingManagerService) {
-        this.httpServletRequest = httpServletRequest;
+        this.setHttpServletRequest(httpServletRequest);
         this.service = iOnboardingManagerService;
     }
 

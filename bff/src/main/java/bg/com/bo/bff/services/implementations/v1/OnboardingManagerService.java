@@ -22,8 +22,6 @@ public class OnboardingManagerService implements IOnboardingManagerService {
     private final IOnboardingManagerMapper mapper;
 
     @Autowired
-    private OnboardingManagerService self;
-
     public OnboardingManagerService(IOnboardingManagerProvider provider, IOnboardingManagerMapper mapper) {
         this.provider = provider;
         this.mapper = mapper;

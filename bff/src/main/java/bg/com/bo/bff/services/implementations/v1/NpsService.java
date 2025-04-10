@@ -23,8 +23,6 @@ public class NpsService implements INpsService {
     private final INpsMapper mapper;
 
     @Autowired
-    private NpsService self;
-
     public NpsService(INpsProvider provider, INpsMapper mapper) {
         this.provider = provider;
         this.mapper = mapper;

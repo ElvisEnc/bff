@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class NpsServiceTest {
+class NpsServiceTest {
     @InjectMocks
     private NpsService service;
     @Spy
@@ -37,8 +37,6 @@ public class NpsServiceTest {
 
     @Mock
     private INpsProvider provider;
-    @Mock
-    private NpsService self;
 
     @Test
     void testRegisterDevice() throws IOException {

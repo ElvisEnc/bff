@@ -30,11 +30,10 @@ import java.io.IOException;
 @RequestMapping("api/v1/nps")
 @Tag(name = "NPS Controller", description = "Controlador del módulo de NPS")
 public class NpsController extends AbstractBFFController {
-    private final HttpServletRequest httpServletRequest;
     private INpsService service;
 
     public NpsController(HttpServletRequest httpServletRequest, INpsService iNpsService) {
-        this.httpServletRequest = httpServletRequest;
+        this.setHttpServletRequest(httpServletRequest);
         this.service = iNpsService;
     }
 
