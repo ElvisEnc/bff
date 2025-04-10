@@ -1,0 +1,52 @@
+package bg.com.bo.bff.providers.dtos.request.loyalty;
+
+import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
+import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
+
+public class LoyaltySERequestFixture {
+
+    public static RegisterSubscriptionRequest withDefaultRegisterSubscription() {
+        return RegisterSubscriptionRequest.builder()
+                .email("test@test.com")
+                .build();
+    }
+
+    public static LoyaltyRegisterSubscriptionRequest withDefaultRegisterSubscriptionSE() {
+        return LoyaltyRegisterSubscriptionRequest.builder()
+                .signatureDigital(true)
+                .idPerson("123")
+                .codeCampaign("1")
+                .jtsOidAccountNumber("1234")
+                .email("test@test.com")
+                .subscriptionOrigin("GANAMOVIL")
+                .build();
+    }
+
+    public static LoyaltyRegisterRedeemVoucherRequest withDefaultRegisterRedeemVoucherSE() {
+        return LoyaltyRegisterRedeemVoucherRequest.builder()
+                .codigoCampana("campana001")
+                .idCodigoSistema("sistema123")
+                .idBeneficio("beneficio456")
+                .tipoBeneficio("TIPO1")
+                .informacion(LoyaltyRegisterRedeemVoucherRequest.Information.builder()
+                        .nombreBeneficiario("Juan Pérez")
+                        .documentoBeneficiario("12345678")
+                        .parentesco("Hijo")
+                        .build())
+                .build();
+    }
+
+    public static RegisterRedeemVoucherRequest withDefaultRegisterRedeemVoucher() {
+        return RegisterRedeemVoucherRequest.builder()
+                .idBenefit("BENEF-001")
+                .typeBenefit("DESCUENTO")
+                .information(RegisterRedeemVoucherRequest.InformationVoucher.builder()
+                        .beneficiaryName("Juan Pérez")
+                        .beneficiaryDocument("12345678")
+                        .beneficiaryRelationship("Hijo")
+                        .build())
+                .build();
+    }
+
+
+}
