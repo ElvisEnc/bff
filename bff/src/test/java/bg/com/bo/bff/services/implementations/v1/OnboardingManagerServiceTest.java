@@ -58,12 +58,49 @@ public class OnboardingManagerServiceTest {
 
     }
 
+    @Test
+    void testGetAllDevicesWithNull() throws IOException {
+        // Arrange
+        ListDevicesMWResponse mwResponseMock = OnboardingManagerMWResponseFixture.withDefaultListDevicesOnboardingWithNull();
+        List<OnboardingManagerResponse> expectedResponse = List.of();
+
+        // Act
+        when(provider.listDeviceOnboardingManager(anyInt())).thenReturn(mwResponseMock);
+        List<OnboardingManagerResponse> response = service.getAllDevices(15);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(provider).listDeviceOnboardingManager(anyInt());
+
+    }
+
+    @Test
+    void testGetAllDevicesWithDataNull() throws IOException {
+        // Arrange
+        ListDevicesMWResponse mwResponseMock = OnboardingManagerMWResponseFixture
+                .withDefaultListDevicesOnboardingWithDataNull();
+        List<OnboardingManagerResponse> expectedResponse = List.of();
+
+
+        // Act
+        when(provider.listDeviceOnboardingManager(anyInt())).thenReturn(mwResponseMock);
+        List<OnboardingManagerResponse> response = service.getAllDevices(15);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        verify(provider).listDeviceOnboardingManager(anyInt());
+
+    }
+
 
     @Test
     void testDisableDevice() throws IOException {
         // Arrange
         GenericResponse expected = GenericResponse.instance(OnboardingMiddlewareResponse.SUCCESS_DEACTIVATE_DEVICE);
-
 
         when(provider.disableDevice(anyInt(), anyString())).thenReturn(
                 OnboardingManagerMWResponseFixture.withDefaultDisableDevice()

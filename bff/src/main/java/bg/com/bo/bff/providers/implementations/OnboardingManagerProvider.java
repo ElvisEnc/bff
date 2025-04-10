@@ -13,6 +13,7 @@ import bg.com.bo.bff.providers.models.enums.middleware.onboarding.manager.Onboar
 import bg.com.bo.bff.providers.models.enums.middleware.onboarding.manager.OnboardingMiddlewareResponse;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
+import bg.com.bo.bff.providers.models.middleware.response.handler.ByMwErrorResponseHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,9 @@ public class OnboardingManagerProvider extends MiddlewareProvider<OnboardingMana
     public ListDevicesMWResponse listDeviceOnboardingManager(int personId) throws IOException {
 
         String url = baseUrl + String.format(OnboardingManagerMiddlewareService.GET_PERSON_DEVICES.getServiceURL(), personId);
-        return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), ListDevicesMWResponse.class);
+        ByMwErrorResponseHandler<ListDevicesMWResponse> responseHandler = ByMwErrorResponseHandler
+                .instance(OnboardingManagerMiddlewareError.ERR002);
+        return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), ListDevicesMWResponse.class, responseHandler);
 
     }
 

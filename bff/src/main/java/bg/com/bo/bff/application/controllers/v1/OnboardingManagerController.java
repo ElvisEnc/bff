@@ -26,7 +26,7 @@ import java.util.List;
 @RestController
 @Validated
 @RequestMapping("api/v1/onboarding-manager")
-@Tag(name = "QR Controller", description = "Controlador del módulo de Nps")
+@Tag(name = "Onboarding Controller", description = "Controlador del módulo de Onboarding")
 public class OnboardingManagerController extends AbstractBFFController {
     private final HttpServletRequest httpServletRequest;
     private IOnboardingManagerService service;

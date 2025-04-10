@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.dtos.response.onboarding.manager;
 
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.providers.dtos.response.onboarding.manager.mw.DisableDeviceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.onboarding.manager.mw.ListDevicesMWResponse;
 
 import java.util.Collections;
@@ -54,6 +55,16 @@ public class OnboardingManagerMWResponseFixture {
                 ).build();
     }
 
+    public static ListDevicesMWResponse withDefaultListDevicesOnboardingWithNull() {
+        return ListDevicesMWResponse.
+                builder()
+                .data(null).build();
+    }
+
+    public static ListDevicesMWResponse withDefaultListDevicesOnboardingWithDataNull() {
+        return null;
+    }
+
 
     public static GenericResponse withDefaultDisableDevice() {
         return GenericResponse.builder()
@@ -62,11 +73,20 @@ public class OnboardingManagerMWResponseFixture {
                 .code("SUCCESS").build();
     }
 
-    public static GenericResponse withDefaultDisableDeviceError() {
+    public static GenericResponse withDefaultDisableDeviceWithError() {
         return GenericResponse.builder()
                 .title("Ocurrió un problema")
                 .message("Ocurrio algo inesperado, no se pudo desactivar el dispositivo.")
                 .code("ERROR").build();
+    }
+
+    public static DisableDeviceMWResponse withDefaultDisableDeviceWithSuccess() {
+        return DisableDeviceMWResponse.builder()
+                .data(DisableDeviceMWResponse.DataMWResponse.builder()
+                        .codeResponse("COD000")
+                        .messageResponse("OK")
+                        .build())
+                .build();
     }
 
 }

@@ -28,7 +28,7 @@ import java.io.IOException;
 @RestController
 @Validated
 @RequestMapping("api/v1/nps")
-@Tag(name = "QR Controller", description = "Controlador del módulo de Nps")
+@Tag(name = "NPS Controller", description = "Controlador del módulo de NPS")
 public class NpsController extends AbstractBFFController {
     private final HttpServletRequest httpServletRequest;
     private INpsService service;

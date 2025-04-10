@@ -100,11 +100,39 @@ class OnboardingManagerProviderTest {
 
     @Test
     @DisplayName("Test service for registerNps.")
+    void testDisableDeviseWithSuccess() throws IOException {
+        // Arrange
+        GenericResponse expectedResponse = GenericResponse.instance(OnboardingMiddlewareResponse.SUCCESS_DEACTIVATE_DEVICE);
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+
+        String jsonResponse = Util.objectToString(OnboardingManagerMWResponseFixture.withDefaultDisableDeviceWithSuccess());
+        System.out.println("jsonResponse: " + jsonResponse);
+        stubFor(
+                post(anyUrl())
+                        .willReturn(okJson(jsonResponse))
+        );
+
+
+        // Act
+        GenericResponse response = provider.disableDevice(15, "CO0000");
+        System.out.println("expected = " + expectedResponse);
+        System.out.println("response = " + response);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(httpClientFactoryMock).create();
+        verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
+
+    }
+
+    @Test
+    @DisplayName("Test service for registerNps.")
     void testDisableDeviseWithError() throws IOException {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(OnboardingMiddlewareResponse.ERROR_DEACTIVATE_DEVICE);
         when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
-        String jsonResponse = Util.objectToString(OnboardingManagerMWResponseFixture.withDefaultDisableDeviceError());
+        String jsonResponse = Util.objectToString(OnboardingManagerMWResponseFixture.withDefaultDisableDeviceWithError());
         stubFor(
                 post(anyUrl()).willReturn(okJson(jsonResponse))
         );
@@ -114,7 +142,7 @@ class OnboardingManagerProviderTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals(response, expectedResponse);
+        assertEquals(expectedResponse, response);
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
 

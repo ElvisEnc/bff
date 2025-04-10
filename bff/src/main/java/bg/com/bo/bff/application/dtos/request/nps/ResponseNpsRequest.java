@@ -16,7 +16,7 @@ import java.util.List;
 public class ResponseNpsRequest {
 
     @NotNull(message = "npsId es necesario.")
-    @Schema(description = "número de la tarjeta de débito", example = "4200560090901100")
+    @Schema(description = "Identificador del NPS", example = "4200560090901100")
     private int npsId;
 
     @NotNull
