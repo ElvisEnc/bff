@@ -2,8 +2,11 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
 import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyRequestFixture;
+import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevel;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyResponseFixture;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltySumPointResponse;
 import bg.com.bo.bff.commons.utils.Util;
@@ -117,5 +120,51 @@ class LoyaltyControllerTest {
         // Assert
         assertNotNull(result);
         verify(service).registerSubscription(any(), any(), any());
+    }
+
+    @Test
+    void givenPersonIdWhenRedeemVoucherThenReturnSuccess() throws Exception {
+        // Arrange
+        RegisterRedeemVoucherRequest request = LoyaltyRequestFixture.withDefaultRegisterRedeemVoucher();
+        LoyaltyRedeemVoucherResponse responseExpected = LoyaltyResponseFixture.withDefaultRedeemVoucher();
+        when(service.registerRedeemVoucher(any(), any(), any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/system-code/{codeSystem}/redeem-voucher";
+        MvcResult result = mockMvc.perform(post(urlLoyalty, "123", "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).registerRedeemVoucher(any(), any(), any());
+    }
+
+
+    @Test
+    void givenPersonIdWhenGetLevelThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyLevel responseExpected = LoyaltyResponseFixture.withDefaultLevel();
+        when(service.getLevel(any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/level";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String expected = Util.objectToString(responseExpected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getLevel(any());
     }
 }

@@ -1,8 +1,7 @@
 package bg.com.bo.bff.providers.interfaces;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRegisterSubscriptionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.*;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySumPointServerResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,4 +15,8 @@ public interface ILoyaltyProvider {
     LoyaltySumPointServerResponse getSumPoint(String codeSystem, Map<String, String> headers) throws IOException;
 
     LoyaltyRegisterSubscriptionResponse registerSubscription(LoyaltyRegisterSubscriptionRequest requestServer, Map<String, String> headers) throws IOException;
+
+    LoyaltyRegisterRedeemVoucherResponse registerRedeemVoucher(LoyaltyRegisterRedeemVoucherRequest requestServer, Map<String, String> headers) throws IOException;
+
+    LoyaltyGetLevelResponse getLevel(Map<String, String> headers, String personId) throws IOException;
 }

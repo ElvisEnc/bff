@@ -1,16 +1,15 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRegisterSubscriptionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevel;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.*;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltySumPointResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.loyalty.LoyaltyMapper;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltySERequestFixture;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySEResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySumPointServerResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
 import bg.com.bo.bff.providers.interfaces.ILoyaltyProvider;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyResponse;
 import org.junit.jupiter.api.Test;
@@ -98,34 +97,32 @@ class LoyaltyServiceTest {
     }
 
     @Test
-    void givenValidDataWhenRegisterSubscriptionException() throws IOException {
+    void givenValidDataWhenRegisterRedeemVoucher() throws IOException {
         //Arrange
-        RegisterSubscriptionRequest request = LoyaltySERequestFixture.withDefaultRegisterSubscription();
-        LoyaltyRegisterSubscriptionResponse expectedResponse = LoyaltySEResponseFixture.withDefaultRegisterSubscriptionException();
-        when(provider.registerSubscription(any(), any())).thenReturn(expectedResponse);
+        RegisterRedeemVoucherRequest request = LoyaltySERequestFixture.withDefaultRegisterRedeemVoucher();
+        LoyaltyRegisterRedeemVoucherResponse expectedResponse = LoyaltySEResponseFixture.withDefaultRegisterRedeemVoucher();
+        when(provider.registerRedeemVoucher(any(), any())).thenReturn(expectedResponse);
 
         //Act
-        GenericException exception = assertThrows(GenericException.class, () ->
-                service.registerSubscription("123", "123", request)
-        );
-        //Assert
-        assertEquals("REGISTER_ERROR", exception.getCode());
-        verify(provider).registerSubscription(any(), any());
+        LoyaltyRedeemVoucherResponse response = service.registerRedeemVoucher("1234", "123", request);
+
+        assertNotNull(response);
+        verify(provider).registerRedeemVoucher(any(), any());
+        verify(mapper).convertResponse(any(LoyaltyRegisterRedeemVoucherResponse.class));
     }
 
     @Test
-    void givenValidDataWhenRegisterSubscriptionEmailException() throws IOException {
+    void givenValidDataWhenGetLevel() throws IOException {
         //Arrange
-        RegisterSubscriptionRequest request = LoyaltySERequestFixture.withDefaultRegisterSubscription();
-        LoyaltyRegisterSubscriptionResponse expectedResponse = LoyaltySEResponseFixture.withDefaultRegisterSubscriptionExistEmail();
-        when(provider.registerSubscription(any(), any())).thenReturn(expectedResponse);
+        LoyaltyGetLevelResponse expectedResponse = LoyaltySEResponseFixture.withDefaultLoyaltyGetLevel();
+        when(provider.getLevel(any(), any())).thenReturn(expectedResponse);
 
         //Act
-        GenericException exception = assertThrows(GenericException.class, () ->
-                service.registerSubscription("123", "123", request)
-        );
-        //Assert
-        assertEquals("EMAIL_REGISTERED", exception.getCode());
-        verify(provider).registerSubscription(any(), any());
+        LoyaltyLevel response = service.getLevel("1234");
+
+        assertNotNull(response);
+        verify(provider).getLevel(any(), any());
+        verify(mapper).convertResponse(any(LoyaltyGetLevelResponse.class));
     }
+
 }

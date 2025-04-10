@@ -1,4 +1,4 @@
-package bg.com.bo.bff.application.dtos.response.loyalty;
+package bg.com.bo.bff.providers.dtos.response.loyalty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;

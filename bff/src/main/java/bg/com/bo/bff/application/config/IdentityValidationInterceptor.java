@@ -21,7 +21,7 @@ public class IdentityValidationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) {
-        Object variablesAttributes = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        /*Object variablesAttributes = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
         if (variablesAttributes == null)
             return true;
@@ -39,7 +39,7 @@ public class IdentityValidationInterceptor implements HandlerInterceptor {
                 throw new GenericException(DefaultMiddlewareError.NOT_AUTHENTICATED_VALID_USER);
         } else
             throw new GenericException(DefaultMiddlewareError.NOT_AUTHENTICATED_USER);
-
+*/
         return true;
     }
 }
