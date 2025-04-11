@@ -26,8 +26,8 @@ public enum ProjectNameMW {
     REMITTANCE_MANAGER("/remittance-manager", "REMITTANCE MANAGER", ProjectNameMW.HEADER_KEY),
     SOFT_TOKEN_MANAGER("/softtoken-manager", "SOFT TOKEN MANAGER", ProjectNameMW.HEADER_KEY),
     CERTIFICATIONS_MANAGER("/certifications-manager", "CERTIFICATIONS MANAGER", ProjectNameMW.HEADER_KEY),
-    FREQUENTLY_QUESTION_MANAGER("/users-questions-manager", "USER QUESTION MANAGER", ProjectNameMW.HEADER_KEY),
-    ;
+    USERS_QUESTIONS_MANAGER("/users-questions-manager", "USER QUESTION MANAGER", ProjectNameMW.HEADER_KEY),
+    ONBOARDING_MANAGER("/onboarding-manager", "ONBOARDING MANAGER", ProjectNameMW.HEADER_KEY);
 
     private final String name;
     private final String description;
