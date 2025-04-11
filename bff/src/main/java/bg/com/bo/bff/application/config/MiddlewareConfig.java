@@ -55,5 +55,8 @@ public class MiddlewareConfig {
 
     private String clientCertificationsManager;
 
-    private String clientFrequentlyQuestionManager;
+    private String clientUsersQuestionsManager;
+
+    private String clientOnboardingManager;
+
 }

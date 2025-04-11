@@ -79,8 +79,11 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.certifications.manager}")
     private String clientCertificationsManager;
 
-    @Value("${client.secret.frequently.question.manager}")
-    private String clientFrequentlyQuestionManager;
+    @Value("${client.secret.users.questions.manager}")
+    private String clientUsersQuestionsManager;
+
+    @Value("${client.secret.onboarding.manager}")
+    private String clientOnboardingManager;
 
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
@@ -109,7 +112,8 @@ public class MiddlewareConfigFactory {
                 .clientRemittanceManager(clientRemittanceManager)
                 .clientSoftTokenManager(clientSoftTokenManager)
                 .clientCertificationsManager(clientCertificationsManager)
-                .clientFrequentlyQuestionManager(clientFrequentlyQuestionManager)
+                .clientUsersQuestionsManager(clientUsersQuestionsManager)
+                .clientOnboardingManager(clientOnboardingManager)
                 .build();
     }
 }
