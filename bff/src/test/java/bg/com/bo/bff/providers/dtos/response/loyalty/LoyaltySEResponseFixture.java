@@ -1,9 +1,5 @@
 package bg.com.bo.bff.providers.dtos.response.loyalty;
 
-
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
