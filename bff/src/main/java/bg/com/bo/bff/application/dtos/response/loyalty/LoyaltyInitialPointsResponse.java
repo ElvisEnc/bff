@@ -11,9 +11,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoyaltySumPointResponse {
-
-    @Schema(description = "Es la sumatoria total de los puntos acumulados")
+public class LoyaltyInitialPointsResponse {
+    @Schema(description = "Puntos VAMOS")
     @JsonProperty("points")
     private int points;
+
+    @Schema(description = "fecha de puntos VAMOS")
+    @JsonProperty("datePoints")
+    private String datePoints;
+
+    @Schema(description = "Puntos de lealtad")
+    @JsonProperty("pointsLoyalty")
+    private int pointsLoyalty;
 }

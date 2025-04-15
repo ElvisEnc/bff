@@ -13,7 +13,8 @@ public enum LoyaltyResponse implements IGenericControllerResponse {
     EMAIL_EXISTS("EMAIL_REGISTERED", "El email ya se encuentra registrado.", "Email ya registrada"),
     INCOMPLETE_POINTS("INCOMPLETE_POINTS", "Los puntos actuales son inferiores a los del vale.", "Puntos incompletos"),
     INACTIVE_USER("INACTIVE_USER", "El vale no puede ser canjeado porque el usuario no se encuentra activo.", "Usuario inactivo"),
-    VOUCHER_NOT_AVAILABLE("INACTIVE_USER", "El vale ya no esta disponible para realizar canjes", "Vale no disponible")
+    VOUCHER_NOT_AVAILABLE("VOUCHER_NOT_AVAILABLE", "El vale ya no esta disponible para realizar canjes", "Vale no disponible"),
+    SUBSCRIPTION_EXISTS("SUBSCRIPTION_EXISTS", "La persona se encuentra inscrita a esta campaña", "Pesona registrada")
     ;
 
     private final String code;

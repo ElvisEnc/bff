@@ -1,5 +1,9 @@
 package bg.com.bo.bff.providers.dtos.response.loyalty;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class LoyaltySEResponseFixture {
 
@@ -9,8 +13,8 @@ public class LoyaltySEResponseFixture {
                 .build();
     }
 
-    public static LoyaltySumPointServerResponse withDefaultSumPoint() {
-        return LoyaltySumPointServerResponse.builder()
+    public static LoyaltyPointServerResponse withDefaultSumPoint() {
+        return LoyaltyPointServerResponse.builder()
                 .point(1)
                 .build();
     }
@@ -93,5 +97,81 @@ public class LoyaltySEResponseFixture {
                 .idLevelNext("LEVEL-002")
                 .build();
     }
+
+    public static LoyaltyGetInitialPointsVamosResponse withDefaultInitialPoints() {
+        return LoyaltyGetInitialPointsVamosResponse.builder()
+                .pointsVamos(0)
+                .datePointsVamos("13/04/2025")
+                .pointsLoyalty(0)
+                .build();
+    }
+
+    public static LoyaltySubscriptionResponse withDefaultSubscription() {
+        return LoyaltySubscriptionResponse.builder()
+                .status(true)
+                .build();
+    }
+
+    public static LoyaltySubscriptionResponse withDefaultSubscriptionFalse() {
+        return LoyaltySubscriptionResponse.builder()
+                .status(false)
+                .build();
+    }
+
+    public static List<LoyaltyStatementPointsResponse> withDefaultStatementPoints() {
+        return List.of(
+                LoyaltyStatementPointsResponse.builder()
+                        .action("Carga")
+                        .comment("Carga de puntos por compra")
+                        .dateCreation("2025-04-10")
+                        .origin("POS - Tienda 01")
+                        .campaignScore(150.0)
+                        .build(),
+                LoyaltyStatementPointsResponse.builder()
+                        .action("Ajuste")
+                        .comment("Ajuste manual de puntos")
+                        .dateCreation("2025-04-12")
+                        .origin("Atención al cliente")
+                        .campaignScore(50.0)
+                        .build()
+        );
+    }
+
+    public static LoyaltyGeneralInformationResponse withDefaultGeneralInformationData() {
+        return LoyaltyGeneralInformationResponse.builder()
+                .codeSystem(1)
+                .level(LoyaltyGetLevelResponse.builder()
+                        .identifier("L1")
+                        .name("Nivel 1")
+                        .minimumScore(100)
+                        .maximumScore(200)
+                        .idCampaign("C1")
+                        .idLevelNext("L2")
+                        .build())
+                .levels(Arrays.asList(
+                        LoyaltyGetLevelResponse.builder()
+                                .identifier("L2")
+                                .name("Nivel 2")
+                                .minimumScore(200)
+                                .maximumScore(300)
+                                .idCampaign("C2")
+                                .idLevelNext("L3")
+                                .build()
+                ))
+                .points(BigDecimal.valueOf(150))
+                .pointsPeriod(BigDecimal.valueOf(50))
+                .build();
+    }
+
+    public static LoyaltyGeneralInformationResponse withDefaultGeneralInformation() {
+        return LoyaltyGeneralInformationResponse.builder()
+                .codeSystem(0)
+                .level(null)
+                .levels(Collections.emptyList())
+                .points(BigDecimal.ZERO)
+                .pointsPeriod(BigDecimal.ZERO)
+                .build();
+    }
+
 
 }

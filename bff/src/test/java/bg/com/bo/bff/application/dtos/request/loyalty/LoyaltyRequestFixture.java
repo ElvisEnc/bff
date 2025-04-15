@@ -21,4 +21,11 @@ public class LoyaltyRequestFixture {
                 .build();
     }
 
+    public static LoyaltyStatementRequest withDefaultStatement() {
+        return LoyaltyStatementRequest.builder()
+                .startDate("2021-09-10")
+                .endDate("2023-09-10")
+                .build();
+    }
+
 }

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoyaltySumPointServerResponse {
+public class LoyaltyPointServerResponse {
     @JsonProperty("puntosActuales")
     private int point;
 }

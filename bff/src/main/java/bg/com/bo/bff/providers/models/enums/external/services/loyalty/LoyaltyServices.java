@@ -12,7 +12,7 @@ public enum LoyaltyServices {
     POST_REGISTER_SUBSCRIPTION("/lealtad/campana/api/v1/suscripciones-ganamovil/contrato-suscripcion"),
     POST_REGISTER_REDEEM_VOUCHER("/lealtad/campana/api/v1/canje-vales-ganamovil/canje-vale"),
     GET_LEVEL("/lealtad/campana/api/v1/suscripciones-ganamovil/obtener-nivel/%s/campana/1"),
-    GET_INITIAL_POINTS_VAMOS("/lealtad/campana/api/v1/"), //no tiene
+    GET_INITIAL_POINTS_VAMOS("/lealtad/campana/api/v1/linkser-ganamovil/obtener-puntos-vamos/%s"),
     GET_POINTS_PERIOD("/lealtad/campana/api/v1/acumulacion-puntos-ganamovil/obtener-sumatoria-puntos-periodo/%s/campana/1"),
     GET_CHECK_SUBSCRIPTION("/lealtad/campana/api/v1/suscripciones-ganamovil/verificar-campanas-suscripcion/%s/campana/1"),
     GET_STATEMENT_POINTS("/lealtad/campana/api/v1/extracto-ganamovil/reporte-extracto"),

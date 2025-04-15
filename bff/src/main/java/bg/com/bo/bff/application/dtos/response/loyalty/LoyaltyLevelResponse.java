@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoyaltyLevel {
+public class LoyaltyLevelResponse {
 
     @Schema(description = "identificador")
     @JsonProperty("identifier")
@@ -36,6 +36,5 @@ public class LoyaltyLevel {
     @Schema(description = "identificador del siguiente nivel")
     @JsonProperty("idLevelNext")
     private String idLevelNext;
-
 
 }

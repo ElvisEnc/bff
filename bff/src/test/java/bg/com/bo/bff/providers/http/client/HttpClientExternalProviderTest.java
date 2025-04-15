@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -20,7 +21,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.http.HttpStatus;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -293,7 +297,128 @@ class HttpClientExternalProviderTest {
         assertEquals(DefaultExternalError.UNAUTHORIZED, result);
     }
 
+    @Test
+    void executePostRequest_withTypeReference_shouldReturnValidResponse_whenSuccess() throws IOException {
+        // Arrange
+        CloseableHttpClient mockHttpClientInstance = mock(CloseableHttpClient.class);
+        when(httpClientFactory.create()).thenReturn(mockHttpClientInstance);
 
+        DummyResponseType dummyResponse = new DummyResponseType("success");
+        CloseableHttpResponse mockHttpResponse = mockHttpResponse(HttpStatus.OK.value(), dummyResponse);
+        when(mockHttpClientInstance.execute(any(HttpUriRequest.class))).thenReturn(mockHttpResponse);
+
+        // Act
+        DummyResponseType response = (DummyResponseType) mockHttpClient.executePostRequest(
+                "http://localhost",
+                new DummyRequestType("data"),
+                Map.of("Authorization", "Bearer token"),
+                new TypeReference<DummyResponseType>() {}
+        );
+
+        // Assert
+        assertNotNull(response);
+        assertEquals("success", response.getStatus());
+    }
+
+    @Test
+    void executePostRequest_shouldThrowHandledException_whenHttpClientCreationFails() {
+        // Arrange
+        when(httpClientFactory.create()).thenThrow(new RuntimeException("Failed to create client"));
+
+        String url = "http://localhost";
+        DummyRequestType request = new DummyRequestType("data");
+        Map<String, String> headers = Map.of();
+        TypeReference<DummyResponseType> responseType = new TypeReference<>() {};
+
+        // Act
+        HandledException exception = assertThrows(HandledException.class, () ->
+                mockHttpClient.executePostRequest(url, request, headers, responseType)
+        );
+
+        // Assert
+        assertEquals(GenericControllerErrorResponse.HTTP_CLIENT_CREATION_EXCEPTION.getDescription(), exception.getMessage());
+    }
+
+    @Test
+    void executePostRequest_shouldRethrowHandledException() throws Exception {
+        // Arrange
+        CloseableHttpClient mockHttpClientInstance = mock(CloseableHttpClient.class);
+        when(httpClientFactory.create()).thenReturn(mockHttpClientInstance);
+
+        String url = "http://localhost";
+        DummyRequestType request = new DummyRequestType("data");
+        Map<String, String> headers = Map.of();
+        TypeReference<DummyResponseType> responseType = new TypeReference<>() {};
+
+        when(mockHttpClientInstance.execute(any(HttpUriRequest.class)))
+                .thenThrow(new HandledException(GenericControllerErrorResponse.REQUEST_EXCEPTION, new RuntimeException("inner")));
+
+        // Act
+        HandledException exception = assertThrows(HandledException.class, () ->
+                mockHttpClient.executePostRequest(url, request, headers, responseType)
+        );
+
+        // Assert
+        assertEquals(GenericControllerErrorResponse.REQUEST_EXCEPTION.getDescription(), exception.getMessage());
+    }
+
+    @Test
+    void executePostRequest_shouldThrowHandledException_whenJsonProcessingFails() throws JsonProcessingException {
+        // Arrange
+        ObjectMapper mockObjectMapper = mock(ObjectMapper.class);
+        when(mockObjectMapper.writeValueAsString(any())).thenThrow(new JsonProcessingException("JSON fail") {});
+        String url = "http://localhost";
+        DummyRequestType request = new DummyRequestType("data");
+        Map<String, String> headers = Map.of();
+        TypeReference<DummyResponseType> responseType = new TypeReference<>() {};
+
+        // Act
+        HandledException exception = assertThrows(HandledException.class, () ->
+                mockHttpClient.executePostRequest(url, request, headers, responseType)
+        );
+
+        // Assert
+        assertEquals(GenericControllerErrorResponse.REQUEST_EXCEPTION.getDescription(), exception.getMessage());
+    }
+
+    @Test
+    void handleResponse_shouldThrowGenericException_whenStatusIsUnauthorized() throws Exception {
+        // Arrange
+        CloseableHttpResponse mockHttpResponse = mock(CloseableHttpResponse.class);
+        StatusLine mockStatusLine = mock(StatusLine.class);
+        HttpEntity mockEntity = mock(HttpEntity.class);
+
+        when(mockHttpResponse.getStatusLine()).thenReturn(mockStatusLine);
+        when(mockStatusLine.getStatusCode()).thenReturn(HttpStatus.UNAUTHORIZED.value());
+        when(mockHttpResponse.getEntity()).thenReturn(mockEntity);
+        when(mockEntity.getContent()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
+
+        // Act & Assert
+        Exception thrown = assertThrows(Exception.class, () -> invokeHandleResponse(mockHttpResponse));
+
+        Throwable cause = (thrown instanceof InvocationTargetException)
+                ? ((InvocationTargetException) thrown).getCause()
+                : thrown;
+
+        assertTrue(cause instanceof GenericException);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private <R> void invokeHandleResponse(CloseableHttpResponse response) throws Exception {
+        Method method = HttpClientExternalProvider.class.getDeclaredMethod(
+                "handleResponse",
+                CloseableHttpResponse.class,
+                TypeReference.class
+        );
+        method.setAccessible(true);
+
+        Class<?> appErrorValue = DefaultExternalError.class;
+        HttpClientExternalProvider instance = new HttpClientExternalProvider(httpClientFactory, objectMapper, appErrorValue);
+
+        method.invoke(instance, response, new TypeReference<DummyResponseType>() {
+        });
+    }
 
     private CloseableHttpResponse mockHttpResponse(int statusCode, Object responseBody) throws IOException {
         CloseableHttpResponse response = mock(CloseableHttpResponse.class);
@@ -354,6 +479,23 @@ class HttpClientExternalProviderTest {
         public String getMessage() {
             return "";
         }
+    }
+
+    public static class DummyRequestType {
+        private String data;
+
+        public DummyRequestType(String data) { this.data = data; }
+        public String getData() { return data; }
+        public void setData(String data) { this.data = data; }
+    }
+
+    public static class DummyResponseType {
+        private String status;
+
+        public DummyResponseType() {}
+        public DummyResponseType(String status) { this.status = status; }
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
     }
 
 }

@@ -1,7 +1,6 @@
 package bg.com.bo.bff.providers.dtos.response.loyalty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,11 +10,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoyaltyRegisterSubscriptionResponse {
+public class LoyaltyGetInitialPointsVamosResponse {
 
-    @JsonProperty("codigoEstado")
-    private int code;
+    @JsonProperty("puntosVamos")
+    private int pointsVamos;
 
-    @JsonProperty("mensaje")
-    private String message;
+    @JsonProperty("fechaPuntosVamos")
+    private String datePointsVamos;
+
+    @JsonProperty("puntosLealtad")
+    private int pointsLoyalty;
 }
