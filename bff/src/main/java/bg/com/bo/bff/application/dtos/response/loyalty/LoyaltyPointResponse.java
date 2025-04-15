@@ -1,4 +1,4 @@
-package bg.com.bo.bff.providers.dtos.response.loyalty;
+package bg.com.bo.bff.application.dtos.response.loyalty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,11 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoyaltyRegisterSubscriptionResponse {
+public class LoyaltyPointResponse {
 
-    @JsonProperty("codigoEstado")
-    private int code;
-
-    @JsonProperty("mensaje")
-    private String message;
+    @Schema(description = "Es la sumatoria total de los puntos acumulados")
+    @JsonProperty("points")
+    private int points;
 }

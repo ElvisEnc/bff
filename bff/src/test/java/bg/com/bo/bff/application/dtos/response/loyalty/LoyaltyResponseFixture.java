@@ -3,6 +3,9 @@ package bg.com.bo.bff.application.dtos.response.loyalty;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 public class LoyaltyResponseFixture {
 
     public static LoyaltySystemCodeResponse withDefaultSystemCode() {
@@ -10,8 +13,8 @@ public class LoyaltyResponseFixture {
                 .codeSystem(1)
                 .build();
     }
-    public static LoyaltySumPointResponse withDefaultSumPoint() {
-        return LoyaltySumPointResponse.builder()
+    public static LoyaltyPointResponse withDefaultSumPoint() {
+        return LoyaltyPointResponse.builder()
                 .points(1)
                 .build();
     }
@@ -75,8 +78,8 @@ public class LoyaltyResponseFixture {
                 .build();
     }
 
-    public static LoyaltyLevel withDefaultLevel() {
-        return LoyaltyLevel.builder()
+    public static LoyaltyLevelResponse withDefaultLevel() {
+        return LoyaltyLevelResponse.builder()
                 .identifier("default-id")
                 .name("Nivel 1")
                 .minimumScore(0)
@@ -85,6 +88,78 @@ public class LoyaltyResponseFixture {
                 .idLevelNext("nivel-2")
                 .build();
     }
+
+    public static LoyaltyStatementResponse withDefaultStatement() {
+        return LoyaltyStatementResponse.builder()
+                .movements(List.of(
+                        LoyaltyStatementResponse.LoyaltyDetailStatementPoints.builder()
+                                .action("ACUMULACION")
+                                .comment("Compra en tienda física")
+                                .dateCreation("2025-04-10T15:30:00")
+                                .origin("TIENDA_FISICA")
+                                .campaignScore(150.0)
+                                .build(),
+                        LoyaltyStatementResponse.LoyaltyDetailStatementPoints.builder()
+                                .action("REDENCION")
+                                .comment("Canje de puntos por producto")
+                                .dateCreation("2025-04-12T11:45:00")
+                                .origin("PORTAL_WEB")
+                                .campaignScore(-100.0)
+                                .build(),
+                        LoyaltyStatementResponse.LoyaltyDetailStatementPoints.builder()
+                                .action("BONIFICACION")
+                                .comment("Promoción especial de aniversario")
+                                .dateCreation("2025-04-01T08:00:00")
+                                .origin("CAMPANIA_ANIVERSARIO")
+                                .campaignScore(200.0)
+                                .build()
+                ))
+                .build();
+    }
+
+    public static LoyaltyGeneralInfoResponse withDefaultGeneralInfo() {
+        return LoyaltyGeneralInfoResponse.builder()
+                .codeSystem(2)
+                .points(new BigDecimal("2915136"))
+                .pointsPeriod(new BigDecimal("2996121"))
+                .level(LoyaltyLevelResponse.builder()
+                        .identifier("a5b374c7-f068-4ced-a68b-882b8080f850")
+                        .name("Diamante")
+                        .minimumScore(140001)
+                        .maximumScore(0)
+                        .idCampaign("700143bf-4b1c-4771-b367-273200e97668")
+                        .idLevelNext(null)
+                        .build())
+                .levels(List.of(
+                        LoyaltyLevelResponse.builder()
+                                .identifier("c8676e5b-b4e4-4534-815c-520168cbb2de")
+                                .name("Bronce")
+                                .minimumScore(0)
+                                .maximumScore(4000)
+                                .idCampaign("700143bf-4b1c-4771-b367-273200e97668")
+                                .idLevelNext("28b8f759-821b-4e47-a21b-0ed1de042088")
+                                .build(),
+                        LoyaltyLevelResponse.builder()
+                                .identifier("28b8f759-821b-4e47-a21b-0ed1de042088")
+                                .name("Plata")
+                                .minimumScore(4001)
+                                .maximumScore(40000)
+                                .idCampaign("700143bf-4b1c-4771-b367-273200e97668")
+                                .idLevelNext("a535e863-90ce-4d22-afba-06ecc332ad23")
+                                .build()
+                ))
+                .build();
+    }
+
+    public static LoyaltyInitialPointsResponse withDefaultInitialPoints() {
+        LoyaltyInitialPointsResponse response = new LoyaltyInitialPointsResponse();
+        response.setPoints(1000);
+        response.setDatePoints("2025-04-14");
+        response.setPointsLoyalty(3500);
+        return response;
+    }
+
+
 
 
 }

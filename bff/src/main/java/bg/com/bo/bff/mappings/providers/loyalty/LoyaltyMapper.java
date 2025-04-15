@@ -1,17 +1,19 @@
 package bg.com.bo.bff.mappings.providers.loyalty;
 
+import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevel;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltySumPointResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.*;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.*;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -26,8 +28,8 @@ public class LoyaltyMapper implements ILoyaltyMapper{
     }
 
     @Override
-    public LoyaltySumPointResponse convertResponse(LoyaltySumPointServerResponse response) {
-        return LoyaltySumPointResponse.builder()
+    public LoyaltyPointResponse convertResponse(LoyaltyPointServerResponse response) {
+        return LoyaltyPointResponse.builder()
                 .points(response.getPoint())
                 .build();
     }
@@ -61,8 +63,8 @@ public class LoyaltyMapper implements ILoyaltyMapper{
     }
 
     @Override
-    public LoyaltyLevel convertResponse(LoyaltyGetLevelResponse response) {
-        return LoyaltyLevel.builder()
+    public LoyaltyLevelResponse convertResponse(LoyaltyGetLevelResponse response) {
+        return LoyaltyLevelResponse.builder()
                 .identifier(response.getIdentifier())
                 .name(response.getName())
                 .minimumScore(response.getMinimumScore())
@@ -70,6 +72,60 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .idCampaign(response.getIdCampaign())
                 .idLevelNext(response.getIdLevelNext())
                 .build();
+    }
+
+    @Override
+    public LoyaltyInitialPointsResponse convertResponse(LoyaltyGetInitialPointsVamosResponse response) {
+        return LoyaltyInitialPointsResponse.builder()
+                .points(response.getPointsVamos())
+                .datePoints(response.getDatePointsVamos())
+                .pointsLoyalty(response.getPointsLoyalty())
+                .build();
+    }
+
+    @Override
+    public LoyaltyStatementResponse convertResponse(List<LoyaltyStatementPointsResponse> response) {
+        if (response == null || response.isEmpty()) {
+            return LoyaltyStatementResponse.builder()
+                    .movements(Collections.emptyList())
+                    .build();
+        }
+        List<LoyaltyStatementResponse.LoyaltyDetailStatementPoints> movements = response.stream()
+                .map(item -> LoyaltyStatementResponse.LoyaltyDetailStatementPoints.builder()
+                        .action(item.getAction())
+                        .comment(item.getComment())
+                        .dateCreation(item.getDateCreation())
+                        .origin(item.getOrigin())
+                        .campaignScore(item.getCampaignScore())
+                        .build())
+                .toList();
+        return LoyaltyStatementResponse.builder()
+                .movements(movements)
+                .build();
+    }
+
+    @Override
+    public LoyaltyGeneralInfoResponse convertResponse(LoyaltyGeneralInformationResponse response) {
+        return LoyaltyGeneralInfoResponse.builder()
+                .codeSystem(response.getCodeSystem())
+                .level(convertLevel(response.getLevel()))
+                .levels(convertLevels(response.getLevels()))
+                .points(response.getPoints())
+                .pointsPeriod(response.getPointsPeriod())
+                .build();
+    }
+
+    private LoyaltyLevelResponse convertLevel(LoyaltyGetLevelResponse level) {
+        if (level == null) {
+            return null;
+        }
+        return convertResponse(level);
+    }
+
+    private List<LoyaltyLevelResponse> convertLevels(List<LoyaltyGetLevelResponse> levels) {
+        return levels.stream()
+                .map(this::convertLevel)
+                .toList();
     }
 
     @Override
@@ -108,6 +164,16 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                                 .build()
                                 : null
                 )
+                .build();
+    }
+
+    @Override
+    public LoyaltyStatementPointRequest mapperRequest(String personId, String codeSystem, LoyaltyStatementRequest request) {
+        return LoyaltyStatementPointRequest.builder()
+                .codigoPersona(codeSystem)
+                .codigoCampana("1")
+                .fechaInicial(request.getStartDate())
+                .fechaFinal(request.getEndDate())
                 .build();
     }
 

@@ -1,12 +1,12 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevel;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.*;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.*;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltySumPointResponse;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.application.exceptions.GenericException;
@@ -18,6 +18,7 @@ import bg.com.bo.bff.services.interfaces.ILoyaltyService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -39,9 +40,9 @@ public class LoyaltyService implements ILoyaltyService {
     }
 
     @Override
-    public LoyaltySumPointResponse getSumPoint(String personId, String codeSystem) throws IOException {
+    public LoyaltyPointResponse getSumPoint(String personId, String codeSystem) throws IOException {
         Map<String, String> headerService = mapper.mapperRequestService(personId);
-        LoyaltySumPointServerResponse responseServer = provider.getSumPoint(codeSystem, headerService);
+        LoyaltyPointServerResponse responseServer = provider.getSumPoint(codeSystem, headerService);
         return mapper.convertResponse(responseServer);
     }
 
@@ -65,9 +66,48 @@ public class LoyaltyService implements ILoyaltyService {
     }
 
     @Override
-    public LoyaltyLevel getLevel(String personId) throws IOException {
+    public LoyaltyLevelResponse getLevel(String personId) throws IOException {
         Map<String, String> headerService = mapper.mapperRequestService(personId);
         LoyaltyGetLevelResponse responseServer = provider.getLevel(headerService, personId);
+        return mapper.convertResponse(responseServer);
+    }
+
+    @Override
+    public LoyaltyPointResponse getPointsPeriod(String personId, String accountId) throws IOException {
+        Map<String, String> headerService = mapper.mapperRequestService(personId);
+        LoyaltyPointServerResponse responseServer = provider.getPointsPeriod(headerService, accountId);
+        return mapper.convertResponse(responseServer);
+    }
+
+    @Override
+    public LoyaltyInitialPointsResponse getInitialPointsVAMOS(String personId) throws IOException {
+        Map<String, String> headerService = mapper.mapperRequestService(personId);
+        LoyaltyGetInitialPointsVamosResponse responseServer = provider.getInitialPointsVAMOS(headerService, personId);
+        return mapper.convertResponse(responseServer);
+    }
+
+    @Override
+    public GenericResponse verifySubscription(String personId) throws IOException {
+        Map<String, String> headerService = mapper.mapperRequestService(personId);
+        LoyaltySubscriptionResponse responseServer = provider.verifySubscription(headerService, personId);
+        if (responseServer.isStatus()) {
+            return GenericResponse.instance(LoyaltyResponse.SUBSCRIPTION_EXISTS);
+        }
+        throw new GenericException(LoyaltyError.NOT_SUBSCRIPTION);
+    }
+
+    @Override
+    public LoyaltyStatementResponse statementPoints(String personId, String codeSystem, LoyaltyStatementRequest request) throws IOException {
+        Map<String, String> headerService = mapper.mapperRequestService(personId);
+        LoyaltyStatementPointRequest requestServer = mapper.mapperRequest(personId, codeSystem, request);
+        List<LoyaltyStatementPointsResponse> responseServer = provider.statementPoints(requestServer, headerService);
+        return mapper.convertResponse(responseServer);
+    }
+
+    @Override
+    public LoyaltyGeneralInfoResponse getGeneralInformation(String personId) throws IOException {
+        Map<String, String> headerService = mapper.mapperRequestService(personId);
+        LoyaltyGeneralInformationResponse responseServer = provider.getGeneralInformation(headerService,personId);
         return mapper.convertResponse(responseServer);
     }
 

@@ -9,6 +9,7 @@ import bg.com.bo.bff.providers.models.enums.middleware.response.GenericControlle
 import bg.com.bo.bff.providers.models.external.services.exception.RequestBuildException;
 import bg.com.bo.bff.providers.models.external.services.interfaces.IExternalError;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -56,7 +57,31 @@ public class HttpClientExternalProvider<T extends IExternalError> {
         }, responseType);
     }
 
+    public <R> R executePostRequest(String url, Object requestBody, Map<String, String> headers, TypeReference<R> responseType) throws IOException {
+        return executeRequest(() -> {
+            HttpPost request = new HttpPost(url);
+            headers.forEach(request::addHeader);
+            String json = objectMapper.writeValueAsString(requestBody);
+            request.setEntity(new StringEntity(json, StandardCharsets.UTF_8));
+            request.addHeader("Content-Type", "application/json");
+            return request;
+        }, responseType);
+    }
+
     private <R> R executeRequest(RequestBuilder builder, Class<R> responseType) throws IOException {
+        try (CloseableHttpClient httpClient = httpClientFactory.create()) {
+            HttpUriRequest request = builder.build();
+            return executeAndHandleResponse(httpClient, request, responseType);
+        } catch (HandledException e) {
+            throw e;
+        } catch (RequestBuildException | JsonProcessingException e) {
+            throw new HandledException(GenericControllerErrorResponse.REQUEST_EXCEPTION, e);
+        } catch (Exception e) {
+            throw new HandledException(GenericControllerErrorResponse.HTTP_CLIENT_CREATION_EXCEPTION, e);
+        }
+    }
+
+    private <R> R executeRequest(RequestBuilder builder, TypeReference<R> responseType) throws IOException {
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             HttpUriRequest request = builder.build();
             return executeAndHandleResponse(httpClient, request, responseType);
@@ -79,7 +104,32 @@ public class HttpClientExternalProvider<T extends IExternalError> {
         }
     }
 
+    private <R> R executeAndHandleResponse(CloseableHttpClient httpClient, HttpUriRequest request, TypeReference<R> responseType) throws IOException {
+        try (CloseableHttpResponse httpResponse = httpClient.execute(request)) {
+            return handleResponse(httpResponse, responseType);
+        } catch (HandledException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new HandledException(GenericControllerErrorResponse.REQUEST_EXCEPTION, e);
+        }
+    }
+
     private <R> R handleResponse(CloseableHttpResponse httpResponse, Class<R> responseType) throws IOException {
+        int statusCode = httpResponse.getStatusLine().getStatusCode();
+        String responseJson = EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8);
+
+        if (statusCode >= 200 && statusCode < 300) {
+            return objectMapper.readValue(responseJson, responseType);
+        } else if (statusCode == HttpStatus.UNAUTHORIZED.value()) {
+            throw new GenericException(DefaultExternalError.UNAUTHORIZED);
+        } else {
+            ExternalResponse externalResponse = Util.stringToObject(responseJson, ExternalResponse.class);
+            IExternalError error = mapErrorResponse(statusCode, externalResponse);
+            throw new HandledException(error, new Exception("Error processing request"));
+        }
+    }
+
+    private <R> R handleResponse(CloseableHttpResponse httpResponse, TypeReference<R> responseType) throws IOException {
         int statusCode = httpResponse.getStatusLine().getStatusCode();
         String responseJson = EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8);
 

@@ -1,12 +1,11 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
+import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevel;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltySumPointResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.*;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.services.interfaces.ILoyaltyService;
@@ -53,7 +52,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtener la sumatoria de los puntos acumulados")
     })
     @GetMapping("/persons/{personId}/system-code/{codeSystem}/sum-points")
-    public ResponseEntity<LoyaltySumPointResponse> getSumPoint(
+    public ResponseEntity<LoyaltyPointResponse> getSumPoint(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("codeSystem") @Parameter(description = "Este es el codigo de sistema de la persona", example = "12345") String codeSystem
     ) throws IOException {
@@ -97,11 +96,79 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtener el nivel de la persona en el programa")
     })
     @GetMapping("/persons/{personId}/level")
-    public ResponseEntity<LoyaltyLevel> getLevel(
+    public ResponseEntity<LoyaltyLevelResponse> getLevel(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.getLevel(personId));
+    }
+
+    @Operation(summary = "Obtener puntos por periodo", description = "Obtener puntos por periodo en el programa",
+            operationId = "getPointsPeriod")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener puntos por periodo en el programa")
+    })
+    @GetMapping("/persons/{personId}/system-code/{codeSystem}/points-period")
+    public ResponseEntity<LoyaltyPointResponse> getPointsPeriod(
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("codeSystem") @OnlyNumber @Parameter(description = "Este es el codigo de sistema de la persona", example = "12345") String codeSystem
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.getPointsPeriod(personId, codeSystem));
+    }
+
+    @Operation(summary = "Obtener puntos por periodo", description = "Obtener puntos por periodo en el programa",
+            operationId = "getPointsPeriod")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener puntos por periodo en el programa")
+    })
+    @GetMapping("/persons/{personId}/initial-points-vamos")
+    public ResponseEntity<LoyaltyInitialPointsResponse> getInitialPointsVAMOS(
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.getInitialPointsVAMOS(personId));
+    }
+
+    @Operation(summary = "Verifica su subscripcion", description = "Verifica su subscripcion en el programa",
+            operationId = "verifySubscription")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Verifica su subscripcion en el programa")
+    })
+    @GetMapping("/persons/{personId}/verify-subscription")
+    public ResponseEntity<GenericResponse> verifySubscription(
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.verifySubscription(personId));
+    }
+
+    @Operation(summary = "Obtener el extracto de los puntos", description = "Obtener el extracto de los puntos del programa VAMOS",
+            operationId = "getStatementPoints")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener el extracto de los puntos del programa VAMOS")
+    })
+    @PostMapping(path = "/persons/{personId}/system-code/{codeSystem}/statement-points", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<LoyaltyStatementResponse> getStatementPoints(
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("codeSystem") @OnlyNumber @Parameter(description = "Este es el codigo de sistema de la persona", example = "12345") String codeSystem,
+            @Valid @RequestBody LoyaltyStatementRequest request
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.statementPoints(personId, codeSystem, request));
+    }
+
+    @Operation(summary = "Obtiene la informacion general", description = "Obtiene la informacion general de la persona en el programa",
+            operationId = "getGeneralInformation")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtiene la informacion general de la persona en el programa")
+    })
+    @GetMapping("/persons/{personId}/general-information")
+    public ResponseEntity<LoyaltyGeneralInfoResponse> getGeneralInformation(
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.getGeneralInformation(personId));
     }
 
 }

@@ -1,22 +1,34 @@
 package bg.com.bo.bff.providers.interfaces;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.*;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
- import java.util.Map;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public interface ILoyaltyProvider {
 
     LoyaltySystemCodeServerResponse getSystemCode(String personId, Map<String, String> headers) throws IOException;
 
-    LoyaltySumPointServerResponse getSumPoint(String codeSystem, Map<String, String> headers) throws IOException;
+    LoyaltyPointServerResponse getSumPoint(String codeSystem, Map<String, String> headers) throws IOException;
 
     LoyaltyRegisterSubscriptionResponse registerSubscription(LoyaltyRegisterSubscriptionRequest requestServer, Map<String, String> headers) throws IOException;
 
     LoyaltyRegisterRedeemVoucherResponse registerRedeemVoucher(LoyaltyRegisterRedeemVoucherRequest requestServer, Map<String, String> headers) throws IOException;
 
     LoyaltyGetLevelResponse getLevel(Map<String, String> headers, String personId) throws IOException;
+
+    LoyaltyPointServerResponse getPointsPeriod(Map<String, String> headers, String codeSystem) throws IOException;
+
+    LoyaltyGetInitialPointsVamosResponse getInitialPointsVAMOS(Map<String, String> headers, String personId) throws IOException;
+
+    LoyaltySubscriptionResponse verifySubscription(Map<String, String> headers, String personId) throws IOException;
+
+    List<LoyaltyStatementPointsResponse> statementPoints(LoyaltyStatementPointRequest request, Map<String, String> headers) throws IOException;
+
+    LoyaltyGeneralInformationResponse getGeneralInformation(Map<String, String> headers, String personId) throws IOException;
 }
