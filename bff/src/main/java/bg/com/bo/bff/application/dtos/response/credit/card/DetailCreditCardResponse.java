@@ -67,4 +67,7 @@ public class DetailCreditCardResponse {
 
     @Schema(description = "DuePayment Date Perio")
     private String duePaymentDatePeriod;
+
+    @Schema(description = "Monto minimo de pago")
+    private String paymentAmountMinimum;
 }

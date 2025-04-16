@@ -171,6 +171,7 @@ public class LoansMWResponseFixture {
                 .amount("100")
                 .secureCurrency("840")
                 .amountSecureMandatory("100")
+                .amountSecureConvertMandatory("10")
                 .errorCode("0")
                 .build();
     }
