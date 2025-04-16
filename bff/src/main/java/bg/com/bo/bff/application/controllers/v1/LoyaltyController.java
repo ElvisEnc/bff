@@ -1,9 +1,11 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
+import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyImageRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyImageResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
@@ -26,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @Validated
 @RestController
@@ -154,7 +157,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtener el extracto de los puntos del programa VAMOS")
     })
     @PostMapping(path = "/persons/{personId}/system-code/{codeSystem}/statement-points", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<LoyaltyStatementResponse> getStatementPoints(
+    public ResponseEntity<List<LoyaltyStatementResponse>> getStatementPoints(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("codeSystem") @OnlyNumber @Parameter(description = "Este es el codigo de sistema de la persona", example = "12345") String codeSystem,
             @Valid @RequestBody LoyaltyStatementRequest request
@@ -174,6 +177,32 @@ public class LoyaltyController extends AbstractBFFController {
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.getGeneralInformation(personId));
+    }
+
+    @Operation(summary = "Obtiene la informacion de una imagen", description = "Obtiene la informacion de una imagen del programa",
+            operationId = "getImageInformation")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtiene la informacion de una imagen del programa")
+    })
+    @GetMapping("/image/{imageId}/image-information")
+    public ResponseEntity<LoyaltyImageResponse> getImageInformation (
+            @PathVariable("imageId") @OnlyNumber @Parameter(description = "Este es la imagenId", example = "12345") String imageId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.getImageInformation(imageId));
+    }
+
+    @Operation(summary = "Obtiene la informacion de las imagenes", description = "Obtiene la informacion de las imagenes que requiere",
+            operationId = "getImageInformation")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtiene la informacion de las imagenes que requiere")
+    })
+    @PostMapping(path = "/images-information", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<LoyaltyImageResponse>> getImagesInformation (
+            @Valid @RequestBody LoyaltyImageRequest request
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.getImagesInformation(request));
     }
 
 }

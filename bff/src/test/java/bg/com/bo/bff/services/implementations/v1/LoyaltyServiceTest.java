@@ -1,5 +1,7 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyImageRequest;
+import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyRequestFixture;
 import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
@@ -19,6 +21,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -186,13 +189,13 @@ class LoyaltyServiceTest {
     @Test
     void givenValidDataWhenStatementPoints() throws IOException {
         //Arrange
-        LoyaltyStatementRequest request = LoyaltySERequestFixture.withDefaultStatement();
+        LoyaltyStatementRequest request = LoyaltyRequestFixture.withDefaultStatement();
         List<LoyaltyStatementPointsResponse> expectedResponse = LoyaltySEResponseFixture.withDefaultStatementPoints();
 
         when(provider.statementPoints(any(), any())).thenReturn(expectedResponse);
 
         //Act
-        LoyaltyStatementResponse response = service.statementPoints("1234", "1234", request);
+        List<LoyaltyStatementResponse> response = service.statementPoints("1234", "1234", request);
 
         assertNotNull(response);
         verify(provider).statementPoints(any(), any());
@@ -202,18 +205,16 @@ class LoyaltyServiceTest {
     @Test
     void givenEmptyStatementPointsListWhenStatementPointsThenReturnsEmptyMovements() throws IOException {
         // Arrange
-        LoyaltyStatementRequest request = LoyaltySERequestFixture.withDefaultStatement();
+        LoyaltyStatementRequest request = LoyaltyRequestFixture.withDefaultStatement();
         List<LoyaltyStatementPointsResponse> emptyResponse = Collections.emptyList();
 
         when(provider.statementPoints(any(), any())).thenReturn(emptyResponse);
 
         // Act
-        LoyaltyStatementResponse response = service.statementPoints("1234", "1234", request);
+        List<LoyaltyStatementResponse> response = service.statementPoints("1234", "1234", request);
 
         // Assert
         assertNotNull(response);
-        assertNotNull(response.getMovements());
-        assertTrue(response.getMovements().isEmpty());
 
         verify(provider).statementPoints(any(), any());
         verify(mapper).convertResponse(emptyResponse);
@@ -222,21 +223,18 @@ class LoyaltyServiceTest {
     @Test
     void givenNullStatementPointsListWhenStatementPointsThenReturnsEmptyMovements() throws IOException {
         // Arrange
-        LoyaltyStatementRequest request = LoyaltySERequestFixture.withDefaultStatement();
+        LoyaltyStatementRequest request = LoyaltyRequestFixture.withDefaultStatement();
 
         when(provider.statementPoints(any(), any())).thenReturn(null);
 
         // Act
-        LoyaltyStatementResponse response = service.statementPoints("1234", "1234", request);
+        List<LoyaltyStatementResponse> response = service.statementPoints("1234", "1234", request);
 
         // Assert
         assertNotNull(response);
-        assertNotNull(response.getMovements());
-        assertTrue(response.getMovements().isEmpty());
 
         verify(provider).statementPoints(any(), any());
     }
-
 
     @Test
     void givenValidDataWhenGeneralInformation() throws IOException {
@@ -266,6 +264,73 @@ class LoyaltyServiceTest {
         assertNotNull(response);
         verify(provider).getGeneralInformation(any(), any());
         verify(mapper).convertResponse(any(LoyaltyGeneralInformationResponse.class));
+    }
+
+    @Test
+    void givenValidDataWhenGetImageInformation() throws IOException{
+        // Arrange
+        LoyaltyGetImageResponse expectedResponse = LoyaltySEResponseFixture.withDefaultImage();
+
+        when(provider.getImageInformation(any())).thenReturn(expectedResponse);
+
+        //Act
+        LoyaltyImageResponse response = service.getImageInformation("1234");
+
+        assertNotNull(response);
+        verify(provider).getImageInformation(any());
+        verify(mapper).convertResponse(any(LoyaltyGetImageResponse.class));
+    }
+
+    @Test
+    void givenValidDataWhenImagesInformation() throws IOException {
+        //Arrange
+        LoyaltyImageRequest request = LoyaltyRequestFixture.withDefaultImage();
+        LoyaltyGetImageResponse expectedResponse = LoyaltySEResponseFixture.withDefaultImage();
+        List<LoyaltyGetImageResponse> expectedListResponse = new ArrayList<>();
+        expectedListResponse.add(expectedResponse);
+
+        when(provider.getImagesInformation(any())).thenReturn(expectedListResponse);
+
+        //Act
+        List<LoyaltyImageResponse> response = service.getImagesInformation(request);
+
+        assertNotNull(response);
+        verify(provider).getImagesInformation(any());
+        verify(mapper).convertResponseImage(expectedListResponse);
+    }
+
+    @Test
+    void givenEmptyStatementPointsListWhenImagesInformationThenReturnsEmptyMovements() throws IOException {
+        // Arrange
+        LoyaltyImageRequest request = LoyaltyRequestFixture.withDefaultImage();
+        List<LoyaltyGetImageResponse> emptyResponse = Collections.emptyList();
+
+        when(provider.getImagesInformation(any())).thenReturn(emptyResponse);
+
+        // Act
+        List<LoyaltyImageResponse> response = service.getImagesInformation(request);
+
+        // Assert
+        assertNotNull(response);
+
+        verify(provider).getImagesInformation(any());
+        verify(mapper).convertResponseImage(emptyResponse);
+    }
+
+    @Test
+    void givenNullStatementPointsListWhenImagesInformationThenReturnsEmptyMovements() throws IOException {
+        // Arrange
+        LoyaltyImageRequest request = LoyaltyRequestFixture.withDefaultImage();
+
+        when(provider.getImagesInformation(any())).thenReturn(null);
+
+        // Act
+        List<LoyaltyImageResponse> response = service.getImagesInformation(request);
+
+        // Assert
+        assertNotNull(response);
+
+        verify(provider).getImagesInformation(any());
     }
 
 }

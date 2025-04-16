@@ -17,6 +17,8 @@ public enum LoyaltyServices {
     GET_CHECK_SUBSCRIPTION("/lealtad/campana/api/v1/suscripciones-ganamovil/verificar-campanas-suscripcion/%s/campana/1"),
     GET_STATEMENT_POINTS("/lealtad/campana/api/v1/extracto-ganamovil/reporte-extracto"),
     GET_GENERAL_INFORMATION("/lealtad/campana/api/v1/suscripciones-ganamovil/informacion-general/%s"),
+    GET_IMAGE("/lealtad/archivos/api/v1/imagenes/buscarImagen/%s/completa/true"),
+    GET_LIST_IMAGES("/lealtad/archivos/api/v1/imagenes/buscar-imagenes"),
     ;
 
     private final String serviceURL;

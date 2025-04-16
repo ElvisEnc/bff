@@ -1,4 +1,5 @@
 package bg.com.bo.bff.providers.interfaces;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.*;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
@@ -31,4 +32,8 @@ public interface ILoyaltyProvider {
     List<LoyaltyStatementPointsResponse> statementPoints(LoyaltyStatementPointRequest request, Map<String, String> headers) throws IOException;
 
     LoyaltyGeneralInformationResponse getGeneralInformation(Map<String, String> headers, String personId) throws IOException;
+
+    LoyaltyGetImageResponse getImageInformation(String imageId) throws IOException;
+
+    List<LoyaltyGetImageResponse> getImagesInformation(LoyaltyGetImagesRequest request) throws IOException;
 }

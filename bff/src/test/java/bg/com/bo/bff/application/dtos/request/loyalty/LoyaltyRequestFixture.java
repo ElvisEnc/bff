@@ -1,6 +1,8 @@
 package bg.com.bo.bff.application.dtos.request.loyalty;
 
 
+import java.util.List;
+
 public class LoyaltyRequestFixture {
 
     public static RegisterSubscriptionRequest withDefaultRegisterSubscription() {
@@ -27,5 +29,16 @@ public class LoyaltyRequestFixture {
                 .endDate("2023-09-10")
                 .build();
     }
+
+    public static LoyaltyImageRequest withDefaultImage() {
+        return LoyaltyImageRequest.builder()
+                .filePaths(List.of(
+                        LoyaltyImageRequest.FilePath.builder()
+                                .file("default/image/path.jpg")
+                                .build()
+                ))
+                .build();
+    }
+
 
 }

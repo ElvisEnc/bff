@@ -1,8 +1,9 @@
 package bg.com.bo.bff.providers.dtos.request.loyalty;
 
-import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
+
+import java.util.List;
 
 public class LoyaltySERequestFixture {
 
@@ -49,19 +50,22 @@ public class LoyaltySERequestFixture {
                 .build();
     }
 
-    public static LoyaltyStatementRequest withDefaultStatement() {
-        return LoyaltyStatementRequest.builder()
-                .startDate("2021-09-10")
-                .endDate("2023-09-10")
-                .build();
-    }
-
     public static LoyaltyStatementPointRequest withDefaultStatementPoint() {
         return LoyaltyStatementPointRequest.builder()
                 .codigoPersona("2")
                 .codigoCampana("1")
                 .fechaInicial("2023-09-10")
                 .fechaFinal("2023-09-10")
+                .build();
+    }
+
+    public static LoyaltyGetImagesRequest  withDefaultImage() {
+        return LoyaltyGetImagesRequest.builder()
+                .rutas(List.of(
+                        LoyaltyGetImagesRequest.Ruta.builder()
+                                .filePath("https://example.com/default-image.jpg")
+                                .build()
+                ))
                 .build();
     }
 

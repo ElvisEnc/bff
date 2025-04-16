@@ -1,10 +1,12 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGeneralInformationResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetImageResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetInitialPointsVamosResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetLevelResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPointServerResponse;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +98,19 @@ public class LoyaltyProvider extends HttpClientExternalProvider<LoyaltyError> im
     public LoyaltyGeneralInformationResponse getGeneralInformation(Map<String, String> headers, String personId) throws IOException {
         String url = baseUrl + String.format(LoyaltyServices.GET_GENERAL_INFORMATION.getServiceURL(), personId);
         return this.executeGetRequest(url, headers, LoyaltyGeneralInformationResponse.class);
+    }
+
+    @Override
+    public LoyaltyGetImageResponse getImageInformation(String imageId) throws IOException {
+        String url = baseUrl + String.format(LoyaltyServices.GET_IMAGE.getServiceURL(), imageId);
+        return this.executeGetRequest(url, Collections.emptyMap(), LoyaltyGetImageResponse.class);
+    }
+
+    @Override
+    public List<LoyaltyGetImageResponse> getImagesInformation(LoyaltyGetImagesRequest requestServer) throws IOException {
+        String url = baseUrl + String.format(LoyaltyServices.GET_LIST_IMAGES.getServiceURL());
+        return this.executePostRequest(url, requestServer, Collections.emptyMap(),
+                new TypeReference<List<LoyaltyGetImageResponse>>() {});
     }
 
 }

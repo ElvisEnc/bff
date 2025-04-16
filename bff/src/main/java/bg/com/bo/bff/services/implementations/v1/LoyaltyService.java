@@ -1,21 +1,25 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyImageRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyImageResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.loyalty.ILoyaltyMapper;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGeneralInformationResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetImageResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetInitialPointsVamosResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetLevelResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPointServerResponse;
@@ -111,7 +115,7 @@ public class LoyaltyService implements ILoyaltyService {
     }
 
     @Override
-    public LoyaltyStatementResponse statementPoints(String personId, String codeSystem, LoyaltyStatementRequest request) throws IOException {
+    public List<LoyaltyStatementResponse> statementPoints(String personId, String codeSystem, LoyaltyStatementRequest request) throws IOException {
         Map<String, String> headerService = mapper.mapperRequestService(personId);
         LoyaltyStatementPointRequest requestServer = mapper.mapperRequest(personId, codeSystem, request);
         List<LoyaltyStatementPointsResponse> responseServer = provider.statementPoints(requestServer, headerService);
@@ -123,6 +127,19 @@ public class LoyaltyService implements ILoyaltyService {
         Map<String, String> headerService = mapper.mapperRequestService(personId);
         LoyaltyGeneralInformationResponse responseServer = provider.getGeneralInformation(headerService,personId);
         return mapper.convertResponse(responseServer);
+    }
+
+    @Override
+    public LoyaltyImageResponse getImageInformation(String imageId) throws IOException {
+        LoyaltyGetImageResponse responseServer = provider.getImageInformation(imageId);
+        return mapper.convertResponse(responseServer);
+    }
+
+    @Override
+    public List<LoyaltyImageResponse> getImagesInformation(LoyaltyImageRequest request) throws IOException {
+        LoyaltyGetImagesRequest requestServer = mapper.mapperRequest(request);
+        List<LoyaltyGetImageResponse> responseServer = provider.getImagesInformation(requestServer);
+        return mapper.convertResponseImage(responseServer);
     }
 
 }

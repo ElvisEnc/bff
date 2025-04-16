@@ -1,9 +1,11 @@
 package bg.com.bo.bff.mappings.providers.loyalty;
 
+import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyImageRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.loyalty.*;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
@@ -24,9 +26,13 @@ public interface ILoyaltyMapper {
 
     LoyaltyInitialPointsResponse convertResponse(LoyaltyGetInitialPointsVamosResponse response);
 
-    LoyaltyStatementResponse convertResponse(List<LoyaltyStatementPointsResponse> response);
+    List<LoyaltyStatementResponse> convertResponse(List<LoyaltyStatementPointsResponse> response);
 
     LoyaltyGeneralInfoResponse convertResponse(LoyaltyGeneralInformationResponse response);
+
+    LoyaltyImageResponse convertResponse(LoyaltyGetImageResponse response);
+
+    List<LoyaltyImageResponse> convertResponseImage(List<LoyaltyGetImageResponse> response);
 
     Map<String, String> mapperRequestService(String personId);
 
@@ -35,4 +41,6 @@ public interface ILoyaltyMapper {
     LoyaltyRegisterRedeemVoucherRequest mapperRequest(String personId, String codeSystem, RegisterRedeemVoucherRequest request);
 
     LoyaltyStatementPointRequest mapperRequest(String personId, String codeSystem, LoyaltyStatementRequest request);
+
+    LoyaltyGetImagesRequest mapperRequest(LoyaltyImageRequest request);
 }

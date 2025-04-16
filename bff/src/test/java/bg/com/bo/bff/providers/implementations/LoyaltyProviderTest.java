@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.*;
@@ -15,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -170,7 +173,6 @@ class LoyaltyProviderTest {
         verify(loyaltyProvider).executePostRequest(eq(expectedUrl), eq(request), eq(headers), any(TypeReference.class));
     }
 
-
     @Test
     void givenValidPersonId_whenGetGeneralInformation_thenReturnResponse() throws Exception {
         String personId = "12345";
@@ -182,6 +184,39 @@ class LoyaltyProviderTest {
 
         LoyaltyGeneralInformationResponse response = loyaltyProvider.getGeneralInformation(headers, personId);
         assertNotNull(response);
+    }
+
+    @Test
+    void givenValidPersonId_whenGetImageInformation_thenReturnResponse() throws Exception {
+        String imageId = "12345";
+        String expectedUrl = BASE_URL + "/lealtad/archivos/api/v1/imagenes/buscarImagen/" + imageId + "/completa/true";
+
+        LoyaltyGetImageResponse mockResponse = LoyaltySEResponseFixture.withDefaultImage();
+        doReturn(mockResponse).when(loyaltyProvider).executeGetRequest(expectedUrl, Collections.emptyMap(), LoyaltyGetImageResponse.class);
+
+        LoyaltyGetImageResponse response = loyaltyProvider.getImageInformation(imageId);
+        assertNotNull(response);
+    }
+
+    @Test
+    void givenValidPersonId_whenGetImagesInformation_thenReturnResponse() throws Exception {
+        // Arrange
+        LoyaltyGetImagesRequest request = LoyaltySERequestFixture.withDefaultImage();
+        String expectedUrl = BASE_URL + "/lealtad/archivos/api/v1/imagenes/buscar-imagenes";
+
+        LoyaltyGetImageResponse mockResponse = LoyaltySEResponseFixture.withDefaultImage();
+        List<LoyaltyGetImageResponse> mockListResponse = new ArrayList<>();
+        mockListResponse.add(mockResponse);
+        doReturn(mockListResponse).when(loyaltyProvider)
+                .executePostRequest(eq(expectedUrl), eq(request), eq(Collections.emptyMap()), any(TypeReference.class));
+
+        // Act
+        List<LoyaltyGetImageResponse> response = loyaltyProvider.getImagesInformation(request);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(mockListResponse.size(), response.size());
+        verify(loyaltyProvider).executePostRequest(eq(expectedUrl), eq(request), eq(Collections.emptyMap()), any(TypeReference.class));
     }
 
 

@@ -91,29 +91,11 @@ public class LoyaltyResponseFixture {
 
     public static LoyaltyStatementResponse withDefaultStatement() {
         return LoyaltyStatementResponse.builder()
-                .movements(List.of(
-                        LoyaltyStatementResponse.LoyaltyDetailStatementPoints.builder()
-                                .action("ACUMULACION")
-                                .comment("Compra en tienda física")
-                                .dateCreation("2025-04-10T15:30:00")
-                                .origin("TIENDA_FISICA")
-                                .campaignScore(150.0)
-                                .build(),
-                        LoyaltyStatementResponse.LoyaltyDetailStatementPoints.builder()
-                                .action("REDENCION")
-                                .comment("Canje de puntos por producto")
-                                .dateCreation("2025-04-12T11:45:00")
-                                .origin("PORTAL_WEB")
-                                .campaignScore(-100.0)
-                                .build(),
-                        LoyaltyStatementResponse.LoyaltyDetailStatementPoints.builder()
-                                .action("BONIFICACION")
-                                .comment("Promoción especial de aniversario")
-                                .dateCreation("2025-04-01T08:00:00")
-                                .origin("CAMPANIA_ANIVERSARIO")
-                                .campaignScore(200.0)
-                                .build()
-                ))
+                .action("ACUMULACION")
+                .comment("Compra en tienda física")
+                .dateCreation("2025-04-10T15:30:00")
+                .origin("TIENDA_FISICA")
+                .campaignScore(150.0)
                 .build();
     }
 
@@ -157,6 +139,17 @@ public class LoyaltyResponseFixture {
         response.setDatePoints("2025-04-14");
         response.setPointsLoyalty(3500);
         return response;
+    }
+
+    public static LoyaltyImageResponse withDefaultImage() {
+        return LoyaltyImageResponse.builder()
+                .identifier(1)
+                .idImageMongo("Nivel 1")
+                .filename("test")
+                .fileType("test")
+                .fileContent("test")
+                .pathImage("test")
+                .build();
     }
 
 
