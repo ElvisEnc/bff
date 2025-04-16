@@ -157,6 +157,10 @@ public class LoansMapper implements ILoansMapper {
                 .amount(Double.parseDouble(mwResponse.getAmount()))
                 .secureCurrency(Integer.parseInt(mwResponse.getSecureCurrency()))
                 .amountSecureMandatory(Double.parseDouble(mwResponse.getAmountSecureMandatory()))
+                .amountSecureConvertMandatory(Double.parseDouble(mwResponse.getAmountSecureConvertMandatory()))
+                .totalAmount(
+                        Math.round(Double.parseDouble(mwResponse.getAmountSecureMandatory()) + Double.parseDouble(mwResponse.getAmount()))*100
+                )
                 .build();
     }
 

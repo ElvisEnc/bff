@@ -76,6 +76,7 @@ public class CreditCardMWResponseFixture {
                 .dueDatePeriod("20/12/2024")
                 .duePaymentDatePeriod("31/12/2022")
                 .debtClose("close")
+                .paymentAmountMinimum("10")
                 .build();
     }
 

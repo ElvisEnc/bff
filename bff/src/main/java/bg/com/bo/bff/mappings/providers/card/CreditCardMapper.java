@@ -111,6 +111,7 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .debtClose(mwResponse.getDebtClose())
                 .dueDatePeriod(mwResponse.getDueDatePeriod())
                 .duePaymentDatePeriod(mwResponse.getDuePaymentDatePeriod())
+                .paymentAmountMinimum(mwResponse.getPaymentAmountMinimum())
                 .build();
     }
 
