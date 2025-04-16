@@ -135,6 +135,7 @@ public class LoansMapper implements ILoansMapper {
 
     @Override
     public LoanDetailPaymentResponse convertResponse(LoanDetailPaymentMWResponse mwResponse) {
+        double total = (double) Math.round(Double.parseDouble(mwResponse.getAmountSecureMandatory()) + Double.parseDouble(mwResponse.getAmount()))*100;
         return LoanDetailPaymentResponse.builder()
                 .correlativeId(Long.parseLong(mwResponse.getIdentifier()))
                 .nroOperation(Long.parseLong(mwResponse.getLoanNumber()))
@@ -158,9 +159,7 @@ public class LoansMapper implements ILoansMapper {
                 .secureCurrency(Integer.parseInt(mwResponse.getSecureCurrency()))
                 .amountSecureMandatory(Double.parseDouble(mwResponse.getAmountSecureMandatory()))
                 .amountSecureConvertMandatory(Double.parseDouble(mwResponse.getAmountSecureConvertMandatory()))
-                .totalAmount(
-                        Math.round(Double.parseDouble(mwResponse.getAmountSecureMandatory()) + Double.parseDouble(mwResponse.getAmount()))*100
-                )
+                .totalAmount(total)
                 .build();
     }
 
