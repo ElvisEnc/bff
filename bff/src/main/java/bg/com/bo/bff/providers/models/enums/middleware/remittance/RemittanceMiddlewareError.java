@@ -28,6 +28,7 @@ public enum RemittanceMiddlewareError implements IMiddlewareError {
     RM_030(HttpStatus.CONFLICT, CodeError.DATA_NOT_FOUND.getCode(), "RM-030", ConstantMessages.NO_FOUND_DATA.getMessage(), ConstantMessages.NO_FOUND_DATA.getTitle(), CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
     RM_031(HttpStatus.CONFLICT, CodeError.ACCOUNT_BLOCKED.getCode(), "RM-031", "No es posible utilizar esta cuenta para realizar esta transacción.", "Cuenta inactiva", CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
     RM_RM_034(HttpStatus.NOT_ACCEPTABLE, CodeError.ERROR_PROCEDURE.getCode(), "RM-RM-034", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
+    RM_WU004(HttpStatus.NOT_ACCEPTABLE, CodeError.ERROR_PROCEDURE.getCode(), "RM-WU004", "La remesa ya ha sido consultado, por favor inténtalo de nuevo en unos minutos","Consulta ya realizada.", CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     RM002(HttpStatus.CONFLICT, CodeError.DATA_NOT_FOUND.getCode(), "RM002", ConstantMessages.NO_FOUND_DATA.getMessage(), ConstantMessages.NO_FOUND_DATA.getTitle(), CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId());
 
     private final HttpStatus httpCode;
