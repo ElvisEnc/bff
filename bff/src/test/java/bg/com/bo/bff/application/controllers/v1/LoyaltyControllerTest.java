@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
+import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyImageRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyRequestFixture;
 import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
@@ -22,6 +23,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -239,7 +243,9 @@ class LoyaltyControllerTest {
         // Arrange
         LoyaltyStatementRequest request = LoyaltyRequestFixture.withDefaultStatement();
         LoyaltyStatementResponse responseExpected = LoyaltyResponseFixture.withDefaultStatement();
-        when(service.statementPoints(any(), any(), any())).thenReturn(responseExpected);
+        List<LoyaltyStatementResponse> responseListExpected = new ArrayList<>();
+        responseListExpected.add(responseExpected);
+        when(service.statementPoints(any(), any(), any())).thenReturn(responseListExpected);
 
         // Act
         String urlLoyalty = "/api/v1/loyalty/persons/{personId}/system-code/{codeSystem}/statement-points";
@@ -255,6 +261,7 @@ class LoyaltyControllerTest {
         assertNotNull(result);
         verify(service).statementPoints(any(), any(), any());
     }
+
 
     @Test
     void givenPersonIdWhenGetGeneralInformationThenReturnSuccess() throws Exception {
@@ -275,5 +282,50 @@ class LoyaltyControllerTest {
         assertNotNull(result);
         verify(service).getGeneralInformation(any());
     }
+
+    @Test
+    void givenPersonIdWhenGetImageInformationThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyImageResponse responseExpected = LoyaltyResponseFixture.withDefaultImage();
+        when(service.getImageInformation(any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/image/{imageId}/image-information";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).getImageInformation(any());
+    }
+
+    @Test
+    void givenPersonIdWhenGetImagesInformationThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyImageRequest request = LoyaltyRequestFixture.withDefaultImage();
+        LoyaltyImageResponse responseExpected = LoyaltyResponseFixture.withDefaultImage();
+        List<LoyaltyImageResponse> responseListExpected = new ArrayList<>();
+        responseListExpected.add(responseExpected);
+        when(service.getImagesInformation(any())).thenReturn(responseListExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/images-information";
+        MvcResult result = mockMvc.perform(post(urlLoyalty)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).getImagesInformation(any());
+    }
+
 
 }

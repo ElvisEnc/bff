@@ -173,5 +173,16 @@ public class LoyaltySEResponseFixture {
                 .build();
     }
 
+    public static LoyaltyGetImageResponse withDefaultImage() {
+        return LoyaltyGetImageResponse.builder()
+                .identifier(0)
+                .idImageMongo("test")
+                .filename("test")
+                .fileType("test")
+                .fileContent("test")
+                .pathImage("test")
+                .build();
+    }
+
 
 }

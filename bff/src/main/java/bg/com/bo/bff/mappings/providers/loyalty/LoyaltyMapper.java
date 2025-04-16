@@ -1,15 +1,18 @@
 package bg.com.bo.bff.mappings.providers.loyalty;
 
+import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyImageRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyImageResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
@@ -89,14 +92,12 @@ public class LoyaltyMapper implements ILoyaltyMapper{
     }
 
     @Override
-    public LoyaltyStatementResponse convertResponse(List<LoyaltyStatementPointsResponse> response) {
+    public List<LoyaltyStatementResponse> convertResponse(List<LoyaltyStatementPointsResponse> response) {
         if (response == null || response.isEmpty()) {
-            return LoyaltyStatementResponse.builder()
-                    .movements(Collections.emptyList())
-                    .build();
+            return List.of();
         }
-        List<LoyaltyStatementResponse.LoyaltyDetailStatementPoints> movements = response.stream()
-                .map(item -> LoyaltyStatementResponse.LoyaltyDetailStatementPoints.builder()
+        return response.stream()
+                .map(item -> LoyaltyStatementResponse.builder()
                         .action(item.getAction())
                         .comment(item.getComment())
                         .dateCreation(item.getDateCreation())
@@ -104,9 +105,6 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                         .campaignScore(item.getCampaignScore())
                         .build())
                 .toList();
-        return LoyaltyStatementResponse.builder()
-                .movements(movements)
-                .build();
     }
 
     @Override
@@ -118,6 +116,35 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .points(response.getPoints())
                 .pointsPeriod(response.getPointsPeriod())
                 .build();
+    }
+
+    @Override
+    public LoyaltyImageResponse convertResponse(LoyaltyGetImageResponse response) {
+        return LoyaltyImageResponse.builder()
+                .identifier(response.getIdentifier())
+                .idImageMongo(response.getIdImageMongo())
+                .filename(response.getFilename())
+                .fileType(response.getFileType())
+                .fileContent(response.getFileContent())
+                .pathImage(response.getPathImage())
+                .build();
+    }
+
+    @Override
+    public List<LoyaltyImageResponse> convertResponseImage(List<LoyaltyGetImageResponse> response) {
+        if (response == null || response.isEmpty()) {
+            return List.of();
+        }
+        return response.stream()
+                .map(img -> LoyaltyImageResponse.builder()
+                        .identifier(img.getIdentifier() != 0 ? img.getIdentifier() : null)
+                        .idImageMongo(img.getIdImageMongo())
+                        .filename(img.getFilename())
+                        .fileType(img.getFileType())
+                        .fileContent(img.getFileContent())
+                        .pathImage(img.getPathImage())
+                        .build())
+                .toList();
     }
 
     private LoyaltyLevelResponse convertLevel(LoyaltyGetLevelResponse level) {
@@ -179,6 +206,19 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .codigoCampana("1")
                 .fechaInicial(request.getStartDate())
                 .fechaFinal(request.getEndDate())
+                .build();
+    }
+
+    @Override
+    public LoyaltyGetImagesRequest mapperRequest(LoyaltyImageRequest request) {
+        List<LoyaltyGetImagesRequest.Ruta> rutas = request.getFilePaths().stream()
+                .map(filePath -> LoyaltyGetImagesRequest.Ruta.builder()
+                        .filePath(filePath.getFile())
+                        .build())
+                .toList();
+
+        return LoyaltyGetImagesRequest.builder()
+                .rutas(rutas)
                 .build();
     }
 
