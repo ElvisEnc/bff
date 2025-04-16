@@ -1,7 +1,5 @@
 package bg.com.bo.bff.providers.dtos.request.loyalty;
 
-import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyImageRequest;
-import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 
