@@ -24,7 +24,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             HttpStatus.CONFLICT,
             CodeError.DATA_NOT_FOUND.getCode(),
             "MDWPSM-002",
-            "No se encontraron registros.",
+            ConstantMessages.NO_FOUND_DATA.getMessage(),
             ConstantMessages.NO_FOUND_DATA.getTitle(),
             CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()
     ),
@@ -40,7 +40,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             HttpStatus.CONFLICT,
             "NOT_FOUND_CITIES",
             "MDWPSM-004",
-            "No se encontraron registros.",
+            ConstantMessages.NO_FOUND_DATA.getMessage(),
             ConstantMessages.NO_FOUND_DATA.getTitle(),
             CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()
     ),
@@ -80,7 +80,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             HttpStatus.CONFLICT,
             "NOT_FOUND_SEARCH_CRITERIA",
             "MDWPSM-010",
-            "No se encontraron registros.",
+            ConstantMessages.NO_FOUND_DATA.getMessage(),
             ConstantMessages.NO_FOUND_DATA.getTitle(),
             CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()
     ),
@@ -152,7 +152,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             HttpStatus.CONFLICT,
             "NOT_FOUND_DATA_IN_REDIS",
             "MDWPSM-020",
-            "No se encontraron registros.",
+            ConstantMessages.NO_FOUND_DATA.getMessage(),
             ConstantMessages.NO_FOUND_DATA.getTitle(),
             CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()
     ),
@@ -190,7 +190,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
     ),
     MDWPSM_026(
             HttpStatus.BAD_REQUEST,
-            "SOURCE_ACCOUNT_KO",
+            CodeError.SOURCE_ACCOUNT_KO.getCode(),
             "MDWPSM-026",
             "No existe la cuenta de origen.",
             "No existe la cuenta de origen.",
@@ -198,7 +198,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
     ),
     MDWPSM_029(
             HttpStatus.NOT_ACCEPTABLE,
-            "SOURCE_ACCOUNT_KO",
+            CodeError.SOURCE_ACCOUNT_KO.getCode(),
             "MDWPSM-029",
             ConstantMessages.NO_FUNDS_AVAILABLE.getMessage(),
             ConstantMessages.NO_FUNDS_AVAILABLE.getTitle(),
@@ -230,7 +230,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
     ),
     MDWPSM_035(
             HttpStatus.BAD_REQUEST,
-            "SOURCE_ACCOUNT_KO",
+            CodeError.SOURCE_ACCOUNT_KO.getCode(),
             "MDWPSM-035",
             "No se puede procesar la transacción para la cuenta de origen.",
             ConstantMessages.GENERIC.getTitle(),
@@ -254,7 +254,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
     ),
     MDWPSM_039(
             HttpStatus.BAD_REQUEST,
-            "SOURCE_ACCOUNT_KO",
+            CodeError.SOURCE_ACCOUNT_KO.getCode(),
             "MDWPSM-039",
             "La cuenta no tiene fondos",
             ConstantMessages.NO_FUNDS_AVAILABLE.getTitle(),
