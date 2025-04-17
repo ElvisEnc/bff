@@ -5,14 +5,17 @@ import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyImageRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCategoryPromotionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyImageResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.services.interfaces.ILoyaltyService;
@@ -204,5 +207,72 @@ public class LoyaltyController extends AbstractBFFController {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.getImagesInformation(request));
     }
+
+    @Operation(summary = "Obtiene la categoria de promocion", description = "Obtiene la categoria de promocion del programa",
+            operationId = "getCategoryPromotions")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtiene la categoria de promocion del programa")
+    })
+    @GetMapping("/persons/{personId}/category-promotions")
+    public ResponseEntity<List<LoyaltyCategoryPromotionResponse>> getCategoryPromotions (
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.getCategoryPromotions(personId));
+    }
+
+    @Operation(summary = "Obtiene la categoria de niveles", description = "Obtiene la informacion de niveles del programa",
+            operationId = "getCategoryPointsLevels")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtiene la informacion de niveles del programa")
+    })
+    @GetMapping("/persons/{personId}/category-points-level")
+    public ResponseEntity<List<LoyaltyLevelResponse>> getCategoryPointsLevels (
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.getCategoryPointsLevels(personId));
+    }
+
+    @Operation(summary = "Obtiene los terminos y condiciones", description = "Obtiene los terminos y condiciones del programa",
+            operationId = "termsConditions")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtiene los terminos y condiciones programa")
+    })
+    @GetMapping("/persons/{personId}/terms-conditions")
+    public ResponseEntity<LoyaltyTermsConditionsResponse> termsConditions (
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.termsConditions(personId));
+    }
+
+    @Operation(summary = "Verificar fluJo con o sin VAMOS", description = "Verificar fluJo con o sin VAMOS",
+            operationId = "termsConditions")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Verificar fluJo con o sin VAMOS")
+    })
+    @GetMapping("/persons/{personId}/check-flow")
+    public ResponseEntity<GenericResponse> checkFlow (
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.checkFlow(personId));
+    }
+
+    @Operation(summary = "Obtener promocion", description = "Obtener promocion del programa",
+            operationId = "getPromotions")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener promocion del programa")
+    })
+    @GetMapping("/persons/{personId}/promotionId/{promotionId}/promotion")
+    public ResponseEntity<LoyaltyPromotionResponse> getPromotions (
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("promotionId") @Parameter(description = "Este es el promotionId de la promocion", example = "12345") String promotionId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.getPromotions(personId, promotionId));
+    }
+
 
 }

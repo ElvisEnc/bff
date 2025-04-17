@@ -2,18 +2,22 @@ package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGeneralInformationResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetCategoryPromotionResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetImageResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetInitialPointsVamosResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetLevelResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetPromotionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTermsConditionsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPointServerResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyRegisterRedeemVoucherResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyRegisterSubscriptionResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatementPointsResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySubscriptionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatusResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
 import bg.com.bo.bff.providers.interfaces.ILoyaltyProvider;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyError;
@@ -82,9 +86,9 @@ public class LoyaltyProvider extends HttpClientExternalProvider<LoyaltyError> im
     }
 
     @Override
-    public LoyaltySubscriptionResponse verifySubscription(Map<String, String> headers, String personId) throws IOException {
+    public LoyaltyStatusResponse verifySubscription(Map<String, String> headers, String personId) throws IOException {
         String url = baseUrl + String.format(LoyaltyServices.GET_CHECK_SUBSCRIPTION.getServiceURL(), personId);
-        return this.executeGetRequest(url, headers, LoyaltySubscriptionResponse.class);
+        return this.executeGetRequest(url, headers, LoyaltyStatusResponse.class);
     }
 
     @Override
@@ -111,6 +115,38 @@ public class LoyaltyProvider extends HttpClientExternalProvider<LoyaltyError> im
         String url = baseUrl + String.format(LoyaltyServices.GET_LIST_IMAGES.getServiceURL());
         return this.executePostRequest(url, requestServer, Collections.emptyMap(),
                 new TypeReference<List<LoyaltyGetImageResponse>>() {});
+    }
+
+    @Override
+    public List<LoyaltyGetCategoryPromotionResponse> getCategoryPromotions(Map<String, String> headers) throws IOException {
+        String url = baseUrl + String.format(LoyaltyServices.GET_CATEGORY_PROMOTION.getServiceURL());
+        return this.executeGetRequest(url, headers,
+                new TypeReference<List<LoyaltyGetCategoryPromotionResponse>>() {});
+    }
+
+    @Override
+    public List<LoyaltyGetLevelResponse> getCategoryPointsLevels(Map<String, String> headers) throws IOException {
+        String url = baseUrl + String.format(LoyaltyServices.GET_CATEGORY_POINTS_LEVEL.getServiceURL());
+        return this.executeGetRequest(url, headers,
+                new TypeReference<List<LoyaltyGetLevelResponse>>() {});
+    }
+
+    @Override
+    public LoyaltyGetTermsConditionsResponse termsConditions(LoyaltyPersonCampRequest requestServer, Map<String, String> headers) throws IOException {
+        String url = baseUrl + String.format(LoyaltyServices.GET_TERMS_CONDITIONS.getServiceURL());
+        return this.executePostRequest(url, requestServer, headers, LoyaltyGetTermsConditionsResponse.class);
+    }
+
+    @Override
+    public LoyaltyStatusResponse checkFlow(Map<String, String> headers, String personId) throws IOException {
+        String url = baseUrl + String.format(LoyaltyServices.VALIDATE_PROGRAM.getServiceURL(), personId);
+        return this.executeGetRequest(url, headers, LoyaltyStatusResponse.class);
+    }
+
+    @Override
+    public LoyaltyGetPromotionResponse getPromotions(Map<String, String> headers, String promotionId) throws IOException {
+        String url = baseUrl + String.format(LoyaltyServices.GET_PROMOTION.getServiceURL(), promotionId);
+        return this.executeGetRequest(url, headers, LoyaltyGetPromotionResponse.class);
     }
 
 }

@@ -403,6 +403,26 @@ class HttpClientExternalProviderTest {
         assertTrue(cause instanceof GenericException);
     }
 
+    @Test
+    void executeGetRequest_shouldReturnValidResponse_whenSuccess200Response() throws IOException {
+        CloseableHttpClient mockHttpClientInstance = mock(CloseableHttpClient.class);
+        when(httpClientFactory.create()).thenReturn(mockHttpClientInstance);
+
+        String jsonResponse = "{\"error\": \"Unauthorized\"}";
+        HttpEntity entity = new StringEntity(jsonResponse, StandardCharsets.UTF_8);
+        CloseableHttpResponse mockResponse = mock(CloseableHttpResponse.class);
+        StatusLine statusLine = mock(StatusLine.class);
+        when(statusLine.getStatusCode()).thenReturn(HttpStatus.UNAUTHORIZED.value());
+        when(mockResponse.getStatusLine()).thenReturn(statusLine);
+        when(mockResponse.getEntity()).thenReturn(entity);
+        when(mockHttpClientInstance.execute(any(HttpUriRequest.class))).thenReturn(mockResponse);
+
+        Executable executable = () -> mockHttpClient.executeGetRequest(
+                "http://localhost", Map.of(), new TypeReference<>() {}
+        );
+
+        assertThrows(HandledException.class, executable);
+    }
 
     @SuppressWarnings("unchecked")
     private <R> void invokeHandleResponse(CloseableHttpResponse response) throws Exception {

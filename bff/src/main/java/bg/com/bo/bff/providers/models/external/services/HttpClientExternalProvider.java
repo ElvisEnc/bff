@@ -57,6 +57,15 @@ public class HttpClientExternalProvider<T extends IExternalError> {
         }, responseType);
     }
 
+    public <R> R executeGetRequest(String url, Map<String, String> headers, TypeReference<R> responseType) throws IOException {
+        return executeRequest(() -> {
+            HttpGet request = new HttpGet(url);
+            headers.forEach(request::addHeader);
+            return request;
+        }, responseType);
+    }
+
+
     public <R> R executePostRequest(String url, Object requestBody, Map<String, String> headers, TypeReference<R> responseType) throws IOException {
         return executeRequest(() -> {
             HttpPost request = new HttpPost(url);

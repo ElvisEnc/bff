@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.interfaces;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.*;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
@@ -27,7 +28,7 @@ public interface ILoyaltyProvider {
 
     LoyaltyGetInitialPointsVamosResponse getInitialPointsVAMOS(Map<String, String> headers, String personId) throws IOException;
 
-    LoyaltySubscriptionResponse verifySubscription(Map<String, String> headers, String personId) throws IOException;
+    LoyaltyStatusResponse verifySubscription(Map<String, String> headers, String personId) throws IOException;
 
     List<LoyaltyStatementPointsResponse> statementPoints(LoyaltyStatementPointRequest request, Map<String, String> headers) throws IOException;
 
@@ -36,4 +37,14 @@ public interface ILoyaltyProvider {
     LoyaltyGetImageResponse getImageInformation(String imageId) throws IOException;
 
     List<LoyaltyGetImageResponse> getImagesInformation(LoyaltyGetImagesRequest request) throws IOException;
+
+    List<LoyaltyGetCategoryPromotionResponse> getCategoryPromotions(Map<String, String> headers) throws IOException;
+
+    List<LoyaltyGetLevelResponse> getCategoryPointsLevels(Map<String, String> headers) throws IOException;
+
+    LoyaltyGetTermsConditionsResponse termsConditions(LoyaltyPersonCampRequest request, Map<String, String> headers) throws IOException;
+
+    LoyaltyStatusResponse checkFlow(Map<String, String> headers, String personId) throws IOException;
+
+    LoyaltyGetPromotionResponse getPromotions(Map<String, String> headers, String promotionId) throws IOException;
 }

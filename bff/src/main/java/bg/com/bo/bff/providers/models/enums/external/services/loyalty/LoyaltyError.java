@@ -19,7 +19,8 @@ public enum LoyaltyError implements IExternalError {
     INCOMPLETE_POINTS(HttpStatus.NOT_ACCEPTABLE, "INCOMPLETE_POINTS", "Los puntos actuales son inferiores a los del vale.", "Los puntos actuales son inferiores a los del vale.", "Ocurrió un error", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()),
     INACTIVE_USER(HttpStatus.NOT_ACCEPTABLE, "INACTIVE_USER", "El vale no puede ser canjeado porque el usuario no se encuentra activo.", "El vale no puede ser canjeado porque el usuario no se encuentra activo.", "Ocurrió un error", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()),
     VOUCHER_NOT_AVAILABLE(HttpStatus.NOT_ACCEPTABLE, "INACTIVE_USER","El vale ya no esta disponible para realizar canjes", "El vale ya no esta disponible para realizar canjes", "Vale no disponible", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()),
-    NOT_SUBSCRIPTION(HttpStatus.NOT_ACCEPTABLE, "NOT_SUBSCRIPTION",null, "La persona no se encuentra subscripta al programa.", "Persona no registrada", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId())
+    NOT_SUBSCRIPTION(HttpStatus.NOT_ACCEPTABLE, "NOT_SUBSCRIPTION",null, "La persona no se encuentra subscripta al programa.", "Persona no registrada", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()),
+    NOT_VALIDATE_PROGRAM(HttpStatus.NOT_ACCEPTABLE, "NOT_VALIDATE_PROGRAM",null, "La persona no pertenece al programa antiguo VAMOS.", "No cumple con las condiciones del flujo", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId())
      ;
     private final HttpStatus httpCode;
     private final String code;

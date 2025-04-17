@@ -4,22 +4,25 @@ import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyImageRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCategoryPromotionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyImageResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.*;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,6 +150,58 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .toList();
     }
 
+    @Override
+    public List<LoyaltyCategoryPromotionResponse> convertResponseCategoryProm(List<LoyaltyGetCategoryPromotionResponse> response) {
+        if (response == null || response.isEmpty()) {
+            return List.of();
+        }
+        return response.stream()
+                .map(cat -> LoyaltyCategoryPromotionResponse.builder()
+                        .identifier(cat.getIdentifier())
+                        .name(cat.getName())
+                        .text(cat.getText())
+                        .link(cat.getLink())
+                        .routeImageThumbnail(cat.getRouteImageThumbnail())
+                        .build())
+                .toList();
+    }
+
+    @Override
+    public LoyaltyTermsConditionsResponse convertResponse(LoyaltyGetTermsConditionsResponse response) {
+        LoyaltyGetTermsConditionsResponse.Person person = response.getInformationPerson();
+        return LoyaltyTermsConditionsResponse.builder()
+                .contractName(response.getContractName())
+                .contract(response.getContract())
+                .informationPerson(
+                        LoyaltyTermsConditionsResponse.PersonData.builder()
+                                .documentNumber(person.getDocumentNumber())
+                                .documentType(person.getDocumentType())
+                                .namePerson(person.getNamePerson())
+                                .build()
+                )
+                .build();
+    }
+
+    @Override
+    public LoyaltyPromotionResponse convertResponse(LoyaltyGetPromotionResponse response) {
+        if (response == null) {
+            return null;
+        }
+        LoyaltyImageResponse image = null;
+        if (response.getImage() != null) {
+            image = convertResponse(response.getImage());
+        }
+
+        return LoyaltyPromotionResponse.builder()
+                .identifier(response.getIdentifier())
+                .namePromotion(response.getNamePromotion())
+                .text(response.getText())
+                .link(response.getLink())
+                .imagePath(response.getImagePath())
+                .image(image)
+                .build();
+    }
+
     private LoyaltyLevelResponse convertLevel(LoyaltyGetLevelResponse level) {
         if (level == null) {
             return null;
@@ -154,7 +209,11 @@ public class LoyaltyMapper implements ILoyaltyMapper{
         return convertResponse(level);
     }
 
-    private List<LoyaltyLevelResponse> convertLevels(List<LoyaltyGetLevelResponse> levels) {
+    @Override
+    public List<LoyaltyLevelResponse> convertLevels(List<LoyaltyGetLevelResponse> levels) {
+        if (levels == null || levels.isEmpty()) {
+            return List.of();
+        }
         return levels.stream()
                 .map(this::convertLevel)
                 .toList();
@@ -173,7 +232,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
         return LoyaltyRegisterSubscriptionRequest.builder()
                 .signatureDigital(true)
                 .idPerson(personId)
-                .codeCampaign("1")
+                .codeCampaign(campaign)
                 .jtsOidAccountNumber(accountId)
                 .email(request.getEmail())
                 .subscriptionOrigin(CanalMW.GANAMOVIL.getDescription())
@@ -203,7 +262,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
     public LoyaltyStatementPointRequest mapperRequest(String personId, String codeSystem, LoyaltyStatementRequest request) {
         return LoyaltyStatementPointRequest.builder()
                 .codigoPersona(codeSystem)
-                .codigoCampana("1")
+                .codigoCampana(campaign)
                 .fechaInicial(request.getStartDate())
                 .fechaFinal(request.getEndDate())
                 .build();
@@ -219,6 +278,14 @@ public class LoyaltyMapper implements ILoyaltyMapper{
 
         return LoyaltyGetImagesRequest.builder()
                 .rutas(rutas)
+                .build();
+    }
+
+    @Override
+    public LoyaltyPersonCampRequest mapperRequest(String personId) {
+        return LoyaltyPersonCampRequest.builder()
+                .idPersona(personId)
+                .codigoCampana(campaign)
                 .build();
     }
 

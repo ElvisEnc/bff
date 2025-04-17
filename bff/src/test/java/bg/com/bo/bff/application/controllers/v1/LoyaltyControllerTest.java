@@ -262,7 +262,6 @@ class LoyaltyControllerTest {
         verify(service).statementPoints(any(), any(), any());
     }
 
-
     @Test
     void givenPersonIdWhenGetGeneralInformationThenReturnSuccess() throws Exception {
         // Arrange
@@ -325,6 +324,110 @@ class LoyaltyControllerTest {
         // Assert
         assertNotNull(result);
         verify(service).getImagesInformation(any());
+    }
+
+    @Test
+    void givenPersonIdWhenGetCategoryPromotionThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyCategoryPromotionResponse responseExpected = LoyaltyResponseFixture.withDefaultCategoryPromotion();
+        List<LoyaltyCategoryPromotionResponse> responseListExpected = new ArrayList<>();
+        responseListExpected.add(responseExpected);
+        when(service.getCategoryPromotions(any())).thenReturn(responseListExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/category-promotions";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).getCategoryPromotions(any());
+    }
+
+    @Test
+    void givenPersonIdWhenGetCategoryPointsLevelsThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyLevelResponse responseExpected = LoyaltyResponseFixture.withDefaultLevel();
+        List<LoyaltyLevelResponse> responseListExpected = new ArrayList<>();
+        responseListExpected.add(responseExpected);
+        when(service.getCategoryPointsLevels(any())).thenReturn(responseListExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/category-points-level";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).getCategoryPointsLevels(any());
+    }
+
+    @Test
+    void givenPersonIdWhenTermsConditionsThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyTermsConditionsResponse responseExpected = LoyaltyResponseFixture.withDefaultTermsConditions();
+        when(service.termsConditions(any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/terms-conditions";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).termsConditions(any());
+    }
+
+    @Test
+    void givenPersonIdWhenCheckFlowThenReturnSuccess() throws Exception {
+        // Arrange
+        GenericResponse responseExpected = LoyaltyResponseFixture.withDefaultGeneric();
+        when(service.checkFlow(any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/check-flow";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).checkFlow(any());
+    }
+
+    @Test
+    void givenPersonIdWhenPromotionsThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyPromotionResponse responseExpected = LoyaltyResponseFixture.withDefaultPromotion();
+        when(service.getPromotions(any(), any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/promotionId/{promotionId}/promotion";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123", "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).getPromotions(any(), any());
     }
 
 

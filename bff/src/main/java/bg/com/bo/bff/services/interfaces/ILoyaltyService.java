@@ -5,7 +5,16 @@ import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.*;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCategoryPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyImageResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +47,16 @@ public interface ILoyaltyService {
     LoyaltyImageResponse getImageInformation(String imageId) throws IOException;
 
     List<LoyaltyImageResponse> getImagesInformation(LoyaltyImageRequest request) throws IOException;
+
+    List<LoyaltyCategoryPromotionResponse> getCategoryPromotions(String personId) throws IOException;
+
+    List<LoyaltyLevelResponse> getCategoryPointsLevels(String personId) throws IOException;
+
+    LoyaltyTermsConditionsResponse termsConditions(String personId) throws IOException;
+
+    GenericResponse checkFlow(String personId) throws IOException;
+
+    LoyaltyPromotionResponse getPromotions(String personId, String promotionId) throws IOException;
 
 
 }

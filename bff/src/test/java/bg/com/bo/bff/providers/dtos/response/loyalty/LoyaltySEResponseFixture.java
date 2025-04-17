@@ -106,14 +106,14 @@ public class LoyaltySEResponseFixture {
                 .build();
     }
 
-    public static LoyaltySubscriptionResponse withDefaultSubscription() {
-        return LoyaltySubscriptionResponse.builder()
+    public static LoyaltyStatusResponse withDefaultSubscription() {
+        return LoyaltyStatusResponse.builder()
                 .status(true)
                 .build();
     }
 
-    public static LoyaltySubscriptionResponse withDefaultSubscriptionFalse() {
-        return LoyaltySubscriptionResponse.builder()
+    public static LoyaltyStatusResponse withDefaultSubscriptionFalse() {
+        return LoyaltyStatusResponse.builder()
                 .status(false)
                 .build();
     }
@@ -183,6 +183,72 @@ public class LoyaltySEResponseFixture {
                 .pathImage("test")
                 .build();
     }
+
+    public static LoyaltyGetImageResponse withDefaultImageData() {
+        return LoyaltyGetImageResponse.builder()
+                .identifier(123)
+                .idImageMongo("mongo123")
+                .filename("archivo.jpg")
+                .fileType("jpg")
+                .fileContent("contenido")
+                .pathImage("ruta/imagen")
+                .build();
+    }
+
+    public static LoyaltyGetCategoryPromotionResponse withDefaultCategoryPromotion() {
+        return LoyaltyGetCategoryPromotionResponse.builder()
+                .identifier("123")
+                .name("test")
+                .text("test")
+                .link("test")
+                .routeImageThumbnail("test")
+                .build();
+    }
+
+    public static LoyaltyGetTermsConditionsResponse withDefaultTermsConditions() {
+        return LoyaltyGetTermsConditionsResponse.builder()
+                .contractName("Contrato Programa VAMOS")
+                .contract("Este es el contenido del contrato del programa VAMOS...")
+                .informationPerson(
+                        LoyaltyGetTermsConditionsResponse.Person.builder()
+                                .documentNumber("12345678")
+                                .documentType("CI")
+                                .namePerson("Juan Pérez")
+                                .build()
+                )
+                .build();
+    }
+
+    public static LoyaltyGetPromotionResponse withDefaultPromotion() {
+        return LoyaltyGetPromotionResponse.builder()
+                .identifier("c1b2e1344f")
+                .namePromotion("Promo")
+                .text("Promoción")
+                .link("https://store.babycorpbolivia.com/")
+                .imagePath("test")
+                .image(LoyaltyGetImageResponse.builder()
+                        .identifier(156)
+                        .idImageMongo(null)
+                        .filename("test")
+                        .fileType("png")
+                        .fileContent("test")
+                        .pathImage("buscarImagen/567")
+                        .build())
+                .build();
+    }
+    public static LoyaltyGetPromotionResponse withDefaultPromotionNull() {
+        return LoyaltyGetPromotionResponse.builder()
+                .identifier("abc123")
+                .namePromotion("test")
+                .text("test")
+                .link("https://test.com")
+                .imagePath("ruta/test")
+                .image(null)
+                .build();
+    }
+
+
+
 
 
 }

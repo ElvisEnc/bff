@@ -50,6 +50,14 @@ public class LoyaltySERequestFixture {
                 .build();
     }
 
+    public static RegisterRedeemVoucherRequest withDefaultRegisterRedeemVoucherNull() {
+        return RegisterRedeemVoucherRequest.builder()
+                .idBenefit("BENEF-002")
+                .typeBenefit("BONO")
+                .information(null)
+                .build();
+    }
+
     public static LoyaltyStatementPointRequest withDefaultStatementPoint() {
         return LoyaltyStatementPointRequest.builder()
                 .codigoPersona("2")
@@ -66,6 +74,13 @@ public class LoyaltySERequestFixture {
                                 .filePath("https://example.com/default-image.jpg")
                                 .build()
                 ))
+                .build();
+    }
+
+    public static LoyaltyPersonCampRequest  withDefaultPersonCamp() {
+        return LoyaltyPersonCampRequest.builder()
+                .idPersona("123")
+                .codigoCampana("1")
                 .build();
     }
 

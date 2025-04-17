@@ -152,6 +152,51 @@ public class LoyaltyResponseFixture {
                 .build();
     }
 
+    public static LoyaltyCategoryPromotionResponse withDefaultCategoryPromotion() {
+        return LoyaltyCategoryPromotionResponse.builder()
+                .identifier("1")
+                .name("test")
+                .text("test")
+                .link("test")
+                .routeImageThumbnail("test")
+                .build();
+    }
+
+    public static LoyaltyTermsConditionsResponse withDefaultTermsConditions(){
+        return LoyaltyTermsConditionsResponse.builder()
+                .contractName("TÉRMINOS Y CONDICIONES PROGRAMA DE LEALTAD PERMANENTE")
+                .contract("Es responsabilidad del cliente leer y aceptar los términos.")
+                .informationPerson(
+                        LoyaltyTermsConditionsResponse.PersonData.builder()
+                                .documentNumber("0000000")
+                                .documentType("CI")
+                                .namePerson("Nombre Ejemplo")
+                                .build()
+                )
+                .build();
+    }
+
+    public static LoyaltyPromotionResponse withDefaultPromotion() {
+        return LoyaltyPromotionResponse.builder()
+                .identifier("c1b2e134-6365-45de-a27e-2db697d8184f")
+                .namePromotion("Promo Baby Corps")
+                .text("Promoción Baby Corps")
+                .link("https://store.babycorpbolivia.com/")
+                .imagePath("buscarImagen/567")
+                .image(
+                        LoyaltyImageResponse.builder()
+                                .identifier(567)
+                                .idImageMongo(null)
+                                .filename("BabyCorp")
+                                .fileType("png")
+                                .fileContent("iVBORw0KGg") // Contenido base64 corto de ejemplo
+                                .pathImage("buscarImagen/567")
+                                .build()
+                )
+                .build();
+    }
+
+
 
 
 

@@ -28,6 +28,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -116,6 +117,24 @@ class LoyaltyServiceTest {
     }
 
     @Test
+    void givenNullInformationWhenRegisterRedeemVoucherThenRequestBuiltWithoutInformation() throws IOException {
+        // Arrange
+        RegisterRedeemVoucherRequest request = LoyaltySERequestFixture.withDefaultRegisterRedeemVoucherNull();
+        LoyaltyRegisterRedeemVoucherResponse expectedResponse = LoyaltySEResponseFixture.withDefaultRegisterRedeemVoucher();
+
+        when(provider.registerRedeemVoucher(any(), any())).thenReturn(expectedResponse);
+
+        // Act
+        LoyaltyRedeemVoucherResponse response = service.registerRedeemVoucher("5678", "SYS-002", request);
+
+        // Assert
+        assertNotNull(response);
+        verify(provider).registerRedeemVoucher(any(), any());
+        verify(mapper).convertResponse(any(LoyaltyRegisterRedeemVoucherResponse.class));
+    }
+
+
+    @Test
     void givenValidDataWhenGetLevel() throws IOException {
         //Arrange
         LoyaltyGetLevelResponse expectedResponse = LoyaltySEResponseFixture.withDefaultLoyaltyGetLevel();
@@ -160,7 +179,7 @@ class LoyaltyServiceTest {
     @Test
     void givenValidDataWhenVerifySubscription() throws IOException {
         //Arrange
-        LoyaltySubscriptionResponse expectedResponse = LoyaltySEResponseFixture.withDefaultSubscription();
+        LoyaltyStatusResponse expectedResponse = LoyaltySEResponseFixture.withDefaultSubscription();
         when(provider.verifySubscription(any(), any())).thenReturn(expectedResponse);
 
         //Act
@@ -174,7 +193,7 @@ class LoyaltyServiceTest {
     @Test
     void givenValidDataWhenVerifySubscriptionFalse() throws IOException {
         //Arrange
-        LoyaltySubscriptionResponse expectedResponse = LoyaltySEResponseFixture.withDefaultSubscriptionFalse();
+        LoyaltyStatusResponse expectedResponse = LoyaltySEResponseFixture.withDefaultSubscriptionFalse();
         when(provider.verifySubscription(any(), any())).thenReturn(expectedResponse);
 
         //Act
@@ -331,6 +350,203 @@ class LoyaltyServiceTest {
         assertNotNull(response);
 
         verify(provider).getImagesInformation(any());
+    }
+
+    @Test
+    void givenImageWithValidIdentifierWhenConvertResponseImageThenIdentifierIsPreserved() {
+        // Arrange
+        LoyaltyGetImageResponse responseWithId = LoyaltySEResponseFixture.withDefaultImageData();
+
+        List<LoyaltyGetImageResponse> list = List.of(responseWithId);
+
+        // Act
+        List<LoyaltyImageResponse> result = mapper.convertResponseImage(list);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(123, result.get(0).getIdentifier());
+    }
+
+    @Test
+    void givenValidDataWhenCategoryPromotions() throws IOException {
+        //Arrange
+        LoyaltyGetCategoryPromotionResponse expectedResponse = LoyaltySEResponseFixture.withDefaultCategoryPromotion();
+        List<LoyaltyGetCategoryPromotionResponse> expectedListResponse = new ArrayList<>();
+        expectedListResponse.add(expectedResponse);
+
+        when(provider.getCategoryPromotions(any())).thenReturn(expectedListResponse);
+
+        //Act
+        List<LoyaltyCategoryPromotionResponse> response = service.getCategoryPromotions("123");
+
+        assertNotNull(response);
+        verify(provider).getCategoryPromotions(any());
+        verify(mapper).convertResponseCategoryProm(expectedListResponse);
+    }
+
+    @Test
+    void givenEmptyCategoryPromotionsListWhenCategoryPromotionsThenReturnsEmpty() throws IOException {
+        // Arrange
+        List<LoyaltyGetCategoryPromotionResponse> emptyResponse = Collections.emptyList();
+
+        when(provider.getCategoryPromotions(any())).thenReturn(emptyResponse);
+
+        // Act
+        List<LoyaltyCategoryPromotionResponse> response = service.getCategoryPromotions("123");
+
+        // Assert
+        assertNotNull(response);
+
+        verify(provider).getCategoryPromotions(any());
+        verify(mapper).convertResponseCategoryProm(emptyResponse);
+    }
+
+    @Test
+    void givenNullCategoryPromotionsListWhenCategoryPromotionsThenReturnsEmpty() throws IOException {
+        // Arrange
+        when(provider.getCategoryPromotions(any())).thenReturn(null);
+
+        // Act
+        List<LoyaltyCategoryPromotionResponse> response = service.getCategoryPromotions("123");
+
+        // Assert
+        assertNotNull(response);
+
+        verify(provider).getCategoryPromotions(any());
+    }
+
+    @Test
+    void givenValidDataWhenCategoryPointsLevels() throws IOException {
+        //Arrange
+        LoyaltyGetLevelResponse expectedResponse = LoyaltySEResponseFixture.withDefaultLoyaltyGetLevel();
+        List<LoyaltyGetLevelResponse> expectedListResponse = new ArrayList<>();
+        expectedListResponse.add(expectedResponse);
+
+        when(provider.getCategoryPointsLevels(any())).thenReturn(expectedListResponse);
+
+        //Act
+        List<LoyaltyLevelResponse> response = service.getCategoryPointsLevels("123");
+
+        assertNotNull(response);
+        verify(provider).getCategoryPointsLevels(any());
+        verify(mapper).convertLevels(expectedListResponse);
+    }
+
+    @Test
+    void givenEmptyCategoryPointsLevelsListWhenCategoryPointsLevelsThenReturnsEmpty() throws IOException {
+        // Arrange
+        List<LoyaltyGetLevelResponse> emptyResponse = Collections.emptyList();
+
+        when(provider.getCategoryPointsLevels(any())).thenReturn(emptyResponse);
+
+        // Act
+        List<LoyaltyLevelResponse> response = service.getCategoryPointsLevels("123");
+
+        // Assert
+        assertNotNull(response);
+
+        verify(provider).getCategoryPointsLevels(any());
+        verify(mapper).convertLevels(emptyResponse);
+    }
+
+    @Test
+    void givenNullCategoryPointsLevelsListWhenCategoryPointsLevelsThenReturnsEmpty() throws IOException {
+        // Arrange
+        when(provider.getCategoryPointsLevels(any())).thenReturn(null);
+
+        // Act
+        List<LoyaltyLevelResponse> response = service.getCategoryPointsLevels("123");
+
+        // Assert
+        assertNotNull(response);
+
+        verify(provider).getCategoryPointsLevels(any());
+    }
+
+    @Test
+    void givenValidDataWhenTermsConditions() throws IOException{
+        // Arrange
+        LoyaltyGetTermsConditionsResponse expectedResponse = LoyaltySEResponseFixture.withDefaultTermsConditions();
+
+        when(provider.termsConditions(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        LoyaltyTermsConditionsResponse response = service.termsConditions("1234");
+
+        assertNotNull(response);
+        verify(provider).termsConditions(any(), any());
+        verify(mapper).convertResponse(any(LoyaltyGetTermsConditionsResponse.class));
+    }
+
+    @Test
+    void givenValidDataWhenCheckFlowTrue() throws IOException {
+        //Arrange
+        LoyaltyStatusResponse expectedResponse = LoyaltySEResponseFixture.withDefaultSubscription();
+        when(provider.checkFlow(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        GenericResponse response = service.checkFlow("1234");
+
+        assertNotNull(response);
+        assertEquals(LoyaltyResponse.VALIDATE_PROGRAM.getMessage(), response.getMessage());
+        verify(provider).checkFlow(any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenCheckFlowFalse() throws IOException {
+        //Arrange
+        LoyaltyStatusResponse expectedResponse = LoyaltySEResponseFixture.withDefaultSubscriptionFalse();
+        when(provider.checkFlow(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        GenericException exception = assertThrows(GenericException.class, () ->
+                service.checkFlow("123")
+        );
+        //Assert
+        assertEquals("NOT_VALIDATE_PROGRAM", exception.getCode());
+        verify(provider).checkFlow(any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenPromotions() throws IOException{
+        // Arrange
+        LoyaltyGetPromotionResponse expectedResponse = LoyaltySEResponseFixture.withDefaultPromotion();
+
+        when(provider.getPromotions(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        LoyaltyPromotionResponse response = service.getPromotions("1234", "1234");
+
+        assertNotNull(response);
+        verify(provider).getPromotions(any(), any());
+        verify(mapper).convertResponse(any(LoyaltyGetPromotionResponse.class));
+    }
+
+    @Test
+    void givenNullResponseWhenPromotionsThenReturnNull() throws IOException {
+        // Arrange
+        when(provider.getPromotions(any(), any())).thenReturn(null);
+
+        // Act
+        LoyaltyPromotionResponse response = service.getPromotions("1234", "1234");
+
+        // Assert
+        assertNull(response);
+        verify(provider).getPromotions(any(), any());
+        verify(mapper).convertResponse((LoyaltyGetPromotionResponse) isNull());
+    }
+    @Test
+    void givenPromotionWithoutImageWhenConvertResponseThenImageIsNull() {
+        // Arrange
+        LoyaltyGetPromotionResponse responseWithoutImage = LoyaltySEResponseFixture.withDefaultPromotionNull();
+
+        // Act
+        LoyaltyPromotionResponse result = mapper.convertResponse(responseWithoutImage);
+
+        // Assert
+        assertNotNull(result);
+        assertNull(result.getImage());
     }
 
 }
