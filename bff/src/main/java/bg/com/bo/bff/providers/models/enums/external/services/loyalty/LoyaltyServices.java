@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.models.enums.external.services.loyalty;
 
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTermsConditionsResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,7 +20,14 @@ public enum LoyaltyServices {
     GET_GENERAL_INFORMATION("/lealtad/campana/api/v1/suscripciones-ganamovil/informacion-general/%s"),
     GET_IMAGE("/lealtad/archivos/api/v1/imagenes/buscarImagen/%s/completa/true"),
     GET_LIST_IMAGES("/lealtad/archivos/api/v1/imagenes/buscar-imagenes"),
+    GET_CATEGORY_PROMOTION("/lealtad/administracion/api/v1/promociones-ganamovil"),
+    GET_CATEGORY_POINTS_LEVEL("/lealtad/administracion/api/v1/niveles-ganamovil/campanas/1"),
+    GET_TERMS_CONDITIONS("/lealtad/administracion/api/v1/campanas-ganamovil/obtener-contrato-persona"),
+    VALIDATE_PROGRAM("/lealtad/administracion/api/v1/reglas-ganamovil/validar-vamos/%s"),
+    GET_PROMOTION("/lealtad/administracion/api/v1/promociones-ganamovil/%s"),
+    GET_STORE_FEATURED("/lealtad/beneficios/api/v1/comercios-ganamovil/comercios-destacados"),
+    GET_QR_TRANSACTION("/lealtad/beneficios/api/v1/vales-ganamovil/%s/tipo-vale/%s"),
+    GET_VOUCHER_TRANSACTION("/lealtad/beneficios/api/v1/vales-ganamovil/campana/1/persona/%s/estado/%s"),
     ;
-
     private final String serviceURL;
 }

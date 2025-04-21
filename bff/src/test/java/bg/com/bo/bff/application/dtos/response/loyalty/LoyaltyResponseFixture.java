@@ -152,7 +152,162 @@ public class LoyaltyResponseFixture {
                 .build();
     }
 
+    public static LoyaltyCategoryPromotionResponse withDefaultCategoryPromotion() {
+        return LoyaltyCategoryPromotionResponse.builder()
+                .identifier("1")
+                .name("test")
+                .text("test")
+                .link("test")
+                .routeImageThumbnail("test")
+                .build();
+    }
 
+    public static LoyaltyTermsConditionsResponse withDefaultTermsConditions(){
+        return LoyaltyTermsConditionsResponse.builder()
+                .contractName("TÉRMINOS Y CONDICIONES PROGRAMA DE LEALTAD PERMANENTE")
+                .contract("Es responsabilidad del cliente leer y aceptar los términos.")
+                .informationPerson(
+                        LoyaltyTermsConditionsResponse.PersonData.builder()
+                                .documentNumber("0000000")
+                                .documentType("CI")
+                                .namePerson("Nombre Ejemplo")
+                                .build()
+                )
+                .build();
+    }
 
+    public static LoyaltyPromotionResponse withDefaultPromotion() {
+        return LoyaltyPromotionResponse.builder()
+                .identifier("c1b2e134-6365-45de-a27e-2db697d8184f")
+                .namePromotion("Promo Baby Corps")
+                .text("Promoción Baby Corps")
+                .link("https://store.babycorpbolivia.com/")
+                .imagePath("buscarImagen/567")
+                .image(
+                        LoyaltyImageResponse.builder()
+                                .identifier(567)
+                                .idImageMongo(null)
+                                .filename("BabyCorp")
+                                .fileType("png")
+                                .fileContent("iVBORw0KGg")
+                                .pathImage("buscarImagen/567")
+                                .build()
+                )
+                .build();
+    }
+
+    public static LoyaltyStoreFeaturedResponse withDefaultStoreFeatured() {
+        return LoyaltyStoreFeaturedResponse.builder()
+                .identifier("store123")
+                .name("Comercio Ejemplo")
+                .description("Un comercio destacado con excelentes productos.")
+                .logo("https://example.com/logo.png")
+                .isFeatured(1)
+                .categoryId("cat001")
+                .category(LoyaltyStoreFeaturedResponse.Category.builder()
+                        .categoryId("cat001")
+                        .nameCategory("Tecnología")
+                        .iconCategory("https://example.com/icono-tecnologia.png")
+                        .build())
+                .isActive(1)
+                .cheaper(0)
+                .build();
+    }
+
+    public static LoyaltyGenericVoucherTransactionResponse withDefaultQrTransactions() {
+        return LoyaltyGenericVoucherTransactionResponse.builder()
+                .identifier("VCHR-001")
+                .voucherCode("ABCD1234")
+                .campaignId("CMP-2025")
+                .holderName("Juan Pérez")
+                .holderDocument("12345678")
+                .beneficiaryName("Ana López")
+                .beneficiaryDocument("87654321")
+                .personId("PERS-1001")
+                .personCode("CDE-9001")
+                .creationDate("2025-04-01T10:00:00Z")
+                .redemptionDate("2025-04-10T15:30:00Z")
+                .redemptionValue(500)
+                .expirationDate("2025-05-01T23:59:59Z")
+                .benefitId("BEN-5001")
+                .name("Vale de Consumo Abril")
+                .description("Vale aplicable a comercios afiliados en el mes de abril.")
+                .banner("https://example.com/banner.png")
+                .note("Canje válido solo en tiendas físicas.")
+                .status("REDEEMED")
+                .voucherType("consumo")
+                .store(LoyaltyStoreFeaturedResponse.builder()
+                        .identifier("STR-001")
+                        .name("Supermercado Ejemplo")
+                        .description("Supermercado con productos variados")
+                        .logo("https://example.com/logo-super.png")
+                        .isFeatured(1)
+                        .categoryId("CAT-01")
+                        .category(LoyaltyStoreFeaturedResponse.Category.builder()
+                                .categoryId("CAT-01")
+                                .nameCategory("Alimentos")
+                                .iconCategory("https://example.com/icon-alimentos.png")
+                                .build())
+                        .isActive(1)
+                        .cheaper(1)
+                        .build())
+                .voucherConsumption(LoyaltyGenericVoucherTransactionResponse.VoucherConsumption.builder()
+                        .valueVoucher("500")
+                        .valueType("Bs")
+                        .build())
+                .build();
+    }
+
+    public static LoyaltyVoucherTransactionsResponse withDefaultVoucherTransactions() {
+        LoyaltyVoucherTransactionsResponse response = new LoyaltyVoucherTransactionsResponse();
+
+        response.setIdentifier("VCH-2025-0001");
+        response.setVoucherCode("VCH-CONS-9821");
+        response.setCampaignId("CAMP-APR-2025");
+        response.setHolderName("Carlos Mendoza");
+        response.setHolderDocument("100200300");
+        response.setBeneficiaryName("Lucía Mendoza");
+        response.setBeneficiaryDocument("200300400");
+        response.setPersonId("PER-1025");
+        response.setPersonCode("USR-789");
+        response.setCreationDate("2025-04-01T09:00:00Z");
+        response.setRedemptionValue(1000);
+        response.setExpirationDate("2025-06-01T23:59:59Z");
+        response.setBenefitId("BENEF-0425");
+        response.setName("Vale de Consumo Hogar");
+        response.setDescription("Vale canjeable en productos del hogar en tiendas afiliadas.");
+        response.setBanner("https://cdn.example.com/vouchers/banner-hogar.png");
+        response.setRedeemed(1);
+        response.setRedemptionDate("2025-04-15T14:20:00Z");
+        response.setManagerId("MG-309");
+        response.setVoucherCost(500);
+        response.setVoucherType("CONSUMO");
+        response.setAssumedPercentage(70);
+        response.setNote("Uso exclusivo en locales físicos");
+        response.setStatus("REDEEMED");
+
+        response.setStore(LoyaltyStoreFeaturedResponse.builder()
+                .identifier("STORE-456")
+                .name("Casa & Hogar")
+                .description("Tienda especializada en artículos para el hogar")
+                .logo("https://cdn.example.com/logos/casayhogar.png")
+                .isFeatured(1)
+                .categoryId("CAT-HOME")
+                .category(LoyaltyStoreFeaturedResponse.Category.builder()
+                        .categoryId("CAT-HOME")
+                        .nameCategory("Hogar")
+                        .iconCategory("https://cdn.example.com/icons/hogar.png")
+                        .build())
+                .isActive(1)
+                .cheaper(0)
+                .build());
+
+        response.setVoucherConsumption(LoyaltyGenericVoucherTransactionResponse.VoucherConsumption.builder()
+                .valueVoucher("1000")
+                .valueType("Bs")
+                .build());
+
+        return response;
+    }
 
 }

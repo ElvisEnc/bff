@@ -47,8 +47,8 @@ public class LoyaltySEResponseFixture {
                 .build();
     }
 
-    public static LoyaltyRegisterRedeemVoucherResponse withDefaultRegisterRedeemVoucher() {
-        return LoyaltyRegisterRedeemVoucherResponse.builder()
+    public static LoyaltyPostRegisterRedeemVoucherResponse withDefaultRegisterRedeemVoucher() {
+        return LoyaltyPostRegisterRedeemVoucherResponse.builder()
                 .identifier("123456")
                 .codeVoucher("VALE-001")
                 .idCampaign("CAMP-2025")
@@ -69,18 +69,18 @@ public class LoyaltySEResponseFixture {
                 .note("Usar antes de la fecha de expiración")
                 .status("ACTIVO")
                 .typeValue("CONSUMO")
-                .trade(LoyaltyRegisterRedeemVoucherResponse.LoyaltyTrade.builder()
+                .trade(LoyaltyPostRegisterRedeemVoucherResponse.LoyaltyGetTrade.builder()
                         .identifierTrade("TRD-001")
                         .nameTrade("Supermercado El Ahorro")
                         .descriptionTrade("Cadena de supermercados")
                         .logoTrade("https://example.com/logo.png")
-                        .category(LoyaltyRegisterRedeemVoucherResponse.LoyaltyCategory.builder()
+                        .category(LoyaltyPostRegisterRedeemVoucherResponse.LoyaltyCategory.builder()
                                 .identifierCategory("CAT-01")
                                 .nameCategory("Alimentos")
                                 .iconCategory("https://example.com/icono.png")
                                 .build())
                         .build())
-                .redeemVoucher(LoyaltyRegisterRedeemVoucherResponse.LoyaltyRedeemVoucher.builder()
+                .redeemVoucher(LoyaltyPostRegisterRedeemVoucherResponse.LoyaltyRedeemVoucher.builder()
                         .valueRedeemVoucher("100")
                         .typeValueRedeemVoucher("PESOS")
                         .build())
@@ -106,14 +106,14 @@ public class LoyaltySEResponseFixture {
                 .build();
     }
 
-    public static LoyaltySubscriptionResponse withDefaultSubscription() {
-        return LoyaltySubscriptionResponse.builder()
+    public static LoyaltyStatusResponse withDefaultSubscription() {
+        return LoyaltyStatusResponse.builder()
                 .status(true)
                 .build();
     }
 
-    public static LoyaltySubscriptionResponse withDefaultSubscriptionFalse() {
-        return LoyaltySubscriptionResponse.builder()
+    public static LoyaltyStatusResponse withDefaultSubscriptionFalse() {
+        return LoyaltyStatusResponse.builder()
                 .status(false)
                 .build();
     }
@@ -181,6 +181,307 @@ public class LoyaltySEResponseFixture {
                 .fileType("test")
                 .fileContent("test")
                 .pathImage("test")
+                .build();
+    }
+
+    public static LoyaltyGetImageResponse withDefaultImageData() {
+        return LoyaltyGetImageResponse.builder()
+                .identifier(123)
+                .idImageMongo("mongo123")
+                .filename("archivo.jpg")
+                .fileType("jpg")
+                .fileContent("contenido")
+                .pathImage("ruta/imagen")
+                .build();
+    }
+
+    public static LoyaltyGetCategoryPromotionResponse withDefaultCategoryPromotion() {
+        return LoyaltyGetCategoryPromotionResponse.builder()
+                .identifier("123")
+                .name("test")
+                .text("test")
+                .link("test")
+                .routeImageThumbnail("test")
+                .build();
+    }
+
+    public static LoyaltyGetTermsConditionsResponse withDefaultTermsConditions() {
+        return LoyaltyGetTermsConditionsResponse.builder()
+                .contractName("Contrato Programa VAMOS")
+                .contract("Este es el contenido del contrato del programa VAMOS...")
+                .informationPerson(
+                        LoyaltyGetTermsConditionsResponse.Person.builder()
+                                .documentNumber("12345678")
+                                .documentType("CI")
+                                .namePerson("Juan Pérez")
+                                .build()
+                )
+                .build();
+    }
+
+    public static LoyaltyGetPromotionResponse withDefaultPromotion() {
+        return LoyaltyGetPromotionResponse.builder()
+                .identifier("c1b2e1344f")
+                .namePromotion("Promo")
+                .text("Promoción")
+                .link("https://store.babycorpbolivia.com/")
+                .imagePath("test")
+                .image(LoyaltyGetImageResponse.builder()
+                        .identifier(156)
+                        .idImageMongo(null)
+                        .filename("test")
+                        .fileType("png")
+                        .fileContent("test")
+                        .pathImage("buscarImagen/567")
+                        .build())
+                .build();
+    }
+
+    public static LoyaltyGetPromotionResponse withDefaultPromotionNull() {
+        return LoyaltyGetPromotionResponse.builder()
+                .identifier("abc123")
+                .namePromotion("test")
+                .text("test")
+                .link("https://test.com")
+                .imagePath("ruta/test")
+                .image(null)
+                .build();
+    }
+
+    public static LoyaltyGetStoreFeaturedResponse withDefaultStoreFeatured() {
+        return LoyaltyGetStoreFeaturedResponse.builder()
+                .identifier("store-123")
+                .name("Comercio Ejemplo")
+                .description("Descripción del comercio de ejemplo")
+                .logo("https://example.com/logo.png")
+                .isFeatured(1)
+                .categoryId("cat-001")
+                .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                        .categoryId("cat-001")
+                        .nameCategory("Alimentos")
+                        .iconCategory("https://example.com/icono.png")
+                        .build())
+                .isActive(1)
+                .cheaper(0)
+                .build();
+    }
+
+    public static LoyaltyGetStoreFeaturedResponse withDefaultStoreFeaturedNull() {
+        return LoyaltyGetStoreFeaturedResponse.builder()
+                .identifier("store-123")
+                .name("Comercio Ejemplo")
+                .description("Descripción del comercio de ejemplo")
+                .logo("https://example.com/logo.png")
+                .isFeatured(1)
+                .categoryId("cat-001")
+                .category(null)
+                .isActive(1)
+                .cheaper(0)
+                .build();
+    }
+
+    public static LoyaltyGetGenericTransactionsResponse withDefaultQrTransactions() {
+        return LoyaltyGetGenericTransactionsResponse.builder()
+                .identifier("trx-001")
+                .voucherCode("VALE12345")
+                .campaignId("camp-987")
+                .holderName("Juan Pérez")
+                .holderDocument("12345678")
+                .beneficiaryName("Ana Gómez")
+                .beneficiaryDocument("87654321")
+                .personId("pers-321")
+                .personCode("PERSCODE123")
+                .creationDate("2025-04-17T10:00:00Z")
+                .redemptionDate("2025-04-18T15:30:00Z")
+                .redemptionValue(5000)
+                .expirationDate("2025-05-01T23:59:59Z")
+                .benefitId("benef-001")
+                .name("Descuento 50%")
+                .description("Beneficio exclusivo en compras seleccionadas")
+                .banner("https://example.com/banner.jpg")
+                .note("Presentar el QR en caja")
+                .status("REDEEMED")
+                .store(LoyaltyGetStoreFeaturedResponse.builder()
+                        .identifier("store-123")
+                        .name("Comercio Ejemplo")
+                        .description("Un comercio destacado de ejemplo")
+                        .logo("https://example.com/logo.png")
+                        .isFeatured(1)
+                        .categoryId("cat-001")
+                        .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                                .categoryId("cat-001")
+                                .nameCategory("Electrodomésticos")
+                                .iconCategory("https://example.com/icono.png")
+                                .build())
+                        .isActive(1)
+                        .cheaper(0)
+                        .build())
+                .voucherType("VALE_DIGITAL")
+                .voucherConsumption(LoyaltyGetGenericTransactionsResponse.GetVoucherConsumption.builder()
+                        .valueVoucher("5000")
+                        .valueType("PUNTOS")
+                        .build())
+                .build();
+    }
+
+    public static LoyaltyGetGenericTransactionsResponse withDefaultVoucherQrNull() {
+        return LoyaltyGetGenericTransactionsResponse.builder()
+                .identifier("trx-001")
+                .voucherCode("VALE12345")
+                .campaignId("camp-987")
+                .holderName("Juan Pérez")
+                .holderDocument("12345678")
+                .beneficiaryName("Ana Gómez")
+                .beneficiaryDocument("87654321")
+                .personId("pers-321")
+                .personCode("PERSCODE123")
+                .creationDate("2025-04-17T10:00:00Z")
+                .redemptionDate("2025-04-18T15:30:00Z")
+                .redemptionValue(5000)
+                .expirationDate("2025-05-01T23:59:59Z")
+                .benefitId("benef-001")
+                .name("Descuento 50%")
+                .description("Beneficio exclusivo en compras seleccionadas")
+                .banner("https://example.com/banner.jpg")
+                .note("Presentar el QR en caja")
+                .status("REDEEMED")
+                .store(LoyaltyGetStoreFeaturedResponse.builder()
+                        .identifier("store-123")
+                        .name("Comercio Ejemplo")
+                        .description("Un comercio destacado de ejemplo")
+                        .logo("https://example.com/logo.png")
+                        .isFeatured(1)
+                        .categoryId("cat-001")
+                        .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                                .categoryId("cat-001")
+                                .nameCategory("Electrodomésticos")
+                                .iconCategory("https://example.com/icono.png")
+                                .build())
+                        .isActive(1)
+                        .cheaper(0)
+                        .build())
+                .voucherType("VALE_DIGITAL")
+                .voucherConsumption(null)
+                .build();
+    }
+
+    public static LoyaltyGetTransactionsResponse withDefaultTransactions() {
+        return LoyaltyGetTransactionsResponse.builder()
+                .identifier("trx-002")
+                .voucherCode("VALE67890")
+                .campaignId("camp-456")
+                .holderName("Carlos Ramírez")
+                .holderDocument("11223344")
+                .beneficiaryName("Laura Martínez")
+                .beneficiaryDocument("44332211")
+                .personId("pers-654")
+                .personCode("PER-CODE-654")
+                .creationDate("2025-04-17T09:45:00Z")
+                .redemptionValue(3000)
+                .expirationDate("2025-05-15T23:59:59Z")
+                .benefitId("benef-456")
+                .name("Vale para supermercado")
+                .description("Descuento del 30% en supermercados seleccionados")
+                .banner("https://example.com/super-banner.jpg")
+                .redeemed(1)
+                .redemptionDate("2025-04-18T14:00:00Z")
+                .managerId("mgr-789")
+                .voucherCost(2500)
+                .voucherType("VALE_FISICO")
+                .assumedPercentage(50)
+                .note("Promoción válida hasta agotar stock")
+                .status("UTILIZADO")
+                .store(LoyaltyGetStoreFeaturedResponse.builder()
+                        .identifier("store-456")
+                        .name("Supermercado Central")
+                        .description("Sucursal principal con múltiples beneficios")
+                        .logo("https://example.com/super-logo.png")
+                        .isFeatured(1)
+                        .categoryId("cat-002")
+                        .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                                .categoryId("cat-002")
+                                .nameCategory("Supermercados")
+                                .iconCategory("https://example.com/icon-super.png")
+                                .build())
+                        .isActive(1)
+                        .cheaper(1)
+                        .build())
+                .voucherConsumption(LoyaltyGetGenericTransactionsResponse.GetVoucherConsumption.builder()
+                        .valueVoucher("3000")
+                        .valueType("PUNTOS")
+                        .build())
+                .build();
+    }
+
+    public static LoyaltyGetTransactionsResponse withDefaultVoucherNull() {
+        return LoyaltyGetTransactionsResponse.builder()
+                .identifier("trx-002")
+                .voucherCode("VALE67890")
+                .campaignId("camp-456")
+                .holderName("Carlos Ramírez")
+                .holderDocument("11223344")
+                .beneficiaryName("Laura Martínez")
+                .beneficiaryDocument("44332211")
+                .personId("pers-654")
+                .personCode("PER-CODE-654")
+                .creationDate("2025-04-17T09:45:00Z")
+                .redemptionValue(3000)
+                .expirationDate("2025-05-15T23:59:59Z")
+                .benefitId("benef-456")
+                .name("Vale para supermercado")
+                .description("Descuento del 30% en supermercados seleccionados")
+                .banner("https://example.com/super-banner.jpg")
+                .redeemed(1)
+                .redemptionDate("2025-04-18T14:00:00Z")
+                .managerId("mgr-789")
+                .voucherCost(2500)
+                .voucherType("VALE_FISICO")
+                .assumedPercentage(50)
+                .note("Promoción válida hasta agotar stock")
+                .status("UTILIZADO")
+                .store(LoyaltyGetStoreFeaturedResponse.builder()
+                        .identifier("store-456")
+                        .name("Supermercado Central")
+                        .description("Sucursal principal con múltiples beneficios")
+                        .logo("https://example.com/super-logo.png")
+                        .isFeatured(1)
+                        .categoryId("cat-002")
+                        .category(null)
+                        .isActive(1)
+                        .cheaper(1)
+                        .build())
+                .voucherConsumption(null)
+                .build();
+    }
+
+    public static LoyaltyGetTransactionsResponse withDefaultStoreNull() {
+        return LoyaltyGetTransactionsResponse.builder()
+                .identifier("trx-002")
+                .voucherCode("VALE67890")
+                .campaignId("camp-456")
+                .holderName("Carlos Ramírez")
+                .holderDocument("11223344")
+                .beneficiaryName("Laura Martínez")
+                .beneficiaryDocument("44332211")
+                .personId("pers-654")
+                .personCode("PER-CODE-654")
+                .creationDate("2025-04-17T09:45:00Z")
+                .redemptionValue(3000)
+                .expirationDate("2025-05-15T23:59:59Z")
+                .benefitId("benef-456")
+                .name("Vale para supermercado")
+                .description("Descuento del 30% en supermercados seleccionados")
+                .banner("https://example.com/super-banner.jpg")
+                .redeemed(1)
+                .redemptionDate("2025-04-18T14:00:00Z")
+                .managerId("mgr-789")
+                .voucherCost(2500)
+                .voucherType("VALE_FISICO")
+                .assumedPercentage(50)
+                .note("Promoción válida hasta agotar stock")
+                .status("UTILIZADO")
+                .store(null)
+                .voucherConsumption(null)
                 .build();
     }
 

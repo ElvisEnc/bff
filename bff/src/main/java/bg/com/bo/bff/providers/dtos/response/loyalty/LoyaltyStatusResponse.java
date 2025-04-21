@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoyaltySubscriptionResponse {
+public class LoyaltyStatusResponse {
     @JsonProperty("estado")
     private boolean status;
 }
