@@ -280,8 +280,8 @@ public class LoyaltySEResponseFixture {
                 .build();
     }
 
-    public static LoyaltyGetQrTransactionsResponse withDefaultQrTransactions() {
-        return LoyaltyGetQrTransactionsResponse.builder()
+    public static LoyaltyGetGenericTransactionsResponse withDefaultQrTransactions() {
+        return LoyaltyGetGenericTransactionsResponse.builder()
                 .identifier("trx-001")
                 .voucherCode("VALE12345")
                 .campaignId("camp-987")
@@ -317,15 +317,15 @@ public class LoyaltySEResponseFixture {
                         .cheaper(0)
                         .build())
                 .voucherType("VALE_DIGITAL")
-                .voucherConsumption(LoyaltyGetQrTransactionsResponse.GetVoucherConsumption.builder()
+                .voucherConsumption(LoyaltyGetGenericTransactionsResponse.GetVoucherConsumption.builder()
                         .valueVoucher("5000")
                         .valueType("PUNTOS")
                         .build())
                 .build();
     }
 
-    public static LoyaltyGetQrTransactionsResponse withDefaultVoucherQrNull() {
-        return LoyaltyGetQrTransactionsResponse.builder()
+    public static LoyaltyGetGenericTransactionsResponse withDefaultVoucherQrNull() {
+        return LoyaltyGetGenericTransactionsResponse.builder()
                 .identifier("trx-001")
                 .voucherCode("VALE12345")
                 .campaignId("camp-987")
@@ -406,7 +406,7 @@ public class LoyaltySEResponseFixture {
                         .isActive(1)
                         .cheaper(1)
                         .build())
-                .consumptionVoucher(LoyaltyGetTransactionsResponse.GetConsumptionVoucher.builder()
+                .voucherConsumption(LoyaltyGetGenericTransactionsResponse.GetVoucherConsumption.builder()
                         .valueVoucher("3000")
                         .valueType("PUNTOS")
                         .build())
@@ -450,7 +450,7 @@ public class LoyaltySEResponseFixture {
                         .isActive(1)
                         .cheaper(1)
                         .build())
-                .consumptionVoucher(null)
+                .voucherConsumption(null)
                 .build();
     }
 
@@ -481,7 +481,7 @@ public class LoyaltySEResponseFixture {
                 .note("Promoción válida hasta agotar stock")
                 .status("UTILIZADO")
                 .store(null)
-                .consumptionVoucher(null)
+                .voucherConsumption(null)
                 .build();
     }
 

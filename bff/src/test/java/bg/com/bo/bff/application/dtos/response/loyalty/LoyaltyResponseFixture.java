@@ -189,7 +189,7 @@ public class LoyaltyResponseFixture {
                                 .idImageMongo(null)
                                 .filename("BabyCorp")
                                 .fileType("png")
-                                .fileContent("iVBORw0KGg") // Contenido base64 corto de ejemplo
+                                .fileContent("iVBORw0KGg")
                                 .pathImage("buscarImagen/567")
                                 .build()
                 )
@@ -214,8 +214,8 @@ public class LoyaltyResponseFixture {
                 .build();
     }
 
-    public static LoyaltyVoucherQrTransactionsResponse withDefaultQrTransactions() {
-        return LoyaltyVoucherQrTransactionsResponse.builder()
+    public static LoyaltyGenericVoucherTransactionResponse withDefaultQrTransactions() {
+        return LoyaltyGenericVoucherTransactionResponse.builder()
                 .identifier("VCHR-001")
                 .voucherCode("ABCD1234")
                 .campaignId("CMP-2025")
@@ -251,7 +251,7 @@ public class LoyaltyResponseFixture {
                         .isActive(1)
                         .cheaper(1)
                         .build())
-                .voucherConsumption(LoyaltyVoucherQrTransactionsResponse.VoucherConsumption.builder()
+                .voucherConsumption(LoyaltyGenericVoucherTransactionResponse.VoucherConsumption.builder()
                         .valueVoucher("500")
                         .valueType("Bs")
                         .build())
@@ -302,7 +302,7 @@ public class LoyaltyResponseFixture {
                 .cheaper(0)
                 .build());
 
-        response.setConsumptionVoucher(LoyaltyVoucherTransactionsResponse.ConsumptionVoucher.builder()
+        response.setVoucherConsumption(LoyaltyGenericVoucherTransactionResponse.VoucherConsumption.builder()
                 .valueVoucher("1000")
                 .valueType("Bs")
                 .build());

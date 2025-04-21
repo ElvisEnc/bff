@@ -601,25 +601,25 @@ class LoyaltyServiceTest {
     @Test
     void givenQRTransactionsWhenPromotions() throws IOException{
         // Arrange
-        LoyaltyGetQrTransactionsResponse expectedResponse = LoyaltySEResponseFixture.withDefaultQrTransactions();
+        LoyaltyGetGenericTransactionsResponse expectedResponse = LoyaltySEResponseFixture.withDefaultQrTransactions();
 
         when(provider.getQRTransactions(any(), any(), any())).thenReturn(expectedResponse);
 
         //Act
-        LoyaltyVoucherQrTransactionsResponse response = service.getQRTransactions("1234", "1234", "123");
+        LoyaltyGenericVoucherTransactionResponse response = service.getQRTransactions("1234", "1234", "123");
 
         assertNotNull(response);
         verify(provider).getQRTransactions(any(), any(), any());
-        verify(mapper).convertVoucherQrTransaction(any(LoyaltyGetQrTransactionsResponse.class));
+        verify(mapper).convertVoucherQrTransaction(any(LoyaltyGetGenericTransactionsResponse.class));
     }
 
     @Test
     void givenVoucherQrTransactionsWhenConvertResponseThenVoucherIsNull() {
         // Arrange
-        LoyaltyGetQrTransactionsResponse expectedResponse = LoyaltySEResponseFixture.withDefaultVoucherQrNull();
+        LoyaltyGetGenericTransactionsResponse expectedResponse = LoyaltySEResponseFixture.withDefaultVoucherQrNull();
 
         // Act
-        LoyaltyVoucherQrTransactionsResponse  result = mapper.convertVoucherQrTransaction(expectedResponse);
+        LoyaltyGenericVoucherTransactionResponse result = mapper.convertVoucherQrTransaction(expectedResponse);
 
         // Assert
         assertNotNull(result);

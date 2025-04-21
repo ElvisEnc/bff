@@ -15,7 +15,7 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherRespo
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherQrTransactionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGenericVoucherTransactionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class LoyaltyMapper implements ILoyaltyMapper{
@@ -229,8 +230,11 @@ public class LoyaltyMapper implements ILoyaltyMapper{
     }
 
     @Override
-    public LoyaltyVoucherQrTransactionsResponse convertVoucherQrTransaction(LoyaltyGetQrTransactionsResponse response) {
-        return LoyaltyVoucherQrTransactionsResponse.builder()
+    public LoyaltyGenericVoucherTransactionResponse convertVoucherQrTransaction(LoyaltyGetGenericTransactionsResponse response) {
+        if (response == null) {
+            return null;
+        }
+        return LoyaltyGenericVoucherTransactionResponse.builder()
                 .identifier(response.getIdentifier())
                 .voucherCode(response.getVoucherCode())
                 .campaignId(response.getCampaignId())
@@ -279,28 +283,18 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                         .name(r.getName())
                         .description(r.getDescription())
                         .banner(r.getBanner())
-                        .redeemed(r.getRedeemed())
                         .redemptionDate(r.getRedemptionDate())
-                        .managerId(r.getManagerId())
-                        .voucherCost(r.getVoucherCost())
                         .voucherType(r.getVoucherType())
-                        .assumedPercentage(r.getAssumedPercentage())
                         .note(r.getNote())
                         .status(r.getStatus())
                         .store(mapStore(r.getStore()))
-                        .consumptionVoucher(mapConsumptionVoucher(r.getConsumptionVoucher()))
+                        .voucherConsumption(mapVoucherConsumption(r.getVoucherConsumption()))
+                        .redeemed(r.getRedeemed())
+                        .managerId(r.getManagerId())
+                        .voucherCost(r.getVoucherCost())
+                        .assumedPercentage(r.getAssumedPercentage())
                         .build())
-                .toList();
-    }
-
-    private LoyaltyVoucherTransactionsResponse.ConsumptionVoucher mapConsumptionVoucher(
-            LoyaltyGetTransactionsResponse.GetConsumptionVoucher voucher) {
-        if (voucher == null) return null;
-
-        return LoyaltyVoucherTransactionsResponse.ConsumptionVoucher.builder()
-                .valueVoucher(voucher.getValueVoucher())
-                .valueType(voucher.getValueType())
-                .build();
+                .collect(Collectors.toList());
     }
 
     private LoyaltyStoreFeaturedResponse mapStore(LoyaltyGetStoreFeaturedResponse store) {
@@ -328,10 +322,10 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .build();
     }
 
-    private LoyaltyVoucherQrTransactionsResponse.VoucherConsumption mapVoucherConsumption(LoyaltyGetQrTransactionsResponse.GetVoucherConsumption voucherConsumption) {
+    private LoyaltyGenericVoucherTransactionResponse.VoucherConsumption mapVoucherConsumption(LoyaltyGetGenericTransactionsResponse.GetVoucherConsumption voucherConsumption) {
         if (voucherConsumption == null) return null;
 
-        return LoyaltyVoucherQrTransactionsResponse.VoucherConsumption.builder()
+        return LoyaltyGenericVoucherTransactionResponse.VoucherConsumption.builder()
                 .valueVoucher(voucherConsumption.getValueVoucher())
                 .valueType(voucherConsumption.getValueType())
                 .build();

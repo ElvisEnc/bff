@@ -1,6 +1,5 @@
 package bg.com.bo.bff.application.dtos.response.loyalty;
 
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetImageResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

@@ -17,7 +17,7 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoRespons
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherQrTransactionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGenericVoucherTransactionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.commons.annotations.loyalty.ValidTypeBenefit;
 import bg.com.bo.bff.commons.annotations.loyalty.ValidTypeStatus;
@@ -298,7 +298,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtener el vale qr transaccionado del programa")
     })
     @GetMapping("/persons/{personId}/voucher/{voucherId}/type/{typeVoucher}/qr-transactions")
-    public ResponseEntity<LoyaltyVoucherQrTransactionsResponse> getQRTransactions (
+    public ResponseEntity<LoyaltyGenericVoucherTransactionResponse> getQRTransactions (
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("voucherId") @Parameter(description = "Este es el identificador del vale", example = "CONSUMO") String voucherId,
             @PathVariable("typeVoucher") @ValidTypeBenefit @Parameter(description = "Este es el personId de la persona", example = "12345") String typeVoucher

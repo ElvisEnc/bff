@@ -2,15 +2,15 @@ package bg.com.bo.bff.providers.dtos.response.loyalty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoyaltyGetQrTransactionsResponse {
+public class LoyaltyGetGenericTransactionsResponse {
     @JsonProperty("id")
     private String identifier;
 
@@ -78,7 +78,7 @@ public class LoyaltyGetQrTransactionsResponse {
     private GetVoucherConsumption voucherConsumption;
 
     @Data
-    @Builder
+    @SuperBuilder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class GetVoucherConsumption {

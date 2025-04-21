@@ -12,7 +12,7 @@ import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetImageResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetInitialPointsVamosResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetLevelResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetPromotionResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetQrTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetGenericTransactionsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetStoreFeaturedResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTermsConditionsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTransactionsResponse;
@@ -160,9 +160,9 @@ public class LoyaltyProvider extends HttpClientExternalProvider<LoyaltyError> im
     }
 
     @Override
-    public LoyaltyGetQrTransactionsResponse getQRTransactions(Map<String, String> headers, String voucherId, String typeVoucher) throws IOException {
+    public LoyaltyGetGenericTransactionsResponse getQRTransactions(Map<String, String> headers, String voucherId, String typeVoucher) throws IOException {
         String url = baseUrl + String.format(LoyaltyServices.GET_QR_TRANSACTION.getServiceURL(), voucherId, typeVoucher);
-        return this.executeGetRequest(url, headers, LoyaltyGetQrTransactionsResponse.class);
+        return this.executeGetRequest(url, headers, LoyaltyGetGenericTransactionsResponse.class);
     }
 
     @Override

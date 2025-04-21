@@ -50,7 +50,7 @@ public interface ILoyaltyProvider {
 
     List<LoyaltyGetStoreFeaturedResponse> getStoreFeatured(Map<String, String> headers) throws IOException;
 
-    LoyaltyGetQrTransactionsResponse getQRTransactions(Map<String, String> headers, String voucherId, String typeVoucher) throws IOException;
+    LoyaltyGetGenericTransactionsResponse getQRTransactions(Map<String, String> headers, String voucherId, String typeVoucher) throws IOException;
 
     List<LoyaltyGetTransactionsResponse> getVoucherTransactions(Map<String, String> headers, String codeSystem, String status) throws IOException;
 }

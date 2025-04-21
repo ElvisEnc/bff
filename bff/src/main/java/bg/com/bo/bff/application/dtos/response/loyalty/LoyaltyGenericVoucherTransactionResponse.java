@@ -3,15 +3,15 @@ package bg.com.bo.bff.application.dtos.response.loyalty;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoyaltyVoucherQrTransactionsResponse {
+public class LoyaltyGenericVoucherTransactionResponse {
     @Schema(description = "Identificador del vale")
     @JsonProperty("identifier")
     private String identifier;
@@ -101,7 +101,7 @@ public class LoyaltyVoucherQrTransactionsResponse {
     private VoucherConsumption voucherConsumption;
 
     @Data
-    @Builder
+    @SuperBuilder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class VoucherConsumption {

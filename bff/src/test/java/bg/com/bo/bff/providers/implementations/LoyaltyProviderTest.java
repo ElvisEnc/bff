@@ -333,10 +333,10 @@ class LoyaltyProviderTest {
         Map<String, String> headers = Map.of("sesion", "123", "idpersona", "1234");
         String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/vales-ganamovil/" + voucherId +"/tipo-vale/" + typeVoucher;
 
-        LoyaltyGetQrTransactionsResponse mockResponse = LoyaltySEResponseFixture.withDefaultQrTransactions();
-        doReturn(mockResponse).when(loyaltyProvider).executeGetRequest(expectedUrl, headers, LoyaltyGetQrTransactionsResponse.class);
+        LoyaltyGetGenericTransactionsResponse mockResponse = LoyaltySEResponseFixture.withDefaultQrTransactions();
+        doReturn(mockResponse).when(loyaltyProvider).executeGetRequest(expectedUrl, headers, LoyaltyGetGenericTransactionsResponse.class);
 
-        LoyaltyGetQrTransactionsResponse response = loyaltyProvider.getQRTransactions(headers, voucherId, typeVoucher);
+        LoyaltyGetGenericTransactionsResponse response = loyaltyProvider.getQRTransactions(headers, voucherId, typeVoucher);
         assertNotNull(response);
     }
 

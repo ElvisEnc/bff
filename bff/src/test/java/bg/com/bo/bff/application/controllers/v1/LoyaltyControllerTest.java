@@ -455,7 +455,7 @@ class LoyaltyControllerTest {
     @Test
     void givenPersonIdWhenQRTransactionsThenReturnSuccess() throws Exception {
         // Arrange
-        LoyaltyVoucherQrTransactionsResponse responseExpected = LoyaltyResponseFixture.withDefaultQrTransactions();
+        LoyaltyGenericVoucherTransactionResponse responseExpected = LoyaltyResponseFixture.withDefaultQrTransactions();
         when(service.getQRTransactions(any(), any(), any())).thenReturn(responseExpected);
 
         // Act

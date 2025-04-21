@@ -16,7 +16,7 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherRespo
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherQrTransactionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGenericVoucherTransactionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
@@ -31,7 +31,7 @@ import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetImageResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetInitialPointsVamosResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetLevelResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetPromotionResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetQrTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetGenericTransactionsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetStoreFeaturedResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTermsConditionsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTransactionsResponse;
@@ -202,9 +202,9 @@ public class LoyaltyService implements ILoyaltyService {
     }
 
     @Override
-    public LoyaltyVoucherQrTransactionsResponse getQRTransactions(String personId, String voucherId, String typeVoucher) throws IOException {
+    public LoyaltyGenericVoucherTransactionResponse getQRTransactions(String personId, String voucherId, String typeVoucher) throws IOException {
         Map<String, String> headerService = mapper.mapperRequestService(personId);
-        LoyaltyGetQrTransactionsResponse responseServer = provider.getQRTransactions(headerService, voucherId, typeVoucher);
+        LoyaltyGetGenericTransactionsResponse responseServer = provider.getQRTransactions(headerService, voucherId, typeVoucher);
         return mapper.convertVoucherQrTransaction(responseServer);
     }
 
@@ -212,7 +212,7 @@ public class LoyaltyService implements ILoyaltyService {
     public List<LoyaltyVoucherTransactionsResponse> getVoucherTransactions(String personId, String codeSystem, String status) throws IOException {
         Map<String, String> headerService = mapper.mapperRequestService(personId);
         List<LoyaltyGetTransactionsResponse> responseServer = provider.getVoucherTransactions(headerService, codeSystem, status);
-        return mapper.convertVoucherTransaction(responseServer);
+        return (List<LoyaltyVoucherTransactionsResponse>) mapper.convertVoucherTransaction(responseServer);
     }
 
 }
