@@ -284,6 +284,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .toList();
     }
 
+    @SuppressWarnings("java:S3252")
     private LoyaltyVoucherTransactionsResponse mapToVoucherTransaction(LoyaltyGetTransactionsResponse r) {
         return LoyaltyVoucherTransactionsResponse.builder()
                 .identifier(r.getIdentifier())
