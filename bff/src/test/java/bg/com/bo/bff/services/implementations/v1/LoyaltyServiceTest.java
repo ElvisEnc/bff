@@ -5,11 +5,19 @@ import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionReques
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevel;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.*;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltySumPointResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.loyalty.LoyaltyMapper;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltySERequestFixture;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetLevelResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyRegisterRedeemVoucherResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyRegisterSubscriptionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySEResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySumPointServerResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyTradeCategoryAPIResponse;
 import bg.com.bo.bff.providers.interfaces.ILoyaltyProvider;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyResponse;
 import org.junit.jupiter.api.Test;
@@ -20,9 +28,12 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -123,6 +134,19 @@ class LoyaltyServiceTest {
         assertNotNull(response);
         verify(provider).getLevel(any(), any());
         verify(mapper).convertResponse(any(LoyaltyGetLevelResponse.class));
+    }
+
+    @Test
+    void givenValidDataWhenGetTradeCategories() throws IOException {
+        //Arrange
+        List<LoyaltyTradeCategoryAPIResponse> expectedResponse = LoyaltySEResponseFixture.withDefaultLoyaltyGetTradeCategories();
+        when(provider.getTradeCategories(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        LoyaltyTradeCategoryListResponse response = service.getTradeCategories("1234");
+
+        assertNotNull(response);
+        verify(provider).getTradeCategories(any(), any());
     }
 
 }

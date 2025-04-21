@@ -1,6 +1,9 @@
 package bg.com.bo.bff.providers.dtos.response.loyalty;
 
 
+import java.util.Collections;
+import java.util.List;
+
 public class LoyaltySEResponseFixture {
 
     public static LoyaltySystemCodeServerResponse withDefaultSystemCode() {
@@ -92,6 +95,17 @@ public class LoyaltySEResponseFixture {
                 .idCampaign("CAMP-2025")
                 .idLevelNext("LEVEL-002")
                 .build();
+    }
+
+    public static List<LoyaltyTradeCategoryAPIResponse> withDefaultLoyaltyGetTradeCategories() {
+        return Collections.singletonList(
+                LoyaltyTradeCategoryAPIResponse
+                        .builder()
+                        .id("15")
+                        .icon("iconTest")
+                        .name("BIMBO")
+                        .build()
+        );
     }
 
 }

@@ -3,6 +3,8 @@ package bg.com.bo.bff.application.dtos.response.loyalty;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 
+import java.util.Collections;
+
 public class LoyaltyResponseFixture {
 
     public static LoyaltySystemCodeResponse withDefaultSystemCode() {
@@ -10,6 +12,7 @@ public class LoyaltyResponseFixture {
                 .codeSystem(1)
                 .build();
     }
+
     public static LoyaltySumPointResponse withDefaultSumPoint() {
         return LoyaltySumPointResponse.builder()
                 .points(1)
@@ -84,6 +87,19 @@ public class LoyaltyResponseFixture {
                 .idCampaign("campaign-001")
                 .idLevelNext("nivel-2")
                 .build();
+    }
+
+    public static LoyaltyTradeCategoryListResponse withDefaultTradeCategories() {
+
+        return LoyaltyTradeCategoryListResponse.builder().data(
+                Collections.singletonList(LoyaltyTradeCategory
+                        .builder()
+                        .name("BIMBO")
+                        .icon("MyIcon")
+                        .identifier("123").build()
+                )
+        ).build();
+
     }
 
 

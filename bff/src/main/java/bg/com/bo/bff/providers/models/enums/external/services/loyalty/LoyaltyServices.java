@@ -17,7 +17,13 @@ public enum LoyaltyServices {
     GET_CHECK_SUBSCRIPTION("/lealtad/campana/api/v1/suscripciones-ganamovil/verificar-campanas-suscripcion/%s/campana/1"),
     GET_STATEMENT_POINTS("/lealtad/campana/api/v1/extracto-ganamovil/reporte-extracto"),
     GET_GENERAL_INFORMATION("/lealtad/campana/api/v1/suscripciones-ganamovil/informacion-general/%s"),
-    ;
+    GET_TRADE_CATEGORIES("/lealtad/beneficios/api/v1/comercios-ganamovil/categorias-comercios"),
+    GET_FEATURED_MERCHANTS("/lealtad/beneficios/api/v1/comercios-ganamovil/comercios-destacados"),
+    GET_CITIES("/lealtad/beneficios/api/v1/ciudades-ganamovil"),
+    GET_CITY_CATEGORY_MERCHANTILS("/lealtad/beneficios/api/v1/comercios-ganamovil/categoria-comercio/ciudad"),
+    GET_QR_VOUCHER_TRANSACTION("/lealtad/beneficios/api/v1/vales-ganamovil/%s/tipo-vale/%s"),
+    POST_COMPANY_MERCHANT_CATEGORY_VOUCHERS("/lealtad/beneficios/api/v1/beneficios-ganamovil/obtener-todos"),
+    GET_VOUCHER_TRANSACTED_LIST("/lealtad/beneficios/api/v1/vales-ganamovil/campana/%s/persona/%s/estado/%s");
 
     private final String serviceURL;
 }

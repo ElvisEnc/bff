@@ -9,6 +9,7 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevel;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyResponseFixture;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltySumPointResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import bg.com.bo.bff.services.interfaces.ILoyaltyService;
@@ -166,5 +167,28 @@ class LoyaltyControllerTest {
         assertNotNull(result);
         assertEquals(expected, actual);
         verify(service).getLevel(any());
+    }
+
+    @Test
+    void givenPersonIdWhenGetTradeCategoriesThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyTradeCategoryListResponse responseExpected = LoyaltyResponseFixture.withDefaultTradeCategories();
+        when(service.getTradeCategories(any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/trade-categories";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String expected = Util.objectToString(responseExpected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getTradeCategories(any());
     }
 }
