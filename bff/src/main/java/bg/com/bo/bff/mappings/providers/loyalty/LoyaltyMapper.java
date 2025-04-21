@@ -284,41 +284,9 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .toList();
     }
 
+    @SuppressWarnings("java:S6213")
     private LoyaltyVoucherTransactionsResponse mapToVoucherTransaction(LoyaltyGetTransactionsResponse r) {
-        LoyaltyGenericVoucherTransactionResponse generic = buildGenericVoucherTransaction(r);
-
-        return LoyaltyVoucherTransactionsResponse.builder()
-                .identifier(generic.getIdentifier())
-                .voucherCode(generic.getVoucherCode())
-                .campaignId(generic.getCampaignId())
-                .holderName(generic.getHolderName())
-                .holderDocument(generic.getHolderDocument())
-                .beneficiaryName(generic.getBeneficiaryName())
-                .beneficiaryDocument(generic.getBeneficiaryDocument())
-                .personId(generic.getPersonId())
-                .personCode(generic.getPersonCode())
-                .creationDate(generic.getCreationDate())
-                .redemptionValue(generic.getRedemptionValue())
-                .expirationDate(generic.getExpirationDate())
-                .benefitId(generic.getBenefitId())
-                .name(generic.getName())
-                .description(generic.getDescription())
-                .banner(generic.getBanner())
-                .redemptionDate(generic.getRedemptionDate())
-                .voucherType(generic.getVoucherType())
-                .note(generic.getNote())
-                .status(generic.getStatus())
-                .store(generic.getStore())
-                .voucherConsumption(generic.getVoucherConsumption())
-                .redeemed(r.getRedeemed())
-                .managerId(r.getManagerId())
-                .voucherCost(r.getVoucherCost())
-                .assumedPercentage(r.getAssumedPercentage())
-                .build();
-    }
-
-    private LoyaltyGenericVoucherTransactionResponse buildGenericVoucherTransaction(LoyaltyGetTransactionsResponse r) {
-        return LoyaltyGenericVoucherTransactionResponse.builder()
+        return bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse.builder()
                 .identifier(r.getIdentifier())
                 .voucherCode(r.getVoucherCode())
                 .campaignId(r.getCampaignId())
@@ -341,8 +309,13 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .status(r.getStatus())
                 .store(mapStore(r.getStore()))
                 .voucherConsumption(mapVoucherConsumption(r.getVoucherConsumption()))
+                .redeemed(r.getRedeemed())
+                .managerId(r.getManagerId())
+                .voucherCost(r.getVoucherCost())
+                .assumedPercentage(r.getAssumedPercentage())
                 .build();
     }
+
 
     private LoyaltyStoreFeaturedResponse mapStore(LoyaltyGetStoreFeaturedResponse store) {
         if (store == null) return null;
