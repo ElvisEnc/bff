@@ -273,6 +273,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .build();
     }
 
+    @SuppressWarnings("java:S6213")
     @Override
     public List<LoyaltyVoucherTransactionsResponse> convertVoucherTransaction(List<LoyaltyGetTransactionsResponse> response) {
         if (response == null || response.isEmpty()) {
@@ -284,9 +285,8 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .toList();
     }
 
-    @SuppressWarnings("java:S6213")
     private LoyaltyVoucherTransactionsResponse mapToVoucherTransaction(LoyaltyGetTransactionsResponse r) {
-        return bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse.builder()
+        return LoyaltyVoucherTransactionsResponse.builder()
                 .identifier(r.getIdentifier())
                 .voucherCode(r.getVoucherCode())
                 .campaignId(r.getCampaignId())
