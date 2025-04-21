@@ -273,7 +273,6 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .build();
     }
 
-    @SuppressWarnings("java:S6213")
     @Override
     public List<LoyaltyVoucherTransactionsResponse> convertVoucherTransaction(List<LoyaltyGetTransactionsResponse> response) {
         if (response == null || response.isEmpty()) {
@@ -286,7 +285,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
     }
 
     private LoyaltyVoucherTransactionsResponse mapToVoucherTransaction(LoyaltyGetTransactionsResponse r) {
-        return LoyaltyVoucherTransactionsResponse.builder()
+        LoyaltyVoucherTransactionsResponse base = LoyaltyVoucherTransactionsResponse.builder()
                 .identifier(r.getIdentifier())
                 .voucherCode(r.getVoucherCode())
                 .campaignId(r.getCampaignId())
@@ -297,24 +296,28 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .personId(r.getPersonId())
                 .personCode(r.getPersonCode())
                 .creationDate(r.getCreationDate())
+                .redemptionDate(r.getRedemptionDate())
                 .redemptionValue(r.getRedemptionValue())
                 .expirationDate(r.getExpirationDate())
                 .benefitId(r.getBenefitId())
                 .name(r.getName())
                 .description(r.getDescription())
                 .banner(r.getBanner())
-                .redemptionDate(r.getRedemptionDate())
-                .voucherType(r.getVoucherType())
                 .note(r.getNote())
                 .status(r.getStatus())
                 .store(mapStore(r.getStore()))
+                .voucherType(r.getVoucherType())
                 .voucherConsumption(mapVoucherConsumption(r.getVoucherConsumption()))
+                .build();
+
+        return base.toBuilder()
                 .redeemed(r.getRedeemed())
                 .managerId(r.getManagerId())
                 .voucherCost(r.getVoucherCost())
                 .assumedPercentage(r.getAssumedPercentage())
                 .build();
     }
+
 
 
     private LoyaltyStoreFeaturedResponse mapStore(LoyaltyGetStoreFeaturedResponse store) {
