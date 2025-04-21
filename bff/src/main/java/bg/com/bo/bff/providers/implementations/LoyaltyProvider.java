@@ -119,7 +119,7 @@ public class LoyaltyProvider extends HttpClientExternalProvider<LoyaltyError> im
     }
 
     @Override
-    public List<LoyaltyRegisterRedeemVoucherResponse> getVoucherTrasanctedList(
+    public List<LoyaltyRegisterRedeemVoucherResponse> getVoucherTransactedList(
             Map<String, String> headers, String personId, int campaignId, String state
     ) throws IOException {
         String url = baseUrl + String.format(

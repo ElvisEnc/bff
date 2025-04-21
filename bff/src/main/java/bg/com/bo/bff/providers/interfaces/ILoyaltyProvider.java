@@ -56,7 +56,7 @@ public interface ILoyaltyProvider {
             Map<String, String> headers, MerchantCampaignVoucherAPIRequest request
     ) throws IOException;
 
-    List<LoyaltyRegisterRedeemVoucherResponse> getVoucherTrasanctedList(
+    List<LoyaltyRegisterRedeemVoucherResponse> getVoucherTransactedList(
             Map<String, String> headers, String personId, int campaignId, String state
     ) throws IOException;
 

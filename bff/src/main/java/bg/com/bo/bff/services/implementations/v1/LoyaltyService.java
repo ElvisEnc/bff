@@ -158,7 +158,7 @@ public class LoyaltyService implements ILoyaltyService {
     ) throws IOException {
         Map<String, String> headerService = mapper.mapperRequestService(personId);
         List<LoyaltyRedeemVoucherResponse> list = mapper.convertVoucherTransactedListResponse(
-                provider.getVoucherTrasanctedList(headerService, personId, campaignId, state)
+                provider.getVoucherTransactedList(headerService, personId, campaignId, state)
         );
         return LoyaltyVoucherTransactedListResponse.builder()
                 .data(list)
