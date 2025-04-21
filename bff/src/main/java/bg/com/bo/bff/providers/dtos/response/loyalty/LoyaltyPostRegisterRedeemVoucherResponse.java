@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoyaltyRegisterRedeemVoucherResponse {
+public class LoyaltyPostRegisterRedeemVoucherResponse {
     @JsonProperty("id")
     private String identifier;
 
@@ -66,7 +66,7 @@ public class LoyaltyRegisterRedeemVoucherResponse {
     private String status;
 
     @JsonProperty("comercio")
-    private LoyaltyTrade trade;
+    private LoyaltyGetTrade trade;
 
     @JsonProperty("tipoVale")
     private String typeValue;
@@ -78,7 +78,7 @@ public class LoyaltyRegisterRedeemVoucherResponse {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class LoyaltyTrade {
+    public static class LoyaltyGetTrade {
         @JsonProperty("id")
         private String identifierTrade;
 

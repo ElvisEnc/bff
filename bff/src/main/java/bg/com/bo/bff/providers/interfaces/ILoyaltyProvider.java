@@ -20,7 +20,7 @@ public interface ILoyaltyProvider {
 
     LoyaltyRegisterSubscriptionResponse registerSubscription(LoyaltyRegisterSubscriptionRequest requestServer, Map<String, String> headers) throws IOException;
 
-    LoyaltyRegisterRedeemVoucherResponse registerRedeemVoucher(LoyaltyRegisterRedeemVoucherRequest requestServer, Map<String, String> headers) throws IOException;
+    LoyaltyPostRegisterRedeemVoucherResponse registerRedeemVoucher(LoyaltyRegisterRedeemVoucherRequest requestServer, Map<String, String> headers) throws IOException;
 
     LoyaltyGetLevelResponse getLevel(Map<String, String> headers, String personId) throws IOException;
 
@@ -47,4 +47,10 @@ public interface ILoyaltyProvider {
     LoyaltyStatusResponse checkFlow(Map<String, String> headers, String personId) throws IOException;
 
     LoyaltyGetPromotionResponse getPromotions(Map<String, String> headers, String promotionId) throws IOException;
+
+    List<LoyaltyGetStoreFeaturedResponse> getStoreFeatured(Map<String, String> headers) throws IOException;
+
+    LoyaltyGetQrTransactionsResponse getQRTransactions(Map<String, String> headers, String voucherId, String typeVoucher) throws IOException;
+
+    List<LoyaltyGetTransactionsResponse> getVoucherTransactions(Map<String, String> headers, String codeSystem, String status) throws IOException;
 }

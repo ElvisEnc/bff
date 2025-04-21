@@ -417,7 +417,7 @@ class LoyaltyControllerTest {
         when(service.getPromotions(any(), any())).thenReturn(responseExpected);
 
         // Act
-        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/promotionId/{promotionId}/promotion";
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/promotion/{promotionId}/promotion";
         MvcResult result = mockMvc.perform(get(urlLoyalty, "123", "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -428,6 +428,71 @@ class LoyaltyControllerTest {
         // Assert
         assertNotNull(result);
         verify(service).getPromotions(any(), any());
+    }
+
+    @Test
+    void givenPersonIdWhenStoreFeaturedThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyStoreFeaturedResponse responseExpected = LoyaltyResponseFixture.withDefaultStoreFeatured();
+        List<LoyaltyStoreFeaturedResponse> responseListExpected = new ArrayList<>();
+        responseListExpected.add(responseExpected);
+        when(service.getStoreFeatured(any())).thenReturn(responseListExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/store-featured";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).getStoreFeatured(any());
+    }
+
+    @Test
+    void givenPersonIdWhenQRTransactionsThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyVoucherQrTransactionsResponse responseExpected = LoyaltyResponseFixture.withDefaultQrTransactions();
+        when(service.getQRTransactions(any(), any(), any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/voucher/{voucherId}/type/{typeVoucher}/qr-transactions";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123","123", "CONSUMO")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).getQRTransactions(any(), any(), any());
+    }
+
+
+    @Test
+    void givenPersonIdWhenVoucherTransactionsThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyVoucherTransactionsResponse responseExpected = LoyaltyResponseFixture.withDefaultVoucherTransactions();
+        List<LoyaltyVoucherTransactionsResponse> responseListExpected = new ArrayList<>();
+        responseListExpected.add(responseExpected);
+        when(service.getVoucherTransactions(any(), any(), any())).thenReturn(responseListExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/system-code/{codeSystem}/status/{status}/voucher-transactions";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123","123", "VIGENTE")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        assertNotNull(result);
+        verify(service).getVoucherTransactions(any(), any(), any());
     }
 
 

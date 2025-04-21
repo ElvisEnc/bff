@@ -105,7 +105,7 @@ class LoyaltyServiceTest {
     void givenValidDataWhenRegisterRedeemVoucher() throws IOException {
         //Arrange
         RegisterRedeemVoucherRequest request = LoyaltySERequestFixture.withDefaultRegisterRedeemVoucher();
-        LoyaltyRegisterRedeemVoucherResponse expectedResponse = LoyaltySEResponseFixture.withDefaultRegisterRedeemVoucher();
+        LoyaltyPostRegisterRedeemVoucherResponse expectedResponse = LoyaltySEResponseFixture.withDefaultRegisterRedeemVoucher();
         when(provider.registerRedeemVoucher(any(), any())).thenReturn(expectedResponse);
 
         //Act
@@ -113,14 +113,14 @@ class LoyaltyServiceTest {
 
         assertNotNull(response);
         verify(provider).registerRedeemVoucher(any(), any());
-        verify(mapper).convertResponse(any(LoyaltyRegisterRedeemVoucherResponse.class));
+        verify(mapper).convertResponse(any(LoyaltyPostRegisterRedeemVoucherResponse.class));
     }
 
     @Test
     void givenNullInformationWhenRegisterRedeemVoucherThenRequestBuiltWithoutInformation() throws IOException {
         // Arrange
         RegisterRedeemVoucherRequest request = LoyaltySERequestFixture.withDefaultRegisterRedeemVoucherNull();
-        LoyaltyRegisterRedeemVoucherResponse expectedResponse = LoyaltySEResponseFixture.withDefaultRegisterRedeemVoucher();
+        LoyaltyPostRegisterRedeemVoucherResponse expectedResponse = LoyaltySEResponseFixture.withDefaultRegisterRedeemVoucher();
 
         when(provider.registerRedeemVoucher(any(), any())).thenReturn(expectedResponse);
 
@@ -130,7 +130,7 @@ class LoyaltyServiceTest {
         // Assert
         assertNotNull(response);
         verify(provider).registerRedeemVoucher(any(), any());
-        verify(mapper).convertResponse(any(LoyaltyRegisterRedeemVoucherResponse.class));
+        verify(mapper).convertResponse(any(LoyaltyPostRegisterRedeemVoucherResponse.class));
     }
 
 
@@ -536,6 +536,7 @@ class LoyaltyServiceTest {
         verify(provider).getPromotions(any(), any());
         verify(mapper).convertResponse((LoyaltyGetPromotionResponse) isNull());
     }
+
     @Test
     void givenPromotionWithoutImageWhenConvertResponseThenImageIsNull() {
         // Arrange
@@ -548,5 +549,155 @@ class LoyaltyServiceTest {
         assertNotNull(result);
         assertNull(result.getImage());
     }
+
+    @Test
+    void givenValidDataWhenStoreFeatured() throws IOException {
+        //Arrange
+        LoyaltyGetStoreFeaturedResponse expectedResponse = LoyaltySEResponseFixture.withDefaultStoreFeatured();
+        List<LoyaltyGetStoreFeaturedResponse> expectedListResponse = new ArrayList<>();
+        expectedListResponse.add(expectedResponse);
+
+        when(provider.getStoreFeatured(any())).thenReturn(expectedListResponse);
+
+        //Act
+        List<LoyaltyStoreFeaturedResponse> response = service.getStoreFeatured("123");
+
+        assertNotNull(response);
+        verify(provider).getStoreFeatured(any());
+        verify(mapper).convertStoreFeatured(expectedListResponse);
+    }
+
+    @Test
+    void givenEmptyStoreFeaturedListWhenStoreFeaturedThenReturnsEmpty() throws IOException {
+        // Arrange
+        List<LoyaltyGetStoreFeaturedResponse> emptyResponse = Collections.emptyList();
+
+        when(provider.getStoreFeatured(any())).thenReturn(emptyResponse);
+
+        // Act
+        List<LoyaltyStoreFeaturedResponse> response = service.getStoreFeatured("123");
+
+        // Assert
+        assertNotNull(response);
+
+        verify(provider).getStoreFeatured(any());
+        verify(mapper).convertStoreFeatured(emptyResponse);
+    }
+
+    @Test
+    void givenStoreFeaturedWhenConvertResponseThenCategoryIsNull() {
+        // Arrange
+        LoyaltyGetStoreFeaturedResponse expectedResponse = LoyaltySEResponseFixture.withDefaultStoreFeaturedNull();
+        List<LoyaltyGetStoreFeaturedResponse> expectedListResponse = new ArrayList<>();
+        expectedListResponse.add(expectedResponse);
+
+        // Act
+        List<LoyaltyStoreFeaturedResponse> result = mapper.convertStoreFeatured(expectedListResponse);
+
+        // Assert
+        assertNotNull(result);
+    }
+
+    @Test
+    void givenQRTransactionsWhenPromotions() throws IOException{
+        // Arrange
+        LoyaltyGetQrTransactionsResponse expectedResponse = LoyaltySEResponseFixture.withDefaultQrTransactions();
+
+        when(provider.getQRTransactions(any(), any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        LoyaltyVoucherQrTransactionsResponse response = service.getQRTransactions("1234", "1234", "123");
+
+        assertNotNull(response);
+        verify(provider).getQRTransactions(any(), any(), any());
+        verify(mapper).convertVoucherQrTransaction(any(LoyaltyGetQrTransactionsResponse.class));
+    }
+
+    @Test
+    void givenVoucherQrTransactionsWhenConvertResponseThenVoucherIsNull() {
+        // Arrange
+        LoyaltyGetQrTransactionsResponse expectedResponse = LoyaltySEResponseFixture.withDefaultVoucherQrNull();
+
+        // Act
+        LoyaltyVoucherQrTransactionsResponse  result = mapper.convertVoucherQrTransaction(expectedResponse);
+
+        // Assert
+        assertNotNull(result);
+    }
+
+    @Test
+    void givenValidDataWhenVoucherTransactions() throws IOException {
+        //Arrange
+        LoyaltyGetTransactionsResponse expectedResponse = LoyaltySEResponseFixture.withDefaultTransactions();
+        List<LoyaltyGetTransactionsResponse> expectedListResponse = new ArrayList<>();
+        expectedListResponse.add(expectedResponse);
+
+        when(provider.getVoucherTransactions(any(), any(), any())).thenReturn(expectedListResponse);
+
+        //Act
+        List<LoyaltyVoucherTransactionsResponse> response = service.getVoucherTransactions("123", "123", "123");
+
+        assertNotNull(response);
+        verify(provider).getVoucherTransactions(any(), any(), any());
+        verify(mapper).convertVoucherTransaction(expectedListResponse);
+    }
+
+    @Test
+    void givenEmptyVoucherTransactionsListWhenVoucherTransactionsThenReturnsEmpty() throws IOException {
+        // Arrange
+        List<LoyaltyGetTransactionsResponse> emptyResponse = Collections.emptyList();
+
+        when(provider.getVoucherTransactions(any(), any(), any())).thenReturn(emptyResponse);
+
+        // Act
+        List<LoyaltyVoucherTransactionsResponse> response = service.getVoucherTransactions("123", "123", "123");
+
+        // Assert
+        assertNotNull(response);
+
+        verify(provider).getVoucherTransactions(any(), any(), any());
+        verify(mapper).convertVoucherTransaction(emptyResponse);
+    }
+
+    @Test
+    void givenVoucherTransactionsWhenConvertResponseThenVoucherTransactionsIsNull() {
+        // Arrange
+        List<LoyaltyGetTransactionsResponse> expectedListResponse = null;
+
+        // Act
+        List<LoyaltyVoucherTransactionsResponse> result = mapper.convertVoucherTransaction(expectedListResponse);
+
+        // Assert
+        assertNotNull(result);
+    }
+
+    @Test
+    void givenVoucherTransactionsWhenConvertResponseThenVoucherIsNull() {
+        // Arrange
+        LoyaltyGetTransactionsResponse expectedResponse = LoyaltySEResponseFixture.withDefaultVoucherNull();
+        List<LoyaltyGetTransactionsResponse> expectedListResponse = new ArrayList<>();
+        expectedListResponse.add(expectedResponse);
+
+        // Act
+        List<LoyaltyVoucherTransactionsResponse> result = mapper.convertVoucherTransaction(expectedListResponse);
+
+        // Assert
+        assertNotNull(result);
+    }
+
+    @Test
+    void givenVoucherTransactionsWhenConvertResponseThenStoreIsNull() {
+        // Arrange
+        LoyaltyGetTransactionsResponse expectedResponse = LoyaltySEResponseFixture.withDefaultStoreNull();
+        List<LoyaltyGetTransactionsResponse> expectedListResponse = new ArrayList<>();
+        expectedListResponse.add(expectedResponse);
+
+        // Act
+        List<LoyaltyVoucherTransactionsResponse> result = mapper.convertVoucherTransaction(expectedListResponse);
+
+        // Assert
+        assertNotNull(result);
+    }
+
 
 }

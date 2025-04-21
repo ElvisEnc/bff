@@ -25,6 +25,9 @@ public enum LoyaltyServices {
     GET_TERMS_CONDITIONS("/lealtad/administracion/api/v1/campanas-ganamovil/obtener-contrato-persona"),
     VALIDATE_PROGRAM("/lealtad/administracion/api/v1/reglas-ganamovil/validar-vamos/%s"),
     GET_PROMOTION("/lealtad/administracion/api/v1/promociones-ganamovil/%s"),
+    GET_STORE_FEATURED("/lealtad/beneficios/api/v1/comercios-ganamovil/comercios-destacados"),
+    GET_QR_TRANSACTION("/lealtad/beneficios/api/v1/vales-ganamovil/%s/tipo-vale/%s"),
+    GET_VOUCHER_TRANSACTION("/lealtad/beneficios/api/v1/vales-ganamovil/campana/1/persona/%s/estado/%s"),
     ;
     private final String serviceURL;
 }

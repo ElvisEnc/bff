@@ -24,7 +24,7 @@ public class RegisterRedeemVoucherRequest {
     private String typeBenefit;
 
     @Schema(description = "Información para el canje")
-    private RegisterRedeemVoucherRequest.InformationVoucher information;
+    private InformationVoucher information;
 
     @Data
     @Builder

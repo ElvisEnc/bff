@@ -14,7 +14,10 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherQrTransactionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +60,12 @@ public interface ILoyaltyService {
     GenericResponse checkFlow(String personId) throws IOException;
 
     LoyaltyPromotionResponse getPromotions(String personId, String promotionId) throws IOException;
+
+    List<LoyaltyStoreFeaturedResponse> getStoreFeatured(String personId) throws IOException;
+
+    LoyaltyVoucherQrTransactionsResponse getQRTransactions(String personId, String voucherId, String typeVoucher) throws IOException;
+
+    List<LoyaltyVoucherTransactionsResponse> getVoucherTransactions(String personId, String codeSystem, String status) throws IOException;
 
 
 }

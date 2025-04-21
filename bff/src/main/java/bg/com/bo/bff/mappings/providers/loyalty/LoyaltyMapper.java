@@ -13,7 +13,10 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherQrTransactionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
@@ -46,7 +49,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
     }
 
     @Override
-    public LoyaltyRedeemVoucherResponse convertResponse(LoyaltyRegisterRedeemVoucherResponse response) {
+    public LoyaltyRedeemVoucherResponse convertResponse(LoyaltyPostRegisterRedeemVoucherResponse response) {
         return LoyaltyRedeemVoucherResponse.builder()
                 .identifier(response.getIdentifier())
                 .codeVoucher(response.getCodeVoucher())
@@ -202,6 +205,138 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .build();
     }
 
+    @Override
+    public List<LoyaltyStoreFeaturedResponse> convertStoreFeatured(List<LoyaltyGetStoreFeaturedResponse> response) {
+        return response.stream().map(store ->
+                LoyaltyStoreFeaturedResponse.builder()
+                        .identifier(store.getIdentifier())
+                        .name(store.getName())
+                        .description(store.getDescription())
+                        .logo(store.getLogo())
+                        .isFeatured(store.getIsFeatured())
+                        .categoryId(store.getCategoryId())
+                        .category(
+                                store.getCategory() != null ? LoyaltyStoreFeaturedResponse.Category.builder()
+                                        .categoryId(store.getCategory().getCategoryId())
+                                        .nameCategory(store.getCategory().getNameCategory())
+                                        .iconCategory(store.getCategory().getIconCategory())
+                                        .build() : null
+                        )
+                        .isActive(store.getIsActive())
+                        .cheaper(store.getCheaper())
+                        .build()
+        ).toList();
+    }
+
+    @Override
+    public LoyaltyVoucherQrTransactionsResponse convertVoucherQrTransaction(LoyaltyGetQrTransactionsResponse response) {
+        return LoyaltyVoucherQrTransactionsResponse.builder()
+                .identifier(response.getIdentifier())
+                .voucherCode(response.getVoucherCode())
+                .campaignId(response.getCampaignId())
+                .holderName(response.getHolderName())
+                .holderDocument(response.getHolderDocument())
+                .beneficiaryName(response.getBeneficiaryName())
+                .beneficiaryDocument(response.getBeneficiaryDocument())
+                .personId(response.getPersonId())
+                .personCode(response.getPersonCode())
+                .creationDate(response.getCreationDate())
+                .redemptionDate(response.getRedemptionDate())
+                .redemptionValue(response.getRedemptionValue())
+                .expirationDate(response.getExpirationDate())
+                .benefitId(response.getBenefitId())
+                .name(response.getName())
+                .description(response.getDescription())
+                .banner(response.getBanner())
+                .note(response.getNote())
+                .status(response.getStatus())
+                .voucherType(response.getVoucherType())
+                .store(mapStore(response.getStore()))
+                .voucherConsumption(mapVoucherConsumption(response.getVoucherConsumption()))
+                .build();
+    }
+
+    @Override
+    public List<LoyaltyVoucherTransactionsResponse> convertVoucherTransaction(List<LoyaltyGetTransactionsResponse> response) {
+        if (response == null || response.isEmpty()) {
+            return List.of();
+        }
+        return response.stream()
+                .map(r -> LoyaltyVoucherTransactionsResponse.builder()
+                        .identifier(r.getIdentifier())
+                        .voucherCode(r.getVoucherCode())
+                        .campaignId(r.getCampaignId())
+                        .holderName(r.getHolderName())
+                        .holderDocument(r.getHolderDocument())
+                        .beneficiaryName(r.getBeneficiaryName())
+                        .beneficiaryDocument(r.getBeneficiaryDocument())
+                        .personId(r.getPersonId())
+                        .personCode(r.getPersonCode())
+                        .creationDate(r.getCreationDate())
+                        .redemptionValue(r.getRedemptionValue())
+                        .expirationDate(r.getExpirationDate())
+                        .benefitId(r.getBenefitId())
+                        .name(r.getName())
+                        .description(r.getDescription())
+                        .banner(r.getBanner())
+                        .redeemed(r.getRedeemed())
+                        .redemptionDate(r.getRedemptionDate())
+                        .managerId(r.getManagerId())
+                        .voucherCost(r.getVoucherCost())
+                        .voucherType(r.getVoucherType())
+                        .assumedPercentage(r.getAssumedPercentage())
+                        .note(r.getNote())
+                        .status(r.getStatus())
+                        .store(mapStore(r.getStore()))
+                        .consumptionVoucher(mapConsumptionVoucher(r.getConsumptionVoucher()))
+                        .build())
+                .toList();
+    }
+
+    private LoyaltyVoucherTransactionsResponse.ConsumptionVoucher mapConsumptionVoucher(
+            LoyaltyGetTransactionsResponse.GetConsumptionVoucher voucher) {
+        if (voucher == null) return null;
+
+        return LoyaltyVoucherTransactionsResponse.ConsumptionVoucher.builder()
+                .valueVoucher(voucher.getValueVoucher())
+                .valueType(voucher.getValueType())
+                .build();
+    }
+
+    private LoyaltyStoreFeaturedResponse mapStore(LoyaltyGetStoreFeaturedResponse store) {
+        if (store == null) return null;
+
+        return LoyaltyStoreFeaturedResponse.builder()
+                .identifier(store.getIdentifier())
+                .name(store.getName())
+                .description(store.getDescription())
+                .logo(store.getLogo())
+                .isFeatured(store.getIsFeatured())
+                .categoryId(store.getCategoryId())
+                .category(mapCategory(store.getCategory()))
+                .isActive(store.getIsActive())
+                .cheaper(store.getCheaper())
+                .build();
+    }
+    private LoyaltyStoreFeaturedResponse.Category mapCategory(LoyaltyGetStoreFeaturedResponse.GetCategory category) {
+        if (category == null) return null;
+
+        return LoyaltyStoreFeaturedResponse.Category.builder()
+                .categoryId(category.getCategoryId())
+                .nameCategory(category.getNameCategory())
+                .iconCategory(category.getIconCategory())
+                .build();
+    }
+
+    private LoyaltyVoucherQrTransactionsResponse.VoucherConsumption mapVoucherConsumption(LoyaltyGetQrTransactionsResponse.GetVoucherConsumption voucherConsumption) {
+        if (voucherConsumption == null) return null;
+
+        return LoyaltyVoucherQrTransactionsResponse.VoucherConsumption.builder()
+                .valueVoucher(voucherConsumption.getValueVoucher())
+                .valueType(voucherConsumption.getValueType())
+                .build();
+    }
+
     private LoyaltyLevelResponse convertLevel(LoyaltyGetLevelResponse level) {
         if (level == null) {
             return null;
@@ -289,7 +424,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .build();
     }
 
-    private LoyaltyRedeemVoucherResponse.LoyaltyTrade mapTrade(LoyaltyRegisterRedeemVoucherResponse.LoyaltyTrade sourceTrade) {
+    private LoyaltyRedeemVoucherResponse.LoyaltyTrade mapTrade(LoyaltyPostRegisterRedeemVoucherResponse.LoyaltyGetTrade sourceTrade) {
         return LoyaltyRedeemVoucherResponse.LoyaltyTrade.builder()
                 .identifierTrade(sourceTrade.getIdentifierTrade())
                 .nameTrade(sourceTrade.getNameTrade())
@@ -299,7 +434,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .build();
     }
 
-    private LoyaltyRedeemVoucherResponse.LoyaltyCategory mapCategory(LoyaltyRegisterRedeemVoucherResponse.LoyaltyCategory sourceCategory) {
+    private LoyaltyRedeemVoucherResponse.LoyaltyCategory mapCategory(LoyaltyPostRegisterRedeemVoucherResponse.LoyaltyCategory sourceCategory) {
         return LoyaltyRedeemVoucherResponse.LoyaltyCategory.builder()
                 .identifierCategory(sourceCategory.getIdentifierCategory())
                 .nameCategory(sourceCategory.getNameCategory())
@@ -307,7 +442,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .build();
     }
 
-    private LoyaltyRedeemVoucherResponse.LoyaltyRedeemVoucher mapRedeemVoucher(LoyaltyRegisterRedeemVoucherResponse.LoyaltyRedeemVoucher sourceVoucher) {
+    private LoyaltyRedeemVoucherResponse.LoyaltyRedeemVoucher mapRedeemVoucher(LoyaltyPostRegisterRedeemVoucherResponse.LoyaltyRedeemVoucher sourceVoucher) {
         return LoyaltyRedeemVoucherResponse.LoyaltyRedeemVoucher.builder()
                 .valueRedeemVoucher(sourceVoucher.getValueRedeemVoucher())
                 .typeValueRedeemVoucher(sourceVoucher.getTypeValueRedeemVoucher())

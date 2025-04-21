@@ -22,7 +22,7 @@ public interface ILoyaltyMapper {
 
     LoyaltyPointResponse convertResponse(LoyaltyPointServerResponse response);
 
-    LoyaltyRedeemVoucherResponse convertResponse(LoyaltyRegisterRedeemVoucherResponse response);
+    LoyaltyRedeemVoucherResponse convertResponse(LoyaltyPostRegisterRedeemVoucherResponse response);
 
     LoyaltyLevelResponse convertResponse(LoyaltyGetLevelResponse response);
 
@@ -38,11 +38,17 @@ public interface ILoyaltyMapper {
 
     List<LoyaltyImageResponse> convertResponseImage(List<LoyaltyGetImageResponse> response);
 
-    List<bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCategoryPromotionResponse> convertResponseCategoryProm(List<LoyaltyGetCategoryPromotionResponse> response);
+    List<LoyaltyCategoryPromotionResponse> convertResponseCategoryProm(List<LoyaltyGetCategoryPromotionResponse> response);
 
     LoyaltyTermsConditionsResponse convertResponse(LoyaltyGetTermsConditionsResponse response);
 
     LoyaltyPromotionResponse convertResponse(LoyaltyGetPromotionResponse response);
+
+    List<LoyaltyStoreFeaturedResponse> convertStoreFeatured(List<LoyaltyGetStoreFeaturedResponse> response);
+
+    LoyaltyVoucherQrTransactionsResponse convertVoucherQrTransaction(LoyaltyGetQrTransactionsResponse response);
+
+    List<LoyaltyVoucherTransactionsResponse> convertVoucherTransaction(List<LoyaltyGetTransactionsResponse> response);
 
     Map<String, String> mapperRequestService(String personId);
 

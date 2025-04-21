@@ -93,10 +93,10 @@ class LoyaltyProviderTest {
         Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
         String expectedUrl = BASE_URL + "/lealtad/campana/api/v1/canje-vales-ganamovil/canje-vale";
 
-        LoyaltyRegisterRedeemVoucherResponse mockResponse = LoyaltySEResponseFixture.withDefaultRegisterRedeemVoucher();
-        doReturn(mockResponse).when(loyaltyProvider).executePostRequest(expectedUrl, request, headers, LoyaltyRegisterRedeemVoucherResponse.class);
+        LoyaltyPostRegisterRedeemVoucherResponse mockResponse = LoyaltySEResponseFixture.withDefaultRegisterRedeemVoucher();
+        doReturn(mockResponse).when(loyaltyProvider).executePostRequest(expectedUrl, request, headers, LoyaltyPostRegisterRedeemVoucherResponse.class);
 
-        LoyaltyRegisterRedeemVoucherResponse response = loyaltyProvider.registerRedeemVoucher(request, headers);
+        LoyaltyPostRegisterRedeemVoucherResponse response = loyaltyProvider.registerRedeemVoucher(request, headers);
         assertNotNull(response);
     }
 
@@ -302,6 +302,66 @@ class LoyaltyProviderTest {
 
         LoyaltyGetPromotionResponse response = loyaltyProvider.getPromotions(headers, promotionId);
         assertNotNull(response);
+    }
+
+    @Test
+    void givenValidPersonId_whenGetStoreFeatured_thenReturnResponse() throws Exception {
+        // Arrange
+        String personId = "12345";
+        Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
+        String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/comercios-ganamovil/comercios-destacados";
+
+        LoyaltyGetStoreFeaturedResponse mockResponse = LoyaltySEResponseFixture.withDefaultStoreFeatured();
+        List<LoyaltyGetStoreFeaturedResponse> mockListResponse = new ArrayList<>();
+        mockListResponse.add(mockResponse);
+        doReturn(mockListResponse).when(loyaltyProvider)
+                .executeGetRequest(eq(expectedUrl), eq(headers), any(TypeReference.class));
+
+        // Act
+        List<LoyaltyGetStoreFeaturedResponse> response = loyaltyProvider.getStoreFeatured(headers);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(mockListResponse.size(), response.size());
+        verify(loyaltyProvider).executeGetRequest(eq(expectedUrl), eq(headers), any(TypeReference.class));
+    }
+
+    @Test
+    void givenValidPersonId_whenGetQRTransactions_thenReturnResponse() throws Exception {
+        String voucherId = "12345";
+        String typeVoucher = "12345";
+        Map<String, String> headers = Map.of("sesion", "123", "idpersona", "1234");
+        String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/vales-ganamovil/" + voucherId +"/tipo-vale/" + typeVoucher;
+
+        LoyaltyGetQrTransactionsResponse mockResponse = LoyaltySEResponseFixture.withDefaultQrTransactions();
+        doReturn(mockResponse).when(loyaltyProvider).executeGetRequest(expectedUrl, headers, LoyaltyGetQrTransactionsResponse.class);
+
+        LoyaltyGetQrTransactionsResponse response = loyaltyProvider.getQRTransactions(headers, voucherId, typeVoucher);
+        assertNotNull(response);
+    }
+
+    @Test
+    void givenValidPersonId_whenGetVoucherTransactions_thenReturnResponse() throws Exception {
+        // Arrange
+        String personId = "12345";
+        String codeSystem = "12345";
+        String status = "12345";
+        Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
+        String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/vales-ganamovil/campana/1/persona/" + codeSystem + "/estado/" + status;
+
+        LoyaltyGetTransactionsResponse mockResponse = LoyaltySEResponseFixture.withDefaultTransactions();
+        List<LoyaltyGetTransactionsResponse> mockListResponse = new ArrayList<>();
+        mockListResponse.add(mockResponse);
+        doReturn(mockListResponse).when(loyaltyProvider)
+                .executeGetRequest(eq(expectedUrl), eq(headers), any(TypeReference.class));
+
+        // Act
+        List<LoyaltyGetTransactionsResponse> response = loyaltyProvider.getVoucherTransactions(headers, codeSystem, status);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(mockListResponse.size(), response.size());
+        verify(loyaltyProvider).executeGetRequest(eq(expectedUrl), eq(headers), any(TypeReference.class));
     }
 
 }

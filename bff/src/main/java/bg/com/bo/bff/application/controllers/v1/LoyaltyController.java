@@ -15,7 +15,12 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherRespo
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherQrTransactionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
+import bg.com.bo.bff.commons.annotations.loyalty.ValidTypeBenefit;
+import bg.com.bo.bff.commons.annotations.loyalty.ValidTypeStatus;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.services.interfaces.ILoyaltyService;
@@ -265,13 +270,56 @@ public class LoyaltyController extends AbstractBFFController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Obtener promocion del programa")
     })
-    @GetMapping("/persons/{personId}/promotionId/{promotionId}/promotion")
+    @GetMapping("/persons/{personId}/promotion/{promotionId}/promotion")
     public ResponseEntity<LoyaltyPromotionResponse> getPromotions (
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("promotionId") @Parameter(description = "Este es el promotionId de la promocion", example = "12345") String promotionId
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.getPromotions(personId, promotionId));
+    }
+
+    @Operation(summary = "Obtener los comercios destacados", description = "Obtener los comercios destacados del programa",
+            operationId = "getStoreFeatured")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener los comercios destacados del programa")
+    })
+    @GetMapping("/persons/{personId}/store-featured")
+    public ResponseEntity<List<LoyaltyStoreFeaturedResponse>> getStoreFeatured (
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.getStoreFeatured(personId));
+    }
+
+    @Operation(summary = "Obtener el vale qr transaccionado", description = "Obtener el vale qr transaccionado del programa",
+            operationId = "getQRTransactions")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener el vale qr transaccionado del programa")
+    })
+    @GetMapping("/persons/{personId}/voucher/{voucherId}/type/{typeVoucher}/qr-transactions")
+    public ResponseEntity<LoyaltyVoucherQrTransactionsResponse> getQRTransactions (
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("voucherId") @Parameter(description = "Este es el identificador del vale", example = "CONSUMO") String voucherId,
+            @PathVariable("typeVoucher") @ValidTypeBenefit @Parameter(description = "Este es el personId de la persona", example = "12345") String typeVoucher
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.getQRTransactions(personId, voucherId, typeVoucher));
+    }
+
+    @Operation(summary = "Obtener el vale transaccionado", description = "Obtener el vale transaccionado del programa",
+            operationId = "getVoucherTransactions")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Obtener el vale transaccionado del programa")
+    })
+    @GetMapping("/persons/{personId}/system-code/{codeSystem}/status/{status}/voucher-transactions")
+    public ResponseEntity<List<LoyaltyVoucherTransactionsResponse>> getVoucherTransactions (
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("codeSystem") @OnlyNumber @Parameter(description = "Este es el codigo de sistema de la persona", example = "12345") String codeSystem,
+            @PathVariable("status") @ValidTypeStatus @Parameter(description = "Este es el estado del vale", example = "VIGENTE") String status
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.getVoucherTransactions(personId, codeSystem, status));
     }
 
 
