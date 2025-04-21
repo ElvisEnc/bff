@@ -23,7 +23,21 @@ import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
-import bg.com.bo.bff.providers.dtos.response.loyalty.*;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGeneralInformationResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetCategoryPromotionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetGenericTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetImageResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetInitialPointsVamosResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetLevelResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetPromotionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetStoreFeaturedResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTermsConditionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPointServerResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPostRegisterRedeemVoucherResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatementPointsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -271,7 +285,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
     }
 
     private LoyaltyVoucherTransactionsResponse mapToVoucherTransaction(LoyaltyGetTransactionsResponse r) {
-        return LoyaltyVoucherTransactionsResponse.builder()
+        return bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse.builder()
                 .identifier(r.getIdentifier())
                 .voucherCode(r.getVoucherCode())
                 .campaignId(r.getCampaignId())
