@@ -285,7 +285,7 @@ public class LoyaltyMapper implements ILoyaltyMapper{
     }
 
     private LoyaltyVoucherTransactionsResponse mapToVoucherTransaction(LoyaltyGetTransactionsResponse r) {
-        LoyaltyVoucherTransactionsResponse base = LoyaltyVoucherTransactionsResponse.builder()
+        return LoyaltyVoucherTransactionsResponse.builder()
                 .identifier(r.getIdentifier())
                 .voucherCode(r.getVoucherCode())
                 .campaignId(r.getCampaignId())
@@ -308,16 +308,12 @@ public class LoyaltyMapper implements ILoyaltyMapper{
                 .store(mapStore(r.getStore()))
                 .voucherType(r.getVoucherType())
                 .voucherConsumption(mapVoucherConsumption(r.getVoucherConsumption()))
-                .build();
-
-        return base.toBuilder()
                 .redeemed(r.getRedeemed())
                 .managerId(r.getManagerId())
                 .voucherCost(r.getVoucherCost())
                 .assumedPercentage(r.getAssumedPercentage())
                 .build();
     }
-
 
 
     private LoyaltyStoreFeaturedResponse mapStore(LoyaltyGetStoreFeaturedResponse store) {
