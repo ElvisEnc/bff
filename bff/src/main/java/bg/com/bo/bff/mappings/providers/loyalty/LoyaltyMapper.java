@@ -29,7 +29,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class LoyaltyMapper implements ILoyaltyMapper{
@@ -265,37 +264,43 @@ public class LoyaltyMapper implements ILoyaltyMapper{
         if (response == null || response.isEmpty()) {
             return List.of();
         }
+
         return response.stream()
-                .map(r -> LoyaltyVoucherTransactionsResponse.builder()
-                        .identifier(r.getIdentifier())
-                        .voucherCode(r.getVoucherCode())
-                        .campaignId(r.getCampaignId())
-                        .holderName(r.getHolderName())
-                        .holderDocument(r.getHolderDocument())
-                        .beneficiaryName(r.getBeneficiaryName())
-                        .beneficiaryDocument(r.getBeneficiaryDocument())
-                        .personId(r.getPersonId())
-                        .personCode(r.getPersonCode())
-                        .creationDate(r.getCreationDate())
-                        .redemptionValue(r.getRedemptionValue())
-                        .expirationDate(r.getExpirationDate())
-                        .benefitId(r.getBenefitId())
-                        .name(r.getName())
-                        .description(r.getDescription())
-                        .banner(r.getBanner())
-                        .redemptionDate(r.getRedemptionDate())
-                        .voucherType(r.getVoucherType())
-                        .note(r.getNote())
-                        .status(r.getStatus())
-                        .store(mapStore(r.getStore()))
-                        .voucherConsumption(mapVoucherConsumption(r.getVoucherConsumption()))
-                        .redeemed(r.getRedeemed())
-                        .managerId(r.getManagerId())
-                        .voucherCost(r.getVoucherCost())
-                        .assumedPercentage(r.getAssumedPercentage())
-                        .build())
-                .collect(Collectors.toList());
+                .map(this::mapToVoucherTransaction)
+                .toList();
     }
+
+    private LoyaltyVoucherTransactionsResponse mapToVoucherTransaction(LoyaltyGetTransactionsResponse r) {
+        return LoyaltyVoucherTransactionsResponse.builder()
+                .identifier(r.getIdentifier())
+                .voucherCode(r.getVoucherCode())
+                .campaignId(r.getCampaignId())
+                .holderName(r.getHolderName())
+                .holderDocument(r.getHolderDocument())
+                .beneficiaryName(r.getBeneficiaryName())
+                .beneficiaryDocument(r.getBeneficiaryDocument())
+                .personId(r.getPersonId())
+                .personCode(r.getPersonCode())
+                .creationDate(r.getCreationDate())
+                .redemptionValue(r.getRedemptionValue())
+                .expirationDate(r.getExpirationDate())
+                .benefitId(r.getBenefitId())
+                .name(r.getName())
+                .description(r.getDescription())
+                .banner(r.getBanner())
+                .redemptionDate(r.getRedemptionDate())
+                .voucherType(r.getVoucherType())
+                .note(r.getNote())
+                .status(r.getStatus())
+                .store(mapStore(r.getStore()))
+                .voucherConsumption(mapVoucherConsumption(r.getVoucherConsumption()))
+                .redeemed(r.getRedeemed())
+                .managerId(r.getManagerId())
+                .voucherCost(r.getVoucherCost())
+                .assumedPercentage(r.getAssumedPercentage())
+                .build();
+    }
+
 
     private LoyaltyStoreFeaturedResponse mapStore(LoyaltyGetStoreFeaturedResponse store) {
         if (store == null) return null;
