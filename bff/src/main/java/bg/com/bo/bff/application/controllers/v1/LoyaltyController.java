@@ -217,7 +217,7 @@ public class LoyaltyController extends AbstractBFFController {
             @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @RequestParam("merchantId") @Parameter(description = "ID del comercio.") UUID merchantId,
             @RequestParam("categoryId") @Parameter(description = "ID de la categoria.") UUID categoryId,
-            @RequestParam("campaignId") @Parameter(description = "ID de la categoria.") int campaignId
+            @RequestParam("campaignId") @Parameter(description = "ID de la campaña.") int campaignId
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(ApiDataResponse.of(
@@ -241,7 +241,7 @@ public class LoyaltyController extends AbstractBFFController {
             @PathVariable("personId") @OnlyNumber
             @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @RequestParam("campaignId") @Parameter(description = "ID de la categoria.") int campaignId,
-            @RequestParam("state") @Parameter(description = "ID de la categoria.") String state
+            @RequestParam("state") @Parameter(description = "ID del estado.") String state
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(
