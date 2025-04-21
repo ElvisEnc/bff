@@ -48,7 +48,7 @@ public interface ILoyaltyMapper {
 
     LoyaltyGenericVoucherTransactionResponse convertVoucherQrTransaction(LoyaltyGetGenericTransactionsResponse response);
 
-    List<?> convertVoucherTransaction(List<LoyaltyGetTransactionsResponse> response);
+    List<LoyaltyVoucherTransactionsResponse> convertVoucherTransaction(List<LoyaltyGetTransactionsResponse> response);
 
     Map<String, String> mapperRequestService(String personId);
 

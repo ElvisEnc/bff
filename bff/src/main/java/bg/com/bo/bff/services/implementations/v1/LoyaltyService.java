@@ -212,7 +212,7 @@ public class LoyaltyService implements ILoyaltyService {
     public List<LoyaltyVoucherTransactionsResponse> getVoucherTransactions(String personId, String codeSystem, String status) throws IOException {
         Map<String, String> headerService = mapper.mapperRequestService(personId);
         List<LoyaltyGetTransactionsResponse> responseServer = provider.getVoucherTransactions(headerService, codeSystem, status);
-        return (List<LoyaltyVoucherTransactionsResponse>) mapper.convertVoucherTransaction(responseServer);
+        return mapper.convertVoucherTransaction(responseServer);
     }
 
 }
