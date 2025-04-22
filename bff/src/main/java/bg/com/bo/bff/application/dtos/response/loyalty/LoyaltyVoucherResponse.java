@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 public class LoyaltyVoucherResponse {
 
     @JsonProperty("identifier")
-    private String identifier;
+    private String voucherId;
 
     @JsonProperty("name")
-    private String name;
+    private String voucherName;
 
     @JsonProperty("description")
-    private String description;
+    private String voucherDescription;
 
     @JsonProperty("redemptionValue")
     private String redemptionValue;
@@ -28,7 +28,7 @@ public class LoyaltyVoucherResponse {
     private String typeVoucher;
 
     @JsonProperty("banner")
-    private String banner;
+    private String voucherBanner;
 
     @JsonProperty("merchantId")
     private String merchantId;

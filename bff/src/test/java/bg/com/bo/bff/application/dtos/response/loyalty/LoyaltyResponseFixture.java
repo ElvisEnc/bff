@@ -316,11 +316,13 @@ public class LoyaltyResponseFixture {
                 .data(
                         Collections.singletonList(
                                 LoyaltyFeaturedMerchant.builder()
-                                        .identifier("123123")
-                                        .name("El Solar")
-                                        .description("Negocio el Solar.")
-                                        .logo("Logo el Solar")
-                                        .cheapest(420)
+                                        .merchantId("123123")
+                                        .merchantName("El Solar")
+                                        .merchantDescription("Negocio el Solar.")
+                                        .merchantLogo("Logo el Solar")
+                                        .merchantCheapest(420)
+                                        .isFeatured((byte) 0)
+                                        .isActive((byte) 0)
                                         .category(
                                                 LoyaltyTradeCategoryResponse.builder()
                                                         .categoryId("123123")
@@ -369,11 +371,13 @@ public class LoyaltyResponseFixture {
                 .voucherType("DESCUENTO")
                 .voucherStatus("ACTIVO")
                 .merchant(LoyaltyFeaturedMerchant.builder()
-                        .identifier("GANADERO")
-                        .name("BANCO BGA")
-                        .description("Comercio dedicado a la banca.")
-                        .logo("Logo BGA")
-                        .cheapest(1500)
+                        .merchantId("GANADERO")
+                        .merchantName("BANCO BGA")
+                        .merchantDescription("Comercio dedicado a la banca.")
+                        .merchantLogo("Logo BGA")
+                        .merchantCheapest(1500)
+                        .isFeatured((byte) 0)
+                        .isActive((byte) 0)
                         .category(LoyaltyTradeCategoryResponse.builder()
                                 .categoryId("CAT-001")
                                 .nameCategory("Banca privada")
@@ -392,13 +396,13 @@ public class LoyaltyResponseFixture {
 
     public static LoyaltyMerchantVoucherCategoryResponse withDefaultGetMerchantCampaignVouchers() {
         return LoyaltyMerchantVoucherCategoryResponse.builder()
-                .redemptionVoucher(new LoyaltyMerchantVoucherCategoryResponse.Voucher[]{
+                .redemptionVoucher(new LoyaltyVoucherResponse[]{
                         buildVoucher(
                                 "Consumo-001",
                                 "Vale de consumo",
                                 "Descuento para consumo", "1000", "CONSUMO")
                 })
-                .travelVoucher(new LoyaltyMerchantVoucherCategoryResponse.Voucher[]{
+                .travelVoucher(new LoyaltyVoucherResponse[]{
                         buildVoucher(
                                 "PASAJE-001",
                                 "Vale de Pasaje",
@@ -406,14 +410,14 @@ public class LoyaltyResponseFixture {
                                 "2000",
                                 "PASAJE")
                 })
-                .productVoucher(new LoyaltyMerchantVoucherCategoryResponse.Voucher[]{
+                .productVoucher(new LoyaltyVoucherResponse[]{
                         buildVoucher(
                                 "PRODUCTOS-001",
                                 "Vale de Productos",
                                 "Canje de producto", "3000",
                                 "PRODUCTOS")
                 })
-                .discountVoucher(new LoyaltyMerchantVoucherCategoryResponse.Voucher[]{
+                .discountVoucher(new LoyaltyVoucherResponse[]{
                         buildVoucher(
                                 "DESCUENTO-001", "Vale Descuento Generales",
                                 "500 Bs en toda la tienda",
@@ -423,16 +427,16 @@ public class LoyaltyResponseFixture {
                 .build();
     }
 
-    private static LoyaltyMerchantVoucherCategoryResponse.Voucher buildVoucher(
+    private static LoyaltyVoucherResponse buildVoucher(
             String id, String name, String desc, String value, String type
     ) {
-        return LoyaltyMerchantVoucherCategoryResponse.Voucher.builder()
-                .identifier(id)
-                .name(name)
-                .description(desc)
+        return LoyaltyVoucherResponse.builder()
+                .voucherId(id)
+                .voucherName(name)
+                .voucherDescription(desc)
                 .redemptionValue(value)
                 .typeVoucher(type)
-                .banner("Banner de vouchers" + id.toLowerCase() + ".png")
+                .voucherBanner("Banner de vouchers" + id.toLowerCase() + ".png")
                 .merchantId("2312001")
                 .build();
     }

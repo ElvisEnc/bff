@@ -15,25 +15,33 @@ import lombok.NoArgsConstructor;
 public class LoyaltyFeaturedMerchant {
 
     @Schema(description = "identificador")
-    @JsonProperty("identifier")
-    private String identifier;
+    @JsonProperty("merchantId")
+    private String merchantId;
 
     @Schema(description = "Nombre del comercio.")
-    @JsonProperty("name")
-    private String name;
+    @JsonProperty("merchantName")
+    private String merchantName;
 
     @Schema(description = "Descripcion")
-    @JsonProperty("description")
-    private String description;
+    @JsonProperty("merchantDescription")
+    private String merchantDescription;
 
     @Schema(description = "logotipo del comercio.")
-    @JsonProperty("logo")
-    private String logo;
+    @JsonProperty("merchantLogo")
+    private String merchantLogo;
+
+    @Schema(description = "Si es destacado")
+    @JsonProperty("isFeatured")
+    private Byte isFeatured;
+
+    @Schema(description = "Si esta activado")
+    @JsonProperty("isActive")
+    private Byte isActive;
 
     @Schema(description = "Costo mas barato.")
-    @JsonProperty("cheapest")
+    @JsonProperty("merchantCheapest")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer cheapest;
+    private Integer merchantCheapest;
 
     @Schema(description = "Categoría del comercio.")
     @JsonProperty("category")

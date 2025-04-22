@@ -14,7 +14,6 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCityListResponse.LoyaltyCity;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyFeaturedMerchant;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyMerchantVoucherCategoryResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyMerchantVoucherCategoryResponse.Voucher;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyQrTransactionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
@@ -22,6 +21,7 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedRespo
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGenericVoucherTransactionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherConsumptionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryResponse;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
@@ -41,6 +41,7 @@ import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetPromotionResponse
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetStoreFeaturedResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTermsConditionsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetVoucherResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPointServerResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPostRegisterRedeemVoucherResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatementPointsResponse;
@@ -487,11 +488,13 @@ public class LoyaltyMapper implements ILoyaltyMapper {
             return Collections.emptyList();
         return apiResponse.stream()
                 .map(data -> LoyaltyFeaturedMerchant.builder()
-                        .identifier(data.getId())
-                        .name(data.getName())
-                        .description(data.getDescription())
-                        .logo(data.getLogo())
-                        .cheapest(data.getCheapest())
+                        .merchantId(data.getMerchantId())
+                        .merchantName(data.getMerchantName())
+                        .merchantDescription(data.getMerchantDescription())
+                        .merchantLogo(data.getMerchantLogo())
+                        .merchantCheapest(data.getMerchantCheapest())
+                        .isFeatured(data.getIsFeatured())
+                        .isActive(data.getIsActive())
                         .category(LoyaltyTradeCategoryResponse
                                 .builder()
                                 .categoryId(data.getCategory().getCategoryId())
@@ -546,10 +549,10 @@ public class LoyaltyMapper implements ILoyaltyMapper {
                 .voucherStatus(apiResponse.getVoucherStatus())
                 .merchant(
                         LoyaltyFeaturedMerchant.builder()
-                                .identifier(apiResponse.getMerchant().getId())
-                                .name(apiResponse.getMerchant().getName())
-                                .description(apiResponse.getMerchant().getDescription())
-                                .logo(apiResponse.getMerchant().getLogo())
+                                .merchantCheapest(apiResponse.getMerchant().getMerchantCheapest())
+                                .merchantName(apiResponse.getMerchant().getMerchantName())
+                                .merchantDescription(apiResponse.getMerchant().getMerchantDescription())
+                                .merchantLogo(apiResponse.getMerchant().getMerchantLogo())
                                 .category(
                                         LoyaltyTradeCategoryResponse.builder()
                                                 .categoryId(apiResponse.getMerchant().getCategory().getCategoryId())
@@ -590,20 +593,20 @@ public class LoyaltyMapper implements ILoyaltyMapper {
     }
 
 
-    private Voucher[] mapVouchers(LoyaltyMerchantCampaignVoucherAPIResponse.Voucher[] vouchers) {
-        if (vouchers == null) return new LoyaltyMerchantVoucherCategoryResponse.Voucher[0];
+    private LoyaltyVoucherResponse[] mapVouchers(LoyaltyGetVoucherResponse[] vouchers) {
+        if (vouchers == null) return new LoyaltyVoucherResponse[0];
 
         return Arrays.stream(vouchers)
-                .map(row -> Voucher.builder()
-                        .identifier(row.getIdentifier())
-                        .name(row.getName())
+                .map(row -> LoyaltyVoucherResponse.builder()
+                        .voucherId(row.getVoucherId())
+                        .voucherName(row.getVoucherName())
                         .typeVoucher(row.getTypeVoucher())
-                        .banner(row.getBanner())
-                        .description(row.getDescription())
+                        .voucherBanner(row.getVoucherBanner())
+                        .voucherDescription(row.getVoucherDescription())
                         .merchantId(row.getMerchantId())
                         .redemptionValue(row.getRedemptionValue())
                         .build())
-                .toArray(Voucher[]::new);
+                .toArray(LoyaltyVoucherResponse[]::new);
     }
 
 

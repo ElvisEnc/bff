@@ -13,16 +13,16 @@ import lombok.NoArgsConstructor;
 public class LoyaltyFeaturedMerchantAPIResponse {
 
     @JsonProperty("id")
-    private String id;
+    private String merchantId;
 
     @JsonProperty("nombre")
-    private String name;
+    private String merchantName;
 
     @JsonProperty("descripcion")
-    private String description;
+    private String merchantDescription;
 
     @JsonProperty("logo")
-    private String logo;
+    private String merchantLogo;
 
     @JsonProperty("isDestacado")
     private Byte isFeatured;
@@ -31,7 +31,7 @@ public class LoyaltyFeaturedMerchantAPIResponse {
     private Byte isActive;
 
     @JsonProperty("masBarato")
-    private Integer cheapest;
+    private Integer merchantCheapest;
 
     @JsonProperty("categoria")
     private LoyaltyGetTradeCategoryResponse category;
