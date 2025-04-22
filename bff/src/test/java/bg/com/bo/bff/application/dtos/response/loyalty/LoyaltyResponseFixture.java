@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 public class LoyaltyResponseFixture {
@@ -308,6 +309,19 @@ public class LoyaltyResponseFixture {
                 .build());
 
         return response;
+    }
+
+    public static LoyaltyTradeCategoryListResponse withDefaultTradeCategories() {
+
+        return LoyaltyTradeCategoryListResponse.builder().data(
+                Collections.singletonList(LoyaltyTradeCategory
+                        .builder()
+                        .name("BIMBO")
+                        .icon("MyIcon")
+                        .identifier("123").build()
+                )
+        ).build();
+
     }
 
 }

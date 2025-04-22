@@ -7,7 +7,21 @@ import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.*;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCategoryPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGenericVoucherTransactionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyImageResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyResponseFixture;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import bg.com.bo.bff.services.interfaces.ILoyaltyService;
@@ -496,4 +510,27 @@ class LoyaltyControllerTest {
     }
 
 
+
+    @Test
+    void givenPersonIdWhenGetTradeCategoriesThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyTradeCategoryListResponse responseExpected = LoyaltyResponseFixture.withDefaultTradeCategories();
+        when(service.getTradeCategories(any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/trade-categories";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String expected = Util.objectToString(responseExpected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getTradeCategories(any());
+    }
 }

@@ -364,4 +364,29 @@ class LoyaltyProviderTest {
         verify(loyaltyProvider).executeGetRequest(eq(expectedUrl), eq(headers), any(TypeReference.class));
     }
 
+    @Test
+    void givenValidPersonId_whenGetTradeCategories_thenReturnResponse() throws Exception {
+        // Arrange
+        String personId = "12345";
+        Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
+
+        String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/comercios-ganamovil/categorias-comercios";
+
+        List<LoyaltyTradeCategoryAPIResponse> mockResponseList =
+                LoyaltySEResponseFixture.withDefaultLoyaltyGetTradeCategories();
+
+        LoyaltyTradeCategoryAPIResponse[] mockArray =
+                mockResponseList.toArray(new LoyaltyTradeCategoryAPIResponse[0]);
+
+        doReturn(mockArray).when(loyaltyProvider)
+                .executeGetRequest(expectedUrl, headers, LoyaltyTradeCategoryAPIResponse[].class);
+
+        // Act
+        List<LoyaltyTradeCategoryAPIResponse> response = loyaltyProvider.getTradeCategories(headers, personId);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(mockResponseList.size(), response.size());
+    }
+
 }

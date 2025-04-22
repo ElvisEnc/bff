@@ -6,11 +6,42 @@ import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.*;
-import bg.com.bo.bff.providers.dtos.response.loyalty.*;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCategoryPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGenericVoucherTransactionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyImageResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.loyalty.LoyaltyMapper;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltySERequestFixture;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGeneralInformationResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetCategoryPromotionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetGenericTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetImageResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetInitialPointsVamosResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetLevelResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetPromotionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetStoreFeaturedResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTermsConditionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPointServerResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPostRegisterRedeemVoucherResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyRegisterSubscriptionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySEResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatementPointsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatusResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyTradeCategoryAPIResponse;
 import bg.com.bo.bff.providers.interfaces.ILoyaltyProvider;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyResponse;
 import org.junit.jupiter.api.Test;
@@ -26,7 +57,10 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
@@ -699,5 +733,18 @@ class LoyaltyServiceTest {
         assertNotNull(result);
     }
 
+
+    @Test
+    void givenValidDataWhenGetTradeCategories() throws IOException {
+        //Arrange
+        List<LoyaltyTradeCategoryAPIResponse> expectedResponse = LoyaltySEResponseFixture.withDefaultLoyaltyGetTradeCategories();
+        when(provider.getTradeCategories(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        LoyaltyTradeCategoryListResponse response = service.getTradeCategories("1234");
+
+        assertNotNull(response);
+        verify(provider).getTradeCategories(any(), any());
+    }
 
 }

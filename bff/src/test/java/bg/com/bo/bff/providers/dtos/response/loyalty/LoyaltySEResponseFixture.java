@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.Collections;
+import java.util.List;
+
 public class LoyaltySEResponseFixture {
 
     public static LoyaltySystemCodeServerResponse withDefaultSystemCode() {
@@ -485,5 +488,16 @@ public class LoyaltySEResponseFixture {
                 .build();
     }
 
+
+    public static List<LoyaltyTradeCategoryAPIResponse> withDefaultLoyaltyGetTradeCategories() {
+        return Collections.singletonList(
+                LoyaltyTradeCategoryAPIResponse
+                        .builder()
+                        .id("15")
+                        .icon("iconTest")
+                        .name("BIMBO")
+                        .build()
+        );
+    }
 
 }
