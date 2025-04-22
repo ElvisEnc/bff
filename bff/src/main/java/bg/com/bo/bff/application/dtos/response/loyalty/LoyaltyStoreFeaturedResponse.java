@@ -40,7 +40,7 @@ public class LoyaltyStoreFeaturedResponse {
 
     @Schema(description = "Informacion de la categoria")
     @JsonProperty("category")
-    private Category category;
+    private LoyaltyTradeCategoryResponse category;
 
     @Schema(description = "Valor si esta activo")
     @JsonProperty("isActive")
@@ -49,22 +49,4 @@ public class LoyaltyStoreFeaturedResponse {
     @Schema(description = "Valor si es mas barato")
     @JsonProperty("cheaper")
     private Integer cheaper;
-
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Category {
-        @Schema(description = "Es el identificador de la categoria")
-        @JsonProperty("categoryId")
-        private String categoryId;
-
-        @Schema(description = "Es el nombre de la categoria")
-        @JsonProperty("nameCategory")
-        private String nameCategory;
-
-        @Schema(description = "Es el icono de la categoria")
-        @JsonProperty("iconCategory")
-        private String iconCategory;
-    }
 }

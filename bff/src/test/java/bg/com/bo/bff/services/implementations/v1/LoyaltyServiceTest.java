@@ -23,7 +23,7 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherRespo
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategory;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactedListResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
@@ -52,7 +52,7 @@ import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatementPointsRespo
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatusResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyTradeCategoryAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTradeCategoryResponse;
 import bg.com.bo.bff.providers.interfaces.ILoyaltyProvider;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyResponse;
 import org.junit.jupiter.api.Test;
@@ -762,7 +762,7 @@ class LoyaltyServiceTest {
     @Test
     void givenValidDataWhenGetTradeCategories() throws IOException {
         //Arrange
-        List<LoyaltyTradeCategoryAPIResponse> expectedResponse = LoyaltySEResponseFixture.withDefaultLoyaltyGetTradeCategories();
+        List<LoyaltyGetTradeCategoryResponse> expectedResponse = LoyaltySEResponseFixture.withDefaultLoyaltyGetTradeCategories();
         when(provider.getTradeCategories(any(), any())).thenReturn(expectedResponse);
 
         //Act
@@ -775,7 +775,7 @@ class LoyaltyServiceTest {
     @Test
     void givenNullApiResponseWhenConvertResponseTradeCategoryThenReturnEmptyList() {
         // Act
-        List<LoyaltyTradeCategory> result = mapper.convertResponseTradeCategory(null);
+        List<LoyaltyTradeCategoryResponse> result = mapper.convertResponseTradeCategory(null);
 
         // Assert
         assertNotNull(result);

@@ -64,9 +64,9 @@ public class LoyaltyResponseFixture {
                 .build();
     }
 
-    public static LoyaltyRedeemVoucherResponse.LoyaltyCategory withDefaultLoyaltyCategory() {
-        return LoyaltyRedeemVoucherResponse.LoyaltyCategory.builder()
-                .identifierCategory("codeVoucher")
+    public static LoyaltyTradeCategoryResponse withDefaultLoyaltyCategory() {
+        return LoyaltyTradeCategoryResponse.builder()
+                .categoryId("codeVoucher")
                 .nameCategory("nameTrade")
                 .iconCategory("holderName")
                 .build();
@@ -205,11 +205,7 @@ public class LoyaltyResponseFixture {
                 .logo("https://example.com/logo.png")
                 .isFeatured(1)
                 .categoryId("cat001")
-                .category(LoyaltyStoreFeaturedResponse.Category.builder()
-                        .categoryId("cat001")
-                        .nameCategory("Tecnología")
-                        .iconCategory("https://example.com/icono-tecnologia.png")
-                        .build())
+                .category(withDefaultLoyaltyCategory())
                 .isActive(1)
                 .cheaper(0)
                 .build();
@@ -244,15 +240,11 @@ public class LoyaltyResponseFixture {
                         .logo("https://example.com/logo-super.png")
                         .isFeatured(1)
                         .categoryId("CAT-01")
-                        .category(LoyaltyStoreFeaturedResponse.Category.builder()
-                                .categoryId("CAT-01")
-                                .nameCategory("Alimentos")
-                                .iconCategory("https://example.com/icon-alimentos.png")
-                                .build())
+                        .category(withDefaultLoyaltyCategory())
                         .isActive(1)
                         .cheaper(1)
                         .build())
-                .voucherConsumption(LoyaltyGenericVoucherTransactionResponse.VoucherConsumption.builder()
+                .voucherConsumption(LoyaltyVoucherConsumptionResponse.builder()
                         .valueVoucher("500")
                         .valueType("Bs")
                         .build())
@@ -294,16 +286,12 @@ public class LoyaltyResponseFixture {
                 .logo("https://cdn.example.com/logos/casayhogar.png")
                 .isFeatured(1)
                 .categoryId("CAT-HOME")
-                .category(LoyaltyStoreFeaturedResponse.Category.builder()
-                        .categoryId("CAT-HOME")
-                        .nameCategory("Hogar")
-                        .iconCategory("https://cdn.example.com/icons/hogar.png")
-                        .build())
+                .category(withDefaultLoyaltyCategory())
                 .isActive(1)
                 .cheaper(0)
                 .build());
 
-        response.setVoucherConsumption(LoyaltyGenericVoucherTransactionResponse.VoucherConsumption.builder()
+        response.setVoucherConsumption(LoyaltyVoucherConsumptionResponse.builder()
                 .valueVoucher("1000")
                 .valueType("Bs")
                 .build());
@@ -314,11 +302,11 @@ public class LoyaltyResponseFixture {
     public static LoyaltyTradeCategoryListResponse withDefaultTradeCategories() {
 
         return LoyaltyTradeCategoryListResponse.builder().data(
-                Collections.singletonList(LoyaltyTradeCategory
+                Collections.singletonList(LoyaltyTradeCategoryResponse
                         .builder()
-                        .name("BIMBO")
-                        .icon("MyIcon")
-                        .identifier("123").build()
+                        .nameCategory("BIMBO")
+                        .iconCategory("MyIcon")
+                        .categoryId("123").build()
                 )
         ).build();
     }
@@ -334,10 +322,10 @@ public class LoyaltyResponseFixture {
                                         .logo("Logo el Solar")
                                         .cheapest(420)
                                         .category(
-                                                LoyaltyTradeCategory.builder()
-                                                        .identifier("123123")
-                                                        .name("Restaurantes")
-                                                        .icon("Icono Restaurante").build()
+                                                LoyaltyTradeCategoryResponse.builder()
+                                                        .categoryId("123123")
+                                                        .nameCategory("Restaurantes")
+                                                        .iconCategory("Icono Restaurante").build()
 
                                         ).build()
                         )
@@ -386,10 +374,10 @@ public class LoyaltyResponseFixture {
                         .description("Comercio dedicado a la banca.")
                         .logo("Logo BGA")
                         .cheapest(1500)
-                        .category(LoyaltyTradeCategory.builder()
-                                .identifier("CAT-001")
-                                .name("Banca privada")
-                                .icon("icono BGA")
+                        .category(LoyaltyTradeCategoryResponse.builder()
+                                .categoryId("CAT-001")
+                                .nameCategory("Banca privada")
+                                .iconCategory("icono BGA")
                                 .build()
                         )
                         .build())
@@ -450,50 +438,45 @@ public class LoyaltyResponseFixture {
     }
 
     public static LoyaltyVoucherTransactedListResponse withDefaultGetVoucherTransactedList() {
-        return LoyaltyVoucherTransactedListResponse.builder()
-                .data(
-                        Collections.singletonList(
-                                LoyaltyRedeemVoucherResponse.builder()
-                                        .identifier("1231323")
-                                        .codeVoucher("Cod123")
-                                        .idCampaign("3221132")
-                                        .holderName("John Travolta")
-                                        .documentHolder("123456789")
-                                        .beneficiaryName("Jane Travolta")
-                                        .beneficiaryDocument("987654321")
-                                        .idPerson("12343")
-                                        .codePerson("COD12345")
-                                        .dateCreation("2025-04-22")
-                                        .dateVoucher("2025-04-23")
-                                        .valueVoucher(100.0)
-                                        .expirationDate("2025-12-31")
-                                        .idBenefit("4564545")
-                                        .name("Voucher para consumo")
-                                        .description("Este voucher es con proposito de consumo.")
-                                        .banner("Banner voucher")
-                                        .note("Solo valido en tiendas que participan.")
-                                        .status("ACTIVE")
-                                        .trade(LoyaltyRedeemVoucherResponse.LoyaltyTrade.builder()
-                                                .identifierTrade("12313245")
-                                                .nameTrade("DISMAC")
-                                                .descriptionTrade("Muy buena tienda para articulos originales")
-                                                .logoTrade("Logo Dismac")
-                                                .category(LoyaltyRedeemVoucherResponse.LoyaltyCategory.builder()
-                                                        .identifierCategory("31232")
-                                                        .nameCategory("Electronica")
-                                                        .iconCategory("Icono Electronica")
-                                                        .build())
-                                                .build())
-                                        .typeValue("CONSUMMO")
-                                        .redeemVoucher(LoyaltyRedeemVoucherResponse.LoyaltyRedeemVoucher.builder()
-                                                .valueRedeemVoucher("100.0")
-                                                .typeValueRedeemVoucher("Dolares")
-                                                .build())
-                                        .build()
-                        )
-                )
-                .build();
+        return LoyaltyVoucherTransactedListResponse.builder().data(
+                    Collections.singletonList(LoyaltyRedeemVoucherResponse.builder()
+                    .identifier("1231323")
+                    .codeVoucher("Cod123")
+                    .idCampaign("3221132")
+                    .holderName("John Travolta")
+                    .documentHolder("123456789")
+                    .beneficiaryName("Jane Travolta")
+                    .beneficiaryDocument("987654321")
+                    .idPerson("12343")
+                    .codePerson("COD12345")
+                    .dateCreation("2025-04-22")
+                    .dateVoucher("2025-04-23")
+                    .valueVoucher(100.0)
+                    .expirationDate("2025-12-31")
+                    .idBenefit("4564545")
+                    .name("Voucher para consumo")
+                    .description("Este voucher es con proposito de consumo.")
+                    .banner("Banner voucher")
+                    .note("Solo valido en tiendas que participan.")
+                    .status("ACTIVE")
+                    .trade(LoyaltyRedeemVoucherResponse.LoyaltyTrade.builder()
+                        .identifierTrade("12313245")
+                        .nameTrade("DISMAC")
+                        .descriptionTrade("Muy buena tienda para articulos originales")
+                        .logoTrade("Logo Dismac")
+                        .category(LoyaltyTradeCategoryResponse.builder()
+                            .categoryId("31232")
+                            .nameCategory("Electronica")
+                            .iconCategory("Icono Electronica")
+                            .build())
+                        .build())
+                    .typeValue("CONSUMMO")
+                    .redeemVoucher(LoyaltyRedeemVoucherResponse.LoyaltyRedeemVoucher.builder()
+                        .valueRedeemVoucher("100.0")
+                        .typeValueRedeemVoucher("Dolares")
+                        .build())
+                    .build()))
+            .build();
     }
-
 
 }

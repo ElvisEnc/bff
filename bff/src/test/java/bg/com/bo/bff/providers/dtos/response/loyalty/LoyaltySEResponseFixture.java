@@ -74,8 +74,8 @@ public class LoyaltySEResponseFixture {
                         .nameTrade("Supermercado El Ahorro")
                         .descriptionTrade("Cadena de supermercados")
                         .logoTrade("https://example.com/logo.png")
-                        .category(LoyaltyPostRegisterRedeemVoucherResponse.LoyaltyCategory.builder()
-                                .identifierCategory("CAT-01")
+                        .category(LoyaltyGetTradeCategoryResponse.builder()
+                                .categoryId("CAT-01")
                                 .nameCategory("Alimentos")
                                 .iconCategory("https://example.com/icono.png")
                                 .build())
@@ -256,7 +256,7 @@ public class LoyaltySEResponseFixture {
                 .logo("https://example.com/logo.png")
                 .isFeatured(1)
                 .categoryId("cat-001")
-                .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                .category(LoyaltyGetTradeCategoryResponse.builder()
                         .categoryId("cat-001")
                         .nameCategory("Alimentos")
                         .iconCategory("https://example.com/icono.png")
@@ -308,7 +308,7 @@ public class LoyaltySEResponseFixture {
                         .logo("https://example.com/logo.png")
                         .isFeatured(1)
                         .categoryId("cat-001")
-                        .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                        .category(LoyaltyGetTradeCategoryResponse.builder()
                                 .categoryId("cat-001")
                                 .nameCategory("Electrodomésticos")
                                 .iconCategory("https://example.com/icono.png")
@@ -352,7 +352,7 @@ public class LoyaltySEResponseFixture {
                         .logo("https://example.com/logo.png")
                         .isFeatured(1)
                         .categoryId("cat-001")
-                        .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                        .category(LoyaltyGetTradeCategoryResponse.builder()
                                 .categoryId("cat-001")
                                 .nameCategory("Electrodomésticos")
                                 .iconCategory("https://example.com/icono.png")
@@ -398,7 +398,7 @@ public class LoyaltySEResponseFixture {
                         .logo("https://example.com/super-logo.png")
                         .isFeatured(1)
                         .categoryId("cat-002")
-                        .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                        .category(LoyaltyGetTradeCategoryResponse.builder()
                                 .categoryId("cat-002")
                                 .nameCategory("Supermercados")
                                 .iconCategory("https://example.com/icon-super.png")
@@ -485,13 +485,13 @@ public class LoyaltySEResponseFixture {
                 .build();
     }
 
-    public static List<LoyaltyTradeCategoryAPIResponse> withDefaultLoyaltyGetTradeCategories() {
+    public static List<LoyaltyGetTradeCategoryResponse> withDefaultLoyaltyGetTradeCategories() {
         return Collections.singletonList(
-                LoyaltyTradeCategoryAPIResponse
+                LoyaltyGetTradeCategoryResponse
                         .builder()
-                        .id("15")
-                        .icon("iconTest")
-                        .name("BIMBO")
+                        .categoryId("15")
+                        .iconCategory("iconTest")
+                        .nameCategory("BIMBO")
                         .build()
         );
     }
@@ -508,10 +508,10 @@ public class LoyaltySEResponseFixture {
                         .isActive((byte) 1)
                         .cheapest(522)
                         .category(
-                                LoyaltyTradeCategoryAPIResponse.builder()
-                                        .id("4545")
-                                        .name("Panaderia")
-                                        .icon("Logo Panaderia")
+                                LoyaltyGetTradeCategoryResponse.builder()
+                                        .categoryId("4545")
+                                        .nameCategory("Panaderia")
+                                        .iconCategory("Logo Panaderia")
                                         .build()
                         )
                         .build()
@@ -539,10 +539,10 @@ public class LoyaltySEResponseFixture {
                 .isActive((byte) 1)
                 .cheapest(350)
                 .category(
-                        LoyaltyTradeCategoryAPIResponse.builder()
-                                .id("36963")
-                                .name("Pollos")
-                                .icon("Logo Solar")
+                        LoyaltyGetTradeCategoryResponse.builder()
+                                .categoryId("36963")
+                                .nameCategory("Pollos")
+                                .iconCategory("Logo Solar")
                                 .build()
                 )
                 .build();

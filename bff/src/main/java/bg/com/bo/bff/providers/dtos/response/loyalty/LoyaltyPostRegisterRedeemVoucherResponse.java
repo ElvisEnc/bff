@@ -92,24 +92,9 @@ public class LoyaltyPostRegisterRedeemVoucherResponse {
         private String logoTrade;
 
         @JsonProperty("categoria")
-        private LoyaltyCategory category;
+        private LoyaltyGetTradeCategoryResponse category;
     }
 
-    @Getter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class LoyaltyCategory {
-        @JsonProperty("id")
-        private String identifierCategory;
-
-        @JsonProperty("nombre")
-        private String nameCategory;
-
-        @JsonProperty("icono")
-        private String iconCategory;
-
-    }
     @Getter
     @Builder
     @AllArgsConstructor

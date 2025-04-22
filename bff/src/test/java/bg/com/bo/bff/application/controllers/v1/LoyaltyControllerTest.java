@@ -28,7 +28,6 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListR
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactedListResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import bg.com.bo.bff.services.interfaces.ILoyaltyService;
 import org.junit.jupiter.api.BeforeEach;
@@ -557,7 +556,8 @@ class LoyaltyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
-        String expected = Util.objectToString(ApiDataResponse.of(responseExpected));
+
+        String expected = Util.objectToString(responseExpected);
         String actual = result.getResponse().getContentAsString();
 
         // Assert
@@ -580,7 +580,8 @@ class LoyaltyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
-        String expected = Util.objectToString(ApiDataResponse.of(responseExpected));
+
+        String expected = Util.objectToString(responseExpected);
         String actual = result.getResponse().getContentAsString();
 
         // Assert
@@ -608,7 +609,8 @@ class LoyaltyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
-        String expected = Util.objectToString(ApiDataResponse.of(responseExpected));
+
+        String expected = Util.objectToString(responseExpected);
         String actual = result.getResponse().getContentAsString();
 
         // Assert
@@ -633,7 +635,8 @@ class LoyaltyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
-        String expected = Util.objectToString(ApiDataResponse.of(responseExpected));
+
+        String expected = Util.objectToString(responseExpected);
         String actual = result.getResponse().getContentAsString();
 
         // Assert
@@ -662,7 +665,8 @@ class LoyaltyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
-        String expected = Util.objectToString(ApiDataResponse.of(responseExpected));
+
+        String expected = Util.objectToString(responseExpected);
         String actual = result.getResponse().getContentAsString();
 
         // Assert

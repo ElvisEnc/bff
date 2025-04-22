@@ -37,6 +37,6 @@ public class LoyaltyFeaturedMerchant {
 
     @Schema(description = "Categoría del comercio.")
     @JsonProperty("category")
-    private LoyaltyTradeCategory category;
+    private LoyaltyTradeCategoryResponse category;
 
 }

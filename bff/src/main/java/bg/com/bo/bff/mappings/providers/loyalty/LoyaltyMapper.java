@@ -21,8 +21,9 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGenericVoucherTransactionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherConsumptionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategory;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryResponse;
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
@@ -50,7 +51,7 @@ import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyCityListAPIResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyFeaturedMerchantAPIResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyMerchantCampaignVoucherAPIResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyQrTransactionAPIResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyTradeCategoryAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTradeCategoryResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -245,13 +246,7 @@ public class LoyaltyMapper implements ILoyaltyMapper {
                         .logo(store.getLogo())
                         .isFeatured(store.getIsFeatured())
                         .categoryId(store.getCategoryId())
-                        .category(
-                                store.getCategory() != null ? LoyaltyStoreFeaturedResponse.Category.builder()
-                                        .categoryId(store.getCategory().getCategoryId())
-                                        .nameCategory(store.getCategory().getNameCategory())
-                                        .iconCategory(store.getCategory().getIconCategory())
-                                        .build() : null
-                        )
+                        .category(mapCategory(store.getCategory()))
                         .isActive(store.getIsActive())
                         .cheaper(store.getCheaper())
                         .build()
@@ -348,20 +343,11 @@ public class LoyaltyMapper implements ILoyaltyMapper {
                 .cheaper(store.getCheaper())
                 .build();
     }
-    private LoyaltyStoreFeaturedResponse.Category mapCategory(LoyaltyGetStoreFeaturedResponse.GetCategory category) {
-        if (category == null) return null;
 
-        return LoyaltyStoreFeaturedResponse.Category.builder()
-                .categoryId(category.getCategoryId())
-                .nameCategory(category.getNameCategory())
-                .iconCategory(category.getIconCategory())
-                .build();
-    }
-
-    private LoyaltyGenericVoucherTransactionResponse.VoucherConsumption mapVoucherConsumption(LoyaltyGetGenericTransactionsResponse.GetVoucherConsumption voucherConsumption) {
+    private LoyaltyVoucherConsumptionResponse mapVoucherConsumption(LoyaltyGetGenericTransactionsResponse.GetVoucherConsumption voucherConsumption) {
         if (voucherConsumption == null) return null;
 
-        return LoyaltyGenericVoucherTransactionResponse.VoucherConsumption.builder()
+        return LoyaltyVoucherConsumptionResponse.builder()
                 .valueVoucher(voucherConsumption.getValueVoucher())
                 .valueType(voucherConsumption.getValueType())
                 .build();
@@ -387,7 +373,7 @@ public class LoyaltyMapper implements ILoyaltyMapper {
     @Override
     public Map<String, String> mapperRequestService(String personId) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("sesion", "0704202517010198a33421103b7311");
+        headers.put("sesion", "2204202511305398a33421103b7311");
         headers.put("idpersona", personId);
         return headers;
     }
@@ -464,11 +450,14 @@ public class LoyaltyMapper implements ILoyaltyMapper {
                 .build();
     }
 
-    private LoyaltyRedeemVoucherResponse.LoyaltyCategory mapCategory(LoyaltyPostRegisterRedeemVoucherResponse.LoyaltyCategory sourceCategory) {
-        return LoyaltyRedeemVoucherResponse.LoyaltyCategory.builder()
-                .identifierCategory(sourceCategory.getIdentifierCategory())
-                .nameCategory(sourceCategory.getNameCategory())
-                .iconCategory(sourceCategory.getIconCategory())
+    private LoyaltyTradeCategoryResponse mapCategory(LoyaltyGetTradeCategoryResponse category) {
+        if (category == null) {
+            return null;
+        }
+        return LoyaltyTradeCategoryResponse.builder()
+                .categoryId(category.getCategoryId())
+                .nameCategory(category.getNameCategory())
+                .iconCategory(category.getIconCategory())
                 .build();
     }
 
@@ -480,14 +469,14 @@ public class LoyaltyMapper implements ILoyaltyMapper {
     }
 
     @Override
-    public List<LoyaltyTradeCategory> convertResponseTradeCategory(List<LoyaltyTradeCategoryAPIResponse> apiResponse) {
+    public List<LoyaltyTradeCategoryResponse> convertResponseTradeCategory(List<LoyaltyGetTradeCategoryResponse> apiResponse) {
         if (apiResponse == null)
             return Collections.emptyList();
         return apiResponse.stream()
-                .map(data -> LoyaltyTradeCategory.builder()
-                        .identifier(data.getId())
-                        .name(data.getName())
-                        .icon(data.getIcon())
+                .map(data -> LoyaltyTradeCategoryResponse.builder()
+                        .categoryId(data.getCategoryId())
+                        .nameCategory(data.getNameCategory())
+                        .iconCategory(data.getIconCategory())
                         .build())
                 .toList();
     }
@@ -503,11 +492,11 @@ public class LoyaltyMapper implements ILoyaltyMapper {
                         .description(data.getDescription())
                         .logo(data.getLogo())
                         .cheapest(data.getCheapest())
-                        .category(LoyaltyTradeCategory
+                        .category(LoyaltyTradeCategoryResponse
                                 .builder()
-                                .identifier(data.getCategory().getId())
-                                .name(data.getCategory().getName())
-                                .icon(data.getCategory().getIcon())
+                                .categoryId(data.getCategory().getCategoryId())
+                                .nameCategory(data.getCategory().getNameCategory())
+                                .iconCategory(data.getCategory().getIconCategory())
                                 .build())
                         .build())
                 .toList();
@@ -562,10 +551,10 @@ public class LoyaltyMapper implements ILoyaltyMapper {
                                 .description(apiResponse.getMerchant().getDescription())
                                 .logo(apiResponse.getMerchant().getLogo())
                                 .category(
-                                        LoyaltyTradeCategory.builder()
-                                                .identifier(apiResponse.getMerchant().getCategory().getId())
-                                                .name(apiResponse.getMerchant().getCategory().getName())
-                                                .icon(apiResponse.getMerchant().getCategory().getIcon())
+                                        LoyaltyTradeCategoryResponse.builder()
+                                                .categoryId(apiResponse.getMerchant().getCategory().getCategoryId())
+                                                .nameCategory(apiResponse.getMerchant().getCategory().getNameCategory())
+                                                .iconCategory(apiResponse.getMerchant().getCategory().getIconCategory())
                                                 .build())
 
                                 .build()

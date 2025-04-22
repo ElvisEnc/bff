@@ -34,7 +34,7 @@ public class LoyaltyFeaturedMerchantAPIResponse {
     private Integer cheapest;
 
     @JsonProperty("categoria")
-    private LoyaltyTradeCategoryAPIResponse category;
+    private LoyaltyGetTradeCategoryResponse category;
 
 
 }

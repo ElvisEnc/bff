@@ -28,7 +28,7 @@ import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyCityListAPIResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyFeaturedMerchantAPIResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyMerchantCampaignVoucherAPIResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyQrTransactionAPIResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyTradeCategoryAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTradeCategoryResponse;
 import bg.com.bo.bff.providers.interfaces.ILoyaltyProvider;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyError;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyServices;
@@ -182,10 +182,10 @@ public class LoyaltyProvider extends HttpClientExternalProvider<LoyaltyError> im
     }
 
     @Override
-    public List<LoyaltyTradeCategoryAPIResponse> getTradeCategories(Map<String, String> headers, String personId)
+    public List<LoyaltyGetTradeCategoryResponse> getTradeCategories(Map<String, String> headers, String personId)
             throws IOException {
         String url = baseUrl + LoyaltyServices.GET_TRADE_CATEGORIES.getServiceURL();
-        return Arrays.asList(this.executeGetRequest(url, headers, LoyaltyTradeCategoryAPIResponse[].class));
+        return Arrays.asList(this.executeGetRequest(url, headers, LoyaltyGetTradeCategoryResponse[].class));
     }
 
     @Override

@@ -10,15 +10,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class LoyaltyTradeCategoryAPIResponse {
+public class LoyaltyGetTradeCategoryResponse {
 
     @JsonProperty("id")
-    private String id;
+    private String categoryId;
 
     @JsonProperty("nombre")
-    private String name;
+    private String nameCategory;
 
     @JsonProperty("icono")
-    private String icon;
+    private String iconCategory;
 
 }

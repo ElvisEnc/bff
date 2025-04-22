@@ -29,7 +29,6 @@ import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactedListResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
-import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.ILoyaltyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -360,12 +359,12 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtener listado de comercios destacados.")
     })
     @GetMapping("/persons/{personId}/featured-merchants")
-    public ResponseEntity<ApiDataResponse<LoyaltyFeaturedMerchantListResponse>> getFeaturedMerchants(
+    public ResponseEntity<LoyaltyFeaturedMerchantListResponse> getFeaturedMerchants(
             @PathVariable("personId") @OnlyNumber
             @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(ApiDataResponse.of(service.getFeaturedMerchants(personId)));
+        return ResponseEntity.ok(service.getFeaturedMerchants(personId));
     }
 
     @Operation(summary = "Obtener el listado de ciudades/departamentos.",
@@ -375,12 +374,12 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Listado de ciudades/departamentos.")
     })
     @GetMapping("/persons/{personId}/cities")
-    public ResponseEntity<ApiDataResponse<LoyaltyCityListResponse>> getCityList(
+    public ResponseEntity<LoyaltyCityListResponse> getCityList(
             @PathVariable("personId") @OnlyNumber
             @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(ApiDataResponse.of(service.getCityList(personId)));
+        return ResponseEntity.ok(service.getCityList(personId));
     }
 
     @Operation(summary = "Obtener el listado de los comercios por ciudades.",
@@ -390,14 +389,14 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200")
     })
     @GetMapping("/persons/{personId}/merchants")
-    public ResponseEntity<ApiDataResponse<LoyaltyFeaturedMerchantListResponse>> getCityCategoryMerchants(
+    public ResponseEntity<LoyaltyFeaturedMerchantListResponse> getCityCategoryMerchants(
             @PathVariable("personId") @OnlyNumber
             @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @RequestParam("cityId") @Parameter(description = "ID de la ciudad.") UUID cityId,
             @RequestParam("categoryId") @Parameter(description = "ID de la categoria.") UUID categoryId
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(ApiDataResponse.of(service.getCityCategoryMerchants(personId, cityId, categoryId)));
+        return ResponseEntity.ok(service.getCityCategoryMerchants(personId, cityId, categoryId));
     }
 
     @Operation(
@@ -412,14 +411,14 @@ public class LoyaltyController extends AbstractBFFController {
             )
     })
     @GetMapping("/persons/{personId}/vouchers/{voucherId}/type/{voucherType}")
-    public ResponseEntity<ApiDataResponse<LoyaltyQrTransactionResponse>> getVoucherDetail(
+    public ResponseEntity<LoyaltyQrTransactionResponse> getVoucherDetail(
             @PathVariable("personId") @OnlyNumber
             @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("voucherId") @Parameter(description = "ID de la ciudad.") UUID voucherId,
             @PathVariable("voucherType") @Parameter(description = "ID de la categoria.") String voucherType
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(ApiDataResponse.of(service.getVoucherDetail(personId, voucherId, voucherType)));
+        return ResponseEntity.ok(service.getVoucherDetail(personId, voucherId, voucherType));
     }
 
     @Operation(
@@ -431,7 +430,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Listado de voucher.")
     })
     @GetMapping("/persons/{personId}/vouchers")
-    public ResponseEntity<ApiDataResponse<LoyaltyMerchantVoucherCategoryResponse>> getCategoryVoucherList(
+    public ResponseEntity<LoyaltyMerchantVoucherCategoryResponse> getCategoryVoucherList(
             @PathVariable("personId") @OnlyNumber
             @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @RequestParam("merchantId") @Parameter(description = "ID del comercio.") UUID merchantId,
@@ -439,9 +438,9 @@ public class LoyaltyController extends AbstractBFFController {
             @RequestParam("campaignId") @Parameter(description = "ID de la campaña.") int campaignId
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(ApiDataResponse.of(
+        return ResponseEntity.ok(
                 service.getMerchantCampaignVouchers(personId, merchantId, categoryId, campaignId)
-        ));
+        );
     }
 
     @Operation(

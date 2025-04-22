@@ -11,19 +11,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoyaltyTradeCategory {
+public class LoyaltyTradeCategoryResponse {
 
     @Schema(description = "identificador")
-    @JsonProperty("identifier")
-    private String identifier;
+    @JsonProperty("categoryId")
+    private String categoryId;
 
     @Schema(description = "Nombre de la categoria.")
-    @JsonProperty("name")
-    private String name;
+    @JsonProperty("nameCategory")
+    private String nameCategory;
 
     @Schema(description = "Icono")
-    @JsonProperty("icon")
-    private String icon;
-
-
+    @JsonProperty("iconCategory")
+    private String iconCategory;
 }

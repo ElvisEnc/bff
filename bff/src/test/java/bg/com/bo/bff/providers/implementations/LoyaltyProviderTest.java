@@ -376,17 +376,17 @@ class LoyaltyProviderTest {
 
         String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/comercios-ganamovil/categorias-comercios";
 
-        List<LoyaltyTradeCategoryAPIResponse> mockResponseList =
+        List<LoyaltyGetTradeCategoryResponse> mockResponseList =
                 LoyaltySEResponseFixture.withDefaultLoyaltyGetTradeCategories();
 
-        LoyaltyTradeCategoryAPIResponse[] mockArray =
-                mockResponseList.toArray(new LoyaltyTradeCategoryAPIResponse[0]);
+        LoyaltyGetTradeCategoryResponse[] mockArray =
+                mockResponseList.toArray(new LoyaltyGetTradeCategoryResponse[0]);
 
         doReturn(mockArray).when(loyaltyProvider)
-                .executeGetRequest(expectedUrl, headers, LoyaltyTradeCategoryAPIResponse[].class);
+                .executeGetRequest(expectedUrl, headers, LoyaltyGetTradeCategoryResponse[].class);
 
         // Act
-        List<LoyaltyTradeCategoryAPIResponse> response = loyaltyProvider.getTradeCategories(headers, personId);
+        List<LoyaltyGetTradeCategoryResponse> response = loyaltyProvider.getTradeCategories(headers, personId);
 
         // Assert
         assertNotNull(response);

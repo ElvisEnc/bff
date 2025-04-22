@@ -12,5 +12,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoyaltyTradeCategoryListResponse {
-    private List<LoyaltyTradeCategory> data;
+    private List<LoyaltyTradeCategoryResponse> data;
 }

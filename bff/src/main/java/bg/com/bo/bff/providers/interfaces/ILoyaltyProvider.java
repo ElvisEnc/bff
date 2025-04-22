@@ -15,7 +15,7 @@ import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyMerchantCampaignVouc
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyQrTransactionAPIResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyRegisterSubscriptionResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyTradeCategoryAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTradeCategoryResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -67,7 +67,7 @@ public interface ILoyaltyProvider {
 
     List<LoyaltyGetTransactionsResponse> getVoucherTransactions(Map<String, String> headers, String codeSystem, String status) throws IOException;
 
-    List<LoyaltyTradeCategoryAPIResponse> getTradeCategories(Map<String, String> headers, String personId)
+    List<LoyaltyGetTradeCategoryResponse> getTradeCategories(Map<String, String> headers, String personId)
             throws IOException;
 
     List<LoyaltyFeaturedMerchantAPIResponse> getFeaturedMerchant(Map<String, String> headers, String personId)

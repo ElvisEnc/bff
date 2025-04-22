@@ -26,7 +26,7 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransaction
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategory;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactedListResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
@@ -231,7 +231,7 @@ public class LoyaltyService implements ILoyaltyService {
     @Override
     public LoyaltyTradeCategoryListResponse getTradeCategories(String personId) throws IOException {
         Map<String, String> headerService = mapper.mapperRequestService(personId);
-        List<LoyaltyTradeCategory> list = mapper.convertResponseTradeCategory(
+        List<LoyaltyTradeCategoryResponse> list = mapper.convertResponseTradeCategory(
                 provider.getTradeCategories(headerService, personId)
         );
         return LoyaltyTradeCategoryListResponse.builder()
