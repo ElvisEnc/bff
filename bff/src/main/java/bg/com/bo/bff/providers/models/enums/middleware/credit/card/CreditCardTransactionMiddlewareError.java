@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.models.enums.middleware.credit.card;
 
 import bg.com.bo.bff.commons.enums.CategoryError;
+import bg.com.bo.bff.commons.enums.CodeError;
 import bg.com.bo.bff.commons.enums.ConstantMessages;
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
 import lombok.AllArgsConstructor;
@@ -91,17 +92,17 @@ public enum CreditCardTransactionMiddlewareError implements IMiddlewareError {
             "Ocurrio un error al obtener en el proceso",
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
     MDWCCTM_017(
-            HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWCCTM-017",
+            HttpStatus.BAD_REQUEST, CodeError.BAD_REQUEST.getCode(), "MDWCCTM-017",
             ConstantMessages.GENERIC.getTitle(),
             "El nombre del esquema debe ser CompanyId para los canales 1 - 6",
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
     MDWCCTM_018(
-            HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWCCTM-018",
+            HttpStatus.BAD_REQUEST, CodeError.BAD_REQUEST.getCode(), "MDWCCTM-018",
             ConstantMessages.GENERIC.getTitle(),
             "Datos invalidos para companyId",
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
     MDWCCTM_019(
-            HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWCCTM-019",
+            HttpStatus.BAD_REQUEST, CodeError.BAD_REQUEST.getCode(), "MDWCCTM-019",
             ConstantMessages.GENERIC.getTitle(),
             "El nombre del esquema debe ser PersonId para el canal 2",
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
@@ -123,7 +124,7 @@ public enum CreditCardTransactionMiddlewareError implements IMiddlewareError {
     MDWCCTM_023(
             HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_INSERT_MAE", "MDWCCTM-023",
             ConstantMessages.GENERIC.getTitle(),
-            "La transacción no se pudo procesar",
+            ConstantMessages.TRANSACTION_COULD_NOT_BE_PROCESSED.getMessage(),
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
     MDWCCTM_024(
             HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_INSERT_AUTHORIZATION", "MDWCCTM-024",
@@ -133,7 +134,7 @@ public enum CreditCardTransactionMiddlewareError implements IMiddlewareError {
     MDWCCTM_025(
             HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_UPDATE_MAE", "MDWCCTM-025",
             ConstantMessages.GENERIC.getTitle(),
-            "La transacción no se pudo procesar",
+            ConstantMessages.TRANSACTION_COULD_NOT_BE_PROCESSED.getMessage(),
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
     MDWCCTM_026(
             HttpStatus.BAD_REQUEST, "QUANTITY_LIMIT_KO", "MDWCCTM-026",
@@ -148,7 +149,7 @@ public enum CreditCardTransactionMiddlewareError implements IMiddlewareError {
     MDWCCTM_028(
             HttpStatus.INTERNAL_SERVER_ERROR, "ERROR_OBTAIN_MAE", "MDWCCTM-028",
             ConstantMessages.GENERIC.getTitle(),
-            "La transacción no se pudo procesar",
+            ConstantMessages.TRANSACTION_COULD_NOT_BE_PROCESSED.getMessage(),
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
     MDWCCTM_029(
             HttpStatus.NOT_ACCEPTABLE, "ERROR_ACCOUNTS_PERSON", "MDWCCTM-029",
@@ -171,12 +172,12 @@ public enum CreditCardTransactionMiddlewareError implements IMiddlewareError {
             "Error al ejecutar la solicitud de actualización de pago",
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
     MDWCCTM_033(
-            HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWCCTM-033",
+            HttpStatus.BAD_REQUEST, CodeError.BAD_REQUEST.getCode(), "MDWCCTM-033",
             ConstantMessages.GENERIC.getTitle(),
             "No se puede procesar el pago, verifique las divisas",
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
     MDWCCTM_034(
-            HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWCCTM-034",
+            HttpStatus.BAD_REQUEST, CodeError.BAD_REQUEST.getCode(), "MDWCCTM-034",
             ConstantMessages.GENERIC.getTitle(),
             "Codigo de monedas es incorrecto",
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
@@ -186,7 +187,7 @@ public enum CreditCardTransactionMiddlewareError implements IMiddlewareError {
             "Error al intentar verificar el ticket",
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
     MDWCCTM_038(
-            HttpStatus.BAD_REQUEST, "BAD_REQUEST", "MDWCCTM-038",
+            HttpStatus.BAD_REQUEST, CodeError.BAD_REQUEST.getCode(), "MDWCCTM-038",
             ConstantMessages.GENERIC.getTitle(),
             "No se puede procesar la transacción, para el usuario rol",
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
