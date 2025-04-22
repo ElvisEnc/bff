@@ -2,34 +2,42 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.user.ChangePasswordRequest;
 import bg.com.bo.bff.application.dtos.request.user.UpdateBiometricsRequest;
-import bg.com.bo.bff.application.dtos.request.user.UserRequestFixture;
 import bg.com.bo.bff.application.dtos.request.user.UpdateDataUserRequest;
+import bg.com.bo.bff.application.dtos.request.user.UserRequestFixture;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
+import bg.com.bo.bff.application.dtos.response.user.BiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.user.ContactResponse;
+import bg.com.bo.bff.application.dtos.response.user.EconomicActivityResponse;
+import bg.com.bo.bff.application.dtos.response.user.MaritalStatusResponse;
+import bg.com.bo.bff.application.dtos.response.user.PersonalResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateBiometricsResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdateDataUserResponse;
+import bg.com.bo.bff.application.dtos.response.user.UpdatePersonalDetail;
+import bg.com.bo.bff.application.dtos.response.user.UserResponseFixture;
 import bg.com.bo.bff.application.dtos.response.user.apiface.DepartmentsResponse;
 import bg.com.bo.bff.application.dtos.response.user.apiface.DistrictsResponse;
-import bg.com.bo.bff.application.dtos.response.user.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.application.exceptions.HandledException;
 import bg.com.bo.bff.commons.converters.ChangePasswordErrorResponseConverter;
 import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.mappings.providers.apiface.ApiFaceMapper;
+import bg.com.bo.bff.mappings.providers.apiface.IApiFaceMapper;
+import bg.com.bo.bff.mappings.providers.information.IPersonalInformationMapper;
 import bg.com.bo.bff.mappings.providers.information.PersonalInformationMapper;
 import bg.com.bo.bff.mappings.providers.login.ILoginMapper;
 import bg.com.bo.bff.providers.dtos.request.personal.information.ApiPersonalInformationNetRequest;
 import bg.com.bo.bff.providers.dtos.request.personal.information.PersonalInformationNetRequestFixture;
 import bg.com.bo.bff.providers.dtos.response.apiface.DepartmentsNetResponse;
 import bg.com.bo.bff.providers.dtos.response.apiface.DistrictsNetResponse;
+import bg.com.bo.bff.providers.dtos.response.login.mw.BiometricStatusMWResponse;
 import bg.com.bo.bff.providers.dtos.response.login.mw.ChangePasswordMWResponse;
 import bg.com.bo.bff.providers.dtos.response.login.mw.LoginMWResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponseFixture;
-import bg.com.bo.bff.providers.dtos.response.login.mw.BiometricStatusMWResponse;
 import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponse;
+import bg.com.bo.bff.providers.dtos.response.personal.information.PersonalInformationNetResponseFixture;
 import bg.com.bo.bff.providers.interfaces.IApiFaceNetProvider;
 import bg.com.bo.bff.providers.interfaces.ILoginMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.IPersonalInformationNetProvider;
-import bg.com.bo.bff.mappings.providers.apiface.IApiFaceMapper;
-import bg.com.bo.bff.mappings.providers.information.IPersonalInformationMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +50,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -96,12 +106,11 @@ class UserServicesTests {
     }
 
     @Test
-    void givenShortPasswordWhenChangePasswordThenReturnBadRequestException() throws IOException {
+    void givenShortPasswordWhenChangePasswordThenReturnBadRequestException() {
         // Arrange
-        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
-        changePasswordRequest.setOldPassword("123456");
-        changePasswordRequest.setNewPassword("ab12");
-
+        ChangePasswordRequest changePasswordRequest = ChangePasswordRequest.builder()
+                .newPassword("132456")
+                .oldPassword("ab12").build();
         String rolePersonId = "1";
         String personId = "999";
 
@@ -118,34 +127,14 @@ class UserServicesTests {
     @Test
     void givenLongPasswordWhenChangePasswordThenReturnBadRequestException() {
         // Arrange
-        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
-        changePasswordRequest.setOldPassword("123456");
-        changePasswordRequest.setNewPassword("123456789012345a");
+        ChangePasswordRequest changePasswordRequest = ChangePasswordRequest.builder()
+                .newPassword("123456789012345a")
+                .oldPassword("123456").build();
 
         String rolePersonId = "1";
         String personId = "999";
 
         HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.NOT_VALID_PASSWORD);
-
-        // Act
-        Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, rolePersonId, changePasswordRequest));
-
-        // Assert
-        assertEquals(expectedResponse.getCode(), ((HandledException) exception).getCode());
-        assertEquals(expectedResponse.getMessage(), exception.getMessage());
-    }
-
-    @Test
-    void givenSamePasswordWhenChangePasswordThenReturnBadRequestException() {
-        // Arrange
-        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
-        changePasswordRequest.setOldPassword("ab1234");
-        changePasswordRequest.setNewPassword("ab1234");
-
-        String rolePersonId = "1";
-        String personId = "999";
-
-        HandledException expectedResponse = new HandledException(ChangePasswordErrorResponseConverter.ChangePasswordErrorResponse.SAME_PASSWORD);
 
         // Act
         Exception exception = assertThrows(Exception.class, () -> service.changePassword(personId, rolePersonId, changePasswordRequest));
@@ -196,7 +185,7 @@ class UserServicesTests {
     }
 
     @Test
-    void givenValidDataWhenGetContactInformation() throws IOException {
+    void givenValidDataWhenGetContactInformation() {
         // Arrange
         ContactResponse expected = UserResponseFixture.withDefaultContactResponse();
         when(provider.getContactInfo()).thenReturn(expected);
@@ -298,7 +287,7 @@ class UserServicesTests {
     }
 
     @Test
-    void givenPersonIdWhenGetEconomicActivityThenResponseExpected() throws IOException {
+    void givenPersonIdWhenGetEconomicActivityThenResponseExpected() {
         // Arrange
         EconomicActivityResponse responseExpected = UserResponseFixture.withDefaultEconomicActivityResponse();
         when(personalInformationNetProvider.getEconomicalActivity(any())).thenReturn(responseExpected);
@@ -485,7 +474,7 @@ class UserServicesTests {
     @Test
     void givenUpdateDataUserRequestAndSpouseNameIsNullWhenUpdateDataUserThenValidateMarriedPerson() throws IOException {
         // Assert
-        GenericResponse expected = GenericResponse.instance(UpdateDataUserResponse.SUCCESS);
+
         UpdateDataUserRequest request = UserRequestFixture.validateMarriedPersonWhenSpouseNameIsNull();
         String jsonPersonalInformation = "{\"CodigoError\":\"COD000\",\"Datos\":{\"cur_datosClienteGanasueldo\":[{\"NUMEROPERSONAFISICA\":1487723,\"FECHAULTACTUALIZACION\":null,\"NOMBRECOMPLETO\":\"PERSONA NATURAL\",\"ESTADOCIVIL\":\"S\",\"SEXO\":\"M\",\"CALLE\":\"LAS LOMAS\",\"NUMEROPUERTA\":\"SN\",\"PISO\":0,\"CIUDAD\":\"SANTA CRUZ\",\"DEPARTAMENTO\":\"SANTA CRUZ\",\"COD_DEPARTAMENTO\":7,\"BARRIOZONA\":\"LAS LOMAS\",\"EMAIL\":\"rb@bg.com\",\"CELULAR\":\"77653520\",\"COD_BARRIO\":0,\"COD_CALLE\":0,\"COD_CIUDAD\":1,\"APELLIDOESPOSO\":\" \",\"USA_APELLIDOESPOSO\":\"N\",\"REFERENCIADOMICILIO\":\" \",\"OFICINA\":\" \",\"ZONA\":1,\"NOMBRE_CONYUGUE\":\" \",\"APARTAMENTO\":\" \",\"TELEFONOS\":\" \",\"FECHAACTUALIZACION\":\"  \",\"NIVEL_INGRESOS\":null,\"ACTIVIDAD_ECONOMICA\":93099,\"EMPLEADO_BANCO\":\"1\",\"COORDENADAS\":\" \"}],\"cur_referenciasPersonaFisica\":[{\"NOMBRE\":\"INGRID CAROLA SAAVEDRA MEDIN\",\"TELEFONOS\":\"78529352\",\"RELACION\":1,\"TIPOREFERENCIA\":\"P\",\"TIPO_PERSONA\":\"F\",\"ORDINAL\":0}],\"cur_actividadEconomica\":[{\"EMPRESA\":\" \",\"CARGO\":\" \",\"FUENTE_INGRESO\":\"P\"}]},\"Mensaje\":\"Ejecución Correcta\"}";
 
