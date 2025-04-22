@@ -6,11 +6,53 @@ import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.*;
-import bg.com.bo.bff.providers.dtos.response.loyalty.*;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCategoryPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCityListResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyFeaturedMerchant;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyFeaturedMerchantListResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGenericVoucherTransactionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyImageResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyMerchantVoucherCategoryResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyQrTransactionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactedListResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.loyalty.LoyaltyMapper;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltySERequestFixture;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyCityListAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyFeaturedMerchantAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGeneralInformationResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetCategoryPromotionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetGenericTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetImageResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetInitialPointsVamosResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetLevelResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetPromotionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetStoreFeaturedResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTermsConditionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyMerchantCampaignVoucherAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPointServerResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPostRegisterRedeemVoucherResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyQrTransactionAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyRegisterSubscriptionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySEResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatementPointsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatusResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTradeCategoryResponse;
 import bg.com.bo.bff.providers.interfaces.ILoyaltyProvider;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyResponse;
 import org.junit.jupiter.api.Test;
@@ -24,10 +66,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -626,6 +676,16 @@ class LoyaltyServiceTest {
     }
 
     @Test
+    void givenNullResponseWhenConvertVoucherQrTransactionThenReturnNull() {
+        // Act
+        LoyaltyGenericVoucherTransactionResponse result = mapper.convertVoucherQrTransaction(null);
+
+        // Assert
+        assertNull(result);
+    }
+
+
+    @Test
     void givenValidDataWhenVoucherTransactions() throws IOException {
         //Arrange
         LoyaltyGetTransactionsResponse expectedResponse = LoyaltySEResponseFixture.withDefaultTransactions();
@@ -699,5 +759,189 @@ class LoyaltyServiceTest {
         assertNotNull(result);
     }
 
+    @Test
+    void givenValidDataWhenGetTradeCategories() throws IOException {
+        //Arrange
+        List<LoyaltyGetTradeCategoryResponse> expectedResponse = LoyaltySEResponseFixture.withDefaultLoyaltyGetTradeCategories();
+        when(provider.getTradeCategories(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+        LoyaltyTradeCategoryListResponse response = service.getTradeCategories("1234");
+
+        assertNotNull(response);
+        verify(provider).getTradeCategories(any(), any());
+    }
+
+    @Test
+    void givenNullApiResponseWhenConvertResponseTradeCategoryThenReturnEmptyList() {
+        // Act
+        List<LoyaltyTradeCategoryResponse> result = mapper.convertResponseTradeCategory(null);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void givenValidDataGetFeaturedMerchants() throws IOException {
+        //Arrange
+        List<LoyaltyFeaturedMerchantAPIResponse> expectedResponse = LoyaltySEResponseFixture.withDefaultFeaturedMerchants();
+        when(provider.getFeaturedMerchant(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+
+        LoyaltyFeaturedMerchantListResponse response = service.getFeaturedMerchants("1234");
+
+        assertNotNull(response);
+        verify(provider).getFeaturedMerchant(any(), any());
+    }
+
+    @Test
+    void givenNullApiResponseWhenConvertResponseFeaturedMerchantThenReturnEmptyList() {
+        // Act
+        List<LoyaltyFeaturedMerchant> result = mapper.convertResponseFeaturedMerchant(null);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+
+    @Test
+    void givenValidDataWhenGetCityList() throws IOException {
+        //Arrange
+        List<LoyaltyCityListAPIResponse> expectedResponse = LoyaltySEResponseFixture.withDefaultGetCityList();
+        when(provider.getCityList(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+
+        LoyaltyCityListResponse response = service.getCityList("1234");
+
+        assertNotNull(response);
+        verify(provider).getCityList(any(), any());
+    }
+
+    @Test
+    void givenNullApiResponseWhenConvertResponseCityThenReturnEmptyList() {
+        // Act
+        List<LoyaltyCityListResponse.LoyaltyCity> result = mapper.convertResponseCity(null);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void givenValidDataWhenGetCityCategoryMerchants() throws IOException {
+        //Arrange
+        List<LoyaltyFeaturedMerchantAPIResponse> expectedResponse = LoyaltySEResponseFixture.withDefaultGetCityCategoryMerchants();
+        when(provider.getCityCategoryMerchants(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+
+        LoyaltyFeaturedMerchantListResponse response = service.getCityCategoryMerchants(
+                "1234",
+                UUID.fromString("1b528e2e-2846-4808-bdf1-b55331a1e112"),
+                UUID.fromString("3ffa6099-b116-43eb-be81-9cea46d0c542")
+        );
+
+        assertNotNull(response);
+        verify(provider).getCityCategoryMerchants(any(), any());
+    }
+
+    @Test
+    void getVoucherDetailShouldReturnExpectedResponse() throws IOException {
+        //Arrange
+        LoyaltyQrTransactionAPIResponse expectedResponse = LoyaltySEResponseFixture.withDefaultGetVoucherDetail();
+        when(provider.getVoucherDetail(any(), any(), any())).thenReturn(expectedResponse);
+
+        //Act
+
+        LoyaltyQrTransactionResponse response = service.getVoucherDetail(
+                "1234",
+                UUID.fromString("1b528e2e-2846-4808-bdf1-b55331a1e112"),
+                "54545"
+        );
+
+        assertNotNull(response);
+        verify(provider).getVoucherDetail(any(), any(), any());
+    }
+
+    @Test
+    void testGetMerchantCampaignVouchers_success() throws IOException {
+        LoyaltyMerchantCampaignVoucherAPIResponse expectedResponse = LoyaltySEResponseFixture.withDefaultGetCampaignVouchers();
+        when(provider.getMerchantCampaignVouchers(any(), any())).thenReturn(expectedResponse);
+
+        //Act
+
+        LoyaltyMerchantVoucherCategoryResponse response = service.getMerchantCampaignVouchers(
+                "1234",
+                UUID.fromString("1b528e2e-2846-4808-bdf1-b55331a1e112"),
+                UUID.fromString("1b528e2e-2846-4808-bdf1-b55331a1e112"),
+                1);
+
+        assertNotNull(response);
+        verify(provider).getMerchantCampaignVouchers(any(), any());
+
+    }
+
+    @Test
+    void givenNullVouchersWhenGetMerchantCampaignVouchersThenReturnEmptyArrays() throws IOException {
+        // Arrange
+        LoyaltyMerchantCampaignVoucherAPIResponse apiResponse = new LoyaltyMerchantCampaignVoucherAPIResponse();
+        apiResponse.setRedemptionVoucher(null);
+        apiResponse.setTravelVoucher(null);
+        apiResponse.setProductVoucher(null);
+        apiResponse.setDiscountVoucher(null);
+
+        when(provider.getMerchantCampaignVouchers(any(), any())).thenReturn(apiResponse);
+
+        // Act
+        LoyaltyMerchantVoucherCategoryResponse response = service.getMerchantCampaignVouchers(
+                "1234",
+                UUID.fromString("1b528e2e-2846-4808-bdf1-b55331a1e112"),
+                UUID.fromString("1b528e2e-2846-4808-bdf1-b55331a1e112"),
+                1
+        );
+
+        // Assert
+        assertNotNull(response);
+        assertNotNull(response.getRedemptionVoucher());
+        assertEquals(0, response.getRedemptionVoucher().length);
+        assertNotNull(response.getTravelVoucher());
+        assertEquals(0, response.getTravelVoucher().length);
+        assertNotNull(response.getProductVoucher());
+        assertEquals(0, response.getProductVoucher().length);
+        assertNotNull(response.getDiscountVoucher());
+        assertEquals(0, response.getDiscountVoucher().length);
+    }
+
+    @Test
+    void testGetVoucherTransactedList_success() throws IOException {
+        List<LoyaltyPostRegisterRedeemVoucherResponse> expectedResponse = LoyaltySEResponseFixture
+                .withDefaultGetVoucherTransactedList();
+        when(provider.getVoucherTransactedList(anyMap(), anyString(), anyInt(), anyString())).thenReturn(expectedResponse);
+
+        //Act
+
+        LoyaltyVoucherTransactedListResponse response = service.getVoucherTransactedList(
+                "1234",
+                123132,
+                "1"
+        );
+
+        assertNotNull(response);
+        verify(provider).getVoucherTransactedList(anyMap(), anyString(), anyInt(), anyString());
+    }
+
+    @Test
+    void givenNullApiResponseWhenConvertVoucherTransactedListResponseThenReturnEmptyList() {
+        // Act
+        List<LoyaltyRedeemVoucherResponse> result = mapper.convertVoucherTransactedListResponse(null);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
 
 }

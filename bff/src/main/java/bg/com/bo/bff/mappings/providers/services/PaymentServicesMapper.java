@@ -263,8 +263,6 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                         .serviceName(mw.getServiceName())
                         .categoryId(mw.getIdCategory())
                         .subCategoryId(mw.getIdSubCategory())
-                        .categoryDesc(mw.getCategoryDesc())
-                        .subCategoryDesc(mw.getSubCategoryDesc())
                         .build())
                 .toList();
     }

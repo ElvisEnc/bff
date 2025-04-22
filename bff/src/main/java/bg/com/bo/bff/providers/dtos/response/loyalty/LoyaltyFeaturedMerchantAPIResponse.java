@@ -1,6 +1,5 @@
 package bg.com.bo.bff.providers.dtos.response.loyalty;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,34 +10,31 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class LoyaltyGetStoreFeaturedResponse {
+public class LoyaltyFeaturedMerchantAPIResponse {
 
     @JsonProperty("id")
-    private String identifier;
+    private String merchantId;
 
     @JsonProperty("nombre")
-    private String name;
+    private String merchantName;
 
     @JsonProperty("descripcion")
-    private String description;
+    private String merchantDescription;
 
     @JsonProperty("logo")
-    private String logo;
+    private String merchantLogo;
 
     @JsonProperty("isDestacado")
-    private Integer isFeatured;
+    private Byte isFeatured;
 
-    @JsonProperty("idCategoria")
-    private String categoryId;
+    @JsonProperty("isActivo")
+    private Byte isActive;
+
+    @JsonProperty("masBarato")
+    private Integer merchantCheapest;
 
     @JsonProperty("categoria")
     private LoyaltyGetTradeCategoryResponse category;
 
-    @JsonProperty("isActivo")
-    private Integer isActive;
-
-    @JsonProperty("masBarato")
-    private Integer cheaper;
 
 }

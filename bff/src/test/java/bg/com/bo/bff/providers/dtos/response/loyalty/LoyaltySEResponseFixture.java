@@ -74,8 +74,8 @@ public class LoyaltySEResponseFixture {
                         .nameTrade("Supermercado El Ahorro")
                         .descriptionTrade("Cadena de supermercados")
                         .logoTrade("https://example.com/logo.png")
-                        .category(LoyaltyPostRegisterRedeemVoucherResponse.LoyaltyCategory.builder()
-                                .identifierCategory("CAT-01")
+                        .category(LoyaltyGetTradeCategoryResponse.builder()
+                                .categoryId("CAT-01")
                                 .nameCategory("Alimentos")
                                 .iconCategory("https://example.com/icono.png")
                                 .build())
@@ -256,7 +256,7 @@ public class LoyaltySEResponseFixture {
                 .logo("https://example.com/logo.png")
                 .isFeatured(1)
                 .categoryId("cat-001")
-                .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                .category(LoyaltyGetTradeCategoryResponse.builder()
                         .categoryId("cat-001")
                         .nameCategory("Alimentos")
                         .iconCategory("https://example.com/icono.png")
@@ -308,7 +308,7 @@ public class LoyaltySEResponseFixture {
                         .logo("https://example.com/logo.png")
                         .isFeatured(1)
                         .categoryId("cat-001")
-                        .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                        .category(LoyaltyGetTradeCategoryResponse.builder()
                                 .categoryId("cat-001")
                                 .nameCategory("Electrodomésticos")
                                 .iconCategory("https://example.com/icono.png")
@@ -352,7 +352,7 @@ public class LoyaltySEResponseFixture {
                         .logo("https://example.com/logo.png")
                         .isFeatured(1)
                         .categoryId("cat-001")
-                        .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                        .category(LoyaltyGetTradeCategoryResponse.builder()
                                 .categoryId("cat-001")
                                 .nameCategory("Electrodomésticos")
                                 .iconCategory("https://example.com/icono.png")
@@ -398,7 +398,7 @@ public class LoyaltySEResponseFixture {
                         .logo("https://example.com/super-logo.png")
                         .isFeatured(1)
                         .categoryId("cat-002")
-                        .category(LoyaltyGetStoreFeaturedResponse.GetCategory.builder()
+                        .category(LoyaltyGetTradeCategoryResponse.builder()
                                 .categoryId("cat-002")
                                 .nameCategory("Supermercados")
                                 .iconCategory("https://example.com/icon-super.png")
@@ -485,5 +485,162 @@ public class LoyaltySEResponseFixture {
                 .build();
     }
 
+    public static List<LoyaltyGetTradeCategoryResponse> withDefaultLoyaltyGetTradeCategories() {
+        return Collections.singletonList(
+                LoyaltyGetTradeCategoryResponse
+                        .builder()
+                        .categoryId("15")
+                        .iconCategory("iconTest")
+                        .nameCategory("BIMBO")
+                        .build()
+        );
+    }
+
+    public static List<LoyaltyFeaturedMerchantAPIResponse> withDefaultFeaturedMerchants() {
+        return Collections.singletonList(
+                LoyaltyFeaturedMerchantAPIResponse
+                        .builder()
+                        .merchantId("15")
+                        .merchantName("BIMBO")
+                        .merchantDescription("Panaderia BIMBO")
+                        .merchantLogo("Logo Bimbo")
+                        .isFeatured((byte) 1)
+                        .isActive((byte) 1)
+                        .merchantCheapest(522)
+                        .category(
+                                LoyaltyGetTradeCategoryResponse.builder()
+                                        .categoryId("4545")
+                                        .nameCategory("Panaderia")
+                                        .iconCategory("Logo Panaderia")
+                                        .build()
+                        )
+                        .build()
+        );
+    }
+
+    public static List<LoyaltyCityListAPIResponse> withDefaultGetCityList() {
+        return Collections.singletonList(
+                LoyaltyCityListAPIResponse
+                        .builder()
+                        .id("25")
+                        .name("KIKY")
+                        .build()
+        );
+    }
+
+    private static LoyaltyFeaturedMerchantAPIResponse withDefaultGetCityCategoryMerchantsData() {
+        return LoyaltyFeaturedMerchantAPIResponse
+                .builder()
+                .merchantId("15")
+                .merchantName("SOLAR")
+                .merchantDescription("POLLO Solar")
+                .merchantLogo("Logo Solar")
+                .isFeatured((byte) 1)
+                .isActive((byte) 1)
+                .merchantCheapest(350)
+                .category(
+                        LoyaltyGetTradeCategoryResponse.builder()
+                                .categoryId("36963")
+                                .nameCategory("Pollos")
+                                .iconCategory("Logo Solar")
+                                .build()
+                )
+                .build();
+    }
+
+    public static List<LoyaltyFeaturedMerchantAPIResponse> withDefaultGetCityCategoryMerchants() {
+        return Collections.singletonList(
+                withDefaultGetCityCategoryMerchantsData()
+        );
+    }
+
+    public static LoyaltyQrTransactionAPIResponse withDefaultGetVoucherDetail() {
+        return LoyaltyQrTransactionAPIResponse
+                .builder()
+                .id("3636")
+                .voucherCode("ABCD1")
+                .campignId("123456")
+                .holderName("GERONIMO VENGA")
+                .documentHolder("65421245")
+                .recipientName("RIHANA SANDOVAL")
+                .recipientDocument("12541254")
+                .personId("321321")
+                .personCode("1232456")
+                .registerDate("2025/03/21")
+                .redemptionDate("2025/03/21")
+                .redemptionValue(5600)
+                .expirationDate("2025/08/21")
+                .benefitId("2323")
+                .voucherName("Voucher millonario")
+                .description("Voucher super ganadoble")
+                .banner("Banner del voucher!")
+                .note("Voucher SuperGanaDobble.")
+                .voucherType("CONSUMO")
+                .voucherStatus("VALIDO")
+                .merchant(withDefaultGetCityCategoryMerchantsData())
+                .travelVoucher(
+                        LoyaltyQrTransactionAPIResponse.TravelVoucher
+                                .builder()
+                                .relationship("Familiar")
+                                .travelVoucherType("Pasaje")
+                                .origin("Bolivia")
+                                .destination("Inglaterra")
+                                .build())
+
+                .build();
+    }
+
+    public static LoyaltyMerchantCampaignVoucherAPIResponse withDefaultGetCampaignVouchers() {
+        return LoyaltyMerchantCampaignVoucherAPIResponse.builder()
+                .discountVoucher(new LoyaltyGetVoucherResponse[]{
+                        LoyaltyGetVoucherResponse.builder()
+                                .merchantId("123123123")
+                                .voucherName("Voucher - Descuento")
+                                .voucherDescription("Voucher con descuento")
+                                .redemptionValue("5000")
+                                .typeVoucher("DESCUENTO")
+                                .voucherBanner("Banner Descuento")
+                                .merchantId("456122")
+                                .build()
+                })
+                .productVoucher(
+                        new LoyaltyGetVoucherResponse[]{
+                                LoyaltyGetVoucherResponse.builder()
+                                        .merchantId("456456")
+                                        .voucherName("Voucher - Producto")
+                                        .voucherDescription("Voucher producto con descuento")
+                                        .redemptionValue("3600")
+                                        .typeVoucher("PRODUCTO")
+                                        .voucherBanner("Banner Voucher producto")
+                                        .merchantId("951951")
+                                        .build()
+                        }
+                ).redemptionVoucher(new LoyaltyGetVoucherResponse[]{
+                        LoyaltyGetVoucherResponse.builder()
+                                .merchantId("78978")
+                                .voucherName("Voucher - Consumo")
+                                .voucherDescription("Voucher con descuento en consumo")
+                                .redemptionValue("4850")
+                                .typeVoucher("CONSUMO")
+                                .voucherBanner("Banner Descuento en consumo")
+                                .merchantId("471474")
+                                .build()
+                }).travelVoucher(new LoyaltyGetVoucherResponse[]{
+                        LoyaltyGetVoucherResponse.builder()
+                                .merchantId("2522525")
+                                .voucherName("Voucher - Pasaje")
+                                .voucherDescription("Voucher con descuento en pasajes")
+                                .redemptionValue("1800")
+                                .typeVoucher("PASAJE")
+                                .voucherBanner("Banner Descuento en pasaje")
+                                .merchantId("456465")
+                                .build()
+                })
+                .build();
+    }
+
+    public static List<LoyaltyPostRegisterRedeemVoucherResponse> withDefaultGetVoucherTransactedList() {
+        return Collections.singletonList(withDefaultRegisterRedeemVoucher());
+    }
 
 }

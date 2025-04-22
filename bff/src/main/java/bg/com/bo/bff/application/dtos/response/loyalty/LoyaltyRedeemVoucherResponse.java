@@ -124,26 +124,8 @@ public class LoyaltyRedeemVoucherResponse  {
 
         @Schema(description = "categoria del comercio")
         @JsonProperty("category")
-        private LoyaltyCategory category;
+        private LoyaltyTradeCategoryResponse category;
     }
-
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class LoyaltyCategory {
-        @Schema(description = "identificador de la categoria")
-        @JsonProperty("identifierCategory")
-        private String identifierCategory;
-
-        @Schema(description = "nombre de la categoria")
-        @JsonProperty("nameCategory")
-        private String nameCategory;
-
-        @Schema(description = "icono de la categoria")
-        @JsonProperty("iconCategory")
-        private String iconCategory;
-    }
-
 
     @Builder
     @AllArgsConstructor

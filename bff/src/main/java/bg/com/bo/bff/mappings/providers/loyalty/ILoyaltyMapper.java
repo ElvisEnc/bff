@@ -12,6 +12,10 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsRespo
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCityListResponse.LoyaltyCity;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyFeaturedMerchant;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyMerchantVoucherCategoryResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyQrTransactionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
@@ -19,6 +23,8 @@ import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsRes
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryResponse;
+import bg.com.bo.bff.providers.dtos.request.loyalty.CityCategoryMerchantsAPIRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
@@ -37,9 +43,16 @@ import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPostRegisterRedeemVo
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatementPointsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
+import bg.com.bo.bff.providers.dtos.request.loyalty.MerchantCampaignVoucherAPIRequest;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyCityListAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyFeaturedMerchantAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyMerchantCampaignVoucherAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyQrTransactionAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTradeCategoryResponse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public interface ILoyaltyMapper {
 
@@ -86,4 +99,21 @@ public interface ILoyaltyMapper {
     LoyaltyGetImagesRequest mapperRequest(LoyaltyImageRequest request);
 
     LoyaltyPersonCampRequest mapperRequest(String personId);
+
+    List<LoyaltyTradeCategoryResponse> convertResponseTradeCategory(List<LoyaltyGetTradeCategoryResponse> apiResponse);
+
+    List<LoyaltyFeaturedMerchant> convertResponseFeaturedMerchant(List<LoyaltyFeaturedMerchantAPIResponse> apiResponse);
+
+    List<LoyaltyCity> convertResponseCity(List<LoyaltyCityListAPIResponse> apiResponse);
+
+    CityCategoryMerchantsAPIRequest mapperRequest(String personId, UUID cityId, UUID categoryId);
+
+    LoyaltyQrTransactionResponse convertResponseQrTransaction(LoyaltyQrTransactionAPIResponse apiResponse);
+
+    MerchantCampaignVoucherAPIRequest mapperRequest(UUID merchantId, UUID categoryId, int campaignId);
+
+    LoyaltyMerchantVoucherCategoryResponse convertResponse(LoyaltyMerchantCampaignVoucherAPIResponse response);
+
+    List<LoyaltyRedeemVoucherResponse> convertVoucherTransactedListResponse(List<LoyaltyPostRegisterRedeemVoucherResponse> apiResponse);
+
 }

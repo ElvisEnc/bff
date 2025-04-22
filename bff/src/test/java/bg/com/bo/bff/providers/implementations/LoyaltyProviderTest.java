@@ -1,10 +1,12 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.loyalty.CityCategoryMerchantsAPIRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
+import bg.com.bo.bff.providers.dtos.request.loyalty.MerchantCampaignVoucherAPIRequest;
 import bg.com.bo.bff.providers.dtos.response.loyalty.*;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltySERequestFixture;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySEResponseFixture;
@@ -21,8 +23,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
@@ -362,6 +366,186 @@ class LoyaltyProviderTest {
         assertNotNull(response);
         assertEquals(mockListResponse.size(), response.size());
         verify(loyaltyProvider).executeGetRequest(eq(expectedUrl), eq(headers), any(TypeReference.class));
+    }
+
+    @Test
+    void givenValidPersonId_whenGetTradeCategories_thenReturnResponse() throws Exception {
+        // Arrange
+        String personId = "12345";
+        Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
+
+        String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/comercios-ganamovil/categorias-comercios";
+
+        List<LoyaltyGetTradeCategoryResponse> mockResponseList =
+                LoyaltySEResponseFixture.withDefaultLoyaltyGetTradeCategories();
+
+        LoyaltyGetTradeCategoryResponse[] mockArray =
+                mockResponseList.toArray(new LoyaltyGetTradeCategoryResponse[0]);
+
+        doReturn(mockArray).when(loyaltyProvider)
+                .executeGetRequest(expectedUrl, headers, LoyaltyGetTradeCategoryResponse[].class);
+
+        // Act
+        List<LoyaltyGetTradeCategoryResponse> response = loyaltyProvider.getTradeCategories(headers, personId);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(mockResponseList.size(), response.size());
+    }
+
+    @Test
+    void givenValidPersonIdWhenGetFeaturedMerchantThenReturnResponse() throws Exception {
+        // Arrange
+        String personId = "12345";
+        Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
+        String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/comercios-ganamovil/comercios-destacados";
+        List<LoyaltyFeaturedMerchantAPIResponse> mockResponseList =
+                LoyaltySEResponseFixture.withDefaultGetCityCategoryMerchants();
+        LoyaltyFeaturedMerchantAPIResponse[] mockArray =
+                mockResponseList.toArray(new LoyaltyFeaturedMerchantAPIResponse[0]);
+
+        doReturn(mockArray).when(loyaltyProvider)
+                .executeGetRequest(expectedUrl, headers, LoyaltyFeaturedMerchantAPIResponse[].class);
+
+        // Act
+        List<LoyaltyFeaturedMerchantAPIResponse> response = loyaltyProvider.getFeaturedMerchant(headers, personId);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(mockResponseList.size(), response.size());
+    }
+
+    @Test
+    void givenValidPersonIdWhenGetCityListThenReturnResponse() throws Exception {
+        // Arrange
+        String personId = "12345";
+        Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
+        String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/ciudades-ganamovil";
+        List<LoyaltyCityListAPIResponse> mockResponseList =
+                LoyaltySEResponseFixture.withDefaultGetCityList();
+        LoyaltyCityListAPIResponse[] mockArray =
+                mockResponseList.toArray(new LoyaltyCityListAPIResponse[0]);
+
+        doReturn(mockArray).when(loyaltyProvider)
+                .executeGetRequest(expectedUrl, headers, LoyaltyCityListAPIResponse[].class);
+
+        // Act
+        List<LoyaltyCityListAPIResponse> response = loyaltyProvider.getCityList(headers, personId);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(mockResponseList.size(), response.size());
+    }
+
+    @Test
+    void givenValidPersonIdWhenGetCityCategoryMerchantsThenReturnResponse() throws Exception {
+        // Arrange
+        String personId = "12345";
+        Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
+        CityCategoryMerchantsAPIRequest request = CityCategoryMerchantsAPIRequest.builder()
+                .idCategoria(UUID.randomUUID()).idCiudad(UUID.randomUUID()).build();
+        String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/comercios-ganamovil/categoria-comercio/ciudad";
+        List<LoyaltyFeaturedMerchantAPIResponse> mockResponseList =
+                LoyaltySEResponseFixture.withDefaultFeaturedMerchants();
+        LoyaltyFeaturedMerchantAPIResponse[] mockArray =
+                mockResponseList.toArray(new LoyaltyFeaturedMerchantAPIResponse[0]);
+
+        doReturn(mockArray).when(loyaltyProvider)
+                .executePostRequest(expectedUrl, request, headers, LoyaltyFeaturedMerchantAPIResponse[].class);
+
+        // Act
+        List<LoyaltyFeaturedMerchantAPIResponse> response = loyaltyProvider.getCityCategoryMerchants(headers, request);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(mockResponseList.size(), response.size());
+    }
+
+    @Test
+    void givenDataVAlidWhenGetVoucherDetailThenReturnResponse() throws Exception {
+        // Arrange
+        String personId = "12345";
+        UUID voucherId = UUID.randomUUID();
+        Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
+
+        String expectedUrl = String.format(
+                BASE_URL + "/lealtad/beneficios/api/v1/vales-ganamovil/%s/tipo-vale/%s",
+                voucherId,
+                "PASAJE"
+        );
+        LoyaltyQrTransactionAPIResponse mockResponse = LoyaltySEResponseFixture.withDefaultGetVoucherDetail();
+
+        doReturn(mockResponse).when(loyaltyProvider)
+                .executeGetRequest(expectedUrl, headers, LoyaltyQrTransactionAPIResponse.class);
+
+        // Act
+        LoyaltyQrTransactionAPIResponse response = loyaltyProvider.getVoucherDetail(headers, voucherId, "PASAJE");
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(mockResponse, response);
+    }
+
+    @Test
+    void givenDataValidWhenGetMerchantCampaignVouchersThenReturnResponse() throws Exception {
+        // Arrange
+        String personId = "12345";
+        UUID merchantId = UUID.randomUUID();
+        UUID categoryId = UUID.randomUUID();
+        MerchantCampaignVoucherAPIRequest request = MerchantCampaignVoucherAPIRequest.builder()
+                .merchantId(merchantId)
+                .campaignId(1)
+                .categoryId(categoryId)
+                .build();
+        Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
+
+        String expectedUrl = String.format(
+                BASE_URL + "/lealtad/beneficios/api/v1/beneficios-ganamovil/obtener-todos"
+        );
+        LoyaltyMerchantCampaignVoucherAPIResponse mockResponse = LoyaltySEResponseFixture.withDefaultGetCampaignVouchers();
+
+        doReturn(mockResponse).when(loyaltyProvider)
+                .executePostRequest(expectedUrl, request, headers, LoyaltyMerchantCampaignVoucherAPIResponse.class);
+
+        // Act
+        LoyaltyMerchantCampaignVoucherAPIResponse response = loyaltyProvider.getMerchantCampaignVouchers(headers, request);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(mockResponse, response);
+    }
+
+    @Test
+    void givenDataValidWhenGetVoucherTransactedListThenReturnResponse() throws Exception {
+        // Arrange
+        String personId = "123456";
+        Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
+
+        String expectedUrl = String.format(
+                BASE_URL + "/lealtad/beneficios/api/v1/vales-ganamovil/campana/%s/persona/%s/estado/%s",
+                1,
+                personId,
+                "ACTIVO"
+        );
+
+        List<LoyaltyPostRegisterRedeemVoucherResponse> mockResponseList = LoyaltySEResponseFixture
+                .withDefaultGetVoucherTransactedList();
+        LoyaltyPostRegisterRedeemVoucherResponse[] mockResponseArray = mockResponseList.toArray(
+                new LoyaltyPostRegisterRedeemVoucherResponse[0]
+        );
+
+        doReturn(mockResponseArray).when(loyaltyProvider)
+                .executeGetRequest(expectedUrl, headers, LoyaltyPostRegisterRedeemVoucherResponse[].class);
+
+        // Act
+        List<LoyaltyPostRegisterRedeemVoucherResponse> response = loyaltyProvider.getVoucherTransactedList(
+                headers, personId, 1, "ACTIVO"
+        );
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(mockResponseList.size(), response.size());
+        assertIterableEquals(mockResponseList, response);
     }
 
 }

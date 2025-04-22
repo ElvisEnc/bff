@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 public class LoyaltyResponseFixture {
@@ -63,9 +64,9 @@ public class LoyaltyResponseFixture {
                 .build();
     }
 
-    public static LoyaltyRedeemVoucherResponse.LoyaltyCategory withDefaultLoyaltyCategory() {
-        return LoyaltyRedeemVoucherResponse.LoyaltyCategory.builder()
-                .identifierCategory("codeVoucher")
+    public static LoyaltyTradeCategoryResponse withDefaultLoyaltyCategory() {
+        return LoyaltyTradeCategoryResponse.builder()
+                .categoryId("codeVoucher")
                 .nameCategory("nameTrade")
                 .iconCategory("holderName")
                 .build();
@@ -204,11 +205,7 @@ public class LoyaltyResponseFixture {
                 .logo("https://example.com/logo.png")
                 .isFeatured(1)
                 .categoryId("cat001")
-                .category(LoyaltyStoreFeaturedResponse.Category.builder()
-                        .categoryId("cat001")
-                        .nameCategory("Tecnología")
-                        .iconCategory("https://example.com/icono-tecnologia.png")
-                        .build())
+                .category(withDefaultLoyaltyCategory())
                 .isActive(1)
                 .cheaper(0)
                 .build();
@@ -243,15 +240,11 @@ public class LoyaltyResponseFixture {
                         .logo("https://example.com/logo-super.png")
                         .isFeatured(1)
                         .categoryId("CAT-01")
-                        .category(LoyaltyStoreFeaturedResponse.Category.builder()
-                                .categoryId("CAT-01")
-                                .nameCategory("Alimentos")
-                                .iconCategory("https://example.com/icon-alimentos.png")
-                                .build())
+                        .category(withDefaultLoyaltyCategory())
                         .isActive(1)
                         .cheaper(1)
                         .build())
-                .voucherConsumption(LoyaltyGenericVoucherTransactionResponse.VoucherConsumption.builder()
+                .voucherConsumption(LoyaltyVoucherConsumptionResponse.builder()
                         .valueVoucher("500")
                         .valueType("Bs")
                         .build())
@@ -293,21 +286,201 @@ public class LoyaltyResponseFixture {
                 .logo("https://cdn.example.com/logos/casayhogar.png")
                 .isFeatured(1)
                 .categoryId("CAT-HOME")
-                .category(LoyaltyStoreFeaturedResponse.Category.builder()
-                        .categoryId("CAT-HOME")
-                        .nameCategory("Hogar")
-                        .iconCategory("https://cdn.example.com/icons/hogar.png")
-                        .build())
+                .category(withDefaultLoyaltyCategory())
                 .isActive(1)
                 .cheaper(0)
                 .build());
 
-        response.setVoucherConsumption(LoyaltyGenericVoucherTransactionResponse.VoucherConsumption.builder()
+        response.setVoucherConsumption(LoyaltyVoucherConsumptionResponse.builder()
                 .valueVoucher("1000")
                 .valueType("Bs")
                 .build());
 
         return response;
+    }
+
+    public static LoyaltyTradeCategoryListResponse withDefaultTradeCategories() {
+
+        return LoyaltyTradeCategoryListResponse.builder().data(
+                Collections.singletonList(LoyaltyTradeCategoryResponse
+                        .builder()
+                        .nameCategory("BIMBO")
+                        .iconCategory("MyIcon")
+                        .categoryId("123").build()
+                )
+        ).build();
+    }
+
+    public static LoyaltyFeaturedMerchantListResponse withDefaultGetFeaturedMerchants() {
+        return LoyaltyFeaturedMerchantListResponse.builder()
+                .data(
+                        Collections.singletonList(
+                                LoyaltyFeaturedMerchant.builder()
+                                        .merchantId("123123")
+                                        .merchantName("El Solar")
+                                        .merchantDescription("Negocio el Solar.")
+                                        .merchantLogo("Logo el Solar")
+                                        .merchantCheapest(420)
+                                        .isFeatured((byte) 0)
+                                        .isActive((byte) 0)
+                                        .category(
+                                                LoyaltyTradeCategoryResponse.builder()
+                                                        .categoryId("123123")
+                                                        .nameCategory("Restaurantes")
+                                                        .iconCategory("Icono Restaurante").build()
+
+                                        ).build()
+                        )
+                )
+                .build();
+    }
+
+    public static LoyaltyCityListResponse withDefaultGetCityList() {
+        return LoyaltyCityListResponse.builder()
+                .data(
+                        Collections.singletonList(
+                                LoyaltyCityListResponse.LoyaltyCity.builder()
+                                        .name("SantaCruz")
+                                        .identifier("123123")
+                                        .build()
+                        )
+                )
+                .build();
+    }
+
+    public static LoyaltyQrTransactionResponse withDefaultGetVoucherDetail() {
+        return LoyaltyQrTransactionResponse.builder()
+                .identifier("123456")
+                .voucherCode("COD123456")
+                .campignId("98765")
+                .holderName("Juan Luis Guerra")
+                .documentHolder("12345678")
+                .recipientName("Mario Villa")
+                .recipientDocument("87654321")
+                .personId("12312313")
+                .personCode("PERSON-2025")
+                .registerDate("2024-04-01")
+                .redemptionDate("2024-04-10")
+                .redemptionValue(5000)
+                .expirationDate("2024-12-31")
+                .benefitId("BENEFICIO-001")
+                .voucherName("Vale de descuento")
+                .description("Este vale otorga un 50% de descuento en productos seleccionados.")
+                .banner("Banner exclusivo.")
+                .note("Usar antes de fin de 2026.")
+                .voucherType("DESCUENTO")
+                .voucherStatus("ACTIVO")
+                .merchant(LoyaltyFeaturedMerchant.builder()
+                        .merchantId("GANADERO")
+                        .merchantName("BANCO BGA")
+                        .merchantDescription("Comercio dedicado a la banca.")
+                        .merchantLogo("Logo BGA")
+                        .merchantCheapest(1500)
+                        .isFeatured((byte) 0)
+                        .isActive((byte) 0)
+                        .category(LoyaltyTradeCategoryResponse.builder()
+                                .categoryId("CAT-001")
+                                .nameCategory("Banca privada")
+                                .iconCategory("icono BGA")
+                                .build()
+                        )
+                        .build())
+                .travelVoucher(LoyaltyQrTransactionResponse.TravelVoucher.builder()
+                        .relationship("Hijo")
+                        .travelVoucherType("INTERPROVINCIAL")
+                        .origin("Lima")
+                        .destination("Cusco")
+                        .build())
+                .build();
+    }
+
+    public static LoyaltyMerchantVoucherCategoryResponse withDefaultGetMerchantCampaignVouchers() {
+        return LoyaltyMerchantVoucherCategoryResponse.builder()
+                .redemptionVoucher(new LoyaltyVoucherResponse[]{
+                        buildVoucher(
+                                "Consumo-001",
+                                "Vale de consumo",
+                                "Descuento para consumo", "1000", "CONSUMO")
+                })
+                .travelVoucher(new LoyaltyVoucherResponse[]{
+                        buildVoucher(
+                                "PASAJE-001",
+                                "Vale de Pasaje",
+                                "Pasaje interprovincial",
+                                "2000",
+                                "PASAJE")
+                })
+                .productVoucher(new LoyaltyVoucherResponse[]{
+                        buildVoucher(
+                                "PRODUCTOS-001",
+                                "Vale de Productos",
+                                "Canje de producto", "3000",
+                                "PRODUCTOS")
+                })
+                .discountVoucher(new LoyaltyVoucherResponse[]{
+                        buildVoucher(
+                                "DESCUENTO-001", "Vale Descuento Generales",
+                                "500 Bs en toda la tienda",
+                                "500",
+                                "DESCUENTO")
+                })
+                .build();
+    }
+
+    private static LoyaltyVoucherResponse buildVoucher(
+            String id, String name, String desc, String value, String type
+    ) {
+        return LoyaltyVoucherResponse.builder()
+                .voucherId(id)
+                .voucherName(name)
+                .voucherDescription(desc)
+                .redemptionValue(value)
+                .typeVoucher(type)
+                .voucherBanner("Banner de vouchers" + id.toLowerCase() + ".png")
+                .merchantId("2312001")
+                .build();
+    }
+
+    public static LoyaltyVoucherTransactedListResponse withDefaultGetVoucherTransactedList() {
+        return LoyaltyVoucherTransactedListResponse.builder().data(
+                    Collections.singletonList(LoyaltyRedeemVoucherResponse.builder()
+                    .identifier("1231323")
+                    .codeVoucher("Cod123")
+                    .idCampaign("3221132")
+                    .holderName("John Travolta")
+                    .documentHolder("123456789")
+                    .beneficiaryName("Jane Travolta")
+                    .beneficiaryDocument("987654321")
+                    .idPerson("12343")
+                    .codePerson("COD12345")
+                    .dateCreation("2025-04-22")
+                    .dateVoucher("2025-04-23")
+                    .valueVoucher(100.0)
+                    .expirationDate("2025-12-31")
+                    .idBenefit("4564545")
+                    .name("Voucher para consumo")
+                    .description("Este voucher es con proposito de consumo.")
+                    .banner("Banner voucher")
+                    .note("Solo valido en tiendas que participan.")
+                    .status("ACTIVE")
+                    .trade(LoyaltyRedeemVoucherResponse.LoyaltyTrade.builder()
+                        .identifierTrade("12313245")
+                        .nameTrade("DISMAC")
+                        .descriptionTrade("Muy buena tienda para articulos originales")
+                        .logoTrade("Logo Dismac")
+                        .category(LoyaltyTradeCategoryResponse.builder()
+                            .categoryId("31232")
+                            .nameCategory("Electronica")
+                            .iconCategory("Icono Electronica")
+                            .build())
+                        .build())
+                    .typeValue("CONSUMMO")
+                    .redeemVoucher(LoyaltyRedeemVoucherResponse.LoyaltyRedeemVoucher.builder()
+                        .valueRedeemVoucher("100.0")
+                        .typeValueRedeemVoucher("Dolares")
+                        .build())
+                    .build()))
+            .build();
     }
 
 }
