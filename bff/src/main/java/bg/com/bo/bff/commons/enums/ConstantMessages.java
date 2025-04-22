@@ -28,7 +28,7 @@ public enum ConstantMessages {
     MODIFY_ERROR("No se pudo realizar la modificación, intente más tarde.", "Ocurrió un problema"),
     GENERIC_INVALID_PARAMS("Verifica que los datos enviados esten correctos.", "Datos Invalidos"),
     NOT_INFORMATION_OBTAINED("No se pudo obtener información, con los datos proporcionados.", "Datos no encontrados"),
-    TRANSACTION_COULD_NOT_BE_PROCESSED("La transacción no se pudo procesar.", "Datos no encontrados");
+    TRANSACTION_COULD_NOT_BE_PROCESSED("La transacción no se pudo procesar.", "Transaccion no procesada.");
 
     private final String message;
     private final String title;
