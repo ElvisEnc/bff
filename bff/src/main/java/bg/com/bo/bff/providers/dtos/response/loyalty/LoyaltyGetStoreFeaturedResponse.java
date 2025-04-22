@@ -1,6 +1,5 @@
 package bg.com.bo.bff.providers.dtos.response.loyalty;
 
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

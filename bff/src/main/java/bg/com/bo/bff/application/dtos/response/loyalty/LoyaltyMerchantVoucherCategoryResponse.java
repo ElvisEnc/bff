@@ -14,43 +14,15 @@ import lombok.NoArgsConstructor;
 public class LoyaltyMerchantVoucherCategoryResponse {
 
     @JsonProperty("redemptionVoucher")
-    private Voucher[] redemptionVoucher;
+    private LoyaltyVoucherResponse[] redemptionVoucher;
 
     @JsonProperty("travelVoucher")
-    private Voucher[] travelVoucher;
+    private LoyaltyVoucherResponse[] travelVoucher;
 
     @JsonProperty("productVoucher")
-    private Voucher[] productVoucher;
+    private LoyaltyVoucherResponse[] productVoucher;
 
     @JsonProperty("discountVoucher")
-    private Voucher[] discountVoucher;
-
-    @Getter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Voucher {
-        @JsonProperty("identifier")
-        private String identifier;
-
-        @JsonProperty("name")
-        private String name;
-
-        @JsonProperty("description")
-        private String description;
-
-        @JsonProperty("redemptionValue")
-        private String redemptionValue;
-
-        @JsonProperty("typeVoucher")
-        private String typeVoucher;
-
-        @JsonProperty("banner")
-        private String banner;
-
-        @JsonProperty("merchantId")
-        private String merchantId;
-
-    }
+    private LoyaltyVoucherResponse[] discountVoucher;
 
 }
