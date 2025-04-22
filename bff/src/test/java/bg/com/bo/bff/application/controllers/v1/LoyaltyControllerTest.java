@@ -8,21 +8,27 @@ import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherReque
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCategoryPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCityListResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyFeaturedMerchantListResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGenericVoucherTransactionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyImageResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyMerchantVoucherCategoryResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyQrTransactionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyResponseFixture;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactedListResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import bg.com.bo.bff.services.interfaces.ILoyaltyService;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,10 +46,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -533,4 +542,158 @@ class LoyaltyControllerTest {
         assertEquals(expected, actual);
         verify(service).getTradeCategories(any());
     }
+
+    @Test
+    void givenPersonIdWhenGetFeaturedMerchantsThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyFeaturedMerchantListResponse responseExpected = LoyaltyResponseFixture.withDefaultGetFeaturedMerchants();
+        when(service.getFeaturedMerchants(any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/featured-merchants";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String expected = Util.objectToString(ApiDataResponse.of(responseExpected));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getFeaturedMerchants(any());
+    }
+
+    @Test
+    void givenPersonIdWhenGetCityListThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyCityListResponse responseExpected = LoyaltyResponseFixture.withDefaultGetCityList();
+        when(service.getCityList(any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/cities";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String expected = Util.objectToString(ApiDataResponse.of(responseExpected));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getCityList(any());
+    }
+
+
+    @Test
+    void givenPersonIdWhenGetCityCategoryMerchantsThenReturnSuccess() throws Exception {
+        // Arrange
+        UUID cityId = UUID.randomUUID();
+        UUID categoryId = UUID.randomUUID();
+        LoyaltyFeaturedMerchantListResponse responseExpected = LoyaltyResponseFixture.withDefaultGetFeaturedMerchants();
+        when(service.getCityCategoryMerchants(any(), any(), any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/merchants";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .param("cityId", cityId.toString())
+                        .param("categoryId", categoryId.toString())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String expected = Util.objectToString(ApiDataResponse.of(responseExpected));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getCityCategoryMerchants(any(), any(), any());
+    }
+
+    @Test
+    void givenPersonIdWhenGetVoucherDetailThenReturnSuccess() throws Exception {
+        // Arrange
+        UUID voucherId = UUID.randomUUID();
+        String voucherType = "CONSUMO";
+        LoyaltyQrTransactionResponse responseExpected = LoyaltyResponseFixture.withDefaultGetVoucherDetail();
+        when(service.getVoucherDetail(any(), any(), any())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/vouchers/{voucherId}/type/{voucherType}";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123", voucherId, voucherType)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String expected = Util.objectToString(ApiDataResponse.of(responseExpected));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getVoucherDetail(any(), any(), any());
+    }
+
+    @Test
+    void givenPersonIdWhenGetMerchantCampaignVouchersThenReturnSuccess() throws Exception {
+        // Arrange
+
+        UUID merchantId = UUID.randomUUID();
+        UUID categoryId = UUID.randomUUID();
+        LoyaltyMerchantVoucherCategoryResponse responseExpected = LoyaltyResponseFixture.withDefaultGetMerchantCampaignVouchers();
+        when(service.getMerchantCampaignVouchers(anyString(), any(UUID.class), any(UUID.class), anyInt())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/vouchers";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .param("merchantId", merchantId.toString())
+                        .param("categoryId", categoryId.toString())
+                        .param("campaignId", "2025")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String expected = Util.objectToString(ApiDataResponse.of(responseExpected));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getMerchantCampaignVouchers(anyString(), any(UUID.class), any(UUID.class), anyInt());
+    }
+
+    @Test
+    void givenPersonIdWhenGetVoucherTransactedListThenReturnSuccess() throws Exception {
+        // Arrange
+        LoyaltyVoucherTransactedListResponse responseExpected = LoyaltyResponseFixture.withDefaultGetVoucherTransactedList();
+        when(service.getVoucherTransactedList(anyString(), anyInt(), anyString())).thenReturn(responseExpected);
+
+        // Act
+        String urlLoyalty = "/api/v1/loyalty/persons/{personId}/vouchers/transacted";
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
+                        .param("campaignId", String.valueOf(1))
+                        .param("state", "VIGENTE")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String expected = Util.objectToString(responseExpected);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).getVoucherTransactedList(anyString(), anyInt(), anyString());
+    }
+
 }
