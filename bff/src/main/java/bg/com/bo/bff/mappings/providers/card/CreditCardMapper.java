@@ -83,7 +83,7 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .dueDate(UtilDate.formatDate(pcMW.getDueDate()))
                 .typeCard(pcMW.getTypeCard())
                 .clientCode(pcMW.getClientCode())
-                .status(pcMW.getStatus())
+                .status(pcMW.getStatus().contains(RESPONSE_TEXT_ACTIVE) ? RESPONSE_TEXT_FORMATED : RESPONSE_TEXT_BLOCKED)
                 .solicitudeDate(UtilDate.formatDate(pcMW.getSolicitudeDate()))
                 .typeCardCode(pcMW.getTypeCardCode())
                 .build();
