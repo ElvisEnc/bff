@@ -1,6 +1,5 @@
 package bg.com.bo.bff.providers.models.enums.external.services.loyalty;
 
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTermsConditionsResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
