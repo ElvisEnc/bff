@@ -1,8 +1,20 @@
 package bg.com.bo.bff.mappings.providers.certifications.implementation;
 
-import bg.com.bo.bff.application.dtos.response.certifications.*;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationAccountsResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationConfigResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationHistoryResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationPrefExchRateResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationPriceResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationTypesResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.SaveCertificationResponse;
 import bg.com.bo.bff.mappings.providers.certifications.interfaces.ICertificationsMapper;
-import bg.com.bo.bff.providers.dtos.response.certifications.*;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationConfigMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationPriceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationSaveRequestMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsHistoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsPreferredExchMWResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;

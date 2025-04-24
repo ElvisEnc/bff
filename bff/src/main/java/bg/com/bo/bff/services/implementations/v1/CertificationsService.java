@@ -3,13 +3,26 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.certifications.CertificationConfigRequest;
 import bg.com.bo.bff.application.dtos.request.certifications.CertificationPriceRequest;
 import bg.com.bo.bff.application.dtos.request.certifications.SaveCertificationRequest;
-import bg.com.bo.bff.application.dtos.response.certifications.*;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationAccountsResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationConfigResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationHistoryResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationPrefExchRateResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationPriceResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationTypesResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.SaveCertificationResponse;
+import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.mappings.providers.certifications.interfaces.ICertificationsMapper;
 import bg.com.bo.bff.providers.dtos.request.certifications.CertificationConfigMWRequest;
 import bg.com.bo.bff.providers.dtos.request.certifications.CertificationPriceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.certifications.SaveCertificationMWRequest;
-import bg.com.bo.bff.providers.dtos.response.certifications.*;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationConfigMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationPriceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationSaveRequestMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsHistoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsPreferredExchMWResponse;
 import bg.com.bo.bff.providers.interfaces.ICertificationsProvider;
 import bg.com.bo.bff.services.interfaces.ICertificationsService;
 import org.springframework.context.annotation.Scope;
@@ -89,7 +102,7 @@ public class CertificationsService implements ICertificationsService {
     public SaveCertificationResponse saveCertRequest(SaveCertificationRequest request) throws IOException {
         SaveCertificationMWRequest mdwRequest = SaveCertificationMWRequest.builder()
                 .personId(request.getPersonId())
-                .appCode("2")
+                .appCode(CanalMW.GANAMOVIL.getCanal())
                 .accountId(request.getAccountId())
                 .chargeFeeId(request.getChargeFeeId())
                 .typeCode(request.getTypeCode())
