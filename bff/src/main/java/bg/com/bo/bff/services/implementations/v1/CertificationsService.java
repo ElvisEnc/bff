@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.dtos.request.certifications.CertificationConfig
 import bg.com.bo.bff.application.dtos.request.certifications.CertificationPriceRequest;
 import bg.com.bo.bff.application.dtos.request.certifications.SaveCertificationRequest;
 import bg.com.bo.bff.application.dtos.response.certifications.*;
+import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.mappings.providers.certifications.interfaces.ICertificationsMapper;
 import bg.com.bo.bff.providers.dtos.request.certifications.CertificationConfigMWRequest;
 import bg.com.bo.bff.providers.dtos.request.certifications.CertificationPriceMWRequest;
@@ -31,8 +32,8 @@ public class CertificationsService implements ICertificationsService {
     }
 
     @Override
-    public List<CertificationTypesResponse> getCertificateTypes(String personId, String appCode) throws IOException {
-        CertificatesTypeListMWResponse response = certificationsProvider.getCertificatesType(personId, appCode);
+    public List<CertificationTypesResponse> getCertificateTypes(String personId) throws IOException {
+        CertificatesTypeListMWResponse response = certificationsProvider.getCertificatesType(personId);
         return certsMapper.convertCertsTypesResponse(response);
     }
 
@@ -58,7 +59,7 @@ public class CertificationsService implements ICertificationsService {
     public CertificationConfigResponse getConfig(CertificationConfigRequest request) throws IOException {
         CertificationConfigMWRequest mdwRequest = CertificationConfigMWRequest.builder()
                 .personId(request.getPersonId())
-                .languageCode(request.getLanguageCode())
+                .languageCode("1")
                 .requestCode(request.getRequestCode())
                 .requestTypeCode(request.getRequestTypeCode())
                 .build();
@@ -68,14 +69,17 @@ public class CertificationsService implements ICertificationsService {
 
     @Override
     public CertificationPriceResponse getCertificationPrice(CertificationPriceRequest request) throws IOException {
+        String initDate = UtilDate.adaptDateToMWFormat(request.getInitDate());
+        String endDate = UtilDate.adaptDateToMWFormat(request.getEndDate());
+
         CertificationPriceMWRequest mdwRequest = CertificationPriceMWRequest.builder()
                 .personId(request.getPersonId())
                 .appCode("2")
                 .session("")
-                .initDate(request.getInitDate())
-                .endDate(request.getEndDate())
-                .certCode(request.getCertCode())
-                .certTypeCode(request.getCertTypeCode())
+                .initDate(initDate)
+                .endDate(endDate)
+                .certCode(request.getCertTypeCode())
+                .certTypeCode(request.getCertCode())
                 .build();
         CertificationPriceMWResponse mdwResponse = certificationsProvider.getCertificationPrice(mdwRequest);
         return certsMapper.convertCertificationPrice(mdwResponse);
@@ -85,6 +89,7 @@ public class CertificationsService implements ICertificationsService {
     public SaveCertificationResponse saveCertRequest(SaveCertificationRequest request) throws IOException {
         SaveCertificationMWRequest mdwRequest = SaveCertificationMWRequest.builder()
                 .personId(request.getPersonId())
+                .appCode("2")
                 .accountId(request.getAccountId())
                 .chargeFeeId(request.getChargeFeeId())
                 .typeCode(request.getTypeCode())

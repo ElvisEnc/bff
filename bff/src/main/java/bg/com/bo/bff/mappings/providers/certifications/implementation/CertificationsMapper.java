@@ -5,7 +5,6 @@ import bg.com.bo.bff.mappings.providers.certifications.interfaces.ICertification
 import bg.com.bo.bff.providers.dtos.response.certifications.*;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -100,21 +99,23 @@ public class CertificationsMapper implements ICertificationsMapper {
 
     @Override
     public CertificationPriceResponse convertCertificationPrice(CertificationPriceMWResponse mdwResponse) {
-        return CertificationPriceResponse.builder()
-                .roleId(mdwResponse.getRoleId())
-                .eventId(mdwResponse.getEventId())
-                .amount(mdwResponse.getAmount())
-                .currencyDes(mdwResponse.getCurrencyDes())
-                .currencyCode(mdwResponse.getCurrencyCode())
-                .rangeFrom(mdwResponse.getRangeFrom())
-                .rangeTo(mdwResponse.getRangeTo())
-                .rangeType(mdwResponse.getRangeType())
-                .build();
+        CertificationPriceMWResponse.PriceObj objResponse = mdwResponse.getData().get(0);
+
+                return CertificationPriceResponse.builder()
+                        .chargeFeeId(objResponse.getChargeFeeId())
+                        .eventId(objResponse.getEventId())
+                        .amount(objResponse.getAmount())
+                        .currencyDes(objResponse.getCurrencyDes())
+                        .currencyCode(objResponse.getCurrencyCode())
+                        .rangeFrom(objResponse.getRangeFrom())
+                        .rangeTo(objResponse.getRangeTo())
+                        .rangeType(objResponse.getRangeType())
+                        .build();
     }
 
     @Override
     public SaveCertificationResponse convertSaveCertification(CertificationSaveRequestMWResponse mdwResponse) {
-        if (!mdwResponse.getResponseCode().equals("COD000"))
+        if (!mdwResponse.getData().getResponseCode().equals("COD000"))
             return SaveCertificationResponse.builder()
                     .message("Hubo un error al realizar la solicitud del certificado.")
                     .build();

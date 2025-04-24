@@ -52,9 +52,9 @@ class CertificationsControllerTest {
     @Test
     void getCertificationsOK() throws Exception {
         List<CertificationTypesResponse> expected = CertificationResponseFixture.withDefaults();
-        when(service.getCertificateTypes(any(), any())).thenReturn(expected);
+        when(service.getCertificateTypes(any())).thenReturn(expected);
 
-        String url = "/api/v1/certifications/persons/1234/application/2";
+        String url = "/api/v1/certifications/persons/1234";
         mockMvc.perform(get(url)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -63,7 +63,7 @@ class CertificationsControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
-        verify(service).getCertificateTypes(any(), any());
+        verify(service).getCertificateTypes(any());
     }
 
     @Test

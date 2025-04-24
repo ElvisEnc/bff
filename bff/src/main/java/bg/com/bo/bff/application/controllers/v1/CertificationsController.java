@@ -26,7 +26,7 @@ import java.util.List;
 @RestController
 @Validated
 @RequestMapping("api/v1/certifications")
-@Tag(name = "Certifications Controller", description = "Contains all the controller methods for Certifications")
+@Tag(name = "Certifications Controller", description = "Controlador de Emision de Certificados")
 public class CertificationsController extends AbstractBFFController {
 
     private final ICertificationsService service;
@@ -41,15 +41,13 @@ public class CertificationsController extends AbstractBFFController {
                     @ApiResponse(responseCode = "200", description = "Certification types list", content = @Content(schema = @Schema(implementation = CertificationTypesResponse.class, type = "array")))
             }
     )
-    @GetMapping("/persons/{personId}/application/{appCode}")
+    @GetMapping("/persons/{personId}")
     public ResponseEntity<ApiDataResponse<List<CertificationTypesResponse>>> getCertsTypes(
-            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el numero de persona", example = "12345") String personId,
-            @PathVariable("appCode") @OnlyNumber @Parameter(description = "Este es el numero de persona", example = "1") String appCode
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el numero de persona", example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(ApiDataResponse.of(service.getCertificateTypes(
-                personId,
-                appCode
+                personId
         )));
     }
 
