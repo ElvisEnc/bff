@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public interface ICertificationsProvider {
 
-    CertificatesTypeListMWResponse getCertificatesType(String personId, String appCode) throws IOException;
+    CertificatesTypeListMWResponse getCertificatesType(String personId) throws IOException;
 
     CertificatesAccountsListMWResponse getAccountsList(String personId) throws IOException;
 

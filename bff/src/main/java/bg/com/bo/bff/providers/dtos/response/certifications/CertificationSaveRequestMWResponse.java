@@ -11,7 +11,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificationSaveRequestMWResponse {
 
-    private String responseCode;
-    private String requestNumber;
+    private SaveResponse data;
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SaveResponse{
+        private String responseCode;
+        private String requestNumber;
+    }
+
 
 }
