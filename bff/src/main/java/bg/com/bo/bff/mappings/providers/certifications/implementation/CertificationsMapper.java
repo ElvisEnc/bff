@@ -1,11 +1,22 @@
 package bg.com.bo.bff.mappings.providers.certifications.implementation;
 
-import bg.com.bo.bff.application.dtos.response.certifications.*;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationAccountsResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationConfigResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationHistoryResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationPrefExchRateResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationPriceResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.CertificationTypesResponse;
+import bg.com.bo.bff.application.dtos.response.certifications.SaveCertificationResponse;
 import bg.com.bo.bff.mappings.providers.certifications.interfaces.ICertificationsMapper;
-import bg.com.bo.bff.providers.dtos.response.certifications.*;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationConfigMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationPriceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationSaveRequestMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsHistoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsPreferredExchMWResponse;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -100,21 +111,23 @@ public class CertificationsMapper implements ICertificationsMapper {
 
     @Override
     public CertificationPriceResponse convertCertificationPrice(CertificationPriceMWResponse mdwResponse) {
-        return CertificationPriceResponse.builder()
-                .roleId(mdwResponse.getRoleId())
-                .eventId(mdwResponse.getEventId())
-                .amount(mdwResponse.getAmount())
-                .currencyDes(mdwResponse.getCurrencyDes())
-                .currencyCode(mdwResponse.getCurrencyCode())
-                .rangeFrom(mdwResponse.getRangeFrom())
-                .rangeTo(mdwResponse.getRangeTo())
-                .rangeType(mdwResponse.getRangeType())
-                .build();
+        CertificationPriceMWResponse.PriceObj objResponse = mdwResponse.getData().get(0);
+
+                return CertificationPriceResponse.builder()
+                        .chargeFeeId(objResponse.getChargeFeeId())
+                        .eventId(objResponse.getEventId())
+                        .amount(objResponse.getAmount())
+                        .currencyDes(objResponse.getCurrencyDes())
+                        .currencyCode(objResponse.getCurrencyCode())
+                        .rangeFrom(objResponse.getRangeFrom())
+                        .rangeTo(objResponse.getRangeTo())
+                        .rangeType(objResponse.getRangeType())
+                        .build();
     }
 
     @Override
     public SaveCertificationResponse convertSaveCertification(CertificationSaveRequestMWResponse mdwResponse) {
-        if (!mdwResponse.getResponseCode().equals("COD000"))
+        if (!mdwResponse.getData().getResponseCode().equals("COD000"))
             return SaveCertificationResponse.builder()
                     .message("Hubo un error al realizar la solicitud del certificado.")
                     .build();

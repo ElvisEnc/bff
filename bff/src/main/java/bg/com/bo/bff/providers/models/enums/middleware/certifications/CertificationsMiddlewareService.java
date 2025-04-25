@@ -13,7 +13,7 @@ public enum CertificationsMiddlewareService {
     GET_CERTIFICATION_HISTORY("/bs/v1/historic-certs/persons/%s"),
     GET_CONFIGS("/bs/v1/config"),
     GET_CERTIFICATION_PRICE("/bs/v1/certs-price"),
-    SAVE_CERTIFICATE_REQUEST("/bs/v1/certs-price")
+    SAVE_CERTIFICATE_REQUEST("/bs/v1/save-request")
 
     ;
 

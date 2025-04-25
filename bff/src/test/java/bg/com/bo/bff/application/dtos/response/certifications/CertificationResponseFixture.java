@@ -98,7 +98,7 @@ public class CertificationResponseFixture {
 
     public static CertificationPriceResponse withDefaultsPrice() {
         return CertificationPriceResponse.builder()
-                .roleId(1)
+                .chargeFeeId(1)
                 .eventId(8)
                 .amount(123)
                 .currencyDes("BS")

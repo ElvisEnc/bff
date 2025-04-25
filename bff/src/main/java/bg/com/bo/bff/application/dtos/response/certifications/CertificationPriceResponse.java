@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificationPriceResponse {
 
-    @Schema(description = "Identificador del rol")
-    private Integer roleId;
+    @Schema(description = "Identificador del cargo")
+    private Integer chargeFeeId;
 
     @Schema(description = "Identificador del evento")
     private Integer eventId;

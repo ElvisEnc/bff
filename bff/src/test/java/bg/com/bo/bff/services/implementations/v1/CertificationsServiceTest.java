@@ -37,10 +37,10 @@ class CertificationsServiceTest {
     void getCertificationsTypeOK() throws IOException {
         List<CertificationTypesResponse> expected = CertificationResponseFixture.withDefaults();
         CertificatesTypeListMWResponse mdwExpected = CertificatesTypeListMWResponseFixture.withDefaults();
-        when(provider.getCertificatesType(any(), any())).thenReturn(mdwExpected);
+        when(provider.getCertificatesType(any())).thenReturn(mdwExpected);
         when(certsMapper.convertCertsTypesResponse(mdwExpected)).thenReturn(expected);
 
-        List<CertificationTypesResponse> response = service.getCertificateTypes("123", "32121");
+        List<CertificationTypesResponse> response = service.getCertificateTypes("123");
 
         assertEquals(expected.size(), response.size());
     }
@@ -48,10 +48,10 @@ class CertificationsServiceTest {
     @Test
     void getCertificationsTypeOKWithNull() throws IOException {
         List<CertificationTypesResponse> expected = new ArrayList<>();
-        when(provider.getCertificatesType(any(), any())).thenReturn(null);
+        when(provider.getCertificatesType(any())).thenReturn(null);
         when(certsMapper.convertCertsTypesResponse(any())).thenReturn(expected);
 
-        List<CertificationTypesResponse> response = service.getCertificateTypes("123", "32121");
+        List<CertificationTypesResponse> response = service.getCertificateTypes("123");
 
         assertEquals(expected.size(), response.size());
     }
@@ -60,10 +60,10 @@ class CertificationsServiceTest {
     void getCertificationsTypeOKWithEmptyList() throws IOException {
         List<CertificationTypesResponse> expected = new ArrayList<>();
         CertificatesTypeListMWResponse mdwExpected = CertificatesTypeListMWResponseFixture.withEmptyData();
-        when(provider.getCertificatesType(any(), any())).thenReturn(mdwExpected);
+        when(provider.getCertificatesType(any())).thenReturn(mdwExpected);
         when(certsMapper.convertCertsTypesResponse(mdwExpected)).thenReturn(expected);
 
-        List<CertificationTypesResponse> response = service.getCertificateTypes("123", "32121");
+        List<CertificationTypesResponse> response = service.getCertificateTypes("123");
 
         assertEquals(expected.size(), response.size());
     }
