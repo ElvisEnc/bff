@@ -63,7 +63,8 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
     @Override
     public DebtsConsultationMWResponse debtsConsultation(DebtsConsultationMWRequest request, Map<String, String> parameters) throws IOException {
         String url = baseUrl + PaymentServicesMiddlewareServices.DEBTS.getServiceURL();
-        return post(url, HeadersMW.getDefaultHeaders(parameters), request, DebtsConsultationMWResponse.class);
+        ByMwErrorResponseHandler<DebtsConsultationMWResponse> responseHandler = ByMwErrorResponseHandler.instance(PaymentServicesMiddlewareError.MDWPSM_014);
+        return post(url, HeadersMW.getDefaultHeaders(parameters), request, DebtsConsultationMWResponse.class, responseHandler);
     }
 
     @Override

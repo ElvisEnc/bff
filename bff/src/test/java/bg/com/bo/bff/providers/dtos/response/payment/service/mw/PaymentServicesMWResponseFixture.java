@@ -134,6 +134,10 @@ public class PaymentServicesMWResponseFixture {
                 ).build();
     }
 
+    public static DebtsConsultationMWResponse withEmptyData(){
+        return new DebtsConsultationMWResponse();
+    }
+
     public static DebtsConsultationMWResponse withDefaultDebtsResponseMWModifyS() {
         return DebtsConsultationMWResponse.builder()
                 .data(DebtsConsultationMWResponse.DebtsConsultationMW.builder()
