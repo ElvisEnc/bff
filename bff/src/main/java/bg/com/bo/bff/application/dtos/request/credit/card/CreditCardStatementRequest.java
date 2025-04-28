@@ -1,8 +1,8 @@
 package bg.com.bo.bff.application.dtos.request.credit.card;
 
+import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.PaginationRequest;
 import bg.com.bo.bff.application.dtos.request.qr.OrderRequest;
-import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreditCardStatementRequest {
     @NotBlank
-    @Pattern(regexp = "13-\\d{2}-10-\\d{6}", message = "Formato inválido para cmsCard")
+    @Pattern(regexp = "13-\\d{2}-(13|10)-\\d{1,6}", message = "Formato inválido para cmsCard")
     @Schema(description = "número compuesto de la Tarjeta", example = "13-07-10-000005")
     private String cmsCard;
 
@@ -34,7 +34,7 @@ public class CreditCardStatementRequest {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CreditCardFilter{
+    public static class CreditCardFilter {
         @Valid
         private PaginationRequest pagination;
 

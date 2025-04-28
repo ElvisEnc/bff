@@ -90,6 +90,8 @@ public class CreditCardMWResponseFixture {
                 .product("Tarjeta Prepaga Oro")
                 .currency("068")
                 .currencyDescription("BOB")
+                .availableAmount(BigDecimal.valueOf(1800.9))
+                .lastRechargeDate("01/01/2025")
                 .registrationDate("2023-01-01")
                 .dueDate("2026-12-31")
                 .statusCard("Activa")
