@@ -16,6 +16,8 @@ public class CashAdvanceMWRequest {
     private String companyId;
     private String cmsAccountNumber;
     private String cmsCardNumber;
+    private String panNumber;
+    private String dueDate;
     private String accountId;
     private BigDecimal amount;
     private String description;

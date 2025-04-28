@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Builder
@@ -31,6 +34,13 @@ public class DetailPrepaidCardResponse {
 
     @Schema(description = "código de moneda")
     private String currency;
+
+    @Setter
+    @Schema(description = "Monto disponible")
+    private BigDecimal availableAmount;
+
+    @Schema(description = "fecha de ultima recarga")
+    private String lastRechargeDate;
 
     @Schema(description = "fecha de registro")
     private String registrationDate;

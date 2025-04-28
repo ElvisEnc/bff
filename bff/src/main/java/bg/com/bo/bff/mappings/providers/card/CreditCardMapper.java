@@ -1,12 +1,45 @@
 package bg.com.bo.bff.mappings.providers.card;
 
-import bg.com.bo.bff.application.dtos.request.credit.card.*;
-import bg.com.bo.bff.application.dtos.response.credit.card.*;
+import bg.com.bo.bff.application.dtos.request.credit.card.AuthorizationCreditCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.BlockCreditCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.CashAdvanceRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.FeePrepaidCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.PayCreditCardRequest;
+import bg.com.bo.bff.application.dtos.response.credit.card.AvailableCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CashAdvanceFeeResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CashAdvanceResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CreditCardStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.DetailCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.DetailPrepaidCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.FeePrepaidCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.LinkserCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.ListCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PayCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PeriodCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PurchaseAuthResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.utils.UtilDate;
-import bg.com.bo.bff.providers.dtos.request.credit.card.*;
+import bg.com.bo.bff.providers.dtos.request.credit.card.AuthorizationCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.BlockCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.CashAdvanceFeeMWRequest;
 import bg.com.bo.bff.providers.dtos.request.credit.card.CashAdvanceMWRequest;
-import bg.com.bo.bff.providers.dtos.response.credit.card.mw.*;
+import bg.com.bo.bff.providers.dtos.request.credit.card.FeePrepaidCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.PayCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.TransAccount;
+import bg.com.bo.bff.providers.dtos.request.credit.card.TransAmount;
+import bg.com.bo.bff.providers.dtos.request.credit.card.TransOwnerAccount;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.AvailableCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.CashAdvanceFeeMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.CashAdvanceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.CreditCardStatementsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.DetailPrepaidCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.DetailsCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.FeePrepaidCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.LinkserCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.ListCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.PayCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.PeriodCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.PurchaseAuthMWResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.credit.card.CreditCardConstans;
 import org.springframework.stereotype.Component;
 
@@ -95,6 +128,7 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .cardId(mwResponse.getAccountMaster())
                 .cmsAccount(mwResponse.getCmsAccountNumber())
                 .cardNumber(Util.obfuscateCardNumber(mwResponse.getPanNumber()))
+                .panNumber(mwResponse.getPanNumber())
                 .holderName(mwResponse.getHolderName())
                 .placeCode(mwResponse.getPlaceCode())
                 .place(mwResponse.getPlace())
@@ -125,6 +159,8 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .productCode(mwResponse.getProductCode())
                 .product(mwResponse.getProduct())
                 .currency(mwResponse.getCurrency())
+                .availableAmount(mwResponse.getAvailableAmount())
+                .lastRechargeDate(mwResponse.getLastRechargeDate())
                 .registrationDate(UtilDate.formatDate(mwResponse.getRegistrationDate()))
                 .dueDate(UtilDate.formatDate(mwResponse.getDueDate()))
                 .cardStatus(mwResponse.getStatusCard())
@@ -240,6 +276,8 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .cmsAccountNumber(request.getCmsAccount())
                 .cmsCardNumber(request.getCmsCard())
                 .accountId(request.getAccountId())
+                .panNumber(request.getPanNumber())
+                .dueDate(request.getDueDate())
                 .amount(request.getAmount())
                 .description(request.getDescription())
                 .build();
