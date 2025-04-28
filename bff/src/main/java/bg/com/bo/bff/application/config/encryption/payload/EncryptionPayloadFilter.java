@@ -113,6 +113,7 @@ public class EncryptionPayloadFilter extends OncePerRequestFilter {
                 new RequestCompare(HttpMethod.GET, "/api/v.*/registry/device/handshake"),
                 new RequestCompare(HttpMethod.GET, "/api/v.*/users/contact"),
                 new RequestCompare(HttpMethod.GET, "/api/v.*/attention-points/points/[0-9]+"),
+                new RequestCompare(HttpMethod.GET, "/api/v.*/attention-points/points"),
                 new RequestCompare(HttpMethod.GET, "/api/v.*/attention-points/points/[0-9]+/tickets"),
                 new RequestCompare(HttpMethod.GET, "/api/v.*/frequently-question/questions")
         );
