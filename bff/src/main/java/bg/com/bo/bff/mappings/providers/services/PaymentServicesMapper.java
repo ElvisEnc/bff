@@ -192,6 +192,13 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
 
     @Override
     public AffiliationDebtsResponse convertDebtsResponse(DebtsConsultationMWResponse mwResponse) {
+        if (mwResponse.getData() == null){
+            return AffiliationDebtsResponse.builder()
+                    .debtDetails(Collections.emptyList())
+                    .build();
+        }
+
+
         List<DebtDetail> debtDetails = mwResponse.getData().getDebtDetails().stream()
                 .map(detail ->
                         DebtDetail.builder()
