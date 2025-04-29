@@ -63,7 +63,11 @@ public class CreditCardService implements ICreditCardService {
     @Autowired
     private CreditCardService self;
 
-    public CreditCardService(ICreditCardProvider provider, ICreditCardTransactionProvider transactionProvider, ICreditCardMapper mapper) {
+    public CreditCardService(
+            ICreditCardProvider provider,
+            ICreditCardTransactionProvider transactionProvider,
+            ICreditCardMapper mapper
+    ) {
         this.provider = provider;
         this.transactionProvider = transactionProvider;
         this.mapper = mapper;
@@ -81,7 +85,9 @@ public class CreditCardService implements ICreditCardService {
 
     @Override
     public DetailPrepaidCardResponse getDetailsPrepaidCard(String personId, String cardId) throws IOException {
-        return mapper.convertDetails(provider.getDetailPrepaidCard(personId, cardId));
+        DetailPrepaidCardResponse dataResponse = mapper.convertDetails(provider.getDetailPrepaidCard(personId, cardId));
+        dataResponse.setAvailableAmount(provider.getAvailable(dataResponse.getCmsAccount()).getAvailableAmount());
+        return dataResponse;
     }
 
     @Override
