@@ -31,6 +31,7 @@ import bg.com.bo.bff.providers.dtos.request.credit.card.CashAdvanceFeeMWRequest;
 import bg.com.bo.bff.providers.dtos.request.credit.card.CashAdvanceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.credit.card.FeePrepaidCardMWRequest;
 import bg.com.bo.bff.providers.dtos.request.credit.card.PayCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.AvailableCreditCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.credit.card.mw.CreditCardStatementsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.credit.card.mw.PayCreditCardMWResponse;
 import bg.com.bo.bff.providers.interfaces.ICreditCardProvider;
@@ -86,7 +87,12 @@ public class CreditCardService implements ICreditCardService {
     @Override
     public DetailPrepaidCardResponse getDetailsPrepaidCard(String personId, String cardId) throws IOException {
         DetailPrepaidCardResponse dataResponse = mapper.convertDetails(provider.getDetailPrepaidCard(personId, cardId));
-        dataResponse.setAvailableAmount(provider.getAvailable(dataResponse.getCmsAccount()).getAvailableAmount());
+        if (dataResponse.getCmsAccount()!= null) {
+            AvailableCreditCardMWResponse available = provider.getAvailable(dataResponse.getCmsAccount());
+            if (available != null) {
+                dataResponse.setAvailableAmount(available.getAvailableAmount());
+            }
+        }
         return dataResponse;
     }
 
