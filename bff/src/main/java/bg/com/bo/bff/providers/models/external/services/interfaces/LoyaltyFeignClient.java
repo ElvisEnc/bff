@@ -13,6 +13,6 @@ import java.util.Map;
 )
 public interface LoyaltyFeignClient {
 
-    @GetMapping("/trade-categories") // esto debe coincidir con LoyaltyServices.GET_TRADE_CATEGORIES.getServiceURL()
+    @GetMapping("/lealtad/beneficios/api/v1/comercios-ganamovil/categorias-comercios") // esto debe coincidir con LoyaltyServices.GET_TRADE_CATEGORIES.getServiceURL()
     LoyaltyGetTradeCategoryResponse[] getTradeCategories(@RequestHeader Map<String, String> headers);
 }
