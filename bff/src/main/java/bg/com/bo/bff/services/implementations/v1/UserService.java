@@ -21,7 +21,7 @@ import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.commons.enums.user.Gender;
 import bg.com.bo.bff.commons.enums.user.MaritalStatus;
 import bg.com.bo.bff.commons.validators.generics.ContainsDigitValidator;
-import bg.com.bo.bff.commons.validators.generics.ContainsUpperCaseValidator;
+import bg.com.bo.bff.commons.validators.generics.ContainsLetterValidator;
 import bg.com.bo.bff.commons.validators.generics.IValidator;
 import bg.com.bo.bff.commons.validators.generics.MaxLengthValidator;
 import bg.com.bo.bff.commons.validators.generics.MinLengthValidator;
@@ -66,8 +66,11 @@ public class UserService implements IUserService {
     private final ILoginMapper mapper;
 
     @Autowired
-    public UserService(ILoginMiddlewareProvider provider, IPersonalInformationNetProvider providerPersonal, IPersonalInformationMapper iPersonalInformationMapper, IApiFaceNetProvider apiFaceNetProvider,
-                       IApiFaceMapper iApiFaceMapper, ILoginMapper mapper) {
+    public UserService(
+            ILoginMiddlewareProvider provider, IPersonalInformationNetProvider providerPersonal,
+            IPersonalInformationMapper iPersonalInformationMapper, IApiFaceNetProvider apiFaceNetProvider,
+            IApiFaceMapper iApiFaceMapper, ILoginMapper mapper
+    ) {
         this.loginMiddlewareProvider = provider;
         this.personalInformationNetProvider = providerPersonal;
         this.iPersonalInformationMapper = iPersonalInformationMapper;
@@ -80,10 +83,18 @@ public class UserService implements IUserService {
     public GenericResponse changePassword(
             String personId, String personRoleId, ChangePasswordRequest changePasswordRequest
     ) throws IOException {
-        IValidator<String> validator = new MinLengthValidator(Constants.PASSWORD_MIN_LENGTH, new HandledException(LoginMiddlewareError.NOT_VALID_PASSWORD));
-        validator.setNext(new MaxLengthValidator(Constants.PASSWORD_MAX_LENGTH, new HandledException(LoginMiddlewareError.NOT_VALID_PASSWORD)))
+        IValidator<String> validator = new MinLengthValidator(
+                Constants.PASSWORD_MIN_LENGTH, new HandledException(LoginMiddlewareError.NOT_VALID_PASSWORD)
+        );
+        validator
+                .setNext(
+                        new MaxLengthValidator(
+                                Constants.PASSWORD_MAX_LENGTH,
+                                new HandledException(LoginMiddlewareError.NOT_VALID_PASSWORD)
+                        )
+                )
                 .setNext(new ContainsDigitValidator(new HandledException(LoginMiddlewareError.NOT_VALID_PASSWORD)))
-                .setNext(new ContainsUpperCaseValidator(new HandledException(LoginMiddlewareError.NOT_VALID_PASSWORD)));
+                .setNext(new ContainsLetterValidator(new HandledException(LoginMiddlewareError.NOT_VALID_PASSWORD)));
 
         validator.validate(changePasswordRequest.getNewPassword());
         ChangePasswordMWRequest mwRequest = mapper.mapperRequest(changePasswordRequest, personId, personRoleId);
