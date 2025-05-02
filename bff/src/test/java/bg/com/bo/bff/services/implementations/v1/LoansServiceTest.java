@@ -466,17 +466,38 @@ class LoansServiceTest {
         LoanDetailPaymentResponse expectedResponse = LoansResponseFixture.withDefaultLoanDetailPaymentResponse();
         ReflectionTestUtils.setField(service, "self", self);
         when(provider.getLoanDetailPayment(any(), any())).thenReturn(mwResponseMock);
-        when(mapper.convertResponse(mwResponseMock)).thenReturn(expectedResponse);
+        when(mapper.convertResponse(mwResponseMock, "068")).thenReturn(expectedResponse);
         when(self.getServiceCache(any(), any(), anyBoolean())).thenReturn(listExpectedResponse);
 
         //Act
-        LoanDetailPaymentResponse response = service.getLoanDetailPayment("12345", "12345", "12345");
+        LoanDetailPaymentResponse response = service.getLoanDetailPayment("12345", "12345", "12345", "068");
 
         //Assert
         assertNotNull(response);
         assertEquals(expectedResponse, response);
         verify(provider).getLoanDetailPayment(any(), any());
-        verify(mapper).convertResponse(mwResponseMock);
+        verify(mapper).convertResponse(mwResponseMock, "068");
+    }
+
+    @Test
+    void givenLoanIdAndPersonIdWhenGetLoanDetailPaymentThenLoanDetailPaymentResponseUSD() throws IOException {
+        //Arrange
+        List<ListLoansResponse> listExpectedResponse = LoansResponseFixture.withDataDefaultListLoansResponse();
+        LoanDetailPaymentMWResponse mwResponseMock = LoansMWResponseFixture.withDefaultLoanDetailPaymentMWResponse();
+        LoanDetailPaymentResponse expectedResponse = LoansResponseFixture.withDefaultLoanDetailPaymentResponse();
+        ReflectionTestUtils.setField(service, "self", self);
+        when(provider.getLoanDetailPayment(any(), any())).thenReturn(mwResponseMock);
+        when(mapper.convertResponse(mwResponseMock, "840")).thenReturn(expectedResponse);
+        when(self.getServiceCache(any(), any(), anyBoolean())).thenReturn(listExpectedResponse);
+
+        //Act
+        LoanDetailPaymentResponse response = service.getLoanDetailPayment("12345", "12345", "12345", "840");
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse, response);
+        verify(provider).getLoanDetailPayment(any(), any());
+        verify(mapper).convertResponse(mwResponseMock, "840");
     }
 
     @Test

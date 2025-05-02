@@ -18,7 +18,7 @@ public interface ILoansMapper {
 
     List<LoanPlanResponse> convertResponse(LoanPlanMWResponse mwResponse);
 
-    LoanDetailPaymentResponse convertResponse(LoanDetailPaymentMWResponse mwResponse);
+    LoanDetailPaymentResponse convertResponse(LoanDetailPaymentMWResponse mwResponse, String currencyCode);
 
     LoanPaymentMWRequest mapperRequest(String personId, String accountId, LoanPaymentRequest request);
 

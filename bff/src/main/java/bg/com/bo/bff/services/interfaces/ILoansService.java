@@ -21,7 +21,7 @@ public interface ILoansService {
 
     List<LoanPlanResponse> getLoanPlans(String loanId, String clientId) throws IOException;
 
-    LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId) throws IOException;
+    LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId, String currencyCode) throws IOException;
 
     LoanPaymentResponse payLoanInstallment(String personId, String accountId, LoanPaymentRequest request) throws IOException;
 

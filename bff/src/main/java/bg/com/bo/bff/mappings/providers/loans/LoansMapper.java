@@ -17,6 +17,8 @@ import java.util.Optional;
 @Component
 public class LoansMapper implements ILoansMapper {
 
+    private static final String CURRENCY_BOB = "068";
+
     @Override
     public List<ListLoansResponse> convertResponse(ListLoansMWResponse mwResponse) {
         if (mwResponse == null || mwResponse.getData() == null)
@@ -134,8 +136,14 @@ public class LoansMapper implements ILoansMapper {
     }
 
     @Override
-    public LoanDetailPaymentResponse convertResponse(LoanDetailPaymentMWResponse mwResponse) {
-        double total = (double) Math.round(Double.parseDouble(mwResponse.getAmountSecureMandatory()) + Double.parseDouble(mwResponse.getAmount()))*100;
+    public LoanDetailPaymentResponse convertResponse(LoanDetailPaymentMWResponse mwResponse, String currencyCode) {
+        double total = 0;
+        if(currencyCode.equals(CURRENCY_BOB)){
+            total = (double) Math.round(Double.parseDouble(mwResponse.getAmountSecureConvertMandatory()) + Double.parseDouble(mwResponse.getAmount()))*100;
+        }else {
+            total = (double) Math.round(Double.parseDouble(mwResponse.getAmountSecureMandatory()) + Double.parseDouble(mwResponse.getAmount()))*100;
+        }
+
         return LoanDetailPaymentResponse.builder()
                 .correlativeId(Long.parseLong(mwResponse.getIdentifier()))
                 .nroOperation(Long.parseLong(mwResponse.getLoanNumber()))
