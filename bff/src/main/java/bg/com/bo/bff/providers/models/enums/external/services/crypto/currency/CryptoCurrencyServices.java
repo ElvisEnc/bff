@@ -8,7 +8,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CryptoCurrencyServices {
 
-    POST_REGISTER_ACCOUNT("/empresas/criptoactivos-mdw/api/v1/account/account-create");
+    AUTHENTICATION("/api/v1/authentication"),
+    POST_REGISTER_ACCOUNT("/api/v1/account/account-create"),
+    POST_AVAILABLE_BALANCE("/api/v1/account/available-balance"),
+    POST_ACCOUNT_EMAIL("/api/v1/account/account-email"),
+    ;
 
     private final String serviceURL;
 }
