@@ -374,7 +374,7 @@ public class LoyaltyMapper implements ILoyaltyMapper {
     @Override
     public Map<String, String> mapperRequestService(String personId) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("sesion", "2204202511305398a33421103b7311");
+        headers.put("sesion", "30042025115627b8edd686493249f3");
         headers.put("idpersona", personId);
         return headers;
     }

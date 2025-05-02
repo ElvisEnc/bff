@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum DefaultExternalError implements IExternalError {
 
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "BAD_REQUEST", "Ocurrió un error", "Error",CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Usuario no autenticado.", "Usuario no autenticado.", "Usuario no autenticado", CategoryError.AUTH.getCategoryId()),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Sin autorización", "Usuario no autenticado.", "Usuario no autenticado", CategoryError.AUTH.getCategoryId()),
     ;
 
 

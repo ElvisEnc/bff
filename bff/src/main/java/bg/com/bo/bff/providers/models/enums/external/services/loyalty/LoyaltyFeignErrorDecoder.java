@@ -19,9 +19,9 @@ public class LoyaltyFeignErrorDecoder implements ErrorDecoder {
             String json = IOUtils.toString(response.body().asInputStream(), StandardCharsets.UTF_8);
 
             ApiErrorResponse errorResponse = objectMapper.readValue(json, ApiErrorResponse.class);
-            String code = errorResponse.getErrorDetailResponse().get(0).getCode();
+            String message = errorResponse.getMensaje();
 
-            LoyaltyError mappedError = findLoyaltyErrorByCode(code);
+            LoyaltyError mappedError = findLoyaltyErrorByCode(message);
 
             return new GenericException(mappedError); // o HandledException(mappedError)
         } catch (Exception e) {
@@ -29,9 +29,9 @@ public class LoyaltyFeignErrorDecoder implements ErrorDecoder {
         }
     }
 
-    private LoyaltyError findLoyaltyErrorByCode(String code) {
+    private LoyaltyError findLoyaltyErrorByCode(String message) {
         for (LoyaltyError err : LoyaltyError.values()) {
-            if (err.getCode().equalsIgnoreCase(code)) {
+            if (err.getMsgError().equalsIgnoreCase(message)) {
                 return err;
             }
         }
