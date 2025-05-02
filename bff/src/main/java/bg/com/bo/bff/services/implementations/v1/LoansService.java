@@ -138,14 +138,14 @@ public class LoansService implements ILoansService {
     }
 
     @Override
-    public LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId) throws IOException {
+    public LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId, String currencyCode) throws IOException {
         List<ListLoansResponse> list = self.getServiceCache(personId, clientId,false);
         boolean existData = list.stream().anyMatch(response -> response.getLoanId().equals(loanId) && response.getClientId().equals(clientId));
         if (!existData) {
             throw new GenericException(LoansMiddlewareError.MDWPRE_NOT_FOUND);
         }
         LoanDetailPaymentMWResponse mwResponse = provider.getLoanDetailPayment(loanId, clientId);
-        return mapper.convertResponse(mwResponse);
+        return mapper.convertResponse(mwResponse, currencyCode);
     }
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == false")},

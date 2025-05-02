@@ -96,14 +96,15 @@ public class LoansController extends AbstractBFFController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Solicitud de pago de préstamo", content = @Content(schema = @Schema(implementation = LoanDetailPaymentResponse.class), mediaType = "application/json"))
     })
-    @GetMapping("{loanId}/persons/{personId}/payments/{clientId}")
+    @GetMapping("{loanId}/persons/{personId}/payments/{clientId}/currency/{currencyCode}")
     public ResponseEntity<LoanDetailPaymentResponse> getLoanDetailPayment(
             @PathVariable("loanId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String loanId,
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
-            @PathVariable("clientId") @OnlyNumber @Parameter(description = "Este es el clientId de la persona", example = "12345") String clientId
+            @PathVariable("clientId") @OnlyNumber @Parameter(description = "Este es el clientId de la persona", example = "12345") String clientId,
+            @PathVariable("currencyCode") @OnlyNumber @Parameter(description = "Este es el clientId de la persona", example = "12345") String currencyCode
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(service.getLoanDetailPayment(loanId, personId, clientId));
+        return ResponseEntity.ok(service.getLoanDetailPayment(loanId, personId, clientId, currencyCode));
     }
 
     @Operation(summary = "Pago de préstamo", description = "Pagar un préstamo con una cuenta propia")

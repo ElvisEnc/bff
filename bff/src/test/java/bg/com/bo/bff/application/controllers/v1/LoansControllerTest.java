@@ -197,11 +197,11 @@ class LoansControllerTest {
     void givenLoandIdAndPersonIdWhenGetLoanPaymentRequestThenResponseLoanDetailPaymentResponse() throws Exception {
         //Arrange
         LoanDetailPaymentResponse expectedResponse = LoansResponseFixture.withDefaultLoanDetailPaymentResponse();
-        when(service.getLoanDetailPayment(any(), any(), any())).thenReturn(expectedResponse);
+        when(service.getLoanDetailPayment(any(), any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments/{clientId}";
-        MvcResult result = mockMvc.perform(get(path, "123", "123", "123")
+        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments/{clientId}/currency/{currencyCode}";
+        MvcResult result = mockMvc.perform(get(path, "123", "123", "123", "321")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -213,7 +213,7 @@ class LoansControllerTest {
         // Assert
         assertNotNull(result);
         assertEquals(response, actual);
-        verify(service).getLoanDetailPayment(any(), any(), any());
+        verify(service).getLoanDetailPayment(any(), any(), any(), any());
     }
 
     @Test
