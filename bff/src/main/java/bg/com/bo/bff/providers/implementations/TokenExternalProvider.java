@@ -38,6 +38,10 @@ public class TokenExternalProvider implements ITokenExternalProvider {
         try {
             ClientToken newToken = authClient.getTokenAuthentication(tokenAuthenticationRequestDto);
 
+            if (newToken.getExpiresIn() == null) {
+                newToken.setExpiresIn(3600);
+            }
+
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime expireAt = now.plusSeconds(newToken.getExpiresIn());
 
