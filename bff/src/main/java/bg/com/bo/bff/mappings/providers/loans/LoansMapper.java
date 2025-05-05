@@ -139,9 +139,9 @@ public class LoansMapper implements ILoansMapper {
     public LoanDetailPaymentResponse convertResponse(LoanDetailPaymentMWResponse mwResponse, String currencyCode) {
         double total = 0;
         if(currencyCode.equals(CURRENCY_BOB)){
-            total = (double) Math.round(Double.parseDouble(mwResponse.getAmountSecureConvertMandatory()) + Double.parseDouble(mwResponse.getAmount()))*100;
+            total = Double.parseDouble(mwResponse.getAmountSecureConvertMandatory()) + Double.parseDouble(mwResponse.getAmount());
         }else {
-            total = (double) Math.round(Double.parseDouble(mwResponse.getAmountSecureMandatory()) + Double.parseDouble(mwResponse.getAmount()))*100;
+            total = Double.parseDouble(mwResponse.getAmountSecureMandatory()) + Double.parseDouble(mwResponse.getAmount());
         }
 
         return LoanDetailPaymentResponse.builder()
