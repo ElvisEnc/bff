@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,5 +41,18 @@ public class CryptoCurrencyController extends AbstractBFFController {
     ) throws IOException {
         getDeviceDataHeader();
        return ResponseEntity.ok(service.registerAccount(personId));
+    }
+
+    @Operation(summary = "Registrar una cuenta", description = "Registrar una cuenta en GanaCripto",
+            operationId = "registerAccount")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Registrar una cuenta en GanaCripto")
+    })
+    @GetMapping("/persons/{personId}/available-balance")
+    public ResponseEntity<GenericResponse> getAvailableBalance(
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+       return ResponseEntity.ok(service.getAvailableBalance(personId));
     }
 }

@@ -7,4 +7,6 @@ import java.io.IOException;
 public interface ICryptoCurrencyService {
 
     GenericResponse registerAccount (String personId) throws IOException;
+
+    GenericResponse getAvailableBalance (String personId) throws IOException;
 }

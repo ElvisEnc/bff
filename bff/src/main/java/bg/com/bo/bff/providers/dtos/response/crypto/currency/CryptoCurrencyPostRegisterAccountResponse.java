@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CryptoCurrencyPostRegisterAccountResponse {
 
-    @JsonProperty("code_error")
+    @JsonProperty("errorCode")
     private String codeError;
 
-    @JsonProperty("message")
+    @JsonProperty("errorMessage")
     private String message;
 
     @JsonProperty("account_number")
