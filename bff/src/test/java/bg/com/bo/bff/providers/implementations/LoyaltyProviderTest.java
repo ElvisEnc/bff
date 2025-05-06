@@ -5,18 +5,39 @@ import bg.com.bo.bff.providers.dtos.request.loyalty.CityCategoryMerchantsAPIRequ
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltySERequestFixture;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.MerchantCampaignVoucherAPIRequest;
-import bg.com.bo.bff.providers.dtos.response.loyalty.*;
-import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltySERequestFixture;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyCityListAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyFeaturedMerchantAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGeneralInformationResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetCategoryPromotionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetGenericTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetImageResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetInitialPointsVamosResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetLevelResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetPromotionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetStoreFeaturedResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTermsConditionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTradeCategoryResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyMerchantCampaignVoucherAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPointServerResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPostRegisterRedeemVoucherResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyQrTransactionAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyRegisterSubscriptionResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySEResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatementPointsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatusResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -28,12 +49,18 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 
 @WireMockTest(httpPort = 8080)
 @ExtendWith(WireMockExtension.class)
 class LoyaltyProviderTest {
+    @Mock
     private LoyaltyProvider loyaltyProvider;
     private IHttpClientFactory httpClientFactoryMock;
     private ObjectMapper objectMapperMock;
@@ -182,7 +209,7 @@ class LoyaltyProviderTest {
     void givenValidPersonId_whenGetGeneralInformation_thenReturnResponse() throws Exception {
         String personId = "12345";
         Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
-        String expectedUrl = BASE_URL + "/lealtad/campana/api/v1/suscripciones-ganamovil/informacion-general/" + personId ;
+        String expectedUrl = BASE_URL + "/lealtad/campana/api/v1/suscripciones-ganamovil/informacion-general/" + personId;
 
         LoyaltyGeneralInformationResponse mockResponse = LoyaltySEResponseFixture.withDefaultGeneralInformationData();
         doReturn(mockResponse).when(loyaltyProvider).executeGetRequest(expectedUrl, headers, LoyaltyGeneralInformationResponse.class);
@@ -286,7 +313,7 @@ class LoyaltyProviderTest {
     void givenValidPersonId_whenCheckFlow_thenReturnResponse() throws Exception {
         String personId = "12345";
         Map<String, String> headers = Map.of("sesion", "123", "idpersona", personId);
-        String expectedUrl = BASE_URL + "/lealtad/administracion/api/v1/reglas-ganamovil/validar-vamos/" + personId ;
+        String expectedUrl = BASE_URL + "/lealtad/administracion/api/v1/reglas-ganamovil/validar-vamos/" + personId;
 
         LoyaltyStatusResponse mockResponse = LoyaltySEResponseFixture.withDefaultSubscription();
         doReturn(mockResponse).when(loyaltyProvider).executeGetRequest(expectedUrl, headers, LoyaltyStatusResponse.class);
@@ -335,7 +362,7 @@ class LoyaltyProviderTest {
         String voucherId = "12345";
         String typeVoucher = "12345";
         Map<String, String> headers = Map.of("sesion", "123", "idpersona", "1234");
-        String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/vales-ganamovil/" + voucherId +"/tipo-vale/" + typeVoucher;
+        String expectedUrl = BASE_URL + "/lealtad/beneficios/api/v1/vales-ganamovil/" + voucherId + "/tipo-vale/" + typeVoucher;
 
         LoyaltyGetGenericTransactionsResponse mockResponse = LoyaltySEResponseFixture.withDefaultQrTransactions();
         doReturn(mockResponse).when(loyaltyProvider).executeGetRequest(expectedUrl, headers, LoyaltyGetGenericTransactionsResponse.class);
@@ -524,8 +551,8 @@ class LoyaltyProviderTest {
         String expectedUrl = String.format(
                 BASE_URL + "/lealtad/beneficios/api/v1/vales-ganamovil/campana/%s/persona/%s/estado/%s",
                 1,
-                personId,
-                "ACTIVO"
+                2,
+                "VIGENTE"
         );
 
         List<LoyaltyPostRegisterRedeemVoucherResponse> mockResponseList = LoyaltySEResponseFixture
@@ -539,7 +566,7 @@ class LoyaltyProviderTest {
 
         // Act
         List<LoyaltyPostRegisterRedeemVoucherResponse> response = loyaltyProvider.getVoucherTransactedList(
-                headers, personId, 1, "ACTIVO"
+                headers, personId, 2, "VIGENTE"
         );
 
         // Assert

@@ -1,34 +1,34 @@
 package bg.com.bo.bff.providers.implementations;
 
-import bg.com.bo.bff.providers.dtos.request.loyalty.MerchantCampaignVoucherAPIRequest;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.loyalty.CityCategoryMerchantsAPIRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyGetImagesRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyPersonCampRequest;
-import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
-import bg.com.bo.bff.providers.dtos.request.loyalty.CityCategoryMerchantsAPIRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterRedeemVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyRegisterSubscriptionRequest;
+import bg.com.bo.bff.providers.dtos.request.loyalty.LoyaltyStatementPointRequest;
+import bg.com.bo.bff.providers.dtos.request.loyalty.MerchantCampaignVoucherAPIRequest;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyCityListAPIResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyFeaturedMerchantAPIResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGeneralInformationResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetCategoryPromotionResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetGenericTransactionsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetImageResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetInitialPointsVamosResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetLevelResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetPromotionResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetGenericTransactionsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetStoreFeaturedResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTermsConditionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTradeCategoryResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTransactionsResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyMerchantCampaignVoucherAPIResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPointServerResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPostRegisterRedeemVoucherResponse;
+import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyQrTransactionAPIResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyRegisterSubscriptionResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatementPointsResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyStatusResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyCityListAPIResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyFeaturedMerchantAPIResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyMerchantCampaignVoucherAPIResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyQrTransactionAPIResponse;
-import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTradeCategoryResponse;
 import bg.com.bo.bff.providers.interfaces.ILoyaltyProvider;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyError;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyServices;
@@ -39,9 +39,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
@@ -107,7 +107,8 @@ public class LoyaltyProvider extends HttpClientExternalProvider<LoyaltyError> im
     public List<LoyaltyStatementPointsResponse> statementPoints(LoyaltyStatementPointRequest requestServer, Map<String, String> headers) throws IOException {
         String url = baseUrl + String.format(LoyaltyServices.GET_STATEMENT_POINTS.getServiceURL());
         return this.executePostRequest(url, requestServer, headers,
-                new TypeReference<List<LoyaltyStatementPointsResponse>>() {});
+                new TypeReference<List<LoyaltyStatementPointsResponse>>() {
+                });
     }
 
     @Override
@@ -126,21 +127,24 @@ public class LoyaltyProvider extends HttpClientExternalProvider<LoyaltyError> im
     public List<LoyaltyGetImageResponse> getImagesInformation(LoyaltyGetImagesRequest requestServer) throws IOException {
         String url = baseUrl + String.format(LoyaltyServices.GET_LIST_IMAGES.getServiceURL());
         return this.executePostRequest(url, requestServer, Collections.emptyMap(),
-                new TypeReference<List<LoyaltyGetImageResponse>>() {});
+                new TypeReference<List<LoyaltyGetImageResponse>>() {
+                });
     }
 
     @Override
     public List<LoyaltyGetCategoryPromotionResponse> getCategoryPromotions(Map<String, String> headers) throws IOException {
         String url = baseUrl + String.format(LoyaltyServices.GET_CATEGORY_PROMOTION.getServiceURL());
         return this.executeGetRequest(url, headers,
-                new TypeReference<List<LoyaltyGetCategoryPromotionResponse>>() {});
+                new TypeReference<List<LoyaltyGetCategoryPromotionResponse>>() {
+                });
     }
 
     @Override
     public List<LoyaltyGetLevelResponse> getCategoryPointsLevels(Map<String, String> headers) throws IOException {
         String url = baseUrl + String.format(LoyaltyServices.GET_CATEGORY_POINTS_LEVEL.getServiceURL());
         return this.executeGetRequest(url, headers,
-                new TypeReference<List<LoyaltyGetLevelResponse>>() {});
+                new TypeReference<List<LoyaltyGetLevelResponse>>() {
+                });
     }
 
     @Override
@@ -165,7 +169,8 @@ public class LoyaltyProvider extends HttpClientExternalProvider<LoyaltyError> im
     public List<LoyaltyGetStoreFeaturedResponse> getStoreFeatured(Map<String, String> headers) throws IOException {
         String url = baseUrl + String.format(LoyaltyServices.GET_STORE_FEATURED.getServiceURL());
         return this.executeGetRequest(url, headers,
-                new TypeReference<List<LoyaltyGetStoreFeaturedResponse>>() {});
+                new TypeReference<List<LoyaltyGetStoreFeaturedResponse>>() {
+                });
     }
 
     @Override
@@ -178,7 +183,8 @@ public class LoyaltyProvider extends HttpClientExternalProvider<LoyaltyError> im
     public List<LoyaltyGetTransactionsResponse> getVoucherTransactions(Map<String, String> headers, String codeSystem, String status) throws IOException {
         String url = baseUrl + String.format(LoyaltyServices.GET_VOUCHER_TRANSACTION.getServiceURL(), codeSystem, status);
         return this.executeGetRequest(url, headers,
-                new TypeReference<List<LoyaltyGetTransactionsResponse>>() {});
+                new TypeReference<List<LoyaltyGetTransactionsResponse>>() {
+                });
     }
 
     @Override
@@ -231,10 +237,10 @@ public class LoyaltyProvider extends HttpClientExternalProvider<LoyaltyError> im
 
     @Override
     public List<LoyaltyPostRegisterRedeemVoucherResponse> getVoucherTransactedList(
-            Map<String, String> headers, String personId, int campaignId, String state
+            Map<String, String> headers, String personId, int systemCode, String state
     ) throws IOException {
         String url = baseUrl + String.format(
-                LoyaltyServices.GET_VOUCHER_TRANSACTED_LIST.getServiceURL(),campaignId, personId, state
+                LoyaltyServices.GET_VOUCHER_TRANSACTED_LIST.getServiceURL(), systemCode, state
         );
         return Arrays.asList(this.executeGetRequest(url, headers, LoyaltyPostRegisterRedeemVoucherResponse[].class));
     }

@@ -62,6 +62,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyPostRegisterRedeemVoucherResponse.LoyaltyRedeemVoucher;
+
 @Component
 public class LoyaltyMapper implements ILoyaltyMapper {
     String campaign = "1";
@@ -370,8 +372,8 @@ public class LoyaltyMapper implements ILoyaltyMapper {
     @Override
     public Map<String, String> mapperRequestService(String personId) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("sesion", "2204202511305398a33421103b7311");
-        headers.put("idpersona", personId);
+        headers.put("sesion", "06052025135559b8edd686493249f3");
+        headers.put("idpersona", "11913382");
         return headers;
     }
 
@@ -460,8 +462,10 @@ public class LoyaltyMapper implements ILoyaltyMapper {
     }
 
     private LoyaltyRedeemVoucherResponse.LoyaltyRedeemVoucher mapRedeemVoucher(
-            LoyaltyPostRegisterRedeemVoucherResponse.LoyaltyRedeemVoucher sourceVoucher
+            LoyaltyRedeemVoucher sourceVoucher
     ) {
+        if (sourceVoucher == null)
+            return null;
         return LoyaltyRedeemVoucherResponse.LoyaltyRedeemVoucher.builder()
                 .valueRedeemVoucher(sourceVoucher.getValueRedeemVoucher())
                 .typeValueRedeemVoucher(sourceVoucher.getTypeValueRedeemVoucher())
@@ -610,8 +614,9 @@ public class LoyaltyMapper implements ILoyaltyMapper {
     public List<LoyaltyRedeemVoucherResponse> convertVoucherTransactedListResponse(
             List<LoyaltyPostRegisterRedeemVoucherResponse> apiResponse
     ) {
-        if (apiResponse == null)
+        if (apiResponse == null) {
             return Collections.emptyList();
+        }
         return apiResponse.stream()
                 .map(data -> LoyaltyRedeemVoucherResponse.builder()
                         .identifier(data.getIdentifier())
@@ -624,13 +629,19 @@ public class LoyaltyMapper implements ILoyaltyMapper {
                         .idPerson(data.getIdPerson())
                         .codePerson(data.getCodePerson())
                         .dateCreation(data.getDateCreation())
-                        .dateVoucher(data.getDateVoucher())
                         .valueVoucher(data.getValueVoucher())
                         .expirationDate(data.getExpirationDate())
+                        .dateVoucher(data.getDateVoucher())
                         .idBenefit(data.getIdBenefit())
                         .name(data.getName())
                         .description(data.getDescription())
                         .banner(data.getBanner())
+                        .isRedeemed(data.getIsRedeemed())
+                        .redemptionDate(data.getRedemptionDate())
+                        .managerId(data.getManagerId())
+                        .voucherCost(data.getVoucherCost())
+                        .typeValue(data.getTypeValue())
+                        .assumedPercentage(data.getAssumedPercentage())
                         .note(data.getNote())
                         .status(data.getStatus())
                         .trade(
@@ -646,8 +657,8 @@ public class LoyaltyMapper implements ILoyaltyMapper {
                                                 .iconCategory(data.getTrade().getCategory().getIconCategory())
                                                 .build())
                                         .build())
-                        .typeValue(data.getTypeValue())
                         .redeemVoucher(mapRedeemVoucher(data.getRedeemVoucher()))
+                        .redeemProduct(mapRedeemVoucher(data.getRedeemProduct()))
                         .build())
                 .toList();
     }

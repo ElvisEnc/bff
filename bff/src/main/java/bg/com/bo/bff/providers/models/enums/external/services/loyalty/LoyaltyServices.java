@@ -33,7 +33,7 @@ public enum LoyaltyServices {
     GET_CITY_CATEGORY_MERCHANTILS("/lealtad/beneficios/api/v1/comercios-ganamovil/categoria-comercio/ciudad"),
     GET_QR_VOUCHER_TRANSACTION("/lealtad/beneficios/api/v1/vales-ganamovil/%s/tipo-vale/%s"),
     POST_COMPANY_MERCHANT_CATEGORY_VOUCHERS("/lealtad/beneficios/api/v1/beneficios-ganamovil/obtener-todos"),
-    GET_VOUCHER_TRANSACTED_LIST("/lealtad/beneficios/api/v1/vales-ganamovil/campana/%s/persona/%s/estado/%s");
+    GET_VOUCHER_TRANSACTED_LIST("/lealtad/beneficios/api/v1/vales-ganamovil/campana/1/persona/%s/estado/%s");
 
     private final String serviceURL;
 }

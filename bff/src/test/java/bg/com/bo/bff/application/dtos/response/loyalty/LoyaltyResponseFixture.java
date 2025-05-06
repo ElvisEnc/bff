@@ -14,6 +14,7 @@ public class LoyaltyResponseFixture {
                 .codeSystem(1)
                 .build();
     }
+
     public static LoyaltyPointResponse withDefaultSumPoint() {
         return LoyaltyPointResponse.builder()
                 .points(1)
@@ -163,7 +164,7 @@ public class LoyaltyResponseFixture {
                 .build();
     }
 
-    public static LoyaltyTermsConditionsResponse withDefaultTermsConditions(){
+    public static LoyaltyTermsConditionsResponse withDefaultTermsConditions() {
         return LoyaltyTermsConditionsResponse.builder()
                 .contractName("TÉRMINOS Y CONDICIONES PROGRAMA DE LEALTAD PERMANENTE")
                 .contract("Es responsabilidad del cliente leer y aceptar los términos.")
@@ -443,44 +444,47 @@ public class LoyaltyResponseFixture {
 
     public static LoyaltyVoucherTransactedListResponse withDefaultGetVoucherTransactedList() {
         return LoyaltyVoucherTransactedListResponse.builder().data(
-                    Collections.singletonList(LoyaltyRedeemVoucherResponse.builder()
-                    .identifier("1231323")
-                    .codeVoucher("Cod123")
-                    .idCampaign("3221132")
-                    .holderName("John Travolta")
-                    .documentHolder("123456789")
-                    .beneficiaryName("Jane Travolta")
-                    .beneficiaryDocument("987654321")
-                    .idPerson("12343")
-                    .codePerson("COD12345")
-                    .dateCreation("2025-04-22")
-                    .dateVoucher("2025-04-23")
-                    .valueVoucher(100.0)
-                    .expirationDate("2025-12-31")
-                    .idBenefit("4564545")
-                    .name("Voucher para consumo")
-                    .description("Este voucher es con proposito de consumo.")
-                    .banner("Banner voucher")
-                    .note("Solo valido en tiendas que participan.")
-                    .status("ACTIVE")
-                    .trade(LoyaltyRedeemVoucherResponse.LoyaltyTrade.builder()
-                        .identifierTrade("12313245")
-                        .nameTrade("DISMAC")
-                        .descriptionTrade("Muy buena tienda para articulos originales")
-                        .logoTrade("Logo Dismac")
-                        .category(LoyaltyTradeCategoryResponse.builder()
-                            .categoryId("31232")
-                            .nameCategory("Electronica")
-                            .iconCategory("Icono Electronica")
-                            .build())
-                        .build())
-                    .typeValue("CONSUMMO")
-                    .redeemVoucher(LoyaltyRedeemVoucherResponse.LoyaltyRedeemVoucher.builder()
-                        .valueRedeemVoucher("100.0")
-                        .typeValueRedeemVoucher("Dolares")
-                        .build())
-                    .build()))
-            .build();
+                        Collections.singletonList(LoyaltyRedeemVoucherResponse.builder()
+                                .identifier("1231323")
+                                .codeVoucher("Cod123")
+                                .idCampaign("3221132")
+                                .holderName("John Travolta")
+                                .documentHolder("123456789")
+                                .beneficiaryName("Jane Travolta")
+                                .beneficiaryDocument("987654321")
+                                .idPerson("12343")
+                                .codePerson("COD12345")
+                                .dateCreation("2025-04-22")
+                                .dateVoucher("2025-04-23")
+                                .valueVoucher(100.0)
+                                .redemptionDate("2025-05-05")
+                                .expirationDate("2025-12-31")
+                                .idBenefit("4564545")
+                                .assumedPercentage(BigDecimal.valueOf(15.00))
+                                .voucherCost(BigDecimal.valueOf(546.00))
+                                .name("Voucher para consumo")
+                                .description("Este voucher es con proposito de consumo.")
+                                .banner("Banner voucher")
+                                .note("Solo valido en tiendas que participan.")
+                                .status("ACTIVE")
+                                .trade(LoyaltyRedeemVoucherResponse.LoyaltyTrade.builder()
+                                        .identifierTrade("12313245")
+                                        .nameTrade("DISMAC")
+                                        .descriptionTrade("Muy buena tienda para articulos originales")
+                                        .logoTrade("Logo Dismac")
+                                        .category(LoyaltyTradeCategoryResponse.builder()
+                                                .categoryId("31232")
+                                                .nameCategory("Electronica")
+                                                .iconCategory("Icono Electronica")
+                                                .build())
+                                        .build())
+                                .typeValue("CONSUMMO")
+                                .redeemVoucher(LoyaltyRedeemVoucherResponse.LoyaltyRedeemVoucher.builder()
+                                        .valueRedeemVoucher("100.0")
+                                        .typeValueRedeemVoucher("Dolares")
+                                        .build())
+                                .build()))
+                .build();
     }
 
 }
