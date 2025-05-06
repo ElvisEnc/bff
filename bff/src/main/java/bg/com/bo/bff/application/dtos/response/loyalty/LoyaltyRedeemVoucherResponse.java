@@ -1,5 +1,6 @@
 package bg.com.bo.bff.application.dtos.response.loyalty;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -7,11 +8,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoyaltyRedeemVoucherResponse  {
+public class LoyaltyRedeemVoucherResponse {
 
     @Schema(description = "identificador del vale")
     @JsonProperty("identifier")
@@ -53,10 +56,6 @@ public class LoyaltyRedeemVoucherResponse  {
     @JsonProperty("dateCreation")
     private String dateCreation;
 
-    @Schema(description = "fecha del Canje")
-    @JsonProperty("dateVoucher")
-    private String dateVoucher;
-
     @Schema(description = "valor del Canje")
     @JsonProperty("valueVoucher")
     private Double valueVoucher;
@@ -68,6 +67,11 @@ public class LoyaltyRedeemVoucherResponse  {
     @Schema(description = "identificador del Beneficio")
     @JsonProperty("idBenefit")
     private String idBenefit;
+
+    @Schema(description = "fecha del Canje")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("dateVoucher")
+    private String dateVoucher;
 
     @Schema(description = "nombre")
     @JsonProperty("name")
@@ -81,6 +85,31 @@ public class LoyaltyRedeemVoucherResponse  {
     @JsonProperty("banner")
     private String banner;
 
+    @Schema(description = "0 no canjeado, 1 canjeado.")
+    @JsonProperty("isRedeemed")
+    private int isRedeemed;
+
+    @Schema(description = "Fecha del canje.")
+    @JsonProperty("redemptionDate")
+    private String redemptionDate;
+
+    @Schema(description = "Fecha del canje.")
+    @JsonProperty("managerId")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String managerId;
+
+    @Schema(description = "Costo del voucher")
+    @JsonProperty("voucherCost")
+    private BigDecimal voucherCost;
+
+    @Schema(description = "tipo de vale")
+    @JsonProperty("typeValue")
+    private String typeValue;
+
+    @Schema(description = "Valor asumido del voucher.")
+    @JsonProperty("assumedPercentage")
+    private BigDecimal assumedPercentage;
+
     @Schema(description = "nota")
     @JsonProperty("note")
     private String note;
@@ -93,14 +122,15 @@ public class LoyaltyRedeemVoucherResponse  {
     @JsonProperty("trade")
     private LoyaltyTrade trade;
 
-    @Schema(description = "tipo de vale")
-    @JsonProperty("typeValue")
-    private String typeValue;
-
     @Schema(description = "vale de consumo")
     @JsonProperty("redeemVoucher")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LoyaltyRedeemVoucher redeemVoucher;
 
+    @Schema(description = "vale de consumo")
+    @JsonProperty("redeemProduct")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LoyaltyRedeemVoucher redeemProduct;
 
     @Builder
     @AllArgsConstructor

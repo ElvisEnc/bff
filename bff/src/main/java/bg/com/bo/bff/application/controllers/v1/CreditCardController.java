@@ -269,9 +269,7 @@ public class CreditCardController extends AbstractBFFController {
                     responseCode = "200",
                     description = "Operación",
                     content = @Content(
-                            schema = @Schema(implementation = PayCreditCardResponse.class), mediaType = "application/json"
-                    )
-            )
+                            schema = @Schema(implementation = PayCreditCardResponse.class), mediaType = "application/json"))
     })
     @PostMapping("/persons/{personId}/accounts/{accountId}/payments")
     public ResponseEntity<PayCreditCardResponse> paymentCreditCard(

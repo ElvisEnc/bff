@@ -1,7 +1,13 @@
 package bg.com.bo.bff.providers.dtos.response.loyalty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -59,6 +65,24 @@ public class LoyaltyPostRegisterRedeemVoucherResponse {
     @JsonProperty("banner")
     private String banner;
 
+    @JsonProperty("isCanjeado")
+    private int isRedeemed;
+
+    @JsonProperty("redemptionDate")
+    private String redemptionDate;
+
+    @JsonProperty("administradorGestorId")
+    private String managerId;
+
+    @JsonProperty("costoVale")
+    private BigDecimal voucherCost;
+
+    @JsonProperty("tipoVale")
+    private String typeValue;
+
+    @JsonProperty("porcentajeAsumido")
+    private BigDecimal assumedPercentage;
+
     @JsonProperty("nota")
     private String note;
 
@@ -68,11 +92,11 @@ public class LoyaltyPostRegisterRedeemVoucherResponse {
     @JsonProperty("comercio")
     private LoyaltyGetTrade trade;
 
-    @JsonProperty("tipoVale")
-    private String typeValue;
-
     @JsonProperty("valeConsumo")
     private LoyaltyRedeemVoucher redeemVoucher;
+
+    @JsonProperty("valeProducto")
+    private LoyaltyRedeemVoucher redeemProduct;
 
     @Getter
     @Builder

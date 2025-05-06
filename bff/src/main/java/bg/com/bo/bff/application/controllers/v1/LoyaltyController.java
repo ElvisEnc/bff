@@ -5,30 +5,30 @@ import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyImageRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.LoyaltyStatementRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterRedeemVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.loyalty.RegisterSubscriptionRequest;
+import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCategoryPromotionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCityListResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyFeaturedMerchantListResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGenericVoucherTransactionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyImageResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyInitialPointsResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyLevelResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyMerchantVoucherCategoryResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPointResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyPromotionResponse;
-import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCityListResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyFeaturedMerchantListResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyMerchantVoucherCategoryResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyQrTransactionResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyRedeemVoucherResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGeneralInfoResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStatementResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyStoreFeaturedResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTermsConditionsResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyGenericVoucherTransactionResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListResponse;
+import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactedListResponse;
 import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactionsResponse;
+import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.commons.annotations.loyalty.ValidTypeBenefit;
 import bg.com.bo.bff.commons.annotations.loyalty.ValidTypeStatus;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyTradeCategoryListResponse;
-import bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyVoucherTransactedListResponse;
-import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.services.interfaces.ILoyaltyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -206,7 +206,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtiene la informacion de una imagen del programa")
     })
     @GetMapping("/image/{imageId}/image-information")
-    public ResponseEntity<LoyaltyImageResponse> getImageInformation (
+    public ResponseEntity<LoyaltyImageResponse> getImageInformation(
             @PathVariable("imageId") @OnlyNumber @Parameter(description = "Este es la imagenId", example = "12345") String imageId
     ) throws IOException {
         getDeviceDataHeader();
@@ -219,7 +219,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtiene la informacion de las imagenes que requiere")
     })
     @PostMapping(path = "/images-information", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<List<LoyaltyImageResponse>> getImagesInformation (
+    public ResponseEntity<List<LoyaltyImageResponse>> getImagesInformation(
             @Valid @RequestBody LoyaltyImageRequest request
     ) throws IOException {
         getDeviceDataHeader();
@@ -232,7 +232,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtiene la categoria de promocion del programa")
     })
     @GetMapping("/persons/{personId}/category-promotions")
-    public ResponseEntity<List<LoyaltyCategoryPromotionResponse>> getCategoryPromotions (
+    public ResponseEntity<List<LoyaltyCategoryPromotionResponse>> getCategoryPromotions(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
@@ -245,7 +245,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtiene la informacion de niveles del programa")
     })
     @GetMapping("/persons/{personId}/category-points-level")
-    public ResponseEntity<List<LoyaltyLevelResponse>> getCategoryPointsLevels (
+    public ResponseEntity<List<LoyaltyLevelResponse>> getCategoryPointsLevels(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
@@ -258,7 +258,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtiene los terminos y condiciones programa")
     })
     @GetMapping("/persons/{personId}/terms-conditions")
-    public ResponseEntity<LoyaltyTermsConditionsResponse> termsConditions (
+    public ResponseEntity<LoyaltyTermsConditionsResponse> termsConditions(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
@@ -271,7 +271,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Verificar fluJo con o sin VAMOS")
     })
     @GetMapping("/persons/{personId}/check-flow")
-    public ResponseEntity<GenericResponse> checkFlow (
+    public ResponseEntity<GenericResponse> checkFlow(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
@@ -284,7 +284,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtener promocion del programa")
     })
     @GetMapping("/persons/{personId}/promotion/{promotionId}/promotion")
-    public ResponseEntity<LoyaltyPromotionResponse> getPromotions (
+    public ResponseEntity<LoyaltyPromotionResponse> getPromotions(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("promotionId") @Parameter(description = "Este es el promotionId de la promocion", example = "12345") String promotionId
     ) throws IOException {
@@ -298,7 +298,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtener los comercios destacados del programa")
     })
     @GetMapping("/persons/{personId}/store-featured")
-    public ResponseEntity<List<LoyaltyStoreFeaturedResponse>> getStoreFeatured (
+    public ResponseEntity<List<LoyaltyStoreFeaturedResponse>> getStoreFeatured(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
@@ -311,7 +311,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtener el vale qr transaccionado del programa")
     })
     @GetMapping("/persons/{personId}/voucher/{voucherId}/type/{typeVoucher}/qr-transactions")
-    public ResponseEntity<LoyaltyGenericVoucherTransactionResponse> getQRTransactions (
+    public ResponseEntity<LoyaltyGenericVoucherTransactionResponse> getQRTransactions(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("voucherId") @Parameter(description = "Este es el identificador del vale", example = "CONSUMO") String voucherId,
             @PathVariable("typeVoucher") @ValidTypeBenefit @Parameter(description = "Este es el personId de la persona", example = "12345") String typeVoucher
@@ -326,7 +326,7 @@ public class LoyaltyController extends AbstractBFFController {
             @ApiResponse(responseCode = "200", description = "Obtener el vale transaccionado del programa")
     })
     @GetMapping("/persons/{personId}/system-code/{codeSystem}/status/{status}/voucher-transactions")
-    public ResponseEntity<List<LoyaltyVoucherTransactionsResponse>> getVoucherTransactions (
+    public ResponseEntity<List<LoyaltyVoucherTransactionsResponse>> getVoucherTransactions(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @PathVariable("codeSystem") @OnlyNumber @Parameter(description = "Este es el codigo de sistema de la persona", example = "12345") String codeSystem,
             @PathVariable("status") @ValidTypeStatus @Parameter(description = "Este es el estado del vale", example = "VIGENTE") String status
@@ -458,12 +458,12 @@ public class LoyaltyController extends AbstractBFFController {
     public ResponseEntity<LoyaltyVoucherTransactedListResponse> getVoucherTransactedList(
             @PathVariable("personId") @OnlyNumber
             @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
-            @RequestParam("campaignId") @Parameter(description = "ID de la categoria.") int campaignId,
-            @RequestParam("state") @Parameter(description = "ID del estado.") String state
+            @RequestParam("systemCode") @Parameter(description = " codigo de sistema.") int systemCode,
+            @RequestParam("state") @ValidTypeStatus @Parameter(description = "ID del estado.") String state
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(
-                service.getVoucherTransactedList(personId, campaignId, state)
+                service.getVoucherTransactedList(personId, systemCode, state)
         );
     }
 }

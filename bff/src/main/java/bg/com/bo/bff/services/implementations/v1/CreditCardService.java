@@ -148,7 +148,7 @@ public class CreditCardService implements ICreditCardService {
         });
 
         comparatorOptions.put("DATE", response -> {
-            String dateStr = response.getProcessDate();
+            String dateStr = response.getTransactionDate();
             return (
                     dateStr != null && !dateStr.isEmpty())
                     ? LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
@@ -164,9 +164,23 @@ public class CreditCardService implements ICreditCardService {
         return list;
     }
 
-    @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'credit-card-statements:' + #personId + ':cmsCard:' + #request.cmsCard", condition = "#refreshData == false")},
-            put = {@CachePut(value = CacheConstants.USER_DATA, key = "'credit-card-statements:' + #personId + ':cmsCard:' + #request.cmsCard", condition = "#refreshData == true")})
-    protected List<CreditCardStatementsResponse> getStatementsCache(String personId, CreditCardStatementRequest request, Boolean refreshData) throws IOException {
+    @Caching(
+            cacheable = {
+                    @Cacheable(
+                            value = CacheConstants.USER_DATA,
+                            key = "'credit-card-statements:' + #personId + ':cmsCard:' + #request.cmsCard",
+                            condition = "#refreshData == false")
+            },
+            put = {
+                    @CachePut(
+                            value = CacheConstants.USER_DATA,
+                            key = "'credit-card-statements:' + #personId + ':cmsCard:' + #request.cmsCard",
+                            condition = "#refreshData == true")
+            }
+    )
+    protected List<CreditCardStatementsResponse> getStatementsCache(
+            String personId, CreditCardStatementRequest request, Boolean refreshData
+    ) throws IOException {
         String card = request.getCmsCard();
         String init = UtilDate.adaptDateToMWFormat(request.getFilters().getDate().getStart());
         String end = UtilDate.adaptDateToMWFormat(request.getFilters().getDate().getEnd());
