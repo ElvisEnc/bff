@@ -49,6 +49,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +89,7 @@ public class CreditCardService implements ICreditCardService {
     @Override
     public DetailPrepaidCardResponse getDetailsPrepaidCard(String personId, String cardId) throws IOException {
         DetailPrepaidCardResponse dataResponse = mapper.convertDetails(provider.getDetailPrepaidCard(personId, cardId));
-        if (dataResponse.getCmsAccount()!= null) {
+        if (dataResponse.getCmsAccount() != null) {
             AvailableCreditCardMWResponse available = provider.getAvailable(dataResponse.getCmsAccount());
             if (available != null) {
                 dataResponse.setAvailableAmount(available.getAvailableAmount());
@@ -130,7 +132,9 @@ public class CreditCardService implements ICreditCardService {
     }
 
     @Override
-    public List<CreditCardStatementsResponse> creditCardStatements(String personId, CreditCardStatementRequest request) throws IOException {
+    public List<CreditCardStatementsResponse> creditCardStatements(
+            String personId, CreditCardStatementRequest request
+    ) throws IOException {
         Boolean refreshData = request.getRefreshData();
         List<CreditCardStatementsResponse> list = self.getStatementsCache(personId, request, refreshData);
 
@@ -142,9 +146,16 @@ public class CreditCardService implements ICreditCardService {
             BigDecimal localAmount = response.getMlAmount();
             return (localAmount != null && localAmount.compareTo(BigDecimal.ZERO) > 0) ? localAmount : foreignAmount;
         });
-        comparatorOptions.put("DATE", CreditCardStatementsResponse::getProcessDate);
-        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
+        comparatorOptions.put("DATE", response -> {
+            String dateStr = response.getProcessDate();
+            return (
+                    dateStr != null && !dateStr.isEmpty())
+                    ? LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    : null;
+        });
+
+        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
         if (request.getFilters().getPagination() != null) {
             int page = request.getFilters().getPagination().getPage();
             int pageSize = request.getFilters().getPagination().getPageSize();
@@ -164,12 +175,16 @@ public class CreditCardService implements ICreditCardService {
     }
 
     @Override
-    public List<PurchaseAuthResponse> getPurchasesAuthorizations(String personId, String cmsCard, String type) throws IOException {
+    public List<PurchaseAuthResponse> getPurchasesAuthorizations(
+            String personId, String cmsCard, String type
+    ) throws IOException {
         return mapper.convertPurchase(provider.getListPurchaseAuth(personId, cmsCard), type);
     }
 
     @Override
-    public PayCreditCardResponse payCreditCard(String personId, String accountId, PayCreditCardRequest request) throws IOException {
+    public PayCreditCardResponse payCreditCard(
+            String personId, String accountId, PayCreditCardRequest request
+    ) throws IOException {
         PayCreditCardMWRequest mwRequest = mapper.mapperRequest(personId, accountId, request);
         PayCreditCardMWResponse mwResponse = transactionProvider.payCreditCard(mwRequest);
         if (mwResponse.getStatus().equals(CreditCardConstans.APPROVED.getValue()))
@@ -181,13 +196,17 @@ public class CreditCardService implements ICreditCardService {
     }
 
     @Override
-    public GenericResponse authorizationCreditCard(String personId, AuthorizationCreditCardRequest request) throws IOException {
+    public GenericResponse authorizationCreditCard(
+            String personId, AuthorizationCreditCardRequest request
+    ) throws IOException {
         AuthorizationCreditCardMWRequest mwRequest = mapper.mapperRequest(personId, request);
         return provider.authorizationCreditCard(mwRequest);
     }
 
     @Override
-    public FeePrepaidCardResponse getFeePrepaidCard(String personId, String cardId, FeePrepaidCardRequest request) throws IOException {
+    public FeePrepaidCardResponse getFeePrepaidCard(
+            String personId, String cardId, FeePrepaidCardRequest request
+    ) throws IOException {
         FeePrepaidCardMWRequest mwRequest = mapper.mapperRequest(cardId, request);
         return mapper.convertResponse(provider.getFeePrepaidCard(mwRequest));
     }

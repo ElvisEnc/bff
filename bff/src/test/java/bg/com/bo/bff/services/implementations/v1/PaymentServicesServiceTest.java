@@ -302,7 +302,6 @@ class PaymentServicesServiceTest {
         AffiliationDebtsRequest request = PaymentServiceRequestFixture.withDefaultDebtsRequest();
         DebtsConsultationMWRequest mwRequestMock = PaymentServicesMWRequestFixture.withDefaultDebtsRequestMW();
         DebtsConsultationMWResponse mwResponseMock = PaymentServicesMWResponseFixture.withDefaultDebtsResponseMWModifyNull();
-        AffiliationDebtsResponse expected = PaymentServiceResponseFixture.withDefaultDebtsResponseModifyNull();
         when(provider.debtsConsultation(any(), any())).thenReturn(mwResponseMock);
 
         //Act
@@ -316,7 +315,7 @@ class PaymentServicesServiceTest {
     }
 
     @Test
-    void givenBadYearWhenGetAffiliationDebtsThenBadRequest() throws IOException {
+    void givenBadYearWhenGetAffiliationDebtsThenBadRequest() {
         // Arrange
         AffiliationDebtsRequest request = PaymentServiceRequestFixture.withDefaultDebtsRequestBadYear();
         Map<String, String> parameters = new HashMap<>();

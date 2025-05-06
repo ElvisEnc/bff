@@ -6,10 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
-public class FrequentlyQuestionMapper implements IFrequentlyQuestionMapper{
+public class FrequentlyQuestionMapper implements IFrequentlyQuestionMapper {
 
     @Override
     public ListFrequentlyQuestionResponse convertResponse(ListFrequentlyQuestionMWResponse mwResponse) {
@@ -26,13 +25,15 @@ public class FrequentlyQuestionMapper implements IFrequentlyQuestionMapper{
                         .question(mw.getQuestion())
                         .answer(convertAnswers(mw.getData()))
                         .build()
-                ).collect(Collectors.toList());
+                ).toList();
         return ListFrequentlyQuestionResponse.builder()
                 .data(frequentlyQuestions)
                 .build();
     }
 
-    private List<ListFrequentlyQuestionResponse.FrequentlyQuestionResponse> convertAnswers(List<ListFrequentlyQuestionMWResponse.FrequentlyQuestionDetailMW> details) {
+    private List<ListFrequentlyQuestionResponse.FrequentlyQuestionResponse> convertAnswers(
+            List<ListFrequentlyQuestionMWResponse.FrequentlyQuestionDetailMW> details
+    ) {
         if (details == null) {
             return new ArrayList<>();
         }
@@ -40,6 +41,6 @@ public class FrequentlyQuestionMapper implements IFrequentlyQuestionMapper{
                 .map(detail -> ListFrequentlyQuestionResponse.FrequentlyQuestionResponse.builder()
                         .response(detail.getResponse())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
     }
 }
