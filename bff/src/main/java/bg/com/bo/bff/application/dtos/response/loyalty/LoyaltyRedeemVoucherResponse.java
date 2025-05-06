@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoyaltyRedeemVoucherResponse {
 
     @Schema(description = "identificador del vale")
@@ -69,7 +70,6 @@ public class LoyaltyRedeemVoucherResponse {
     private String idBenefit;
 
     @Schema(description = "fecha del Canje")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("dateVoucher")
     private String dateVoucher;
 
@@ -95,7 +95,6 @@ public class LoyaltyRedeemVoucherResponse {
 
     @Schema(description = "Fecha del canje.")
     @JsonProperty("managerId")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String managerId;
 
     @Schema(description = "Costo del voucher")
@@ -124,12 +123,10 @@ public class LoyaltyRedeemVoucherResponse {
 
     @Schema(description = "vale de consumo")
     @JsonProperty("redeemVoucher")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LoyaltyRedeemVoucher redeemVoucher;
 
     @Schema(description = "vale de consumo")
     @JsonProperty("redeemProduct")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LoyaltyRedeemVoucher redeemProduct;
 
     @Builder
