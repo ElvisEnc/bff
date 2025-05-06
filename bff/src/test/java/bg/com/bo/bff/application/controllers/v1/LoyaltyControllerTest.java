@@ -482,7 +482,7 @@ class LoyaltyControllerTest {
 
         // Act
         String urlLoyalty = "/api/v1/loyalty/persons/{personId}/voucher/{voucherId}/type/{typeVoucher}/qr-transactions";
-        MvcResult result = mockMvc.perform(get(urlLoyalty, "123","123", "CONSUMO")
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123", "123", "CONSUMO")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -505,7 +505,7 @@ class LoyaltyControllerTest {
 
         // Act
         String urlLoyalty = "/api/v1/loyalty/persons/{personId}/system-code/{codeSystem}/status/{status}/voucher-transactions";
-        MvcResult result = mockMvc.perform(get(urlLoyalty, "123","123", "VIGENTE")
+        MvcResult result = mockMvc.perform(get(urlLoyalty, "123", "123", "VIGENTE")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -516,7 +516,6 @@ class LoyaltyControllerTest {
         assertNotNull(result);
         verify(service).getVoucherTransactions(any(), any(), any());
     }
-
 
 
     @Test
@@ -684,7 +683,7 @@ class LoyaltyControllerTest {
         // Act
         String urlLoyalty = "/api/v1/loyalty/persons/{personId}/vouchers/transacted";
         MvcResult result = mockMvc.perform(get(urlLoyalty, "123")
-                        .param("campaignId", String.valueOf(1))
+                        .param("systemCode", String.valueOf(1))
                         .param("state", "VIGENTE")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
