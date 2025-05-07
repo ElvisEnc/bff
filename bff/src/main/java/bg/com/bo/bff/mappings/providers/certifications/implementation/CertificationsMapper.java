@@ -127,12 +127,17 @@ public class CertificationsMapper implements ICertificationsMapper {
 
     @Override
     public SaveCertificationResponse convertSaveCertification(CertificationSaveRequestMWResponse mdwResponse) {
-        if (!mdwResponse.getData().getResponseCode().equals("COD000"))
-            return SaveCertificationResponse.builder()
-                    .message("Hubo un error al realizar la solicitud del certificado.")
-                    .build();
         return SaveCertificationResponse.builder()
-                .message("La solicitud fue registrada correctamente.")
+                .certPrice(mdwResponse.getData().getCertPrice())
+                .requestDate(mdwResponse.getData().getRequestDate())
+                .requestTime(mdwResponse.getData().getRequestTime())
+                .fromCurrency(mdwResponse.getData().getFromCurrency())
+                .originAccount(mdwResponse.getData().getOriginAccount())
+                .clientAccountName(mdwResponse.getData().getClientAccountName())
+                .email(mdwResponse.getData().getEmail())
+                .certDescription(mdwResponse.getData().getCertDescription())
+                .dateRange(mdwResponse.getData().getDateRange())
+                .requestNumber(mdwResponse.getData().getRequestNumber())
                 .build();
     }
 

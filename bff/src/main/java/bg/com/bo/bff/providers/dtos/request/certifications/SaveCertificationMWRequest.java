@@ -21,5 +21,6 @@ public class SaveCertificationMWRequest {
     private String clientName;
     private String initDate;
     private String endDate;
+    private String email;
 
 }

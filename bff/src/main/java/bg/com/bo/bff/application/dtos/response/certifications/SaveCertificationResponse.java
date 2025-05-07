@@ -11,6 +11,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SaveCertificationResponse {
 
-    private String message;
+    private String certPrice;
+    private String requestDate;
+    private String requestTime;
+    private String fromCurrency;
+    private String originAccount;
+    private String clientAccountName;
+    private String email;
+    private String certDescription;
+    private String dateRange;
+    private String requestNumber;
 
 }

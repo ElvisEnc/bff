@@ -215,7 +215,7 @@ public class LoansMapper implements ILoansMapper {
                 .insuranceAmount(mwResponse.getInsuranceAmount())
                 .currencyCodeInsurance(mwResponse.getCurrencyInsurance())
                 .amountDebitInsurance(mwResponse.getAmountDebitInsurance())
-                .exchangeRateDebit(mwResponse.getExchangeRateDebit())
+                .exchangeRateDebitInsurance(mwResponse.getExchangeRateDebitInsurance())
                 .loanId(mwResponse.getToLoanNumber())
                 .loanCapital(mwResponse.getLoanCapital())
                 .currentInterest(mwResponse.getCurrentInterest())
@@ -225,6 +225,7 @@ public class LoansMapper implements ILoansMapper {
                 .nextDueDate(UtilDate.formatDate(mwResponse.getNextDueDate()))
                 .totalInstallments(mwResponse.getTotalInstallments())
                 .paidInstallments(mwResponse.getPaidInstallments())
+                .amountInsuranceCurrencyLoans(mwResponse.getAmountInsuranceCurrencyLoans())
                 .build();
     }
 

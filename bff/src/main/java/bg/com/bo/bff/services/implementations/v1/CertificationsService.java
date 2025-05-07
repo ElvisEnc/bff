@@ -91,8 +91,8 @@ public class CertificationsService implements ICertificationsService {
                 .session("")
                 .initDate(initDate)
                 .endDate(endDate)
-                .certCode(request.getCertTypeCode())
-                .certTypeCode(request.getCertCode())
+                .certCode(request.getCertCode())
+                .certTypeCode( request.getCertTypeCode())
                 .build();
         CertificationPriceMWResponse mdwResponse = certificationsProvider.getCertificationPrice(mdwRequest);
         return certsMapper.convertCertificationPrice(mdwResponse);
@@ -100,6 +100,8 @@ public class CertificationsService implements ICertificationsService {
 
     @Override
     public SaveCertificationResponse saveCertRequest(SaveCertificationRequest request) throws IOException {
+        String initDate = UtilDate.adaptDateToMWFormat(request.getInitDate());
+        String endDate = UtilDate.adaptDateToMWFormat(request.getEndDate());
         SaveCertificationMWRequest mdwRequest = SaveCertificationMWRequest.builder()
                 .personId(request.getPersonId())
                 .appCode(CanalMW.GANAMOVIL.getCanal())
@@ -109,8 +111,9 @@ public class CertificationsService implements ICertificationsService {
                 .requestCode(request.getRequestCode())
                 .nit(request.getNit())
                 .clientName(request.getClientName())
-                .initDate(request.getInitDate())
-                .endDate(request.getEndDate())
+                .initDate(initDate)
+                .endDate(endDate)
+                .email(request.getEmail())
                 .build();
         CertificationSaveRequestMWResponse mdwResponse = certificationsProvider.saveCertificateRequest(mdwRequest);
         return certsMapper.convertSaveCertification(mdwResponse);

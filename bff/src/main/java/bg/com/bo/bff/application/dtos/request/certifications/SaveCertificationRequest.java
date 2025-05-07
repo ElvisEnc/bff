@@ -1,6 +1,8 @@
 package bg.com.bo.bff.application.dtos.request.certifications;
 
+import bg.com.bo.bff.commons.annotations.DatePattern;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,9 +36,15 @@ public class SaveCertificationRequest {
     private String clientName;
 
     @Schema(description = "Fecha de inicio")
+    @DatePattern(message = "Formato de fecha invalido")
     private String initDate;
 
     @Schema(description = "Fecha de fin")
+    @DatePattern(message = "Formato de fecha invalido")
     private String endDate;
+
+    @Schema(description = "correo electronico del cliente")
+    @Email
+    private String email;
 
 }
