@@ -8,22 +8,18 @@ public class CertificationSaveRequestMWResponseFixture {
         return CertificationSaveRequestMWResponse.builder()
                 .data(
                         CertificationSaveRequestMWResponse.SaveResponse.builder()
-                                .requestNumber("12345")
-                                .responseCode("COD000")
+                                .certPrice("50.0")
+                                .requestDate("2025-01-01")
+                                .requestTime("10:10")
+                                .fromCurrency("068")
+                                .originAccount("123456")
+                                .clientAccountName("NOMBRE")
+                                .email("test@bg.com.bo")
+                                .certDescription("DESCRIPTION")
+                                .dateRange("FROM 1 TO 2 MONTHS")
+                                .requestNumber("321654987")
                                 .build()
                 )
-                .build();
-    }
-
-    public static CertificationSaveRequestMWResponse withError() {
-        return CertificationSaveRequestMWResponse.builder()
-                .data(
-                        CertificationSaveRequestMWResponse.SaveResponse.builder()
-                                .requestNumber("0")
-                                .responseCode("COD001")
-                                .build()
-                )
-
                 .build();
     }
 

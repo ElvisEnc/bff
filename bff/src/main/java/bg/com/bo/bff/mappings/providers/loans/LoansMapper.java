@@ -10,6 +10,7 @@ import bg.com.bo.bff.providers.dtos.request.loans.mw.Pcc01MWRequest;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -137,12 +138,17 @@ public class LoansMapper implements ILoansMapper {
 
     @Override
     public LoanDetailPaymentResponse convertResponse(LoanDetailPaymentMWResponse mwResponse, String currencyCode) {
-        double total = 0;
+        BigDecimal total;
+        BigDecimal secureAmount;
+        BigDecimal amount;
         if(currencyCode.equals(CURRENCY_BOB)){
-            total = Double.parseDouble(mwResponse.getAmountSecureConvertMandatory()) + Double.parseDouble(mwResponse.getAmount());
+            secureAmount = new BigDecimal(mwResponse.getAmountSecureConvertMandatory());
+            amount = new BigDecimal(mwResponse.getAmount());
         }else {
-            total = Double.parseDouble(mwResponse.getAmountSecureMandatory()) + Double.parseDouble(mwResponse.getAmount());
+            secureAmount = new BigDecimal(mwResponse.getAmountSecureMandatory());
+            amount = new BigDecimal(mwResponse.getAmount());
         }
+        total = amount.add(secureAmount);
 
         return LoanDetailPaymentResponse.builder()
                 .correlativeId(Long.parseLong(mwResponse.getIdentifier()))
@@ -167,7 +173,7 @@ public class LoansMapper implements ILoansMapper {
                 .secureCurrency(Integer.parseInt(mwResponse.getSecureCurrency()))
                 .amountSecureMandatory(Double.parseDouble(mwResponse.getAmountSecureMandatory()))
                 .amountSecureConvertMandatory(Double.parseDouble(mwResponse.getAmountSecureConvertMandatory()))
-                .totalAmount(total)
+                .totalAmount(total.doubleValue())
                 .build();
     }
 
@@ -215,7 +221,7 @@ public class LoansMapper implements ILoansMapper {
                 .insuranceAmount(mwResponse.getInsuranceAmount())
                 .currencyCodeInsurance(mwResponse.getCurrencyInsurance())
                 .amountDebitInsurance(mwResponse.getAmountDebitInsurance())
-                .exchangeRateDebit(mwResponse.getExchangeRateDebit())
+                .exchangeRateDebitInsurance(mwResponse.getExchangeRateDebitInsurance())
                 .loanId(mwResponse.getToLoanNumber())
                 .loanCapital(mwResponse.getLoanCapital())
                 .currentInterest(mwResponse.getCurrentInterest())
@@ -225,6 +231,7 @@ public class LoansMapper implements ILoansMapper {
                 .nextDueDate(UtilDate.formatDate(mwResponse.getNextDueDate()))
                 .totalInstallments(mwResponse.getTotalInstallments())
                 .paidInstallments(mwResponse.getPaidInstallments())
+                .amountInsuranceCurrencyLoans(mwResponse.getAmountInsuranceCurrencyLoans())
                 .build();
     }
 

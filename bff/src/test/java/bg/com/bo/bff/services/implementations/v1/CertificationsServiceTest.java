@@ -209,20 +209,7 @@ class CertificationsServiceTest {
 
         SaveCertificationResponse response = service.saveCertRequest(request);
 
-        assertEquals(expected.getMessage(), response.getMessage());
-    }
-
-    @Test
-    void saveRequestError() throws IOException {
-        SaveCertificationRequest request = SaveCertificationRequestFixture.withDefaults();
-        CertificationSaveRequestMWResponse mdwExpected = CertificationSaveRequestMWResponseFixture.withError();
-        SaveCertificationResponse expected = CertificationResponseFixture.withDefaultsSave();
-        when(provider.saveCertificateRequest(any())).thenReturn(mdwExpected);
-        when(certsMapper.convertSaveCertification(mdwExpected)).thenReturn(expected);
-
-        SaveCertificationResponse response = service.saveCertRequest(request);
-
-        assertEquals(expected.getMessage(), response.getMessage());
+        assertEquals(expected.getRequestNumber(), response.getRequestNumber());
     }
 
 }

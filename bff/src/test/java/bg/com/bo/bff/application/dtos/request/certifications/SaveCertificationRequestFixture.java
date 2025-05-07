@@ -11,8 +11,9 @@ public class SaveCertificationRequestFixture {
                 .requestCode("951")
                 .nit("123546")
                 .clientName("Nombre Cliente")
-                .initDate("1/1/2025")
-                .endDate("1/1/2025")
+                .initDate("2025-01-01")
+                .endDate("2025-01-01")
+                .email("test@bg.com.bo")
                 .build();
     }
 
