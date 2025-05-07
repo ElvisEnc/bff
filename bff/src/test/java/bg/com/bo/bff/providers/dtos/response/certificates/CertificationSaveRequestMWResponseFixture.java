@@ -23,16 +23,4 @@ public class CertificationSaveRequestMWResponseFixture {
                 .build();
     }
 
-//    public static CertificationSaveRequestMWResponse withError() {
-//        return CertificationSaveRequestMWResponse.builder()
-//                .data(
-//                        CertificationSaveRequestMWResponse.SaveResponse.builder()
-//                                .requestNumber("0")
-//                                .responseCode("COD001")
-//                                .build()
-//                )
-//
-//                .build();
-//    }
-
 }
