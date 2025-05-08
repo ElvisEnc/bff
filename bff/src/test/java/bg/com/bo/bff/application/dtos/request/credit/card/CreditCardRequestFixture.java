@@ -134,7 +134,7 @@ public class CreditCardRequestFixture {
 
     public static FeePrepaidCardRequest withDefaultComissionPrepaidCardRequest() {
         return FeePrepaidCardRequest.builder()
-                .cmsAccount("13-45-10-12")
+                .cmsAccount("13-45-10-129")
                 .amount(new BigDecimal("100.00"))
                 .build();
     }

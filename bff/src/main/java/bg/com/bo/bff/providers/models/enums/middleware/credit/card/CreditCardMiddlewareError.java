@@ -63,7 +63,7 @@ public enum CreditCardMiddlewareError implements IMiddlewareError {
     MDWPGL_400(
             HttpStatus.BAD_REQUEST, "INVALID_DATA", "MDWPGL-400",
             ConstantMessages.GENERIC.getTitle(),
-            "Datos inválidos.",
+            "Datos inválidos, el monto debe ser mayor o igual a 10.",
             CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId());
     private final HttpStatus httpCode;
     private final String code;
