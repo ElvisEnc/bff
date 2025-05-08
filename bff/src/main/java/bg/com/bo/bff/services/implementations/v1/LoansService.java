@@ -126,7 +126,7 @@ public class LoansService implements ILoansService {
         boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
         Map<String, Function<LoanInsurancePaymentsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
         comparatorOptions.put("AMOUNT_PAID", LoanInsurancePaymentsResponse::getAmount);
-        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getPaymentDate(), UtilDate.getDateFormatter()));
+        comparatorOptions.put("DATE", LoanInsurancePaymentsResponse::getPaymentDate);
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
         if (request.getFilters().getPagination() != null) {
@@ -148,8 +148,8 @@ public class LoansService implements ILoansService {
         return mapper.convertResponse(mwResponse, currencyCode);
     }
 
-    @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == false")},
-            put = {@CachePut(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #personId + ':loans:' + #loanId", condition = "#refreshData == true")})
+    @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #clientId + ':loans:' + #loanId", condition = "#refreshData == false")},
+            put = {@CachePut(value = CacheConstants.USER_DATA, key = "'loan-insurance-payments:' + #clientId + ':loans:' + #loanId", condition = "#refreshData == true")})
     protected List<LoanInsurancePaymentsResponse> getLoanInsurancePaymentsCache(String loanId, String clientId, String loamNumber, Boolean refreshData) throws IOException {
         LoanInsurancePaymentsMWResponse mwResponse = provider.getListLoanInsurancePayments(loanId, loamNumber, clientId);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
