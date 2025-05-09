@@ -21,7 +21,6 @@ public record DataServiceAffiliation(
         @Schema(description = "Code", example = "73166120")
         String code,
 
-        @NotBlank
         @Schema(description = "Descripción", example = "desc")
         String description,
 
