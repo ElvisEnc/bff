@@ -1,6 +1,7 @@
 package bg.com.bo.bff.providers.models.enums.middleware.credit.card;
 
 import bg.com.bo.bff.commons.enums.CategoryError;
+import bg.com.bo.bff.commons.enums.CodeError;
 import bg.com.bo.bff.commons.enums.ConstantMessages;
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
 import lombok.AllArgsConstructor;
@@ -61,10 +62,26 @@ public enum CreditCardMiddlewareError implements IMiddlewareError {
             "Ocurrio un error al obtener los datos.",
             CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
     MDWPGL_400(
-            HttpStatus.BAD_REQUEST, "INVALID_DATA", "MDWPGL-400",
+            HttpStatus.BAD_REQUEST, CodeError.INVALID_DATA.getCode(), "MDWPGL-400",
             ConstantMessages.GENERIC.getTitle(),
             "Datos inválidos, el monto debe ser mayor o igual a 10.",
-            CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId());
+            CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
+    MDWCCM_0014(
+            HttpStatus.BAD_REQUEST, CodeError.INVALID_DATA.getCode(), "MDWCCM-0014",
+            ConstantMessages.GENERIC.getTitle(),
+            "Datos inválidos, los datos proporcionados no corresponden al mismo registro.",
+            CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()),
+    MDWCCM_0025(
+            HttpStatus.BAD_REQUEST, CodeError.INVALID_DATA.getCode(), "MDWCCM-0025",
+            ConstantMessages.GENERIC.getTitle(),
+            "La tarjeta no tiene saldo disponible.",
+            CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
+    MDWCCM_0026(
+            HttpStatus.BAD_REQUEST, CodeError.INVALID_DATA.getCode(), "MDWCCM-0026",
+            ConstantMessages.GENERIC.getTitle(),
+            "La cuenta no permite realizar pagos.",
+            CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId());
+
     private final HttpStatus httpCode;
     private final String code;
     private final String codeMiddleware;

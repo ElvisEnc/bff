@@ -72,7 +72,7 @@ public class CreditCardResponseFixture {
                 .accountStatus("Active")
                 .insurance(true)
                 .currency("USD")
-                .amountAvailable("2000")
+                .amountAvailable(BigDecimal.valueOf(2000))
                 .limitMin("100")
                 .limitMax("5000")
                 .debtClose("close")

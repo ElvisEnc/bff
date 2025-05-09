@@ -62,7 +62,7 @@ public class CreditCardMWResponseFixture {
                 .placeCode("001")
                 .place("Main Branch")
                 .amountLimit("5000")
-                .amountAvailable("2000")
+                .amountAvailable(BigDecimal.valueOf(2000))
                 .currencyCode("USD")
                 .currencyDescription("US Dollar")
                 .dueDate("2024-12-31")
@@ -318,7 +318,7 @@ public class CreditCardMWResponseFixture {
                 .build();
     }
 
-    public static AuthorizationCreditCardMWResponse withDefaultAuthorizationCreditCardMWResponse(){
+    public static AuthorizationCreditCardMWResponse withDefaultAuthorizationCreditCardMWResponse() {
         return AuthorizationCreditCardMWResponse.builder()
                 .codError("TJC092")
                 .desError("Success")
@@ -326,7 +326,7 @@ public class CreditCardMWResponseFixture {
                 .build();
     }
 
-    public static AuthorizationCreditCardMWResponse withDefaultAuthorizationCreditCardMWErrorResponse(){
+    public static AuthorizationCreditCardMWResponse withDefaultAuthorizationCreditCardMWErrorResponse() {
         return AuthorizationCreditCardMWResponse.builder()
                 .codError("000")
                 .desError("Error")
@@ -334,7 +334,7 @@ public class CreditCardMWResponseFixture {
                 .build();
     }
 
-    public static FeePrepaidCardMWResponse withDefaultComissionPrepaidCardMWResponse(){
+    public static FeePrepaidCardMWResponse withDefaultComissionPrepaidCardMWResponse() {
         return FeePrepaidCardMWResponse.builder()
                 .transferFee(BigDecimal.valueOf(5.0))
                 .insuranceAmount(BigDecimal.valueOf(100.0))

@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Builder
@@ -50,8 +53,9 @@ public class DetailCreditCardResponse {
     @Schema(description = "código de moneda")
     private String currency;
 
+    @Setter
     @Schema(description = "monto dispobible")
-    private String amountAvailable;
+    private BigDecimal amountAvailable;
 
     @Schema(description = "Monto límite.")
     private String amountLimit;
