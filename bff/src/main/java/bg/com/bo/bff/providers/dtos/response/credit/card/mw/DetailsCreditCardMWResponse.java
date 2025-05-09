@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -18,7 +20,7 @@ public class DetailsCreditCardMWResponse {
     private String placeCode;
     private String place;
     private String amountLimit;
-    private String amountAvailable;
+    private BigDecimal amountAvailable;
     private String currencyCode;
     private String currencyDescription;
     private String dueDate;

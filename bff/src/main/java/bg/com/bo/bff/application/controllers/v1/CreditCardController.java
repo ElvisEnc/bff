@@ -200,7 +200,7 @@ public class CreditCardController extends AbstractBFFController {
             @PathVariable("personId") @OnlyNumber
             @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
             @RequestParam("cmsAccount") @NotBlank
-            @Pattern(regexp = "13-\\d{2}-10-\\d{6}", message = "Formato inválido para cmsAccount")
+            @Pattern(regexp = "13-\\d{2}-10-\\d{3,6}", message = "Formato inválido para cmsAccount")
             @Schema(description = "número compuesto de la Cuenta", example = "13-01-10-000000") String cmsAccount
     ) throws IOException {
         getDeviceDataHeader();

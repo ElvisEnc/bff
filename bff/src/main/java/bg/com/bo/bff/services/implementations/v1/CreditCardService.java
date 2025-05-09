@@ -83,7 +83,14 @@ public class CreditCardService implements ICreditCardService {
 
     @Override
     public DetailCreditCardResponse getDetailsCreditCard(String personId, String cardId) throws IOException {
-        return mapper.convertDetails(provider.getDetailCreditCard(personId, cardId));
+        DetailCreditCardResponse dataResponse = mapper.convertDetails(provider.getDetailCreditCard(personId, cardId));
+        if (dataResponse.getCmsAccount() != null) {
+            AvailableCreditCardMWResponse available = provider.getAvailable(dataResponse.getCmsAccount());
+            if (available != null) {
+                dataResponse.setAmountAvailable(available.getAvailableAmount());
+            }
+        }
+        return dataResponse;
     }
 
     @Override
