@@ -47,6 +47,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -61,6 +62,11 @@ public class CreditCardMapper implements ICreditCardMapper {
     private static final String TRANSACTIONS_STATUS_POSTED = "POSTED";
     private static final String TRANSACTIONS_STATUS_POSTED_FORMATTED = "PROCESADA";
     private static final String TRANSACTIONS_STATUS_NO_POSTED_FORMATTED = "RECHAZADA";
+
+    private static final Map<String, Integer> TRANSACTION_TYPE_VALUES = Map.of(
+            "TPP", 35,
+            "TC", 2
+    );
 
     @Override
     public ListCreditCardResponse convertResponse(ListCreditCardMWResponse mwResponse) {
@@ -373,7 +379,11 @@ public class CreditCardMapper implements ICreditCardMapper {
                         .amount(request.getAmount().getAmount())
                         .build())
                 .supplementaryData(PayCreditCardMWRequest.SupplementaryData.builder()
-                        .transactionType(CreditCardConstans.TRANSACTION_TYPE.getValue())
+                        .transactionType(
+                                String.valueOf(
+                                        TRANSACTION_TYPE_VALUES.getOrDefault(
+                                                request.getTransactionType(), 0))
+                        )
                         .description(request.getData().getDescription())
                         .sourceOfFunds(request.getData().getSourceOfFunds())
                         .destinationOfFunds(request.getData().getDestinationOfFunds())
