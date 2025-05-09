@@ -104,8 +104,8 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             HttpStatus.CONFLICT,
             "NO_DEBTS_FOUND",
             "MDWPSM-014",
-            "No tiene deudas en el servicio afiliado",
-            ConstantMessages.NO_FOUND_DATA.getTitle(),
+            "Ocurrió algún problema con el proceso de obtención de deudas, por favor intente más tarde.",
+            ConstantMessages.GENERIC.getTitle(),
             CategoryError.MW_NO_DATA_FAIL_RESPONSE.getCategoryId()
     ),
     MDWPSM_015(
