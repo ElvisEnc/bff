@@ -145,10 +145,7 @@ public class LoansService implements ILoansService {
 
         comparatorOptions.put("AMOUNT_PAID", LoanInsurancePaymentsResponse::getAmount);
 
-        comparatorOptions.put("DATE", response ->
-                LocalDate.parse(response.getPaymentDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-
-        );
+        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getPaymentDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
         if (request.getFilters().getPagination() != null) {
