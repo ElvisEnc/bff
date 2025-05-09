@@ -29,7 +29,9 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 
@@ -125,10 +127,21 @@ public class LoansService implements ILoansService {
         String field = (request.getFilters().getOrder() != null) ? request.getFilters().getOrder().getField() : "DATE";
         boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
         Map<String, Function<LoanInsurancePaymentsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
-        comparatorOptions.put("AMOUNT_PAID", LoanInsurancePaymentsResponse::getAmount);
-        comparatorOptions.put("DATE", LoanInsurancePaymentsResponse::getPaymentDate);
-        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
+        comparatorOptions.put("AMOUNT_PAID", response -> {
+            BigDecimal amount = response.getAmount();
+            return (amount != null && amount.compareTo(BigDecimal.ZERO) > 0) ? amount : 0;
+        });
+
+        comparatorOptions.put("DATE", response -> {
+            String dateStr = response.getPaymentDate();
+            return (
+                    dateStr != null && !dateStr.isEmpty())
+                    ? LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    : null;
+        });
+
+        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
         if (request.getFilters().getPagination() != null) {
             int page = request.getFilters().getPagination().getPage();
             int pageSize = request.getFilters().getPagination().getPageSize();
@@ -139,7 +152,7 @@ public class LoansService implements ILoansService {
 
     @Override
     public LoanDetailPaymentResponse getLoanDetailPayment(String loanId, String personId, String clientId, String currencyCode) throws IOException {
-        List<ListLoansResponse> list = self.getServiceCache(personId, clientId,false);
+        List<ListLoansResponse> list = self.getServiceCache(personId, clientId, false);
         boolean existData = list.stream().anyMatch(response -> response.getLoanId().equals(loanId) && response.getClientId().equals(clientId));
         if (!existData) {
             throw new GenericException(LoansMiddlewareError.MDWPRE_NOT_FOUND);
