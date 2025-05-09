@@ -128,18 +128,12 @@ public class LoansService implements ILoansService {
         boolean desc = (request.getFilters().getOrder() == null) || request.getFilters().getOrder().getDesc();
         Map<String, Function<LoanInsurancePaymentsResponse, ? extends Comparable<?>>> comparatorOptions = new HashMap<>();
 
-        comparatorOptions.put("AMOUNT_PAID", response -> {
-            BigDecimal amount = response.getAmount();
-            return (amount != null && amount.compareTo(BigDecimal.ZERO) > 0) ? amount : 0;
-        });
+        comparatorOptions.put("AMOUNT_PAID", LoanInsurancePaymentsResponse::getAmount);
 
-        comparatorOptions.put("DATE", response -> {
-            String dateStr = response.getPaymentDate();
-            return (
-                    dateStr != null && !dateStr.isEmpty())
-                    ? LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                    : null;
-        });
+        comparatorOptions.put("DATE", response ->
+                LocalDate.parse(response.getPaymentDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+
+        );
 
         list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
         if (request.getFilters().getPagination() != null) {
