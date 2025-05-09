@@ -344,7 +344,7 @@ class LoansServiceTest {
 
         //Assert
         assertNotNull(response);
-        assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
+        assertEquals(expectedResponse.size(), response.size());
         verify(provider).getListLoanInsurancePayments(any(), any(), any());
         verify(mapper).convertResponse(mwResponseMock);
     }

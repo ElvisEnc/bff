@@ -153,7 +153,7 @@ class LoansControllerTest {
         when(service.getLoanInsurancePayments(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/loans/{loanId}/persons/{personId}/insurance-payments";
+        String path = "/api/v1/loans/{loanId}/clients/{clientId}/insurance-payments";
         MvcResult result = mockMvc.perform(post(path, "123", "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)

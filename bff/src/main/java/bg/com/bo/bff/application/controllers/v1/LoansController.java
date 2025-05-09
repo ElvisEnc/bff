@@ -69,14 +69,14 @@ public class LoansController extends AbstractBFFController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de seguros pagados")
     })
-    @PostMapping("{loanId}/persons/{personId}/insurance-payments")
+    @PostMapping("{loanId}/clients/{clientId}/insurance-payments")
     public ResponseEntity<ApiDataResponse<List<LoanInsurancePaymentsResponse>>> getListLoanInsurancePayments(
             @PathVariable("loanId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String loanId,
-            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("clientId") @OnlyNumber @Parameter(description = "Este es el clientId de la persona", example = "12345") String clientId,
             @Valid @RequestBody LoanPaymentsRequest request
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(ApiDataResponse.of(service.getLoanInsurancePayments(loanId, personId, request)));
+        return ResponseEntity.ok(ApiDataResponse.of(service.getLoanInsurancePayments(loanId, clientId, request)));
     }
 
     @Operation(summary = "Plan de pagos", description = "Obtiene una lista de planes de pago del prestamo")

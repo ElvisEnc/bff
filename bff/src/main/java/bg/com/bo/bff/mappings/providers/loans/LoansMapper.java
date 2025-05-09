@@ -84,7 +84,7 @@ public class LoansMapper implements ILoansMapper {
                         .currencyCode(mw.getCurrency())
                         .currencyDescription(mw.getCurrencyDescription())
                         .paymentNumber(mw.getPaymentNumber())
-                        .paymentDate(UtilDate.formatDate(mw.getPaymentDate()))
+                        .paymentDate(mw.getPaymentDate())
                         .amount(Util.scaleToTwoDecimals(mw.getAmount()))
                         .index(mw.getRecord())
                         .build())
