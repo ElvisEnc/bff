@@ -1,7 +1,10 @@
 package bg.com.bo.bff.application.dtos.response.payment.service;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -18,13 +21,15 @@ public class DebtDetail {
     private String invoiceName;
 
     @Schema(description = "Identificador de la factura")
-    private String invoiceId;
+    private String invoiceNITCI;
 
     @Schema(description = "Complemento de la factura")
     private String invoiceComplementId;
 
     @Schema(description = "e-mail para la factura")
     private String invoiceEmail;
+
+    private String invoiceType;
 
     @Schema(description = "descripción")
     private String description;

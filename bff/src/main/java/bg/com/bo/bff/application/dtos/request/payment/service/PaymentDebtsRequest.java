@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.dtos.request.payment.service;
 
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
+import bg.com.bo.bff.commons.annotations.ValidText;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
@@ -38,6 +39,17 @@ public record PaymentDebtsRequest(
         @Schema(description = "Nombre de la factura", example = "Juan Perez")
         String invoiceName,
 
+        @Schema(description = "Tipo de favturacion")
+        String invoiceType,
+
+        @Schema(description = "Complemente del carnet de identidad", example = "1L")
+        @Size(max = 2)
+        String invoiceComplementId,
+
+        @Schema(description = "Correo electronico al que se encia la factura.", example = "test@hotmail.com")
+        @Size(max = 50)
+        String invoiceEmail,
+
         @NotBlank
         @Size(max = 150)
         @Schema(description = "Compañia", example = "company")
@@ -48,6 +60,7 @@ public record PaymentDebtsRequest(
         String serviceCode,
 
         @NotBlank
+        @ValidText
         @Size(max = 150)
         @Schema(description = "Descripción", example = "Pagos")
         String description

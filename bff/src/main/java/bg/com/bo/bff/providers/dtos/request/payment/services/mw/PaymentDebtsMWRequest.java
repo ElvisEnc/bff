@@ -55,6 +55,9 @@ public class PaymentDebtsMWRequest {
         private String idGeneratedForDebt;
         private String invoiceNITCI;
         private String invoiceName;
+        private String invoiceType;
+        private String invoiceComplementId;
+        private String invoiceEmail;
         private String company;
         private String affiliationCode;
         private String serviceCode;

@@ -85,7 +85,10 @@ public class PaymentServiceRequestFixture {
                 "Juan Perez",
                 "Test Company",
                 "77",
-                "Pagos"
+                "Pagos",
+                "1",
+                "765",
+                "description"
         );
     }
 

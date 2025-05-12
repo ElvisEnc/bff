@@ -32,6 +32,7 @@ public class DebtsConsultationMWResponse {
         private String invoiceId;
         private String invoiceComplementId;
         private String invoiceEmail;
+        private String invoiceType;
         private String description;
         private String referenceCode;
         private Integer monthPeriod;

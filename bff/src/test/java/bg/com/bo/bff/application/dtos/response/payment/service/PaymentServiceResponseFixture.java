@@ -77,7 +77,7 @@ public class PaymentServiceResponseFixture {
         return DebtDetail.builder()
                 .invoiceCanModifyData("S")
                 .invoiceName("Pedro Perez")
-                .invoiceId("1234")
+                .invoiceNITCI("1234")
                 .invoiceComplementId("12")
                 .invoiceEmail("email@atest.com")
                 .description("123")
