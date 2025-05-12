@@ -47,43 +47,4 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
         throw new GenericException(CryptoCurrencyError.USER_REGISTERED);
     }
 
-    @Override
-    public AvailableBalanceResponse getAvailableBalance(String personId) throws IOException {
-        CryptCurrencyPersonRequest requestServer = mapper.mapperRequest(personId);
-        CryptoCurrencyGetAvailableBalanceResponse responseServer = provider.getAvailableBalance(requestServer);
-        if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
-            return mapper.convertResponse(responseServer);
-        }
-        throw new GenericException(CryptoCurrencyError.ACCOUNT_NOT_FOUND);
-    }
-
-    @Override
-    public AccountEmailResponse getAccountEmail(String personId) throws IOException {
-        CryptCurrencyPersonRequest requestServer = mapper.mapperRequest(personId);
-        CryptoCurrencyGetAccountEmailResponse responseServer = provider.getAccountEmail(requestServer);
-        if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
-            return mapper.convertResponse(responseServer);
-        }
-        throw new GenericException(CryptoCurrencyError.EMAIL_NOT_FOUND);
-    }
-
-    @Override
-    public List<AccountExtractResponse> getAccountExtract(String personId, String accountId, AccountExtractRequest request) throws IOException {
-        CryptoCurrencyAccountExtractRequest requestServer = mapper.mapperRequest(accountId, request);
-        CryptoCurrencyAccountExtractResponse responseServer = provider.getAccountExtract(requestServer);
-        if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
-            return mapper.convertResponse(responseServer);
-        }
-        throw new GenericException(CryptoCurrencyError.EXTRACT_NOT_FOUND);
-    }
-
-    @Override
-    public ExchangeRateResponse getExchangeRate(String personId, String currencyId) throws IOException {
-        CryptoCurrencyExchangeRateRequest requestServer = mapper.mapperRequest(personId, currencyId);
-        CryptoCurrencyExchangeRateResponse responseServer = provider.getExchangeRate(requestServer);
-        if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
-            return mapper.convertResponse(responseServer);
-        }
-        throw new GenericException(CryptoCurrencyError.ERROR_EXCHANGE);
-    }
 }

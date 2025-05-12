@@ -1,5 +1,6 @@
 package bg.com.bo.bff.application.dtos.response.crypto.currency;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,4 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExchangeRateResponse {
+
+    @Schema(description = "currency")
+    private String currency;
 }

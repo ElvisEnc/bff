@@ -35,27 +35,4 @@ public class CryptoCurrencyProvider extends HttpClientExternalProvider<CryptoCur
         return null;
     }
 
-    @Override
-    public CryptoCurrencyGetAvailableBalanceResponse getAvailableBalance(CryptCurrencyPersonRequest requestServer) throws IOException {
-        String url = baseUrl + String.format(CryptoCurrencyServices.POST_AVAILABLE_BALANCE.getServiceURL());
-        return null;
-    }
-
-    @Override
-    public CryptoCurrencyGetAccountEmailResponse getAccountEmail(CryptCurrencyPersonRequest requestServer) throws IOException {
-        String url = baseUrl + String.format(CryptoCurrencyServices.POST_ACCOUNT_EMAIL.getServiceURL());
-        return null;
-    }
-
-    @Override
-    public CryptoCurrencyAccountExtractResponse getAccountExtract(CryptoCurrencyAccountExtractRequest requestServer) throws IOException {
-        String url = baseUrl + String.format(CryptoCurrencyServices.POST_ACCOUNT_EXTRACT.getServiceURL());
-        return null;
-    }
-
-    @Override
-    public CryptoCurrencyExchangeRateResponse getExchangeRate(CryptoCurrencyExchangeRateRequest requestServer) throws IOException {
-        String url = baseUrl + String.format(CryptoCurrencyServices.POST_EXCHANGE_RATE.getServiceURL());
-        return null;
-    }
 }
