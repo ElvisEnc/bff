@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ICertificationsService {
 
-    List<CertificationTypesResponse> getCertificateTypes(String personId, String appCode) throws IOException;
+    List<CertificationTypesResponse> getCertificateTypes(String personId) throws IOException;
 
     List<CertificationAccountsResponse> getAccounts(String personId) throws IOException;
 

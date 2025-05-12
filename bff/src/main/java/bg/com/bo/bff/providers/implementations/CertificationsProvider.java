@@ -1,18 +1,26 @@
 package bg.com.bo.bff.providers.implementations;
 
 import bg.com.bo.bff.application.config.MiddlewareConfig;
+import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.providers.dtos.request.certifications.CertificationConfigMWRequest;
 import bg.com.bo.bff.providers.dtos.request.certifications.CertificationPriceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.certifications.SaveCertificationMWRequest;
-import bg.com.bo.bff.providers.dtos.response.certifications.*;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesAccountsListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificatesTypeListMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationConfigMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationPriceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationSaveRequestMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsHistoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.certifications.CertificationsPreferredExchMWResponse;
 import bg.com.bo.bff.providers.interfaces.ICertificationsProvider;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.certifications.CertificationsMiddlewareError;
 import bg.com.bo.bff.providers.models.enums.middleware.certifications.CertificationsMiddlewareService;
 import bg.com.bo.bff.providers.models.middleware.HeadersMW;
 import bg.com.bo.bff.providers.models.middleware.MiddlewareProvider;
+import bg.com.bo.bff.providers.models.middleware.response.handler.ByMwErrorResponseHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +40,11 @@ public class CertificationsProvider extends MiddlewareProvider<CertificationsMid
     }
 
     @Override
-    public CertificatesTypeListMWResponse getCertificatesType(String personId, String appCode) throws IOException {
+    public CertificatesTypeListMWResponse getCertificatesType(String personId) throws IOException {
         String url = baseURL + String.format(
                 CertificationsMiddlewareService.GET_CERTIFICATIONS_TYPE.getServiceURL(),
                 personId,
-                appCode
+                CanalMW.GANAMOVIL.getCanal()
         );
         return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), CertificatesTypeListMWResponse.class);
     }
@@ -65,7 +73,8 @@ public class CertificationsProvider extends MiddlewareProvider<CertificationsMid
                 CertificationsMiddlewareService.GET_CERTIFICATION_HISTORY.getServiceURL(),
                 personId
         );
-        return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), CertificationsHistoryMWResponse.class);
+        ByMwErrorResponseHandler<CertificationsHistoryMWResponse> responseHandler = ByMwErrorResponseHandler.instance(CertificationsMiddlewareError.MCDCERTMGR_0001);
+        return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), CertificationsHistoryMWResponse.class, responseHandler);
     }
 
     @Override

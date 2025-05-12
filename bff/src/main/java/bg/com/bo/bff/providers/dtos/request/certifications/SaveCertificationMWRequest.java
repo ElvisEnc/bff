@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class SaveCertificationMWRequest {
 
     private String personId;
+    private String appCode;
     private String accountId;
     private String chargeFeeId;
     private String typeCode;

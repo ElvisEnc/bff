@@ -20,6 +20,9 @@ public class DetailCreditCardResponse {
     @Schema(description = "número de la tarjeta")
     private String cardNumber;
 
+    @Schema(description = "número principal de la tarjeta.")
+    private String panNumber;
+
     @Schema(description = "nombre del titular")
     private String holderName;
 

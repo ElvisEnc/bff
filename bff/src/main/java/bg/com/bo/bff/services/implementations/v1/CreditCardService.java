@@ -1,7 +1,23 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.credit.card.*;
-import bg.com.bo.bff.application.dtos.response.credit.card.*;
+import bg.com.bo.bff.application.dtos.request.credit.card.AuthorizationCreditCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.BlockCreditCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.CashAdvanceRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.CreditCardStatementRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.FeePrepaidCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.PayCreditCardRequest;
+import bg.com.bo.bff.application.dtos.response.credit.card.AvailableCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CashAdvanceFeeResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CashAdvanceResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CreditCardStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.DetailCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.DetailPrepaidCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.FeePrepaidCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.LinkserCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.ListCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PayCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PeriodCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PurchaseAuthResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
@@ -9,7 +25,12 @@ import bg.com.bo.bff.commons.filters.OrderFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.mappings.providers.card.ICreditCardMapper;
-import bg.com.bo.bff.providers.dtos.request.credit.card.*;
+import bg.com.bo.bff.providers.dtos.request.credit.card.AuthorizationCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.BlockCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.CashAdvanceFeeMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.CashAdvanceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.FeePrepaidCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.PayCreditCardMWRequest;
 import bg.com.bo.bff.providers.dtos.response.credit.card.mw.CreditCardStatementsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.credit.card.mw.PayCreditCardMWResponse;
 import bg.com.bo.bff.providers.interfaces.ICreditCardProvider;
@@ -27,7 +48,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -157,6 +177,6 @@ public class CreditCardService implements ICreditCardService {
     @Override
     public FeePrepaidCardResponse getFeePrepaidCard(String personId, String cardId, FeePrepaidCardRequest request) throws IOException {
         FeePrepaidCardMWRequest mwRequest = mapper.mapperRequest(cardId, request);
-        return  mapper.convertResponse(provider.getFeePrepaidCard(mwRequest));
+        return mapper.convertResponse(provider.getFeePrepaidCard(mwRequest));
     }
 }

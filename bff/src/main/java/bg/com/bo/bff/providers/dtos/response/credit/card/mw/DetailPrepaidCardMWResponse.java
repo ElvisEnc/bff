@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -18,6 +20,8 @@ public class DetailPrepaidCardMWResponse {
     private String product;
     private String currency;
     private String currencyDescription;
+    private BigDecimal availableAmount;
+    private String lastRechargeDate;
     private String registrationDate;
     private String dueDate;
     private String statusCard;

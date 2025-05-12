@@ -19,10 +19,6 @@ public class CertificationConfigRequest {
 
     @JsonProperty
     @OnlyNumber
-    private String languageCode;
-
-    @JsonProperty
-    @OnlyNumber
     private String requestCode;
 
     @JsonProperty

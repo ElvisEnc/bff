@@ -28,6 +28,8 @@ public class CreditCardRequestFixture {
         return CashAdvanceRequest.builder()
                 .cmsAccount("13-45-10-123456")
                 .cmsCard("13-45-10-1234567890")
+                .panNumber("4099-11XX-XXXX-2018")
+                .dueDate("30/11/2029")
                 .accountId("123456")
                 .amount(new BigDecimal("100.00"))
                 .description("Cash advance for travel")

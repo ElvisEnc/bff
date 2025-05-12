@@ -77,7 +77,7 @@ class CertificationsProviderTest {
         String jsonResponse = Util.objectToString(expected);
         stubFor(get(anyUrl()).willReturn(okJson(jsonResponse)));
 
-        CertificatesTypeListMWResponse response = provider.getCertificatesType("123", "123");
+        CertificatesTypeListMWResponse response = provider.getCertificatesType("123");
         String json = Util.objectToString(response);
 
         assertEquals(jsonResponse, json);
