@@ -12,6 +12,8 @@ public enum CryptoCurrencyServices {
     POST_REGISTER_ACCOUNT("/api/v1/account/account-create"),
     POST_AVAILABLE_BALANCE("/api/v1/account/available-balance"),
     POST_ACCOUNT_EMAIL("/api/v1/account/account-email"),
+    POST_ACCOUNT_EXTRACT("/api/v1/divisa-exchange/account-extract"),
+    POST_EXCHANGE_RATE("/api/v1/divisa-exchange/exchange-rate"),
     ;
 
     private final String serviceURL;
