@@ -15,24 +15,29 @@ import bg.com.bo.bff.providers.interfaces.ICryptoCurrencyProvider;
 import bg.com.bo.bff.providers.models.enums.external.services.crypto.currency.CryptoCurrencyError;
 import bg.com.bo.bff.providers.models.enums.external.services.crypto.currency.CryptoCurrencyServices;
 import bg.com.bo.bff.providers.models.external.services.HttpClientExternalProvider;
+import bg.com.bo.bff.providers.models.external.services.interfaces.CryptoAssetsFeignClient;
+import bg.com.bo.bff.providers.models.external.services.interfaces.CryptoCurrencyFeignClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 @Service
-public class CryptoCurrencyProvider extends HttpClientExternalProvider<CryptoCurrencyError> implements ICryptoCurrencyProvider {
+public class CryptoCurrencyProvider implements ICryptoCurrencyProvider {
+    private final CryptoAssetsFeignClient cryptoAssetsFeignClient;
     private final String baseUrl;
 
-    public CryptoCurrencyProvider(IHttpClientFactory httpClientFactory, ObjectMapper objectMapper, ExternalServiceConfig externalConfig) {
-        super(httpClientFactory, objectMapper, CryptoCurrencyError.class);
+    public CryptoCurrencyProvider(CryptoAssetsFeignClient cryptoAssetsFeignClient, ExternalServiceConfig externalConfig) {
+        this.cryptoAssetsFeignClient = cryptoAssetsFeignClient;
         this.baseUrl = externalConfig.getUrlExternalBase() + ProjectName.CRYPTOCURRENCY_MANAGER.getName();
     }
 
     @Override
-    public CryptoCurrencyPostRegisterAccountResponse registerAccount(CryptCurrencyPersonRequest requestServer) throws IOException {
-        String url = baseUrl + String.format(CryptoCurrencyServices.POST_REGISTER_ACCOUNT.getServiceURL());
-        return null;
+    public CryptoCurrencyPostRegisterAccountResponse registerAccount(
+            String token, CryptCurrencyPersonRequest requestServer
+    ) {
+        // String url = baseUrl + String.format(CryptoCurrencyServices.POST_REGISTER_ACCOUNT.getServiceURL());
+        return this.cryptoAssetsFeignClient.createAccount(token, requestServer);
     }
 
 }
