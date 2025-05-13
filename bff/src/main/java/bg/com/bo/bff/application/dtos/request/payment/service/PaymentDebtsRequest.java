@@ -39,14 +39,14 @@ public record PaymentDebtsRequest(
         @Schema(description = "Nombre de la factura", example = "Juan Perez")
         String invoiceName,
 
-        @Schema(description = "Tipo de favturacion")
+        @Schema(description = "Tipo de facturacion")
         String invoiceType,
 
-        @Schema(description = "Complemente del carnet de identidad", example = "1L")
+        @Schema(description = "Complemento del carnet de identidad", example = "1L")
         @Size(max = 2)
         String invoiceComplementId,
 
-        @Schema(description = "Correo electronico al que se encia la factura.", example = "test@hotmail.com")
+        @Schema(description = "Correo electronico al que se envia la factura.", example = "test@hotmail.com")
         @Size(max = 50)
         String invoiceEmail,
 

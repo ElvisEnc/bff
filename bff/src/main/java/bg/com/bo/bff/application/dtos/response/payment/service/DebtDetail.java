@@ -20,7 +20,7 @@ public class DebtDetail {
     @Schema(description = "Nombre para la factura")
     private String invoiceName;
 
-    @Schema(description = "Identificador de la factura")
+    @Schema(description = "Número de NIT/CI para la factura")
     private String invoiceNITCI;
 
     @Schema(description = "Complemento de la factura")
@@ -29,6 +29,7 @@ public class DebtDetail {
     @Schema(description = "e-mail para la factura")
     private String invoiceEmail;
 
+    @Schema(description = "Tipo de factura")
     private String invoiceType;
 
     @Schema(description = "descripción")
