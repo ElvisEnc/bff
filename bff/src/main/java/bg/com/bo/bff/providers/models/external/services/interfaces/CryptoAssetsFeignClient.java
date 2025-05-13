@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.models.external.services.interfaces;
 
+import bg.com.bo.bff.commons.enums.config.provider.external.ProjectName;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptCurrencyPersonRequest;
 import bg.com.bo.bff.providers.dtos.request.token.external.TokenAuthenticationRequestDto;
@@ -13,12 +14,14 @@ import java.util.Map;
 
 @FeignClient(
         name = "crypto-assets",
-        url = "http://api.stg.bg.com.bo/empresas/criptoactivos-mdw/api/v1",
+        url = "${loyalty.server.url}",
         configuration = LoyaltyFeignConfig.class
 )
 public interface CryptoAssetsFeignClient {
 
-    @GetMapping("/authentication")
+    public static final String BASE_URI = "/empresas/criptoactivos-mdw/api/v1";
+
+    @GetMapping(BASE_URI + "/authentication")
     ClientToken getTokenAuthentication(
             @RequestBody TokenAuthenticationRequestDto tokenAuthenticationRequestDto
     );
