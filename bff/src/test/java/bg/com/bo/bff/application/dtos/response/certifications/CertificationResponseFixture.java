@@ -68,9 +68,7 @@ public class CertificationResponseFixture {
         return Arrays.asList(
                 CertificationHistoryResponse.builder()
                         .requestNumber("1268870")
-                        .day("21")
-                        .month("Ene")
-                        .year("2022")
+
                         .title("Certificado Cuentas")
                         .docNumber("CCU1268870-SC2022")
                         .state("Entregado")
@@ -78,9 +76,7 @@ public class CertificationResponseFixture {
                         .build(),
                 CertificationHistoryResponse.builder()
                         .requestNumber("1268870")
-                        .day("21")
-                        .month("Ene")
-                        .year("2022")
+                        .date("21/02/2021")
                         .title("Certificado Cuentas")
                         .docNumber("CCU1268870-SC2022")
                         .state("Entregado")
