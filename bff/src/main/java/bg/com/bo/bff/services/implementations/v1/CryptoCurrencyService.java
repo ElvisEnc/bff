@@ -1,19 +1,27 @@
 package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.crypto.currency.AccountExtractRequest;
+import bg.com.bo.bff.application.dtos.request.crypto.currency.ExchangeOperationRequest;
+import bg.com.bo.bff.application.dtos.request.crypto.currency.GenerateVoucherRequest;
 import bg.com.bo.bff.application.dtos.response.crypto.currency.AccountEmailResponse;
 import bg.com.bo.bff.application.dtos.response.crypto.currency.AccountExtractResponse;
 import bg.com.bo.bff.application.dtos.response.crypto.currency.AvailableBalanceResponse;
+import bg.com.bo.bff.application.dtos.response.crypto.currency.ExchangeOperationResponse;
 import bg.com.bo.bff.application.dtos.response.crypto.currency.ExchangeRateResponse;
+import bg.com.bo.bff.application.dtos.response.crypto.currency.GenerateVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.user.AppCodeResponseNet;
 import bg.com.bo.bff.mappings.providers.crypto.currency.ICryptoCurrencyMapper;
-import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptCurrencyPersonRequest;
+import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeOperationRequest;
+import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyGenerateVoucherRequest;
+import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyPersonRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyAccountExtractRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeRateRequest;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyAccountExtractResponse;
+import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyExchangeOperationResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyExchangeRateResponse;
+import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGenerateVoucherResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGetAccountEmailResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGetAvailableBalanceResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyPostRegisterAccountResponse;
@@ -39,7 +47,7 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
 
     @Override
     public GenericResponse registerAccount(String personId) throws IOException {
-        CryptCurrencyPersonRequest requestServer = mapper.mapperRequest(personId);
+        CryptoCurrencyPersonRequest requestServer = mapper.mapperRequest(personId);
         CryptoCurrencyPostRegisterAccountResponse responseServer = provider.registerAccount(requestServer);
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return GenericResponse.instance(CryptoCurrencyResponse.REGISTERED_SUCCESS);
@@ -47,4 +55,63 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
         throw new GenericException(CryptoCurrencyError.USER_REGISTERED);
     }
 
+    @Override
+    public AvailableBalanceResponse getAvailableBalance(String personId) throws IOException {
+        CryptoCurrencyPersonRequest requestServer = mapper.mapperRequest(personId);
+        CryptoCurrencyGetAvailableBalanceResponse responseServer = provider.getAvailableBalance(requestServer);
+        if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
+            return mapper.convertResponse(responseServer);
+        }
+        throw new GenericException(CryptoCurrencyError.ACCOUNT_NOT_FOUND);
+    }
+
+    @Override
+    public AccountEmailResponse getAccountEmail(String personId) throws IOException {
+        CryptoCurrencyPersonRequest requestServer = mapper.mapperRequest(personId);
+        CryptoCurrencyGetAccountEmailResponse responseServer = provider.getAccountEmail(requestServer);
+        if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
+            return mapper.convertResponse(responseServer);
+        }
+        throw new GenericException(CryptoCurrencyError.EMAIL_NOT_FOUND);
+    }
+
+    @Override
+    public List<AccountExtractResponse> getAccountExtract(String personId, String accountId, AccountExtractRequest request) throws IOException {
+        CryptoCurrencyAccountExtractRequest requestServer = mapper.mapperRequest(accountId, request);
+        CryptoCurrencyAccountExtractResponse responseServer = provider.getAccountExtract(requestServer);
+        if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
+            return mapper.convertResponse(responseServer);
+        }
+        throw new GenericException(CryptoCurrencyError.EXTRACT_NOT_FOUND);
+    }
+
+    @Override
+    public ExchangeRateResponse getExchangeRate(String personId, String currencyId) throws IOException {
+        CryptoCurrencyExchangeRateRequest requestServer = mapper.mapperRequest(personId, currencyId);
+        CryptoCurrencyExchangeRateResponse responseServer = provider.getExchangeRate(requestServer);
+        if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
+            return mapper.convertResponse(responseServer);
+        }
+        throw new GenericException(CryptoCurrencyError.ERROR_EXCHANGE);
+    }
+
+    @Override
+    public ExchangeOperationResponse exchangeOperation(String personId, String accountId, ExchangeOperationRequest request) throws IOException {
+        CryptoCurrencyExchangeOperationRequest requestServer = mapper.mapperRequest(personId, accountId, request);
+        CryptoCurrencyExchangeOperationResponse responseServer = provider.exchangeOperation(requestServer);
+        if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
+            return mapper.convertResponse(responseServer);
+        }
+        throw new GenericException(CryptoCurrencyError.ERROR_EXCHANGE);
+    }
+
+    @Override
+    public GenerateVoucherResponse postGenerateVoucher(String personId, GenerateVoucherRequest request) throws IOException {
+        CryptoCurrencyGenerateVoucherRequest requestServer = mapper.mapperRequest(request);
+        CryptoCurrencyGenerateVoucherResponse responseServer = provider.postGenerateVoucher(requestServer);
+        if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
+            return mapper.convertResponse(responseServer);
+        }
+        throw new GenericException(CryptoCurrencyError.ERROR_VOUCHER);
+    }
 }

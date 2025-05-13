@@ -16,10 +16,13 @@ public class AvailableBalanceResponse {
 
     @Schema(description = "currency")
     private String currency;
+
     @Schema(description = "availableBalance")
     private BigDecimal availableBalance;
+
     @Schema(description = "account")
     private Integer account;
+
     @Schema(description = "status")
     private String status;
 

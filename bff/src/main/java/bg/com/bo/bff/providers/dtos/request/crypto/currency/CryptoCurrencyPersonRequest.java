@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CryptCurrencyPersonRequest {
+public class CryptoCurrencyPersonRequest {
 
     @JsonProperty("personId")
     @JsonAlias({"nroPersona", "personNumber"})

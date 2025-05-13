@@ -14,6 +14,8 @@ public enum CryptoCurrencyServices {
     POST_ACCOUNT_EMAIL("/api/v1/account/account-email"),
     POST_ACCOUNT_EXTRACT("/api/v1/divisa-exchange/account-extract"),
     POST_EXCHANGE_RATE("/api/v1/divisa-exchange/exchange-rate"),
+    POST_EXCHANGE_OPERATION("/api/v1/divisa-exchange/exchange-operation"),
+    POST_GENERATE_VOUCHER("/api/v1/divisa-exchange/generate-voucher"),
     ;
 
     private final String serviceURL;

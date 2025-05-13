@@ -3,11 +3,15 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.ExternalServiceConfig;
 import bg.com.bo.bff.commons.enums.config.provider.external.ProjectName;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
-import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptCurrencyPersonRequest;
+import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeOperationRequest;
+import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyGenerateVoucherRequest;
+import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyPersonRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyAccountExtractRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeRateRequest;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyAccountExtractResponse;
+import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyExchangeOperationResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyExchangeRateResponse;
+import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGenerateVoucherResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGetAccountEmailResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGetAvailableBalanceResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyPostRegisterAccountResponse;
@@ -30,9 +34,44 @@ public class CryptoCurrencyProvider extends HttpClientExternalProvider<CryptoCur
     }
 
     @Override
-    public CryptoCurrencyPostRegisterAccountResponse registerAccount(CryptCurrencyPersonRequest requestServer) throws IOException {
+    public CryptoCurrencyPostRegisterAccountResponse registerAccount(CryptoCurrencyPersonRequest requestServer) throws IOException {
         String url = baseUrl + String.format(CryptoCurrencyServices.POST_REGISTER_ACCOUNT.getServiceURL());
         return null;
     }
 
+    @Override
+    public CryptoCurrencyGetAvailableBalanceResponse getAvailableBalance(CryptoCurrencyPersonRequest requestServer) throws IOException {
+        String url = baseUrl + String.format(CryptoCurrencyServices.POST_AVAILABLE_BALANCE.getServiceURL());
+        return null;
+    }
+
+    @Override
+    public CryptoCurrencyGetAccountEmailResponse getAccountEmail(CryptoCurrencyPersonRequest requestServer) throws IOException {
+        String url = baseUrl + String.format(CryptoCurrencyServices.POST_ACCOUNT_EMAIL.getServiceURL());
+        return null;
+    }
+
+    @Override
+    public CryptoCurrencyAccountExtractResponse getAccountExtract(CryptoCurrencyAccountExtractRequest requestServer) throws IOException {
+        String url = baseUrl + String.format(CryptoCurrencyServices.POST_ACCOUNT_EXTRACT.getServiceURL());
+        return null;
+    }
+
+    @Override
+    public CryptoCurrencyExchangeRateResponse getExchangeRate(CryptoCurrencyExchangeRateRequest requestServer) throws IOException {
+        String url = baseUrl + String.format(CryptoCurrencyServices.POST_EXCHANGE_RATE.getServiceURL());
+        return null;
+    }
+
+    @Override
+    public CryptoCurrencyExchangeOperationResponse exchangeOperation(CryptoCurrencyExchangeOperationRequest requestServer) throws IOException {
+        String url = baseUrl + String.format(CryptoCurrencyServices.POST_EXCHANGE_OPERATION.getServiceURL());
+        return null;
+    }
+
+    @Override
+    public CryptoCurrencyGenerateVoucherResponse postGenerateVoucher(CryptoCurrencyGenerateVoucherRequest requestServer) throws IOException {
+        String url = baseUrl + String.format(CryptoCurrencyServices.POST_GENERATE_VOUCHER.getServiceURL());
+        return null;
+    }
 }

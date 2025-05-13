@@ -17,6 +17,8 @@ public enum CryptoCurrencyError implements IExternalError {
     EMAIL_NOT_FOUND(HttpStatus.NOT_ACCEPTABLE, "EMAIL_NOT_FOUND", null, "No se pudo obtener el correo", "No se obtuvo correo", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()),
     EXTRACT_NOT_FOUND(HttpStatus.NOT_ACCEPTABLE, "EXTRACT_NOT_FOUND", null, "No se pudo obtener el extrato", "No se obtuvo el extracto", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()),
     ERROR_EXCHANGE(HttpStatus.NOT_ACCEPTABLE, "ERROR_EXCHANGE", null, ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
+    ERROR_EXCHANGE_OPERATION(HttpStatus.NOT_ACCEPTABLE, "ERROR_EXCHANGE_OPERATION", null, ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
+    ERROR_VOUCHER(HttpStatus.NOT_ACCEPTABLE, "ERROR_VOUCHER", null, ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     ;
 
     private final HttpStatus httpCode;

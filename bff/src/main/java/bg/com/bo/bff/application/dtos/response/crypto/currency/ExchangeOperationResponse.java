@@ -10,14 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExchangeRateResponse {
+public class ExchangeOperationResponse {
 
-    @Schema(description = "purchaseFxRate")
-    private Double purchaseFxRate ;
-
-    @Schema(description = "saleFxRate")
-    private Double saleFxRate ;
-    
-    @Schema(description = "description")
-    private String description;
+    @Schema(description = "data")
+    private Double data ;
 }
