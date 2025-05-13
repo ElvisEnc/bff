@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CryptCurrencyPersonRequest {
 
-    @JsonProperty("personId")
-    @JsonAlias({"nroPersona", "personNumber"})
+    @JsonProperty("nroPersona")
     private String personId;
 }

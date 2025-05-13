@@ -49,10 +49,11 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
         CryptCurrencyPersonRequest requestServer = mapper.mapperRequest(personId);
 
         ClientToken token = this.tokenExternalProvider.generateAccountAccessToken(
-                TokenAuthenticationRequestDto.builder().password("").username("").build()
+                TokenAuthenticationRequestDto.builder().password("JBANK1").username("SYSTEMS1").build()
         );
+        String finalToken =  "Bearer " + token.getAccessToken();
         CryptoCurrencyPostRegisterAccountResponse responseServer = provider.registerAccount(
-                token.getAccessToken(), requestServer
+                finalToken, requestServer
         );
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return GenericResponse.instance(CryptoCurrencyResponse.REGISTERED_SUCCESS);
