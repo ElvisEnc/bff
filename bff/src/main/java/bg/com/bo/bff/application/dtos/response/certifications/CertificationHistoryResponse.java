@@ -15,14 +15,8 @@ public class CertificationHistoryResponse {
     @Schema(description = "Numero de la solicitud realizada")
     private String requestNumber;
 
-    @Schema(description = "Dia en que se realizo la solicitud")
-    private String day;
-
-    @Schema(description = "Mes en el que se realizo la solicitud")
-    private String month;
-
-    @Schema(description = "Año en que se realizo la soliciatud")
-    private String year;
+    @Schema(description = "Fecha de solicitud")
+    private String date;
 
     @Schema(description = "Titulo del documento")
     private String title;
