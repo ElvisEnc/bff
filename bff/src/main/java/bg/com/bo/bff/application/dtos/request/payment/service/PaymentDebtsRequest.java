@@ -26,15 +26,16 @@ public record PaymentDebtsRequest(
         Long fromAccountId,
 
         @NotBlank
+        @NotNull
         @Size(min = 1, max = 100)
         @Schema(description = "uuid", example = "324a029a-553f-4acb-abf4-4dcb25574463")
         String idGenerated,
 
-        @OnlyNumber
+        @Pattern(regexp = "\\d+", message = "Existen valores invalidos en la numero de CI o NIT")
+        @Size(min = 1, max = 30)
         @Schema(description = "Nit de la factura", example = "12546878")
-        String invoiceNit,
+        String invoiceNITCI,
 
-        @NotBlank
         @Size(max = 150)
         @Schema(description = "Nombre de la factura", example = "Juan Perez")
         String invoiceName,
@@ -56,10 +57,12 @@ public record PaymentDebtsRequest(
         String company,
 
         @OnlyNumber
+        @NotNull
         @Schema(description = "Código de servicio", example = "77")
         String serviceCode,
 
         @NotBlank
+        @NotNull
         @ValidText
         @Size(max = 150)
         @Schema(description = "Descripción", example = "Pagos")

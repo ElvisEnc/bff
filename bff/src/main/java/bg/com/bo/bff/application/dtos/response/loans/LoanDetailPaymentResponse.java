@@ -60,9 +60,6 @@ public class LoanDetailPaymentResponse {
     @Schema(description = "Capital")
     private double capital;
 
-    @Schema(description = "Formulario")
-    private int form;
-
     @Schema(description = "Monto")
     private double amount;
 
