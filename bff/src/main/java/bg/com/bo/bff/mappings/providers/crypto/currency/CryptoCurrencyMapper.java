@@ -89,6 +89,8 @@ public class CryptoCurrencyMapper implements ICryptoCurrencyMapper{
     @Override
     public GenerateVoucherResponse convertResponse(CryptoCurrencyGenerateVoucherResponse response) {
         return GenerateVoucherResponse.builder()
+                .transactionNumber(response.getData().getTransactionNumber())
+                .transactionType(response.getData().getTransactionType())
                 .build();
     }
 
