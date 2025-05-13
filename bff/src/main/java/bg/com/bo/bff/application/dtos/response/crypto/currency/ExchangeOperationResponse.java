@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 public class ExchangeOperationResponse {
 
     @Schema(description = "data")
-    private Double data ;
+    private String data ;
 }

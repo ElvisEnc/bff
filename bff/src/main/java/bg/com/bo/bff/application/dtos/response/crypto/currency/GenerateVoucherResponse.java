@@ -20,5 +20,5 @@ public class GenerateVoucherResponse {
     @NotBlank(message = "accountNumber no puede ser vacío.")
     @Schema(description = "accountNumber permite realizar la busqueda de los extractos.",
             example = "558745")
-    private String datee;
+    private String date;
 }

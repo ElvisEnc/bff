@@ -1,6 +1,8 @@
 package bg.com.bo.bff.application.dtos.request.crypto.currency;
 
 
+import java.math.BigDecimal;
+
 public class CryptoCurrencyRequestFixture {
 
     public static AccountExtractRequest withDefaultAccountExtract() {
@@ -10,6 +12,22 @@ public class CryptoCurrencyRequestFixture {
                 .endDate("2025-01-31")
                 .startPage(1)
                 .endPage(100)
+                .build();
+    }
+
+    public static ExchangeOperationRequest withDefaultExchangeOperation() {
+        return ExchangeOperationRequest.builder()
+                .amount(BigDecimal.valueOf(78.5))
+                .currency("2222")
+                .destinationAccount("27845")
+                .description("test")
+                .build();
+    }
+
+    public static GenerateVoucherRequest withDefaultGenerateVoucher() {
+        return GenerateVoucherRequest.builder()
+                .seatNumber("2222")
+                .dateProcess("2025-01-31")
                 .build();
     }
 }

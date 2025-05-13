@@ -50,4 +50,25 @@ public class CryptoCurrencyResponseFixture {
                 .build();
     }
 
+    public static ExchangeRateResponse withDefaultExchangeRate() {
+        return ExchangeRateResponse.builder()
+                .purchaseFxRate(12.2)
+                .saleFxRate(12.2)
+                .description("test")
+                .build();
+    }
+
+    public static ExchangeOperationResponse withDefaultExchangeOperation() {
+        return ExchangeOperationResponse.builder()
+                .data("test")
+                .build();
+    }
+
+    public static GenerateVoucherResponse withDefaultGenerateVoucher() {
+        return GenerateVoucherResponse.builder()
+                .accountNumber("78455")
+                .date("2025-01-01")
+                .build();
+    }
+
 }
