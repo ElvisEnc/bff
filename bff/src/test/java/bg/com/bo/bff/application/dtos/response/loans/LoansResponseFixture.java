@@ -159,7 +159,6 @@ public class LoansResponseFixture {
                 .accruedCharges(100.0)
                 .interestCurrent(100.0)
                 .capital(100.0)
-                .form(1)
                 .amount(100.0)
                 .secureCurrency(1)
                 .amountSecureMandatory(100.0)

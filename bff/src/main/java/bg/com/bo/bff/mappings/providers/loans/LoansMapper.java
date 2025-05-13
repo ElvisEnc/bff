@@ -143,11 +143,10 @@ public class LoansMapper implements ILoansMapper {
         BigDecimal amount;
         if(currencyCode.equals(CURRENCY_BOB)){
             secureAmount = new BigDecimal(mwResponse.getAmountSecureConvertMandatory());
-            amount = new BigDecimal(mwResponse.getAmount());
         }else {
             secureAmount = new BigDecimal(mwResponse.getAmountSecureMandatory());
-            amount = new BigDecimal(mwResponse.getAmount());
         }
+        amount = new BigDecimal(mwResponse.getAmount());
         total = amount.add(secureAmount);
 
         return LoanDetailPaymentResponse.builder()
@@ -164,11 +163,10 @@ public class LoansMapper implements ILoansMapper {
                 .status(mwResponse.getStatus())
                 .paid(!mwResponse.getErrorCode().equals("0"))
                 .balanceSecure(Double.parseDouble(mwResponse.getBalanceSecure()))
-                .accruedCharges(Double.parseDouble(mwResponse.getAccruedCharges()))
+                .accruedCharges((new BigDecimal(mwResponse.getAccruedCharges()).add(new BigDecimal(mwResponse.getForm()))).doubleValue())
                 .penaltyInterest(Double.parseDouble(mwResponse.getPenaltyInterest()))
                 .interestCurrent(Double.parseDouble(mwResponse.getInterestCurrent()))
                 .capital(Double.parseDouble(mwResponse.getCapital()))
-                .form(Integer.parseInt(mwResponse.getForm()))
                 .amount(Double.parseDouble(mwResponse.getAmount()))
                 .secureCurrency(Integer.parseInt(mwResponse.getSecureCurrency()))
                 .amountSecureMandatory(Double.parseDouble(mwResponse.getAmountSecureMandatory()))
