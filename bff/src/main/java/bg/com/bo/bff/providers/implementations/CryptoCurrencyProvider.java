@@ -16,7 +16,7 @@ import bg.com.bo.bff.providers.models.enums.external.services.crypto.currency.Cr
 import bg.com.bo.bff.providers.models.enums.external.services.crypto.currency.CryptoCurrencyServices;
 import bg.com.bo.bff.providers.models.external.services.HttpClientExternalProvider;
 import bg.com.bo.bff.providers.models.external.services.interfaces.CryptoAssetsFeignClient;
-import bg.com.bo.bff.providers.models.external.services.interfaces.CryptoCurrencyFeignClient;
+//import bg.com.bo.bff.providers.models.external.services.interfaces.CryptoCurrencyFeignClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
