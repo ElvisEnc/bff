@@ -32,9 +32,8 @@ public record PaymentDebtsRequest(
 
         @OnlyNumber
         @Schema(description = "Nit de la factura", example = "12546878")
-        String invoiceNit,
+        String invoiceNITCI,
 
-        @NotBlank
         @Size(max = 150)
         @Schema(description = "Nombre de la factura", example = "Juan Perez")
         String invoiceName,

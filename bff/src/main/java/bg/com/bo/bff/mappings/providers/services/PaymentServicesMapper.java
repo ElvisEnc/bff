@@ -129,7 +129,7 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                         .build())
                 .supplementaryData(PaymentDebtsMWRequest.PaymentSupplementary.builder()
                         .idGeneratedForDebt(request.idGenerated())
-                        .invoiceNITCI(request.invoiceNit())
+                        .invoiceNITCI(request.invoiceNITCI())
                         .invoiceName(request.invoiceName())
                         .invoiceType(request.invoiceType())
                         .invoiceComplementId(request.invoiceComplementId())
