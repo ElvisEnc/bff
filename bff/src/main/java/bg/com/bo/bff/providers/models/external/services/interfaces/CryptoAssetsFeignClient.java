@@ -20,7 +20,7 @@ import java.util.Map;
 )
 public interface CryptoAssetsFeignClient {
 
-    public static final String BASE_URI = "/empresas/criptoactivos-mdw/api/v1";
+    String BASE_URI = "/empresas/criptoactivos-mdw/api/v1";
 
     @GetMapping(BASE_URI + "/authentication")
     ClientToken getTokenAuthentication(
