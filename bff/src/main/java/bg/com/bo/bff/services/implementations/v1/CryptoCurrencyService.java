@@ -51,9 +51,10 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
         ClientToken token = this.tokenExternalProvider.generateAccountAccessToken(
                 TokenAuthenticationRequestDto.builder().password("JBANK1").username("SYSTEMS1").build()
         );
-        String finalToken =  "Bearer " + token.getAccessToken();
+
+        // Para obtener el token con Bearer se lo saca con la funcion getAuthorizationHeader que se encuentra en el DTO
         CryptoCurrencyPostRegisterAccountResponse responseServer = provider.registerAccount(
-                finalToken, requestServer
+                token.getAuthorizationHeader(), requestServer
         );
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return GenericResponse.instance(CryptoCurrencyResponse.REGISTERED_SUCCESS);

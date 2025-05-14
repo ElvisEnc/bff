@@ -6,6 +6,7 @@ import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptCurrencyPersonR
 import bg.com.bo.bff.providers.dtos.request.token.external.TokenAuthenticationRequestDto;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyPostRegisterAccountResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltyGetTradeCategoryResponse;
+import bg.com.bo.bff.providers.models.enums.external.services.crypto.currency.CryptoCurrencyFeignConfig;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyFeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ import java.util.Map;
 @FeignClient(
         name = "crypto-assets",
         url = "${loyalty.server.url}",
-        configuration = LoyaltyFeignConfig.class
+        configuration = CryptoCurrencyFeignConfig.class
 )
 public interface CryptoAssetsFeignClient {
 
@@ -28,7 +29,7 @@ public interface CryptoAssetsFeignClient {
 
 
     @RequestMapping(
-            path = "/account/account-create",
+            path = BASE_URI + "/account/account-create",
             method = RequestMethod.POST)
     CryptoCurrencyPostRegisterAccountResponse createAccount(
             @RequestHeader("Authorization") String token,
