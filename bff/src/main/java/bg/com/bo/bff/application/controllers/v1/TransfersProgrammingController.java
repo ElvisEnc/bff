@@ -1,11 +1,9 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
-import bg.com.bo.bff.application.dtos.response.certifications.CertificationTypesResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
-import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.ITransferProgrammingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

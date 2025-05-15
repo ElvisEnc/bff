@@ -1,6 +1,5 @@
 package bg.com.bo.bff.providers.dtos.response.transfers.programming;
 
-import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
