@@ -270,20 +270,23 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
     ),
     MDWPSM_046(
             HttpStatus.NOT_ACCEPTABLE,
-            "ERROR_PAYMENT_DEBT",
+            "ERROR_INVOICE_DATA",
             "MDWPSM-046",
-            ConstantMessages.GENERIC.getMessage(),
-            ConstantMessages.GENERIC.getTitle(),
+            """
+                    Toma en cuenta que la factura se emitirá con los datos ingresados
+                    y esta información no podrá modificarse después del pago.
+                    """,
+            "Verifica los datos de facturación",
             CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()
     ),
     MDWPSM_047(
             HttpStatus.NOT_ACCEPTABLE,
             "NOT_ACCEPTABLE",
             "MDWPSM-047",
-            "Afiliación duplicada. El sericio ya se encuentrtra afiliado",
-            "Registro Extente",
+            "Afiliación duplicada. El servicio ya se encuentrtra afiliado",
+            "Registro Existente",
             CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()
-            ),
+    ),
     MDWPSM_049(
             HttpStatus.BAD_REQUEST,
             "ERROR_GETTING_TRASACCION_NUMBER",
@@ -299,7 +302,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             ConstantMessages.GENERIC.getMessage(),
             ConstantMessages.GENERIC.getTitle(),
             CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()
-            ),
+    ),
     MDWPSM_051(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "ERROR_POWER_VALIDATION",
@@ -307,7 +310,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             ConstantMessages.GENERIC.getMessage(),
             ConstantMessages.GENERIC.getTitle(),
             CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()
-            );
+    );
 
     private final HttpStatus httpCode;
     private final String code;

@@ -31,7 +31,7 @@ public record PaymentDebtsRequest(
         @Schema(description = "uuid", example = "324a029a-553f-4acb-abf4-4dcb25574463")
         String idGenerated,
 
-        @Pattern(regexp = "\\d+", message = "Existen valores invalidos en la numero de CI o NIT")
+        @Pattern(regexp = "\\d+", message = "Existen valores invalidos en el numero de CI o NIT")
         @Size(min = 1, max = 30)
         @Schema(description = "Nit de la factura", example = "12546878")
         String invoiceNITCI,
