@@ -1,8 +1,8 @@
 package bg.com.bo.bff.application.dtos.request.credit.card;
 
+import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.PaginationRequest;
 import bg.com.bo.bff.application.dtos.request.qr.OrderRequest;
-import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
 import bg.com.bo.bff.application.dtos.request.transfer.AmountTransfer;
 import bg.com.bo.bff.application.dtos.request.transfer.DataTransfer;
 import bg.com.bo.bff.application.dtos.request.transfer.TargetAccount;
@@ -14,6 +14,7 @@ public class CreditCardRequestFixture {
         return BlockCreditCardRequest.builder()
                 .cmsCard("13-01-10-0201360001")
                 .type("2")
+                .typeCard("TC")
                 .build();
     }
 

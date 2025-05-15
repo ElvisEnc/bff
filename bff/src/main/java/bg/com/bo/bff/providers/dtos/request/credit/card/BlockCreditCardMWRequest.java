@@ -14,4 +14,5 @@ public class BlockCreditCardMWRequest {
     private String personId;
     private String codBlockType;
     private String codBlockReason;
+    private String typeCard;
 }

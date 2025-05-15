@@ -80,6 +80,7 @@ public class CreditCardResponseFixture {
                 .duePaymentDatePeriod("31/12/2022")
                 .dueDatePeriod("20/12/2024")
                 .paymentAmountMinimum("10")
+                .amountPaymentCurrent(BigDecimal.valueOf(350))
                 .build();
     }
 
