@@ -14,4 +14,14 @@ public class ClientToken {
     String jti;
     String requiredAt;
     String expiredAt;
+
+    public String getAuthorizationHeader() {
+        if (accessToken == null) return null;
+
+        if (accessToken.toLowerCase().startsWith("bearer ")) {
+            return accessToken;
+        }
+
+        return "Bearer " + accessToken;
+    }
 }

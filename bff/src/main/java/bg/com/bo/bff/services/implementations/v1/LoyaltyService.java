@@ -53,7 +53,6 @@ import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeResponse;
 import bg.com.bo.bff.providers.dtos.response.loyalty.LoyaltySystemCodeServerResponse;
 import bg.com.bo.bff.providers.dtos.request.loyalty.MerchantCampaignVoucherAPIRequest;
 import bg.com.bo.bff.providers.interfaces.ILoyaltyProvider;
-import bg.com.bo.bff.providers.interfaces.ILoyaltyProviderFeignAdapter;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyError;
 import bg.com.bo.bff.providers.models.enums.external.services.loyalty.LoyaltyResponse;
 import bg.com.bo.bff.services.interfaces.ILoyaltyService;
@@ -69,12 +68,10 @@ import static bg.com.bo.bff.application.dtos.response.loyalty.LoyaltyCityListRes
 @Service
 public class LoyaltyService implements ILoyaltyService {
     private final ILoyaltyProvider provider;
-    private final ILoyaltyProviderFeignAdapter providerFeignAdapter;
     private final ILoyaltyMapper mapper;
 
-    public LoyaltyService(ILoyaltyProvider idcProvider, ILoyaltyProviderFeignAdapter providerFeignAdapter, ILoyaltyMapper idcMapper) {
+    public LoyaltyService(ILoyaltyProvider idcProvider, ILoyaltyMapper idcMapper) {
         this.provider = idcProvider;
-        this.providerFeignAdapter = providerFeignAdapter;
         this.mapper = idcMapper;
     }
 
@@ -235,7 +232,7 @@ public class LoyaltyService implements ILoyaltyService {
     public LoyaltyTradeCategoryListResponse getTradeCategories(String personId) throws IOException {
         Map<String, String> headerService = mapper.mapperRequestService(personId);
         List<LoyaltyTradeCategoryResponse> list = mapper.convertResponseTradeCategory(
-                providerFeignAdapter.getTradeCategories(headerService, personId)
+                provider.getTradeCategories(headerService, personId)
         );
         return LoyaltyTradeCategoryListResponse.builder()
                 .data(list).build();

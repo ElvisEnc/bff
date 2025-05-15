@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public interface ICryptoCurrencyProvider {
 
-    CryptoCurrencyPostRegisterAccountResponse registerAccount (CryptoCurrencyPersonRequest requestServer) throws IOException;
+    CryptoCurrencyPostRegisterAccountResponse registerAccount (String token,CryptoCurrencyPersonRequest requestServer) throws IOException;
 
     CryptoCurrencyGetAvailableBalanceResponse getAvailableBalance (CryptoCurrencyPersonRequest requestServer) throws IOException;
 

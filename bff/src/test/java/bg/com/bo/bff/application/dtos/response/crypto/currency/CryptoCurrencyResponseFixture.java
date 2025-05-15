@@ -66,8 +66,8 @@ public class CryptoCurrencyResponseFixture {
 
     public static GenerateVoucherResponse withDefaultGenerateVoucher() {
         return GenerateVoucherResponse.builder()
-                .accountNumber("78455")
-                .date("2025-01-01")
+                .currencyDebit(1)
+                .currency(20)
                 .build();
     }
 

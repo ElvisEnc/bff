@@ -3,8 +3,8 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.request.token.external.TokenAuthenticationRequestDto;
+import bg.com.bo.bff.providers.implementations.feign.CryptoCurrencyFeignClient;
 import bg.com.bo.bff.providers.interfaces.ITokenExternalProvider;
-import bg.com.bo.bff.providers.models.external.services.interfaces.CryptoAssetsFeignClient;
 import bg.com.bo.bff.providers.models.middleware.DefaultMiddlewareError;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Log4j2
 public class TokenExternalProvider implements ITokenExternalProvider {
 
-    private final CryptoAssetsFeignClient authClient;
+    private final CryptoCurrencyFeignClient authClient;
 
     private final Map<String, ClientToken> tokenStore = new ConcurrentHashMap<>();
     private final Map<String, LocalDateTime> expirationStore = new ConcurrentHashMap<>();

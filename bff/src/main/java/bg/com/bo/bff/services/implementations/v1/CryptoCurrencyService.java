@@ -13,11 +13,13 @@ import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.enums.user.AppCodeResponseNet;
 import bg.com.bo.bff.mappings.providers.crypto.currency.ICryptoCurrencyMapper;
+import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeOperationRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyGenerateVoucherRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyPersonRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyAccountExtractRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeRateRequest;
+import bg.com.bo.bff.providers.dtos.request.token.external.TokenAuthenticationRequestDto;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyAccountExtractResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyExchangeOperationResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyExchangeRateResponse;
@@ -25,6 +27,7 @@ import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGener
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGetAccountEmailResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGetAvailableBalanceResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyPostRegisterAccountResponse;
+import bg.com.bo.bff.providers.implementations.TokenExternalProvider;
 import bg.com.bo.bff.providers.implementations.feign.CryptoCurrencyFeignClient;
 import bg.com.bo.bff.providers.models.enums.external.services.crypto.currency.CryptoCurrencyError;
 import bg.com.bo.bff.providers.models.enums.external.services.crypto.currency.CryptoCurrencyResponse;
@@ -39,11 +42,14 @@ import java.util.List;
 public class CryptoCurrencyService implements ICryptoCurrencyService {
 
     private final ICryptoCurrencyProvider provider;
+    private final TokenExternalProvider tokenExternalProvider;
     private final ICryptoCurrencyMapper mapper;
     private final CryptoCurrencyFeignClient cryptoFeignClient;
 
-    public CryptoCurrencyService(ICryptoCurrencyProvider provider, ICryptoCurrencyMapper idcMapper, CryptoCurrencyFeignClient cryptoFeignClient) {
+    public CryptoCurrencyService(ICryptoCurrencyProvider provider, TokenExternalProvider tokenExternalProvider,
+                                 ICryptoCurrencyMapper idcMapper, CryptoCurrencyFeignClient cryptoFeignClient) {
         this.provider = provider;
+        this.tokenExternalProvider = tokenExternalProvider;
         this.mapper = idcMapper;
         this.cryptoFeignClient = cryptoFeignClient;
     }
@@ -51,7 +57,12 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
     @Override
     public GenericResponse registerAccount(String personId) throws IOException {
         CryptoCurrencyPersonRequest requestServer = mapper.mapperRequest(personId);
-        CryptoCurrencyPostRegisterAccountResponse responseServer = provider.registerAccount(requestServer);
+        ClientToken token = this.tokenExternalProvider.generateAccountAccessToken(
+                TokenAuthenticationRequestDto.builder().password("JBANK1").username("SYSTEMS1").build()
+        );
+        CryptoCurrencyPostRegisterAccountResponse responseServer = cryptoFeignClient.createAccount(
+                token.getAuthorizationHeader(), requestServer
+        );
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return GenericResponse.instance(CryptoCurrencyResponse.REGISTERED_SUCCESS);
         }
