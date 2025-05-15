@@ -1,8 +1,6 @@
 package bg.com.bo.bff.application.dtos.response.crypto.currency;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,13 +24,13 @@ public class GenerateVoucherResponse {
     private BigDecimal amount;
 
     @JsonProperty("currencyAmount")
-    private BigDecimal currency;
+    private Integer currency;
 
     @JsonProperty("currencyEquivalentCredit")
-    private BigDecimal currencyCredit;
+    private Integer currencyCredit;
 
     @JsonProperty("currencyEquivalentDebit")
-    private BigDecimal currencyDebit;
+    private Integer currencyDebit;
 
     @JsonProperty("senderName")
     private String senderName;
@@ -65,7 +63,7 @@ public class GenerateVoucherResponse {
     private BigDecimal creditAmount;
 
     @JsonProperty("creditExchangeRate")
-    private BigDecimal creditExchangeRate;
+    private Double creditExchangeRate;
 
     @JsonProperty("description")
     private String description;

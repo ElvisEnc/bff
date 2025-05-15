@@ -91,6 +91,22 @@ public class CryptoCurrencyMapper implements ICryptoCurrencyMapper{
         return GenerateVoucherResponse.builder()
                 .transactionNumber(response.getData().getTransactionNumber())
                 .transactionType(response.getData().getTransactionType())
+                .amount(response.getData().getAmount())
+                .currency(response.getData().getCurrencyAmount())
+                .currencyCredit(response.getData().getCurrencyEquivalentCredit())
+                .currencyDebit(response.getData().getCurrencyEquivalentDebit())
+                .senderName(response.getData().getSenderName())
+                .senderAccountNumber(response.getData().getSenderAccountNumber())
+                .senderJts(response.getData().getSenderNdJts())
+                .receiverName(response.getData().getReceiverName())
+                .receiverJts(response.getData().getReceiverNdJts())
+                .receiverAccountNumber(response.getData().getReceiverAccountNumber())
+                .receiverBank(response.getData().getReceiverBank())
+                .debitAmount(response.getData().getEquivalentDebitAmount())
+                .debitExchangeRate(response.getData().getDebitExchangeRate())
+                .creditAmount(response.getData().getEquivalentCreditAmount())
+                .creditExchangeRate(response.getData().getCreditExchangeRate())
+                .description(response.getData().getDescription())
                 .build();
     }
 

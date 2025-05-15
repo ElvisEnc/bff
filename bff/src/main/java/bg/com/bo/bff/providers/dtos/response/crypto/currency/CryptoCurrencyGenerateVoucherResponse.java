@@ -36,6 +36,9 @@ public class CryptoCurrencyGenerateVoucherResponse {
         @Schema(description = "transactionType")
         private int transactionType;
 
+        @Schema(description = "amount")
+        private BigDecimal amount;
+
         @Schema(description = "currencyAmount")
         private Integer currencyAmount;
 

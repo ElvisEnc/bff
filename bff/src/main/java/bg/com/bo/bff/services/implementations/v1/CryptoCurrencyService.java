@@ -25,6 +25,7 @@ import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGener
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGetAccountEmailResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGetAvailableBalanceResponse;
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyPostRegisterAccountResponse;
+import bg.com.bo.bff.providers.implementations.feign.CryptoCurrencyFeignClient;
 import bg.com.bo.bff.providers.models.enums.external.services.crypto.currency.CryptoCurrencyError;
 import bg.com.bo.bff.providers.models.enums.external.services.crypto.currency.CryptoCurrencyResponse;
 import bg.com.bo.bff.services.interfaces.ICryptoCurrencyService;
@@ -39,10 +40,12 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
 
     private final ICryptoCurrencyProvider provider;
     private final ICryptoCurrencyMapper mapper;
+    private final CryptoCurrencyFeignClient cryptoFeignClient;
 
-    public CryptoCurrencyService(ICryptoCurrencyProvider provider, ICryptoCurrencyMapper idcMapper) {
+    public CryptoCurrencyService(ICryptoCurrencyProvider provider, ICryptoCurrencyMapper idcMapper, CryptoCurrencyFeignClient cryptoFeignClient) {
         this.provider = provider;
         this.mapper = idcMapper;
+        this.cryptoFeignClient = cryptoFeignClient;
     }
 
     @Override
