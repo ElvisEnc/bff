@@ -59,4 +59,6 @@ public class MiddlewareConfig {
 
     private String clientOnboardingManager;
 
+    private String clientTransferProgramming;
+
 }

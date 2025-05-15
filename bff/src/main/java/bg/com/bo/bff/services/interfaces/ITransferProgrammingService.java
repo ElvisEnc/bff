@@ -1,0 +1,15 @@
+package bg.com.bo.bff.services.interfaces;
+
+import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
+import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
+
+import java.io.IOException;
+import java.util.List;
+
+public interface ITransferProgrammingService {
+
+    List<ProgrammedTransfersResponse> getTransfers(String personId) throws IOException;
+
+    List<PaymentsPlanResponse> getPaymentsPlan(String transferId) throws IOException;
+
+}

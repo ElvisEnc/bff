@@ -27,7 +27,9 @@ public enum ProjectNameMW {
     SOFT_TOKEN_MANAGER("/softtoken-manager", "SOFT TOKEN MANAGER", ProjectNameMW.HEADER_KEY),
     CERTIFICATIONS_MANAGER("/certifications-manager", "CERTIFICATIONS MANAGER", ProjectNameMW.HEADER_KEY),
     USERS_QUESTIONS_MANAGER("/users-questions-manager", "USER QUESTION MANAGER", ProjectNameMW.HEADER_KEY),
-    ONBOARDING_MANAGER("/onboarding-manager", "ONBOARDING MANAGER", ProjectNameMW.HEADER_KEY);
+    ONBOARDING_MANAGER("/onboarding-manager", "ONBOARDING MANAGER", ProjectNameMW.HEADER_KEY),
+    TRANSFER_PROGRAMMING_MANAGER("/transfer-programming-manager", "TRANSFER PROGRAMMING MANAGER", ProjectNameMW.HEADER_KEY)
+    ;
 
     private final String name;
     private final String description;
