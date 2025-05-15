@@ -272,10 +272,7 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             HttpStatus.NOT_ACCEPTABLE,
             "ERROR_INVOICE_DATA",
             "MDWPSM-046",
-            """
-                    Toma en cuenta que la factura se emitirá con los datos ingresados
-                    y esta información no podrá modificarse después del pago.
-                    """,
+            "Toma en cuenta que la factura se emitirá con los datos ingresados y esta información no podrá modificarse después del pago.",
             "Verifica los datos de facturación",
             CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()
     ),

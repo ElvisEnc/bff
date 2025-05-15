@@ -85,6 +85,9 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.onboarding.manager}")
     private String clientOnboardingManager;
 
+    @Value("${client.secret.transfer.programming.manager}")
+    private String clientTransferProgramming;
+
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
@@ -114,6 +117,7 @@ public class MiddlewareConfigFactory {
                 .clientCertificationsManager(clientCertificationsManager)
                 .clientUsersQuestionsManager(clientUsersQuestionsManager)
                 .clientOnboardingManager(clientOnboardingManager)
+                .clientTransferProgramming(clientTransferProgramming)
                 .build();
     }
 }
