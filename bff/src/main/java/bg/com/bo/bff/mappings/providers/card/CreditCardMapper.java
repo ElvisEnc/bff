@@ -152,6 +152,7 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .dueDatePeriod(mwResponse.getDueDatePeriod())
                 .duePaymentDatePeriod(mwResponse.getDuePaymentDatePeriod())
                 .paymentAmountMinimum(mwResponse.getPaymentAmountMinimum())
+                .amountPaymentCurrent(mwResponse.getAmountPaymentCurrent())
                 .build();
     }
 
@@ -188,6 +189,7 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .codBlockReason(request.getType().equals(CreditCardConstans.UNBLOCK_REASON.getValue()) ?
                         CreditCardConstans.UNBLOCK_REASON.getValue() :
                         CreditCardConstans.BLOCK_REASON.getValue())
+                .typeCard(request.getTypeCard())
                 .build();
     }
 

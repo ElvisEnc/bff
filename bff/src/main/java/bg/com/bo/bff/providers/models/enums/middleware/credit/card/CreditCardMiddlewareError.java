@@ -74,7 +74,7 @@ public enum CreditCardMiddlewareError implements IMiddlewareError {
     MDWCCM_0025(
             HttpStatus.BAD_REQUEST, CodeError.INVALID_DATA.getCode(), "MDWCCM-0025",
             ConstantMessages.GENERIC.getTitle(),
-            "La tarjeta no tiene saldo disponible.",
+            "La tarjeta tiene un estado invalido.",
             CategoryError.MW_SPECIFIC_INTERNAL_FAILURE.getCategoryId()),
     MDWCCM_0026(
             HttpStatus.BAD_REQUEST, CodeError.INVALID_DATA.getCode(), "MDWCCM-0026",

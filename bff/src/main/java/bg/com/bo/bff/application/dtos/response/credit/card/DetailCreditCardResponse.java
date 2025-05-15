@@ -77,4 +77,7 @@ public class DetailCreditCardResponse {
 
     @Schema(description = "Monto minimo de pago")
     private String paymentAmountMinimum;
+
+    @Schema(description = "Monto actual pagado.")
+    private BigDecimal amountPaymentCurrent;
 }
