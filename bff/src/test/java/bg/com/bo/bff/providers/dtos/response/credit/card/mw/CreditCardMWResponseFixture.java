@@ -78,6 +78,8 @@ public class CreditCardMWResponseFixture {
                 .debtClose("close")
                 .paymentAmountMinimum("10")
                 .amountPaymentCurrent(BigDecimal.valueOf(350))
+                .amountMinimumCurrent(BigDecimal.valueOf(195))
+                .debtCloseCurrent(BigDecimal.valueOf(1500))
                 .build();
     }
 

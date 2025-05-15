@@ -36,4 +36,6 @@ public class DetailsCreditCardMWResponse {
     private String duePaymentDatePeriod;
     private String paymentAmountMinimum;
     private BigDecimal amountPaymentCurrent;
+    private BigDecimal amountMinimumCurrent;
+    private BigDecimal debtCloseCurrent;
 }

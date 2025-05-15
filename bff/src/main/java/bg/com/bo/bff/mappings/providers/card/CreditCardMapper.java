@@ -152,7 +152,9 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .dueDatePeriod(mwResponse.getDueDatePeriod())
                 .duePaymentDatePeriod(mwResponse.getDuePaymentDatePeriod())
                 .paymentAmountMinimum(mwResponse.getPaymentAmountMinimum())
-                .amountPaymentCurrent(mwResponse.getAmountPaymentCurrent())
+                .currentPaymentAmount(mwResponse.getAmountPaymentCurrent())
+                .currentDebtClosureAmount(mwResponse.getDebtCloseCurrent())
+                .currentMinimumAmount(mwResponse.getAmountMinimumCurrent())
                 .build();
     }
 
