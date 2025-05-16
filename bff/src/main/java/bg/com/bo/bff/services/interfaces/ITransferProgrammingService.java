@@ -1,5 +1,6 @@
 package bg.com.bo.bff.services.interfaces;
 
+import bg.com.bo.bff.application.dtos.response.transfers.programming.DeleteTransferResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
 
@@ -11,5 +12,7 @@ public interface ITransferProgrammingService {
     List<ProgrammedTransfersResponse> getTransfers(String personId) throws IOException;
 
     List<PaymentsPlanResponse> getPaymentsPlan(String transferId) throws IOException;
+
+    DeleteTransferResponse deleteTransfer(String personId, String transferId) throws IOException;
 
 }

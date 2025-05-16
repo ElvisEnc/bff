@@ -1,11 +1,12 @@
 package bg.com.bo.bff.mappings.providers.transfers.programming;
 
+import bg.com.bo.bff.application.dtos.response.transfers.programming.DeleteTransferResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
+import bg.com.bo.bff.providers.dtos.response.transfers.programming.DeleteTransferMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.ProgrammedTransferMDWResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
@@ -79,5 +80,19 @@ public class TransferProgrammingMapper implements ITransferProgrammingMapper {
                                 .ordinal(paymentObj.getOrdinal())
                                 .build()
                 ).toList();
+    }
+
+    @Override
+    public DeleteTransferResponse convertDeleteResponse(DeleteTransferMDWResponse mdwResponse) {
+        if (!mdwResponse.getData().getCodError().equals("COD000")) {
+            return DeleteTransferResponse.builder()
+                    .titulo("Error")
+                    .mensaje("Algo salio mal al intentar cancela la programación de transferencia.")
+                    .build();
+        }
+        return DeleteTransferResponse.builder()
+                .titulo("Transferencia Cancelada")
+                .mensaje("La programación de transferencia será cancelada permanentemente, recuerda que una vez cancelada no podrá habilitarse de nuevo.")
+                .build();
     }
 }

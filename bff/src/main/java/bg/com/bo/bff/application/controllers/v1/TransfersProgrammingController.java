@@ -1,6 +1,8 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
+import bg.com.bo.bff.application.dtos.response.credit.card.ListCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.transfers.programming.DeleteTransferResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
@@ -15,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,4 +73,22 @@ public class TransfersProgrammingController extends AbstractBFFController {
         );
     }
 
+    @Operation(
+            summary = "Cancelar Transferencia Programada",
+            description = "Cancela la transferencia programada de un cliente segun el nro de la transferencia")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = DeleteTransferResponse.class)))
+    })
+    @DeleteMapping("/cancel/persons/{personId}/transfer/{transferId}")
+    public ResponseEntity<DeleteTransferResponse> getListCreditCards(
+            @PathVariable("personId") @OnlyNumber
+            @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("transferId") @OnlyNumber
+            @Parameter(description = "Este es el personId de la persona", example = "12345") String transferId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.deleteTransfer(personId, transferId));
+    }
 }

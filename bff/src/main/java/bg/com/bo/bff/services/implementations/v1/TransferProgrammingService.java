@@ -1,8 +1,10 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.response.transfers.programming.DeleteTransferResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
 import bg.com.bo.bff.mappings.providers.transfers.programming.TransferProgrammingMapper;
+import bg.com.bo.bff.providers.dtos.response.transfers.programming.DeleteTransferMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.ProgrammedTransferMDWResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferProgrammingProvider;
@@ -37,5 +39,11 @@ public class TransferProgrammingService implements ITransferProgrammingService {
     public List<PaymentsPlanResponse> getPaymentsPlan(String transferId) throws IOException {
         PaymentsPlanMDWResponse response = provider.getPaymentsPlan(transferId);
         return mapper.convertPaymentsPlanResponse(response);
+    }
+
+    @Override
+    public DeleteTransferResponse deleteTransfer(String personId, String transferId) throws IOException {
+        DeleteTransferMDWResponse response = provider.deleteTransfer(personId, transferId);
+        return mapper.convertDeleteResponse(response);
     }
 }

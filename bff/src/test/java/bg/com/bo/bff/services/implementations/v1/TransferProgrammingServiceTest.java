@@ -1,10 +1,12 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.response.transfers.programming.DeleteTransferResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponseFixture;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponseFixture;
 import bg.com.bo.bff.mappings.providers.transfers.programming.TransferProgrammingMapper;
+import bg.com.bo.bff.providers.dtos.response.transfers.programming.DeleteTransferMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.ProgrammedTransferMDWResponse;
@@ -84,6 +86,52 @@ class TransferProgrammingServiceTest {
         List<PaymentsPlanResponse> response = service.getPaymentsPlan("1234");
 
         assertEquals(expected.size(), response.size());
+    }
+
+    @Test
+    void deleteProgrammedTransfer() throws IOException {
+        DeleteTransferMDWResponse mdwExpected = DeleteTransferMDWResponse.builder()
+                .data(
+                        DeleteTransferMDWResponse.DeleteTransfer.builder()
+                                .desError("OK")
+                                .codError("COD000")
+                                .build()
+                )
+                .build();
+        DeleteTransferResponse expected = DeleteTransferResponse.builder()
+                .titulo("OK")
+                .mensaje("La programación de transferencia será cancelada permanentemente, recuerda que una vez cancelada no podrá habilitarse de nuevo.")
+                .build();
+
+        when(provider.deleteTransfer(any(), any())).thenReturn(mdwExpected);
+        when(mapper.convertDeleteResponse(mdwExpected)).thenReturn(expected);
+
+        DeleteTransferResponse response = service.deleteTransfer("123", "321");
+
+        assertEquals(expected.getMensaje(), response.getMensaje());
+    }
+
+    @Test
+    void deleteProgrammedTransferError() throws IOException {
+        DeleteTransferMDWResponse mdwExpected = DeleteTransferMDWResponse.builder()
+                .data(
+                        DeleteTransferMDWResponse.DeleteTransfer.builder()
+                                .desError("Error")
+                                .codError("COD001")
+                                .build()
+                )
+                .build();
+        DeleteTransferResponse expected = DeleteTransferResponse.builder()
+                .titulo("Error")
+                .mensaje("Algo salio mal al intentar cancela la programación de transferencia.")
+                .build();
+
+        when(provider.deleteTransfer(any(), any())).thenReturn(mdwExpected);
+        when(mapper.convertDeleteResponse(mdwExpected)).thenReturn(expected);
+
+        DeleteTransferResponse response = service.deleteTransfer("123", "321");
+
+        assertEquals(expected.getMensaje(), response.getMensaje());
     }
 
 }
