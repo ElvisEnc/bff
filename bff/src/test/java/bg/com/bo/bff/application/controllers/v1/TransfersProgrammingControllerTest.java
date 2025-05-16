@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
+import bg.com.bo.bff.application.dtos.response.transfers.programming.DeleteTransferResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponseFixture;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
@@ -23,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -79,6 +81,26 @@ class TransfersProgrammingControllerTest {
                 .andReturn();
 
         verify(service).getPaymentsPlan( any());
+    }
+
+    @Test
+    void deleteProgrammedTransferOK() throws Exception {
+        DeleteTransferResponse expected = DeleteTransferResponse.builder()
+                .mensaje("OK")
+                .titulo("OK")
+                .build();
+        when(service.deleteTransfer(any(), any())).thenReturn(expected);
+
+        String url = "/api/v1/transfer-programming/cancel/persons/123/transfer/321";
+        mockMvc.perform(delete(url)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        verify(service).deleteTransfer(any(),  any());
     }
 
 }
