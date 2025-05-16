@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CryptoCurrencyPersonRequest {
-
-    @JsonProperty("nroPersona")
-    private String personId;
+public class CryptoCurrencyNroPersonRequest {
+    @JsonProperty("personNumber")
+    private Integer personNumber;
 }

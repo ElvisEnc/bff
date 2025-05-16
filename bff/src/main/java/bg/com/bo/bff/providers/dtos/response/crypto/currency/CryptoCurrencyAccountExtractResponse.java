@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -31,49 +30,49 @@ public class CryptoCurrencyAccountExtractResponse {
     @NoArgsConstructor
     public static class ExtractResponse {
 
-        @Schema(description = "existsVoucher")
-        private String existsVoucher;
+        @JsonProperty("existsVoucher")
+        private boolean existsVoucher;
 
-        @Schema(description = "transactionDate")
+        @JsonProperty("transactionDate")
         private String transactionDate;
 
-        @Schema(description = "transactionTime")
+        @JsonProperty("transactionTime")
         private String transactionTime;
 
-        @Schema(description = "amount")
-        private BigDecimal amount;
+        @JsonProperty("amount")
+        private String amount;
 
-        @Schema(description = "description")
+        @JsonProperty("description")
         private String description;
 
-        @Schema(description = "day")
+        @JsonProperty("day")
         private int day;
 
-        @Schema(description = "month")
+        @JsonProperty("month")
         private String month;
 
-        @Schema(description = "year")
+        @JsonProperty("year")
         private String year;
 
-        @Schema(description = "transactionType")
+        @JsonProperty("transactionType")
         private String transactionType;
 
-        @Schema(description = "processDate")
+        @JsonProperty("processDate")
         private String processDate;
 
-        @Schema(description = "branch")
+        @JsonProperty("branch")
         private String branch;
 
-        @Schema(description = "seatNumber")
+        @JsonProperty("seatNumber")
         private String seatNumber;
 
-        @Schema(description = "correlative")
+        @JsonProperty("correlative")
         private String correlative;
 
-        @Schema(description = "currentBalance")
+        @JsonProperty("currentBalance")
         private String currentBalance;
 
-        @Schema(description = "currencySymbol")
+        @JsonProperty("currencySymbol")
         private String currencySymbol;
 
     }

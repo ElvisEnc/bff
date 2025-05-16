@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -24,7 +23,7 @@ public class AccountExtractResponse {
     private String transactionTime;
 
     @Schema(description = "amount")
-    private BigDecimal amount;
+    private String amount;
 
     @Schema(description = "description")
     private String description;

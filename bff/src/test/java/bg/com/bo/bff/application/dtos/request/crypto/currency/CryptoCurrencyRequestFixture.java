@@ -17,7 +17,7 @@ public class CryptoCurrencyRequestFixture {
 
     public static ExchangeOperationRequest withDefaultExchangeOperation() {
         return ExchangeOperationRequest.builder()
-                .amount(BigDecimal.valueOf(78.5))
+                .amount(78.5)
                 .currency("2222")
                 .destinationAccount("27845")
                 .description("test")

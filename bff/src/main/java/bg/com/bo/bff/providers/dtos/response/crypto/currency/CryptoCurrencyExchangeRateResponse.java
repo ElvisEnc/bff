@@ -28,19 +28,19 @@ public class CryptoCurrencyExchangeRateResponse {
     @NoArgsConstructor
     public static class ExchangeResponse {
 
-        @Schema(description = "pDecCompraTc")
+        @JsonProperty("pDecCompraTc")
         private Double purchaseFxRate ;
 
-        @Schema(description = "pDecVentaTc")
+        @JsonProperty("pDecVentaTc")
         private Double saleFxRate ;
 
-        @Schema(description = "pStrDescripcion")
+        @JsonProperty("pStrDescripcion")
         private String description;
 
-        @Schema(description = "pStrCodError")
+        @JsonProperty("pStrCodError")
         private String code;
 
-        @Schema(description = "pStrDesError")
+        @JsonProperty("pStrDesError")
         private String messageError;
     }
 }

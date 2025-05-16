@@ -11,6 +11,7 @@ import bg.com.bo.bff.application.dtos.response.crypto.currency.ExchangeRateRespo
 import bg.com.bo.bff.application.dtos.response.crypto.currency.GenerateVoucherResponse;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeOperationRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyGenerateVoucherRequest;
+import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyNroPersonRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyPersonRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyAccountExtractRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeRateRequest;
@@ -38,6 +39,8 @@ public interface ICryptoCurrencyMapper {
     GenerateVoucherResponse convertResponse(CryptoCurrencyGenerateVoucherResponse response);
 
     CryptoCurrencyPersonRequest mapperRequest(String personId);
+
+    CryptoCurrencyNroPersonRequest mapperRequestPerson(String personId);
 
     CryptoCurrencyAccountExtractRequest mapperRequest(String accountId, AccountExtractRequest request);
 

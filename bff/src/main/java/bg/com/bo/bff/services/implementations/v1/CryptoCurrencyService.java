@@ -16,6 +16,7 @@ import bg.com.bo.bff.mappings.providers.crypto.currency.ICryptoCurrencyMapper;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeOperationRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyGenerateVoucherRequest;
+import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyNroPersonRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyPersonRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyAccountExtractRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeRateRequest;
@@ -32,7 +33,6 @@ import bg.com.bo.bff.providers.implementations.feign.CryptoCurrencyFeignClient;
 import bg.com.bo.bff.providers.models.enums.external.services.crypto.currency.CryptoCurrencyError;
 import bg.com.bo.bff.providers.models.enums.external.services.crypto.currency.CryptoCurrencyResponse;
 import bg.com.bo.bff.services.interfaces.ICryptoCurrencyService;
-import bg.com.bo.bff.providers.interfaces.ICryptoCurrencyProvider;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -41,14 +41,14 @@ import java.util.List;
 @Service
 public class CryptoCurrencyService implements ICryptoCurrencyService {
 
-    private final ICryptoCurrencyProvider provider;
     private final TokenExternalProvider tokenExternalProvider;
     private final ICryptoCurrencyMapper mapper;
     private final CryptoCurrencyFeignClient cryptoFeignClient;
+    private static final String USER = "JBANK1";
+    private static final String PWD = "SYSTEMS1";
 
-    public CryptoCurrencyService(ICryptoCurrencyProvider provider, TokenExternalProvider tokenExternalProvider,
+    public CryptoCurrencyService(TokenExternalProvider tokenExternalProvider,
                                  ICryptoCurrencyMapper idcMapper, CryptoCurrencyFeignClient cryptoFeignClient) {
-        this.provider = provider;
         this.tokenExternalProvider = tokenExternalProvider;
         this.mapper = idcMapper;
         this.cryptoFeignClient = cryptoFeignClient;
@@ -57,11 +57,9 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
     @Override
     public GenericResponse registerAccount(String personId) throws IOException {
         CryptoCurrencyPersonRequest requestServer = mapper.mapperRequest(personId);
-        ClientToken token = this.tokenExternalProvider.generateAccountAccessToken(
-                TokenAuthenticationRequestDto.builder().password("JBANK1").username("SYSTEMS1").build()
-        );
+
         CryptoCurrencyPostRegisterAccountResponse responseServer = cryptoFeignClient.createAccount(
-                token.getAuthorizationHeader(), requestServer
+                getToken().getAuthorizationHeader(), requestServer
         );
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return GenericResponse.instance(CryptoCurrencyResponse.REGISTERED_SUCCESS);
@@ -71,8 +69,11 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
 
     @Override
     public AvailableBalanceResponse getAvailableBalance(String personId) throws IOException {
-        CryptoCurrencyPersonRequest requestServer = mapper.mapperRequest(personId);
-        CryptoCurrencyGetAvailableBalanceResponse responseServer = provider.getAvailableBalance(requestServer);
+        CryptoCurrencyNroPersonRequest requestServer = mapper.mapperRequestPerson(personId);
+
+        CryptoCurrencyGetAvailableBalanceResponse responseServer = cryptoFeignClient.availableBalance(
+                getToken().getAuthorizationHeader(), requestServer
+        );
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return mapper.convertResponse(responseServer);
         }
@@ -81,8 +82,11 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
 
     @Override
     public AccountEmailResponse getAccountEmail(String personId) throws IOException {
-        CryptoCurrencyPersonRequest requestServer = mapper.mapperRequest(personId);
-        CryptoCurrencyGetAccountEmailResponse responseServer = provider.getAccountEmail(requestServer);
+        CryptoCurrencyNroPersonRequest requestServer = mapper.mapperRequestPerson(personId);
+
+        CryptoCurrencyGetAccountEmailResponse responseServer = cryptoFeignClient.accountEmail(
+                getToken().getAuthorizationHeader(), requestServer
+        );
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return mapper.convertResponse(responseServer);
         }
@@ -92,7 +96,10 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
     @Override
     public List<AccountExtractResponse> getAccountExtract(String personId, String accountId, AccountExtractRequest request) throws IOException {
         CryptoCurrencyAccountExtractRequest requestServer = mapper.mapperRequest(accountId, request);
-        CryptoCurrencyAccountExtractResponse responseServer = provider.getAccountExtract(requestServer);
+
+        CryptoCurrencyAccountExtractResponse responseServer = cryptoFeignClient.accountExtract(
+                getToken().getAuthorizationHeader(), requestServer
+        );
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return mapper.convertResponse(responseServer);
         }
@@ -102,7 +109,10 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
     @Override
     public ExchangeRateResponse getExchangeRate(String personId, String currencyId) throws IOException {
         CryptoCurrencyExchangeRateRequest requestServer = mapper.mapperRequest(personId, currencyId);
-        CryptoCurrencyExchangeRateResponse responseServer = provider.getExchangeRate(requestServer);
+
+        CryptoCurrencyExchangeRateResponse responseServer = cryptoFeignClient.exchangeRate(
+                getToken().getAuthorizationHeader(), requestServer
+        );
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return mapper.convertResponse(responseServer);
         }
@@ -112,20 +122,35 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
     @Override
     public ExchangeOperationResponse exchangeOperation(String personId, String accountId, ExchangeOperationRequest request) throws IOException {
         CryptoCurrencyExchangeOperationRequest requestServer = mapper.mapperRequest(personId, accountId, request);
-        CryptoCurrencyExchangeOperationResponse responseServer = provider.exchangeOperation(requestServer);
+
+        CryptoCurrencyExchangeOperationResponse responseServer = cryptoFeignClient.exchangeOperation(
+                getToken().getAuthorizationHeader(), requestServer
+        );
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return mapper.convertResponse(responseServer);
         }
-        throw new GenericException(CryptoCurrencyError.ERROR_EXCHANGE);
+        throw new GenericException(CryptoCurrencyError.ERROR_EXCHANGE_OPERATION);
     }
 
     @Override
     public GenerateVoucherResponse postGenerateVoucher(String personId, GenerateVoucherRequest request) throws IOException {
         CryptoCurrencyGenerateVoucherRequest requestServer = mapper.mapperRequest(request);
-        CryptoCurrencyGenerateVoucherResponse responseServer = provider.postGenerateVoucher(requestServer);
+
+        CryptoCurrencyGenerateVoucherResponse responseServer = cryptoFeignClient.generateVoucher(
+                getToken().getAuthorizationHeader(), requestServer
+        );
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return mapper.convertResponse(responseServer);
         }
         throw new GenericException(CryptoCurrencyError.ERROR_VOUCHER);
+    }
+
+    private ClientToken getToken(){
+        return tokenExternalProvider.generateAccountAccessToken(
+                TokenAuthenticationRequestDto.builder()
+                        .username(USER)
+                        .password(PWD)
+                        .build()
+        );
     }
 }

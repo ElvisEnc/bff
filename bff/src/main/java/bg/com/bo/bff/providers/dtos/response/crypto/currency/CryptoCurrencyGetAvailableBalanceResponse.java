@@ -1,13 +1,12 @@
 package bg.com.bo.bff.providers.dtos.response.crypto.currency;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -15,37 +14,44 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class CryptoCurrencyGetAvailableBalanceResponse {
 
-    @Schema(description = "errorCode")
+    @JsonProperty("errorCode")
     private String codeError;
 
-    @Schema(description = "errorMessage")
+    @JsonProperty("errorMessage")
     private String message;
 
     @Schema(description = "data")
+    @JsonProperty("data")
     private GetBalanceResponse data;
 
-    @Getter
+    @Data
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class GetBalanceResponse {
 
-        @Schema(description = "pStrMoneda")
+        @JsonProperty("pStrMoneda")
         private String currency;
 
-        @Schema(description = "pDecSaldoDisponible")
-        private BigDecimal availableBalance;
+        @JsonProperty("pDecSaldoDisponible")
+        private Double availableBalance;
 
-        @Schema(description = "pIntNumeroCuenta")
+        @JsonProperty("pIntNumeroCuenta")
         private Integer account;
 
-        @Schema(description = "pStrEstado")
+        @JsonProperty("pStrEstado")
         private String status;
 
-        @Schema(description = "pStrCodError")
+        @JsonProperty("pIntJtsOid")
+        private Integer jtsOid;
+
+        @JsonProperty("pStrProducto")
+        private String product;
+
+        @JsonProperty("pStrCodError")
         private String codeError;
 
-        @Schema(description = "pStrDesError")
+        @JsonProperty("pStrDesError")
         private String description;
     }
 }

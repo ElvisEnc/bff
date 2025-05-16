@@ -12,6 +12,7 @@ import bg.com.bo.bff.application.dtos.response.crypto.currency.GenerateVoucherRe
 import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeOperationRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyGenerateVoucherRequest;
+import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyNroPersonRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyPersonRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyAccountExtractRequest;
 import bg.com.bo.bff.providers.dtos.request.crypto.currency.CryptoCurrencyExchangeRateRequest;
@@ -35,6 +36,8 @@ public class CryptoCurrencyMapper implements ICryptoCurrencyMapper{
                 .availableBalance(response.getData().getAvailableBalance())
                 .account(response.getData().getAccount())
                 .status(response.getData().getStatus())
+                .jtsOid(response.getData().getJtsOid())
+                .product(response.getData().getProduct())
                 .build();
     }
 
@@ -42,17 +45,18 @@ public class CryptoCurrencyMapper implements ICryptoCurrencyMapper{
     public AccountEmailResponse convertResponse(CryptoCurrencyGetAccountEmailResponse response) {
         return AccountEmailResponse.builder()
                 .email(response.getData().getEmail())
+                .name(response.getData().getName())
                 .build();
     }
 
     @Override
     public List<AccountExtractResponse> convertResponse(CryptoCurrencyAccountExtractResponse response) {
-        if (response == null || response.getData() == null) {
+        if (response.getData() == null) {
             return List.of();
         }
         return response.getData().stream()
                 .map(item -> AccountExtractResponse.builder()
-                        .existsVoucher(Boolean.parseBoolean(item.getExistsVoucher()))
+                        .existsVoucher(item.isExistsVoucher())
                         .transactionDate(item.getTransactionDate())
                         .transactionTime(item.getTransactionTime())
                         .amount(item.getAmount())
@@ -83,6 +87,16 @@ public class CryptoCurrencyMapper implements ICryptoCurrencyMapper{
     @Override
     public ExchangeOperationResponse convertResponse(CryptoCurrencyExchangeOperationResponse response) {
         return ExchangeOperationResponse.builder()
+                .importDebited(response.getData().getImportDebited())
+                .currency(response.getData().getCurrency())
+                .seatNo(response.getData().getSeatNo())
+                .receiptId(response.getData().getReceiptId())
+                .tcCredit(response.getData().getTcCredit())
+                .tcDebit(response.getData().getTcDebit())
+                .branch(response.getData().getBranch())
+                .dateSeat(response.getData().getDateSeat())
+                .importItf(response.getData().getImportItf())
+                .importAccredited(response.getData().getImportAccredited())
                 .build();
     }
 
@@ -118,6 +132,13 @@ public class CryptoCurrencyMapper implements ICryptoCurrencyMapper{
     }
 
     @Override
+    public CryptoCurrencyNroPersonRequest mapperRequestPerson(String personId) {
+        return CryptoCurrencyNroPersonRequest.builder()
+                .personNumber(Integer.valueOf(personId))
+                .build();
+    }
+
+    @Override
     public CryptoCurrencyAccountExtractRequest mapperRequest(String accountId, AccountExtractRequest request) {
         return CryptoCurrencyAccountExtractRequest.builder()
                 .jtsOidNumber(Integer.valueOf(accountId))
@@ -145,7 +166,7 @@ public class CryptoCurrencyMapper implements ICryptoCurrencyMapper{
                 .accountId(Integer.valueOf(accountId))
                 .destinationAccount(Integer.valueOf(request.getDestinationAccount()))
                 .description(request.getDescription())
-                .requestNumber(0)
+                .requestNumber(338)
                 .canal(Integer.parseInt(CanalMW.GANAMOVIL.getCanal()))
                 .build();
     }

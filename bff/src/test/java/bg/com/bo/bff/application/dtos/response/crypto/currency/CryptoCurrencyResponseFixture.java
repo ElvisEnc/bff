@@ -1,18 +1,17 @@
 package bg.com.bo.bff.application.dtos.response.crypto.currency;
 
-
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-
-import java.math.BigDecimal;
 
 public class CryptoCurrencyResponseFixture {
 
     public static AvailableBalanceResponse withDefaultAvailableBalance() {
         return AvailableBalanceResponse.builder()
                 .currency("2222")
-                .availableBalance(BigDecimal.valueOf(478.5))
+                .availableBalance(478.5)
                 .account(14785)
                 .status("ok")
+                .jtsOid(7845)
+                .product("ok")
                 .build();
     }
 
@@ -27,6 +26,7 @@ public class CryptoCurrencyResponseFixture {
     public static AccountEmailResponse withDefaultAccountEmail() {
         return AccountEmailResponse.builder()
                 .email("test@test.com")
+                .name("test")
                 .build();
     }
 
@@ -35,7 +35,7 @@ public class CryptoCurrencyResponseFixture {
                 .existsVoucher(false)
                 .transactionDate("2025-01-01")
                 .transactionTime("00:00:00")
-                .amount(BigDecimal.ZERO)
+                .amount("78.2")
                 .description("Default transaction")
                 .day(1)
                 .month("January")
@@ -60,7 +60,16 @@ public class CryptoCurrencyResponseFixture {
 
     public static ExchangeOperationResponse withDefaultExchangeOperation() {
         return ExchangeOperationResponse.builder()
-                .data("test")
+                .importDebited(78.5)
+                .currency(5)
+                .seatNo(5L)
+                .receiptId(5)
+                .tcCredit(5)
+                .tcDebit(5.5)
+                .branch(5)
+                .dateSeat("test")
+                .importItf(5.5)
+                .importAccredited(5.5)
                 .build();
     }
 

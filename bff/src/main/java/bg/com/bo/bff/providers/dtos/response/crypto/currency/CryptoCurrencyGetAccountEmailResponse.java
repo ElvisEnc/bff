@@ -1,6 +1,6 @@
 package bg.com.bo.bff.providers.dtos.response.crypto.currency;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CryptoCurrencyGetAccountEmailResponse {
-    @Schema(description = "errorCode")
+    @JsonProperty("errorCode")
     private String codeError;
 
-    @Schema(description = "errorMessage")
+    @JsonProperty("errorMessage")
     private String message;
 
-    @Schema(description = "data")
+    @JsonProperty("data")
     private GetAccountEmailResponse data;
 
     @Getter
@@ -28,13 +28,16 @@ public class CryptoCurrencyGetAccountEmailResponse {
     @NoArgsConstructor
     public static class GetAccountEmailResponse {
 
-        @Schema(description = "pStrEmail")
+        @JsonProperty("pStrEmail")
         private String email;
 
-        @Schema(description = "pStrCodError")
+        @JsonProperty("pStrNombreCompleto")
+        private String name;
+
+        @JsonProperty("pStrCodError")
         private String codeError;
 
-        @Schema(description = "pStrDesError")
+        @JsonProperty("pStrDesError")
         private String message;
 
     }

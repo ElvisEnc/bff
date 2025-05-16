@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -18,12 +16,18 @@ public class AvailableBalanceResponse {
     private String currency;
 
     @Schema(description = "availableBalance")
-    private BigDecimal availableBalance;
+    private Double availableBalance;
 
     @Schema(description = "account")
     private Integer account;
 
     @Schema(description = "status")
     private String status;
+
+    @Schema(description = "jtsOid")
+    private Integer jtsOid;
+
+    @Schema(description = "product")
+    private String product;
 
 }

@@ -1,13 +1,11 @@
 package bg.com.bo.bff.providers.dtos.response.crypto.currency;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
 
 
 @Data
@@ -15,13 +13,13 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CryptoCurrencyGenerateVoucherResponse {
-    @Schema(description = "errorCode")
+    @JsonProperty("errorCode")
     private String codeError;
 
-    @Schema(description = "errorMessage")
+    @JsonProperty("errorMessage")
     private String message;
 
-    @Schema(description = "data")
+    @JsonProperty("data")
     private VoucherResponse data;
 
     @Getter
@@ -30,58 +28,58 @@ public class CryptoCurrencyGenerateVoucherResponse {
     @NoArgsConstructor
     public static class VoucherResponse {
 
-        @Schema(description = "transactionNumber")
+        @JsonProperty("transactionNumber")
         private Integer transactionNumber;
 
-        @Schema(description = "transactionType")
-        private int transactionType;
+        @JsonProperty("transactionType")
+        private Integer transactionType;
 
-        @Schema(description = "amount")
-        private BigDecimal amount;
+        @JsonProperty("amount")
+        private Double amount;
 
-        @Schema(description = "currencyAmount")
+        @JsonProperty("currencyAmount")
         private Integer currencyAmount;
 
-        @Schema(description = "currencyEquivalentCredit")
+        @JsonProperty("currencyEquivalentCredit")
         private Integer currencyEquivalentCredit;
 
-        @Schema(description = "currencyEquivalentDebit")
+        @JsonProperty("currencyEquivalentDebit")
         private Integer currencyEquivalentDebit;
 
-        @Schema(description = "senderName")
+        @JsonProperty("senderName")
         private String senderName;
 
-        @Schema(description = "senderAccountNumber")
+        @JsonProperty("senderAccountNumber")
         private String senderAccountNumber;
 
-        @Schema(description = "senderNdJts")
-        private Long senderNdJts;
+        @JsonProperty("senderNdJts")
+        private Integer senderNdJts;
 
-        @Schema(description = "receiverName")
+        @JsonProperty("receiverName")
         private String receiverName;
 
-        @Schema(description = "receiverNdJts")
-        private Long receiverNdJts;
+        @JsonProperty("receiverNdJts")
+        private Integer receiverNdJts;
 
-        @Schema(description = "receiverAccountNumber")
+        @JsonProperty("receiverAccountNumber")
         private String receiverAccountNumber;
 
-        @Schema(description = "receiverBank")
+        @JsonProperty("receiverBank")
         private String receiverBank;
 
-        @Schema(description = "equivalentDebitAmount")
-        private BigDecimal equivalentDebitAmount;
+        @JsonProperty("equivalentDebitAmount")
+        private Double equivalentDebitAmount;
 
-        @Schema(description = "debitExchangeRate")
+        @JsonProperty("debitExchangeRate")
         private Double debitExchangeRate;
 
-        @Schema(description = "equivalentCreditAmount")
-        private BigDecimal equivalentCreditAmount;
+        @JsonProperty("equivalentCreditAmount")
+        private Double equivalentCreditAmount;
 
-        @Schema(description = "creditExchangeRate")
+        @JsonProperty("creditExchangeRate")
         private Double creditExchangeRate;
 
-        @Schema(description = "description")
+        @JsonProperty("description")
         private String description;
     }
 }

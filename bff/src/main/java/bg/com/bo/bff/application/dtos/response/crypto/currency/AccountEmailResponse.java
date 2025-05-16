@@ -14,4 +14,7 @@ public class AccountEmailResponse {
 
     @Schema(description = "email")
     private String email;
+
+    @Schema(description = "name")
+    private String name;
 }

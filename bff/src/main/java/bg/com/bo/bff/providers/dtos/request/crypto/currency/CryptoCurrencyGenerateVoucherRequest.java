@@ -16,7 +16,7 @@ public class CryptoCurrencyGenerateVoucherRequest {
     @JsonProperty("seatNumber")
     private Long seatNumber;
 
-    @JsonProperty("branch")
+    @JsonProperty("branchNumber")
     private int branch;
 
     @JsonProperty("dateProcess")

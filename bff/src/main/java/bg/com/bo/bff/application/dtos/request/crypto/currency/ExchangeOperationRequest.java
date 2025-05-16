@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 public class ExchangeOperationRequest {
 
     @ValidAmount
-    private BigDecimal amount;
+    private Double amount;
 
     @NotNull(message = "La moneda es obligatoria")
     @NotBlank(message = "La moneda no puede estar vacía")

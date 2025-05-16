@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -21,7 +19,7 @@ public class GenerateVoucherResponse {
     private Integer transactionType;
 
     @JsonProperty("amount")
-    private BigDecimal amount;
+    private Double amount;
 
     @JsonProperty("currencyAmount")
     private Integer currency;
@@ -39,13 +37,13 @@ public class GenerateVoucherResponse {
     private String senderAccountNumber;
 
     @JsonProperty("senderNdJts")
-    private Long senderJts;
+    private Integer senderJts;
 
     @JsonProperty("receiverName")
     private String receiverName;
 
     @JsonProperty("receiverNdJts")
-    private Long receiverJts;
+    private Integer receiverJts;
 
     @JsonProperty("receiverAccountNumber")
     private String receiverAccountNumber;
@@ -54,13 +52,13 @@ public class GenerateVoucherResponse {
     private String receiverBank;
 
     @JsonProperty("equivalentDebitAmount")
-    private BigDecimal debitAmount;
+    private Double debitAmount;
 
     @JsonProperty("debitExchangeRate")
     private Double debitExchangeRate;
 
     @JsonProperty("equivalentCreditAmount")
-    private BigDecimal creditAmount;
+    private Double creditAmount;
 
     @JsonProperty("creditExchangeRate")
     private Double creditExchangeRate;

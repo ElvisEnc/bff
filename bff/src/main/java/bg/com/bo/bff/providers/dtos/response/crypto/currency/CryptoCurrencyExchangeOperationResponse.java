@@ -1,11 +1,9 @@
 package bg.com.bo.bff.providers.dtos.response.crypto.currency;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -19,19 +17,44 @@ public class CryptoCurrencyExchangeOperationResponse {
     @JsonProperty("errorMessage")
     private String message;
 
-    @Schema(description = "data")
+    @JsonProperty("data")
     private OperationResponse data;
 
-    @Getter
+    @Data
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class OperationResponse {
-        @Schema(description = "pStrDescripcion")
-        private String description;
-        @Schema(description = "pStrCodError")
-        private String code;
-        @Schema(description = "pStrDesError")
-        private String messageError;
+
+        @JsonProperty("importeDebitado")
+        private Double importDebited;
+
+        @JsonProperty("codMoneda")
+        private int currency;
+
+        @JsonProperty("nroAsiento")
+        private Long seatNo;
+
+        @JsonProperty("idComprobante")
+        private int receiptId;
+
+        @JsonProperty("tcCredito")
+        private int tcCredit;
+
+        @JsonProperty("tcDebito")
+        private Double tcDebit;
+
+        @JsonProperty("nroSucursal")
+        private int branch;
+
+        @JsonProperty("fechaAsiento")
+        private String dateSeat;
+
+        @JsonProperty("importeItf")
+        private Double importItf;
+
+        @JsonProperty("importeAcreditado")
+        private Double importAccredited;
+
     }
 }
