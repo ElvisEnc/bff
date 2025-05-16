@@ -3,6 +3,7 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.response.transfers.programming.DeleteTransferMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.ProgrammedTransferMDWResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
@@ -57,6 +58,17 @@ public class TransferProgrammingMiddlewareProvider extends MiddlewareProvider<Tr
         ByMwErrorResponseHandler<PaymentsPlanMDWResponse> responseHandler = ByMwErrorResponseHandler.instance(TransferProgrammingMDWError.TPM_0002);
         return get(url, HeadersMW.getDefaultHeaders(httpServletRequest), PaymentsPlanMDWResponse.class, responseHandler);
     }
+
+    @Override
+    public DeleteTransferMDWResponse deleteTransfer(String personId, String transferId) throws IOException {
+        String url = baseURL + String.format(
+                TransfersProgrammingMDWServices.DELETE_PROGRAMMED_TRANSFER.getServiceUrl(),
+                personId,
+                transferId
+        );
+        return delete(url, HeadersMW.getDefaultHeaders(httpServletRequest), DeleteTransferMDWResponse.class);
+    }
+
 
 
 }

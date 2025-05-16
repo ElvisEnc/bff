@@ -8,6 +8,7 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
+import bg.com.bo.bff.providers.dtos.response.transfers.programming.DeleteTransferMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.ProgrammedTransferMDWResponse;
@@ -27,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -98,5 +100,23 @@ class TransferProgrammingProviderTest {
         assertEquals(jsonExpected, jsonResponse);
     }
 
+    @Test
+    void deleteProgrammedTransfer() throws IOException {
+        DeleteTransferMDWResponse expected = DeleteTransferMDWResponse.builder()
+                .data(
+                        DeleteTransferMDWResponse.DeleteTransfer.builder()
+                                .codError("COD000")
+                                .desError("Exitoso")
+                                .build()
+                )
+                .build();
+        String jsonExpected = Util.objectToString(expected);
+        stubFor(delete(anyUrl()).willReturn(okJson(jsonExpected)));
+
+        DeleteTransferMDWResponse response = provider.deleteTransfer("1234", "4321");
+        String jsonResponse = Util.objectToString(response);
+
+        assertEquals(jsonExpected, jsonResponse);
+    }
 
 }
