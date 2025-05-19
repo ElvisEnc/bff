@@ -19,12 +19,12 @@ public class AccountExtractRequest {
 
     @NotBlank(message = "startDate no puede estar vacío.")
     @Schema(description = "startDate es necesario para realizar la busqueda.",
-            example = "05/05/2025")
+            example = "2023-11-22")
     private String startDate;
 
     @NotBlank(message = "endDate no puede estar vacío.")
     @Schema(description = "endDate es necesario para realizar la busqueda.",
-            example = "05/05/2025")
+            example = "2023-11-22")
     private String endDate;
 
     @Schema(description = "startPage es necesario para realizar la paginacion.",

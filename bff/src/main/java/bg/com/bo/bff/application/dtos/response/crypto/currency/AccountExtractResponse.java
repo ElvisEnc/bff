@@ -13,48 +13,48 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AccountExtractResponse {
 
-    @Schema(description = "existsVoucher")
+    @Schema(description = "Indica si existe un comprobante para la transacción")
     private boolean existsVoucher;
 
-    @Schema(description = "transactionDate")
+    @Schema(description = "Fecha de la transacción en formato yyyy-MM-dd")
     private String transactionDate;
 
-    @Schema(description = "transactionTime")
+    @Schema(description = "Hora de la transacción en formato HH:mm:ss")
     private String transactionTime;
 
-    @Schema(description = "amount")
+    @Schema(description = "Monto de la transacción")
     private String amount;
 
-    @Schema(description = "description")
+    @Schema(description = "Descripción o detalle de la transacción")
     private String description;
 
-    @Schema(description = "day")
+    @Schema(description = "Día de la transacción")
     private int day;
 
-    @Schema(description = "month")
+    @Schema(description = "Mes de la transacción")
     private String month;
 
-    @Schema(description = "year")
+    @Schema(description = "Año de la transacción")
     private String year;
 
-    @Schema(description = "transactionType")
+    @Schema(description = "Tipo de transacción")
     private String transactionType;
 
-    @Schema(description = "processDate")
+    @Schema(description = "Fecha en la que se procesó la transacción")
     private String processDate;
 
-    @Schema(description = "branch")
+    @Schema(description = "Sucursal donde se realizó la transacción")
     private String branch;
 
-    @Schema(description = "seatNumber")
+    @Schema(description = "Número de asiento contable asociado")
     private String seatNumber;
 
-    @Schema(description = "correlative")
+    @Schema(description = "Número correlativo de la transacción")
     private String correlative;
 
-    @Schema(description = "currentBalance")
+    @Schema(description = "Saldo actual de la cuenta después de la transacción")
     private String currentBalance;
 
-    @Schema(description = "currencySymbol")
+    @Schema(description = "Símbolo de la moneda")
     private String currencySymbol;
 }

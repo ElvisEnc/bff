@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.dtos.response.crypto.currency;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,33 +12,33 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ExchangeOperationResponse {
 
-    @JsonProperty("importDebited")
+    @Schema(description = "Importe debitado en la operación de cambio")
     private Double importDebited;
 
-    @JsonProperty("currency")
+    @Schema(description = "Código de la moneda utilizada en la operación")
     private int currency;
 
-    @JsonProperty("seatNo")
+    @Schema(description = "Número de asiento contable")
     private Long seatNo;
 
-    @JsonProperty("receiptId")
+    @Schema(description = "ID del comprobante generado")
     private int receiptId;
 
-    @JsonProperty("tcCredit")
+    @Schema(description = "Tipo de cambio utilizado para el crédito")
     private int tcCredit;
 
-    @JsonProperty("tcDebit")
+    @Schema(description = "Tipo de cambio utilizado para el débito")
     private Double tcDebit;
 
-    @JsonProperty("branch")
+    @Schema(description = "Código de la sucursal que realizó la operación")
     private int branch;
 
-    @JsonProperty("dateSeat")
+    @Schema(description = "Fecha del asiento contable")
     private String dateSeat;
 
-    @JsonProperty("importItf")
+    @Schema(description = "Importe del ITF")
     private Double importItf;
 
-    @JsonProperty("importAccredited")
+    @Schema(description = "Importe acreditado en la cuenta")
     private Double importAccredited;
 }

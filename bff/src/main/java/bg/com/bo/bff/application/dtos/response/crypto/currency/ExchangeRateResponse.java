@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ExchangeRateResponse {
 
-    @Schema(description = "purchaseFxRate")
+    @Schema(description = "Tipo de cambio para compra de moneda extranjera")
     private Double purchaseFxRate ;
 
-    @Schema(description = "saleFxRate")
+    @Schema(description = "Tipo de cambio para venta de moneda extranjera")
     private Double saleFxRate ;
-    
-    @Schema(description = "description")
+
+    @Schema(description = "Descripción adicional sobre el tipo de cambio")
     private String description;
 }

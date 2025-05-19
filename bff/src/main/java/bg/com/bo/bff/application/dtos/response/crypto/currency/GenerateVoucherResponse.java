@@ -1,6 +1,6 @@
 package bg.com.bo.bff.application.dtos.response.crypto.currency;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,57 +12,57 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GenerateVoucherResponse {
 
-    @JsonProperty("transactionNumber")
+    @Schema(description = "Número de la transacción")
     private Integer transactionNumber;
 
-    @JsonProperty("transactionType")
+    @Schema(description = "Tipo de transacción realizada")
     private Integer transactionType;
 
-    @JsonProperty("amount")
+    @Schema(description = "Monto total de la transacción")
     private Double amount;
 
-    @JsonProperty("currencyAmount")
+    @Schema(description = "Código de la moneda utilizada")
     private Integer currency;
 
-    @JsonProperty("currencyEquivalentCredit")
+    @Schema(description = "Moneda equivalente del monto acreditado")
     private Integer currencyCredit;
 
-    @JsonProperty("currencyEquivalentDebit")
+    @Schema(description = "Moneda equivalente del monto debitado")
     private Integer currencyDebit;
 
-    @JsonProperty("senderName")
+    @Schema(description = "Nombre del remitente")
     private String senderName;
 
-    @JsonProperty("senderAccountNumber")
+    @Schema(description = "Número de cuenta del remitente")
     private String senderAccountNumber;
 
-    @JsonProperty("senderNdJts")
+    @Schema(description = "JTS del remitente")
     private Integer senderJts;
 
-    @JsonProperty("receiverName")
+    @Schema(description = "Nombre del destinatario")
     private String receiverName;
 
-    @JsonProperty("receiverNdJts")
+    @Schema(description = "JTS del destinatario")
     private Integer receiverJts;
 
-    @JsonProperty("receiverAccountNumber")
+    @Schema(description = "Número de cuenta del destinatario")
     private String receiverAccountNumber;
 
-    @JsonProperty("receiverBank")
+    @Schema(description = "Banco del destinatario")
     private String receiverBank;
 
-    @JsonProperty("equivalentDebitAmount")
+    @Schema(description = "Monto debitado en moneda equivalente")
     private Double debitAmount;
 
-    @JsonProperty("debitExchangeRate")
+    @Schema(description = "Tipo de cambio usado para el débito")
     private Double debitExchangeRate;
 
-    @JsonProperty("equivalentCreditAmount")
+    @Schema(description = "Monto acreditado en moneda equivalente")
     private Double creditAmount;
 
-    @JsonProperty("creditExchangeRate")
+    @Schema(description = "Tipo de cambio usado para el crédito")
     private Double creditExchangeRate;
 
-    @JsonProperty("description")
+    @Schema(description = "Descripción o concepto de la transacción")
     private String description;
 }

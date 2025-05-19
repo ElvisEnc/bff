@@ -12,22 +12,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AvailableBalanceResponse {
 
-    @Schema(description = "currency")
+    @Schema(description = "Moneda de la cuenta")
     private String currency;
 
-    @Schema(description = "availableBalance")
+    @Schema(description = "Saldo disponible en la cuenta")
     private Double availableBalance;
 
-    @Schema(description = "account")
+    @Schema(description = "Número de cuenta")
     private Integer account;
 
-    @Schema(description = "status")
+    @Schema(description = "Estado actual de la cuenta")
     private String status;
 
-    @Schema(description = "jtsOid")
+    @Schema(description = "Identificador JTS de la cuenta")
     private Integer jtsOid;
 
-    @Schema(description = "product")
+    @Schema(description = "Tipo de producto asociado a la cuenta")
     private String product;
 
 }

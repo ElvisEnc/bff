@@ -24,6 +24,8 @@ import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGetAc
 import bg.com.bo.bff.providers.dtos.response.crypto.currency.CryptoCurrencyGetAvailableBalanceResponse;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
@@ -140,11 +142,15 @@ public class CryptoCurrencyMapper implements ICryptoCurrencyMapper{
 
     @Override
     public CryptoCurrencyAccountExtractRequest mapperRequest(String accountId, AccountExtractRequest request) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String formattedStartDate = LocalDate.parse(request.getStartDate(), inputFormatter).format(outputFormatter);
+        String formattedEndDate = LocalDate.parse(request.getEndDate(), inputFormatter).format(outputFormatter);
         return CryptoCurrencyAccountExtractRequest.builder()
                 .jtsOidNumber(Integer.valueOf(accountId))
                 .accountNumber(request.getAccountNumber())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
+                .startDate(formattedStartDate)
+                .endDate(formattedEndDate)
                 .startPage(request.getStartPage())
                 .endPage(request.getEndPage())
                 .build();
@@ -173,10 +179,13 @@ public class CryptoCurrencyMapper implements ICryptoCurrencyMapper{
 
     @Override
     public CryptoCurrencyGenerateVoucherRequest mapperRequest(GenerateVoucherRequest request) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String formattedDateProcess = LocalDate.parse(request.getDateProcess(), inputFormatter).format(outputFormatter);
         return CryptoCurrencyGenerateVoucherRequest.builder()
                 .seatNumber(Long.valueOf(request.getSeatNumber()))
                 .branch(0)
-                .dateProcess(request.getDateProcess())
+                .dateProcess(formattedDateProcess)
                 .build();
     }
 }

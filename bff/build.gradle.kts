@@ -60,6 +60,9 @@ dependencies {
 
 	compileOnly("org.projectlombok:lombok:1.18.34")
 
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
+
 	annotationProcessor("org.projectlombok:lombok:1.18.34")
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
 
@@ -73,7 +76,6 @@ dependencies {
 	testCompileOnly("org.projectlombok:lombok:1.18.34")
 
 	testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
-
 }
 
 configurations.implementation {

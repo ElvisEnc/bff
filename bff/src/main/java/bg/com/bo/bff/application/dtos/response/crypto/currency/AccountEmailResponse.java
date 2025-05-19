@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AccountEmailResponse {
 
-    @Schema(description = "email")
+    @Schema(description = "Correo electrónico asociado a la cuenta")
     private String email;
 
-    @Schema(description = "name")
+    @Schema(description = "Nombre del titular de la cuenta")
     private String name;
 }

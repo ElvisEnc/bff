@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CryptoCurrencyResponse implements IGenericControllerResponse {
-    REGISTERED_SUCCESS("SUCCESS", "¡Apertura de cuenta exitosa!", "Cuenta creada exitosametne"),
+    REGISTERED_SUCCESS("SUCCESS", "¡Apertura de cuenta exitosa!", "Cuenta creada exitosamente"),
     ;
 
     private final String code;

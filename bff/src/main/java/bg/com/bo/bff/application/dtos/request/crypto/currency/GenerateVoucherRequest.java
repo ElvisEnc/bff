@@ -20,6 +20,6 @@ public class GenerateVoucherRequest {
 
     @NotBlank(message = "dateProcess no puede estar vacío.")
     @Schema(description = "dateProcess es necesario para generar el voucher.",
-            example = "05/05/2025")
+            example = "2023-11-22")
     private String dateProcess;
 }
