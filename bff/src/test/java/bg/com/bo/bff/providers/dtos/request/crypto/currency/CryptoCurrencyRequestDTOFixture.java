@@ -8,8 +8,8 @@ public class CryptoCurrencyRequestDTOFixture {
     public static AccountExtractRequest withDefaultAccountExtract() {
         return AccountExtractRequest.builder()
                 .accountNumber("99000214")
-                .startDate("05/05/2025")
-                .endDate("05/05/2025")
+                .startDate("2025-05-16")
+                .endDate("2025-05-16")
                 .startPage(1)
                 .endPage(100)
                 .build();
@@ -18,7 +18,7 @@ public class CryptoCurrencyRequestDTOFixture {
     public static GenerateVoucherRequest withDefaultGenerateVoucher() {
         return GenerateVoucherRequest.builder()
                 .seatNumber("99000214")
-                .dateProcess("05/05/2025")
+                .dateProcess("2025-05-16")
                 .build();
     }
 
