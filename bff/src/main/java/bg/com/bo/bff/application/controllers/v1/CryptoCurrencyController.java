@@ -69,17 +69,17 @@ public class CryptoCurrencyController extends AbstractBFFController {
        return ResponseEntity.ok(service.getAvailableBalance(personId));
     }
 
-    @Operation(summary = "Cuenta email", description = "Cuenta email",
-            operationId = "getAccountEmail")
+    @Operation(summary = "Datos basicos de la cuenta", description = "Datos basicos de la cuenta",
+            operationId = "getBasicAccount")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cuenta email")
+            @ApiResponse(responseCode = "200", description = "Datos basicos de la cuenta")
     })
     @GetMapping("/persons/{personId}/basic-account-data")
-    public ResponseEntity<AccountEmailResponse> getAccountEmail(
+    public ResponseEntity<AccountEmailResponse> getBasicAccount(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {
         getDeviceDataHeader();
-       return ResponseEntity.ok(service.getAccountEmail(personId));
+       return ResponseEntity.ok(service.getBasicAccount(personId));
     }
 
     @Operation(summary = "Genera los extractos desde una fecha predeterminada", description = "Genera los extractos desde una fecha predeterminada",

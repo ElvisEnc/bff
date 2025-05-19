@@ -48,7 +48,7 @@ public interface CryptoCurrencyFeignClient {
     );
 
     @PostMapping(BASE_URL + "/account/account-email")
-    CryptoCurrencyGetAccountEmailResponse accountEmail(
+    CryptoCurrencyGetAccountEmailResponse basicAccount(
             @RequestHeader("Authorization") String token,
             @RequestBody CryptoCurrencyNroPersonRequest requestServer
     );

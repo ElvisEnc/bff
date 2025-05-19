@@ -140,11 +140,11 @@ class CryptoCurrencyServiceTest {
         when(tokenExternalProvider.generateAccountAccessToken(any()))
                 .thenReturn(clientToken);
 
-        when(feignClient.accountEmail(eq("Bearer token"), any()))
+        when(feignClient.basicAccount(eq("Bearer token"), any()))
                 .thenReturn(response);
 
         // Act
-        AccountEmailResponse result = service.getAccountEmail("123456");
+        AccountEmailResponse result = service.getBasicAccount("123456");
 
         // Assert
         assertNotNull(result);
@@ -158,12 +158,12 @@ class CryptoCurrencyServiceTest {
         when(tokenExternalProvider.generateAccountAccessToken(any()))
                 .thenReturn(clientToken);
 
-        when(feignClient.accountEmail(eq("Bearer token"), any()))
+        when(feignClient.basicAccount(eq("Bearer token"), any()))
                 .thenReturn(response);
 
         // Act & Assert
         GenericException ex = assertThrows(GenericException.class, () -> {
-            service.getAccountEmail("123456");
+            service.getBasicAccount("123456");
         });
 
         assertEquals(CryptoCurrencyError.EMAIL_NOT_FOUND.getMessage(), ex.getMessage());

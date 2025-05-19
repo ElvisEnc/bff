@@ -107,7 +107,7 @@ class CryptoCurrencyControllerTest {
     void givenPersonIdWhenGetAccountEmailThenReturnSuccess() throws Exception {
         // Arrange
         AccountEmailResponse responseExpected = CryptoCurrencyResponseFixture.withDefaultAccountEmail();
-        when(service.getAccountEmail(any())).thenReturn(responseExpected);
+        when(service.getBasicAccount(any())).thenReturn(responseExpected);
 
         // Act
         String urlCryptoCurrency = "/api/v1/cryptocurrency/persons/{personId}/basic-account-data";
@@ -123,7 +123,7 @@ class CryptoCurrencyControllerTest {
         // Assert
         assertNotNull(result);
         assertEquals(expected, actual);
-        verify(service).getAccountEmail(any());
+        verify(service).getBasicAccount(any());
     }
 
     @Test

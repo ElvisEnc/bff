@@ -20,7 +20,7 @@ public interface ICryptoCurrencyService {
 
     AvailableBalanceResponse getAvailableBalance (String personId) throws IOException;
 
-    AccountEmailResponse getAccountEmail (String personId) throws IOException;
+    AccountEmailResponse getBasicAccount (String personId) throws IOException;
 
     List<AccountExtractResponse> getAccountExtract (String personId, String accountId, AccountExtractRequest request) throws IOException;
 

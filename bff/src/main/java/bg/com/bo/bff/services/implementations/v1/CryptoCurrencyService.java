@@ -79,10 +79,10 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
     }
 
     @Override
-    public AccountEmailResponse getAccountEmail(String personId) throws IOException {
+    public AccountEmailResponse getBasicAccount(String personId) throws IOException {
         CryptoCurrencyNroPersonRequest requestServer = mapper.mapperRequestPerson(personId);
 
-        CryptoCurrencyGetAccountEmailResponse responseServer = cryptoFeignClient.accountEmail(
+        CryptoCurrencyGetAccountEmailResponse responseServer = cryptoFeignClient.basicAccount(
                 getToken().getAuthorizationHeader(), requestServer
         );
         if (responseServer.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
