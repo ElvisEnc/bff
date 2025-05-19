@@ -56,11 +56,9 @@ dependencies {
 	implementation("org.mapstruct:mapstruct:1.5.5.Final")
 	implementation("io.jsonwebtoken:jjwt-api:0.12.3")
 	implementation("com.github.librepdf:openpdf:2.0.1")
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
 	compileOnly("org.projectlombok:lombok:1.18.34")
-
-	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
-	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
 
 	annotationProcessor("org.projectlombok:lombok:1.18.34")
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
@@ -76,7 +74,6 @@ dependencies {
 
 	testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
 
-	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 }
 
 configurations.implementation {
