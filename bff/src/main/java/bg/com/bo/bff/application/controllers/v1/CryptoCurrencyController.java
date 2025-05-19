@@ -74,7 +74,7 @@ public class CryptoCurrencyController extends AbstractBFFController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cuenta email")
     })
-    @GetMapping("/persons/{personId}/account-email")
+    @GetMapping("/persons/{personId}/basic-account-data")
     public ResponseEntity<AccountEmailResponse> getAccountEmail(
             @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el personId de la persona", example = "12345") String personId
     ) throws IOException {

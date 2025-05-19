@@ -110,7 +110,7 @@ class CryptoCurrencyControllerTest {
         when(service.getAccountEmail(any())).thenReturn(responseExpected);
 
         // Act
-        String urlCryptoCurrency = "/api/v1/cryptocurrency/persons/{personId}/account-email";
+        String urlCryptoCurrency = "/api/v1/cryptocurrency/persons/{personId}/basic-account-data";
         MvcResult result = mockMvc.perform(get(urlCryptoCurrency, "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
