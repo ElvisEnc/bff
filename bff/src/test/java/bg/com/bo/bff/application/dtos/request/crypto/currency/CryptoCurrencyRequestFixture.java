@@ -1,8 +1,6 @@
 package bg.com.bo.bff.application.dtos.request.crypto.currency;
 
 
-import java.math.BigDecimal;
-
 public class CryptoCurrencyRequestFixture {
 
     public static AccountExtractRequest withDefaultAccountExtract() {

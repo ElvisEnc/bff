@@ -44,8 +44,6 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
     private final TokenExternalProvider tokenExternalProvider;
     private final ICryptoCurrencyMapper mapper;
     private final CryptoCurrencyFeignClient cryptoFeignClient;
-    private static final String USER = "JBANK1";
-    private static final String PWD = "SYSTEMS1";
 
     public CryptoCurrencyService(TokenExternalProvider tokenExternalProvider,
                                  ICryptoCurrencyMapper idcMapper, CryptoCurrencyFeignClient cryptoFeignClient) {
@@ -148,8 +146,8 @@ public class CryptoCurrencyService implements ICryptoCurrencyService {
     private ClientToken getToken(){
         return tokenExternalProvider.generateAccountAccessToken(
                 TokenAuthenticationRequestDto.builder()
-                        .username(USER)
-                        .password(PWD)
+                        .username("JBANK1")
+                        .password("SYSTEMS1")
                         .build()
         );
     }
