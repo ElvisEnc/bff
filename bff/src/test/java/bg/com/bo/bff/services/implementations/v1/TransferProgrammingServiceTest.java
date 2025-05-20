@@ -9,8 +9,6 @@ import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedT
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponseFixture;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.SaveProgrammedTransferResponse;
 import bg.com.bo.bff.mappings.providers.transfers.programming.TransferProgrammingMapper;
-import bg.com.bo.bff.providers.dtos.request.SaveTransferMDWRequestFixture;
-import bg.com.bo.bff.providers.dtos.request.transfers.programming.SaveTransferMDWRequest;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.DeleteTransferMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponseFixture;

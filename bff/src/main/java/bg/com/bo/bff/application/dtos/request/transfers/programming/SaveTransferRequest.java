@@ -31,7 +31,6 @@ public class SaveTransferRequest {
     private String currency;
 
     @Schema(description = "Tipo de transferencia")
-
     private String transferType;
 
     @Schema(description = "Glosa para la transferencia programada")
