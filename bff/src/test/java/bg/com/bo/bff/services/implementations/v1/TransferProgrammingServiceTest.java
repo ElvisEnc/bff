@@ -1,16 +1,20 @@
 package bg.com.bo.bff.services.implementations.v1;
 
+import bg.com.bo.bff.application.dtos.request.traansfers.programming.SaveTransferRequestFixture;
+import bg.com.bo.bff.application.dtos.request.transfers.programming.SaveTransferRequest;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.DeleteTransferResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponseFixture;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponseFixture;
+import bg.com.bo.bff.application.dtos.response.transfers.programming.SaveProgrammedTransferResponse;
 import bg.com.bo.bff.mappings.providers.transfers.programming.TransferProgrammingMapper;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.DeleteTransferMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.ProgrammedTransferMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.ProgrammedTransferMDWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.transfers.programming.SaveTransferMDWResponse;
 import bg.com.bo.bff.providers.interfaces.ITransferProgrammingProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -130,6 +134,54 @@ class TransferProgrammingServiceTest {
         when(mapper.convertDeleteResponse(mdwExpected)).thenReturn(expected);
 
         DeleteTransferResponse response = service.deleteTransfer("123", "321");
+
+        assertEquals(expected.getMensaje(), response.getMensaje());
+    }
+
+    @Test
+    void saveTransferOK() throws IOException {
+        SaveTransferRequest request = SaveTransferRequestFixture.withDefaults();
+        SaveProgrammedTransferResponse expected = SaveProgrammedTransferResponse.builder()
+                .titulo("OK")
+                .mensaje("Registro exitoso, el débito del monto programado será relizado de manera automática todos los días a horas 05:00 de la mañana.")
+                .build();
+        SaveTransferMDWResponse mdwExpected = SaveTransferMDWResponse.builder()
+                .data(
+                        SaveTransferMDWResponse.SaveTransfer.builder()
+                                .codError("COD000")
+                                .desError("Exitoso")
+                                .build()
+                )
+                .build();
+
+        when(provider.saveTransfer(any())).thenReturn(mdwExpected);
+        when(mapper.convertSaveResponse(mdwExpected)).thenReturn(expected);
+
+        SaveProgrammedTransferResponse response = service.saveTransfer(request, "1234");
+
+        assertEquals(expected.getMensaje(), response.getMensaje());
+    }
+
+    @Test
+    void saveTransferError() throws IOException {
+        SaveTransferRequest request = SaveTransferRequestFixture.withDefaults();
+        SaveProgrammedTransferResponse expected = SaveProgrammedTransferResponse.builder()
+                .titulo("Error")
+                .mensaje("Algo salio mal al intentar registrar la programación de transferencia.")
+                .build();
+        SaveTransferMDWResponse mdwExpected = SaveTransferMDWResponse.builder()
+                .data(
+                        SaveTransferMDWResponse.SaveTransfer.builder()
+                                .codError("COD001")
+                                .desError("Error")
+                                .build()
+                )
+                .build();
+
+        when(provider.saveTransfer(any())).thenReturn(mdwExpected);
+        when(mapper.convertSaveResponse(mdwExpected)).thenReturn(expected);
+
+        SaveProgrammedTransferResponse response = service.saveTransfer(request, "1234");
 
         assertEquals(expected.getMensaje(), response.getMensaje());
     }

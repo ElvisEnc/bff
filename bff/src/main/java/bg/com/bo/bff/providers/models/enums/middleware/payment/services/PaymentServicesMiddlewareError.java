@@ -80,8 +80,8 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             HttpStatus.CONFLICT,
             "NOT_FOUND_SEARCH_CRITERIA",
             "MDWPSM-010",
-            ConstantMessages.NO_FOUND_DATA.getMessage(),
-            ConstantMessages.NO_FOUND_DATA.getTitle(),
+            "No se econtramos un afiliado asociado al código ingresado. Por favor, intenta con otro código",
+            "Cliente no encontrado",
             CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()
     ),
     MDWPSM_011(
@@ -152,8 +152,8 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             HttpStatus.CONFLICT,
             "NOT_FOUND_DATA_IN_REDIS",
             "MDWPSM-020",
-            ConstantMessages.NO_FOUND_DATA.getMessage(),
-            ConstantMessages.NO_FOUND_DATA.getTitle(),
+            "Selecciona la cuota que deseas pagar nuevamente",
+            "El pago no se confirmó a tiempo",
             CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()
     ),
     MDWPSM_021(
@@ -268,21 +268,29 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             ConstantMessages.GENERIC.getTitle(),
             CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()
     ),
+//    MDWPSM_046(
+//            HttpStatus.NOT_ACCEPTABLE,
+//            "ERROR_INVOICE_DATA",
+//            "MDWPSM-046",
+//            "Toma en cuenta que la factura se emitirá con los datos ingresados y esta información no podrá modificarse después del pago.",
+//            "Verifica los datos de facturación",
+//            CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()
+//    ),
     MDWPSM_046(
             HttpStatus.NOT_ACCEPTABLE,
-            "ERROR_INVOICE_DATA",
+            "PAYMENT_ERROR",
             "MDWPSM-046",
-            "Toma en cuenta que la factura se emitirá con los datos ingresados y esta información no podrá modificarse después del pago.",
-            "Verifica los datos de facturación",
+            "Tuvimos un problema al procesar el pag, intenta más tarde.",
+            "Error en el pago",
             CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()
     ),
     MDWPSM_047(
-            HttpStatus.NOT_ACCEPTABLE,
-            "NOT_ACCEPTABLE",
+            HttpStatus.CONFLICT,
+            "SERVICE_ALREADY_AFFILIATED",
             "MDWPSM-047",
             "Afiliación duplicada. El servicio ya se encuentrtra afiliado",
             "Registro Existente",
-            CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()
+            CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()
     ),
     MDWPSM_049(
             HttpStatus.BAD_REQUEST,
