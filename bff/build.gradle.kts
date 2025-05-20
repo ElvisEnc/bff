@@ -33,6 +33,11 @@ repositories {
 	mavenCentral()
 }
 
+dependencyManagement {
+	imports {
+		mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.1") // Usa la versión compatible con Spring Boot 3.3.x
+	}
+}
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-security")
@@ -51,6 +56,7 @@ dependencies {
 	implementation("org.mapstruct:mapstruct:1.5.5.Final")
 	implementation("io.jsonwebtoken:jjwt-api:0.12.3")
 	implementation("com.github.librepdf:openpdf:2.0.1")
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
 	compileOnly("org.projectlombok:lombok:1.18.34")
 

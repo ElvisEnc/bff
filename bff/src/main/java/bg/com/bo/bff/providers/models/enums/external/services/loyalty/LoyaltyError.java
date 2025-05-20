@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum LoyaltyError implements IExternalError { 
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Usuario no autenticado.", "Usuario no autenticado.", "Usuario no autenticado", CategoryError.AUTH.getCategoryId()),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Sin autorización", "Usuario no autenticado.", "Usuario no autenticado", CategoryError.AUTH.getCategoryId()),
     GENERIC_ERROR(HttpStatus.NOT_ACCEPTABLE, "GENERIC_ERROR", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     LOYALTY_ERROR(HttpStatus.NOT_ACCEPTABLE, "GENERIC_ERROR", "Ocurrio un error al verificar Vamos", ConstantMessages.GENERIC.getMessage(), ConstantMessages.GENERIC.getTitle(), CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()),
     REGISTER_ERROR(HttpStatus.NOT_ACCEPTABLE, "REGISTER_ERROR", "Ocurrio algun problema al realizar la suscripción", "Ocurrio algun problema al realizar la suscripción", "Error al suscribirse", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()),

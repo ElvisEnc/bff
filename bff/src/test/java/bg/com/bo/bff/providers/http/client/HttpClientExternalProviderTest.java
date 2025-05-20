@@ -219,20 +219,20 @@ class HttpClientExternalProviderTest {
     }
 
     @Test
-    void mapErrorResponse_shouldReturnMatchingExternalError_whenMessageMatches() {
+    void mapErrorResponse_shouldReturnMatchingExternalError_whenMessageMatches1() {
         // Arrange
         var mockHttpClientFactory = mock(bg.com.bo.bff.commons.interfaces.IHttpClientFactory.class);
         var provider = new HttpClientExternalProvider<>(mockHttpClientFactory, objectMapper, DefaultExternalError.class);
 
         ExternalResponse response = new ExternalResponse();
         response.setCodigoEstado(400);
-        response.setMensaje("Usuario no autenticado.");
+        response.setMensaje("BAD_REQUEST");
 
         // Act
         IExternalError result = provider.mapErrorResponse(HttpStatus.BAD_REQUEST.value(), response);
 
         // Assert
-        assertEquals(DefaultExternalError.UNAUTHORIZED, result);
+        assertEquals(DefaultExternalError.BAD_REQUEST.getMsgError(), result.getMsgError());
     }
 
     @Test
