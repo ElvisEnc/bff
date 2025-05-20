@@ -8,11 +8,14 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
+import bg.com.bo.bff.providers.dtos.request.SaveTransferMDWRequestFixture;
+import bg.com.bo.bff.providers.dtos.request.transfers.programming.SaveTransferMDWRequest;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.DeleteTransferMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.ProgrammedTransferMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.ProgrammedTransferMDWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.transfers.programming.SaveTransferMDWResponse;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,6 +34,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -114,6 +118,26 @@ class TransferProgrammingProviderTest {
         stubFor(delete(anyUrl()).willReturn(okJson(jsonExpected)));
 
         DeleteTransferMDWResponse response = provider.deleteTransfer("1234", "4321");
+        String jsonResponse = Util.objectToString(response);
+
+        assertEquals(jsonExpected, jsonResponse);
+    }
+
+    @Test
+    void saveProgrammedTransfer() throws IOException {
+        SaveTransferMDWRequest request = SaveTransferMDWRequestFixture.withDefaults();
+        SaveTransferMDWResponse expected = SaveTransferMDWResponse.builder()
+                .data(
+                        SaveTransferMDWResponse.SaveTransfer.builder()
+                                .codError("COD000")
+                                .desError("Exitoso")
+                                .build()
+                )
+                .build();
+        String jsonExpected = Util.objectToString(expected);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonExpected)));
+
+        SaveTransferMDWResponse response = provider.saveTransfer(request);
         String jsonResponse = Util.objectToString(response);
 
         assertEquals(jsonExpected, jsonResponse);

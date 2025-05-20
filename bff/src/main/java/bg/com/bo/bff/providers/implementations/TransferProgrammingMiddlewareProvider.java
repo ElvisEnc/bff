@@ -3,9 +3,11 @@ package bg.com.bo.bff.providers.implementations;
 import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.transfers.programming.SaveTransferMDWRequest;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.DeleteTransferMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.PaymentsPlanMDWResponse;
 import bg.com.bo.bff.providers.dtos.response.transfers.programming.ProgrammedTransferMDWResponse;
+import bg.com.bo.bff.providers.dtos.response.transfers.programming.SaveTransferMDWResponse;
 import bg.com.bo.bff.providers.interfaces.ITokenMiddlewareProvider;
 import bg.com.bo.bff.providers.interfaces.ITransferProgrammingProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.transfers.programming.TransferProgrammingMDWError;
@@ -20,7 +22,6 @@ import java.io.IOException;
 
 @Service
 public class TransferProgrammingMiddlewareProvider extends MiddlewareProvider<TransferProgrammingMDWError> implements ITransferProgrammingProvider {
-
 
     private final String baseURL;
 
@@ -69,6 +70,11 @@ public class TransferProgrammingMiddlewareProvider extends MiddlewareProvider<Tr
         return delete(url, HeadersMW.getDefaultHeaders(httpServletRequest), DeleteTransferMDWResponse.class);
     }
 
+    @Override
+    public SaveTransferMDWResponse saveTransfer(SaveTransferMDWRequest request) throws IOException {
+        String url = baseURL + TransfersProgrammingMDWServices.SAVE_TRANSFER.getServiceUrl();
+        return post(url, HeadersMW.getDefaultHeaders(httpServletRequest), request, SaveTransferMDWResponse.class);
+    }
 
 
 }

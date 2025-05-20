@@ -1,11 +1,15 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
+import bg.com.bo.bff.application.dtos.request.traansfers.programming.SaveTransferRequestFixture;
+import bg.com.bo.bff.application.dtos.request.transfers.programming.SaveTransferRequest;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.DeleteTransferResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponseFixture;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponseFixture;
+import bg.com.bo.bff.application.dtos.response.transfers.programming.SaveProgrammedTransferResponse;
+import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.services.implementations.v1.TransferProgrammingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +22,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -25,6 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -80,7 +86,7 @@ class TransfersProgrammingControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
-        verify(service).getPaymentsPlan( any());
+        verify(service).getPaymentsPlan(any());
     }
 
     @Test
@@ -100,7 +106,29 @@ class TransfersProgrammingControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
-        verify(service).deleteTransfer(any(),  any());
+        verify(service).deleteTransfer(any(), any());
+    }
+
+    @Test
+    void saveTransferOK() throws Exception {
+        String request = Util.objectToString(SaveTransferRequestFixture.withDefaults());
+        SaveProgrammedTransferResponse expected = SaveProgrammedTransferResponse.builder()
+                .titulo("OK")
+                .mensaje("Registro exitoso, el débito del monto programado será relizado de manera automática todos los días a horas 05:00 de la mañana.")
+                .build();
+        when(service.saveTransfer(any(), any())).thenReturn(expected);
+        String url = "/api/v1/transfer-programming/persons/123456";
+
+        mockMvc.perform(post(url)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        verify(service).saveTransfer(any(), any());
     }
 
 }

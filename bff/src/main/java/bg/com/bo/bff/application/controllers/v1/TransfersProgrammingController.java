@@ -1,9 +1,11 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
+import bg.com.bo.bff.application.dtos.request.transfers.programming.SaveTransferRequest;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.DeleteTransferResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
 import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
+import bg.com.bo.bff.application.dtos.response.transfers.programming.SaveProgrammedTransferResponse;
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
 import bg.com.bo.bff.services.interfaces.ITransferProgrammingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +21,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -89,5 +93,23 @@ public class TransfersProgrammingController extends AbstractBFFController {
     ) throws IOException {
         getDeviceDataHeader();
         return ResponseEntity.ok(service.deleteTransfer(personId, transferId));
+    }
+
+    @Operation(
+            summary = "Registro de Programacion de Transferencia",
+            description = "Registra una nueva programación de transferencia")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = SaveProgrammedTransferResponse.class)))
+    })
+    @PostMapping("/persons/{personId}")
+    public ResponseEntity<SaveProgrammedTransferResponse> saveRequest(
+            @PathVariable("personId") @OnlyNumber
+            @Parameter(description = "Este es el numero de la persona", example = "12345") String personId,
+            @RequestBody SaveTransferRequest request
+            ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.saveTransfer(request, personId));
     }
 }
