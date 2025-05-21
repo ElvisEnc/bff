@@ -215,6 +215,7 @@ class RemittanceControllerTest {
 
         // Act
         MvcResult result = mockMvc.perform(get(GET_CONSULT_WESTERUNION_REMITTANCE, "123456","353535")
+                        .param("jtsOidAccount", "321321")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Util.objectToString(request)))

@@ -260,7 +260,7 @@ class RemittanceServiceTest {
 
         //When
         when(provider.consultWURemittance(any(ConsultWURemittanceMWRequest.class ))).thenReturn(mwResponseMock);
-        List<CheckRemittanceResponse> response = service.consultWURemittance("10", "20", request);
+        List<CheckRemittanceResponse> response = service.consultWURemittance("10", "20", request.getJtsOidAccount());
 
         //Then
         assertNotNull(response);
