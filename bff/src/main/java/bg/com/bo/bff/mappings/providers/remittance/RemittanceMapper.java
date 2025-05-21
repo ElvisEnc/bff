@@ -3,18 +3,6 @@ package bg.com.bo.bff.mappings.providers.remittance;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceWURequest;
 import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
-import bg.com.bo.bff.application.dtos.response.remittance.UpdateWURemittanceResponse;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.*;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.UpdateWURemittanceMWResponse;
-import java.util.Collections;
-import java.util.List;
-import org.springframework.stereotype.Component;
-
-import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
-import bg.com.bo.bff.commons.utils.Util;
-import bg.com.bo.bff.commons.utils.UtilDate;
-
-import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.GPCurrencies;
@@ -26,11 +14,28 @@ import bg.com.bo.bff.application.dtos.response.remittance.GPRelationships;
 import bg.com.bo.bff.application.dtos.response.remittance.GPTransactionReasons;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
+import bg.com.bo.bff.application.dtos.response.remittance.UpdateWURemittanceResponse;
+import bg.com.bo.bff.commons.enums.config.provider.CanalMW;
+import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.commons.utils.UtilDate;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.ConsultWURemittanceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.DepositRemittanceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.DepositRemittanceWUMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.UpdateWURemittanceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.DepositRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.UpdateWURemittanceMWResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareEnums;
+import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.List;
 
 @Component
 public class RemittanceMapper implements IRemittanceMapper {
@@ -227,13 +232,14 @@ public class RemittanceMapper implements IRemittanceMapper {
     }
 
     @Override
-    public ConsultWURemittanceMWRequest mapperRequestRemittanceWU(String personId, String remittanceId,
-                                                                  ConsultWURemittanceRequest request) {
+    public ConsultWURemittanceMWRequest mapperRequestRemittanceWU(
+            String personId, String remittanceId, String jtsOidAccount
+    ) {
         return ConsultWURemittanceMWRequest.builder()
                 .personId(personId)
                 .applicationId(CanalMW.GANAMOVIL.getCanal())
                 .noRemittance(remittanceId)
-                .jtsOidAccount(request.getJtsOidAccount())
+                .jtsOidAccount(jtsOidAccount)
                 .build();
     }
 
