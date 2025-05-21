@@ -2,6 +2,7 @@ package bg.com.bo.bff.mappings.providers.remittance;
 
 import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceWURequest;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
@@ -25,6 +26,8 @@ public interface IRemittanceMapper {
     CheckRemittanceMWRequest mapperRequestRemittance(String personId, String remittanceId);
 
     DepositRemittanceMWRequest mapperRequestDeposit(String personId, String remittanceId, DepositRemittanceRequest request);
+
+    DepositRemittanceWUMWRequest mapperRequestDepositWU(String personId, String remittanceId, DepositRemittanceWURequest request);
 
     ListGeneralParametersResponse convertResponse(ListGeneralParametersMWResponse mwResponse);
 

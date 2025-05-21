@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Builder
@@ -19,6 +22,9 @@ public class DetailCreditCardResponse {
 
     @Schema(description = "número de la tarjeta")
     private String cardNumber;
+
+    @Schema(description = "número principal de la tarjeta.")
+    private String panNumber;
 
     @Schema(description = "nombre del titular")
     private String holderName;
@@ -47,8 +53,9 @@ public class DetailCreditCardResponse {
     @Schema(description = "código de moneda")
     private String currency;
 
+    @Setter
     @Schema(description = "monto dispobible")
-    private String amountAvailable;
+    private BigDecimal amountAvailable;
 
     @Schema(description = "Monto límite.")
     private String amountLimit;
@@ -67,4 +74,16 @@ public class DetailCreditCardResponse {
 
     @Schema(description = "DuePayment Date Perio")
     private String duePaymentDatePeriod;
+
+    @Schema(description = "Monto minimo de pago")
+    private String paymentAmountMinimum;
+
+    @Schema(description = "Monto actual pagado.")
+    private BigDecimal currentPaymentAmount;
+
+    @Schema(description = "Monto mínimo actual.")
+    private BigDecimal currentMinimumAmount;
+
+    @Schema(description = "Monto pendiente de pago.")
+    private BigDecimal currentDebtClosureAmount;
 }

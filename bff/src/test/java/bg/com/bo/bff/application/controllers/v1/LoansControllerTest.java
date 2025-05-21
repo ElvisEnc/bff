@@ -1,9 +1,7 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
-import bg.com.bo.bff.application.dtos.request.loans.ListLoansRequest;
-import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentsRequest;
-import bg.com.bo.bff.application.dtos.request.loans.LoansRequestFixture;
+import bg.com.bo.bff.application.dtos.request.loans.*;
 import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
 import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.commons.utils.Util;
@@ -65,11 +63,11 @@ class LoansControllerTest {
         // Arrange
         ListLoansRequest requestMock = LoansRequestFixture.withDefaultListLoansRequest();
         List<ListLoansResponse> expectedResponse = LoansResponseFixture.withDataDefaultListLoansResponse();
-        when(service.getListLoansByPerson(any(), any())).thenReturn(expectedResponse);
+        when(service.getListLoansByPerson(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/loans/persons/{personId}";
-        MvcResult result = mockMvc.perform(post(path, "123456")
+        String path = "/api/v1/loans/persons/1234/clients/4321";
+        MvcResult result = mockMvc.perform(post(path)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Util.objectToString(requestMock)))
@@ -83,7 +81,7 @@ class LoansControllerTest {
 
         assertNotNull(result);
         assertEquals(expectedJsonResponse, response);
-        verify(service).getListLoansByPerson(any(), any());
+        verify(service).getListLoansByPerson(any(), any(), any());
     }
 
     @Test
@@ -94,7 +92,7 @@ class LoansControllerTest {
         when(service.getLoanPayments(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments";
+        String path = "/api/v1/loans/{loanId}/clients/{clientId}/payments";
         MvcResult result = mockMvc.perform(post(path, "123", "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -122,7 +120,7 @@ class LoansControllerTest {
                 .refreshData(false)
                 .build();
         // Act
-        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments";
+        String path = "/api/v1/loans/{loanId}/clients/{clientId}/payments";
         mockMvc.perform(post(path, "123", "123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestMock)))
@@ -140,7 +138,7 @@ class LoansControllerTest {
                 .refreshData(false)
                 .build();
         // Act
-        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments";
+        String path = "/api/v1/loans/{loanId}/clients/{clientId}/payments";
         mockMvc.perform(post(path, "123", "123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestMock)))
@@ -155,7 +153,7 @@ class LoansControllerTest {
         when(service.getLoanInsurancePayments(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/loans/{loanId}/persons/{personId}/insurance-payments";
+        String path = "/api/v1/loans/{loanId}/clients/{clientId}/insurance-payments";
         MvcResult result = mockMvc.perform(post(path, "123", "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -179,7 +177,7 @@ class LoansControllerTest {
         when(service.getLoanPlans(any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/loans/{loanId}/persons/{personId}";
+        String path = "/api/v1/loans/{loanId}/clients/{personId}";
         MvcResult result = mockMvc.perform(get(path, "123", "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -199,11 +197,11 @@ class LoansControllerTest {
     void givenLoandIdAndPersonIdWhenGetLoanPaymentRequestThenResponseLoanDetailPaymentResponse() throws Exception {
         //Arrange
         LoanDetailPaymentResponse expectedResponse = LoansResponseFixture.withDefaultLoanDetailPaymentResponse();
-        when(service.getLoanDetailPayment(any(), any(), any())).thenReturn(expectedResponse);
+        when(service.getLoanDetailPayment(any(), any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments/{clientId}";
-        MvcResult result = mockMvc.perform(get(path, "123", "123", "123")
+        String path = "/api/v1/loans/{loanId}/persons/{personId}/payments/{clientId}/currency/{currencyCode}";
+        MvcResult result = mockMvc.perform(get(path, "123", "123", "123", "321")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -215,20 +213,22 @@ class LoansControllerTest {
         // Assert
         assertNotNull(result);
         assertEquals(response, actual);
-        verify(service).getLoanDetailPayment(any(), any(), any());
+        verify(service).getLoanDetailPayment(any(), any(), any(), any());
     }
 
     @Test
     void givenLoanIdAccountIdPersonIdWhenPayLoanRequestThenResponseLoanPaymentResponse() throws Exception {
         //Arrange
+        LoanPaymentRequest requestMock = LoansRequestFixture.withDefaultLoanPaymentRequest();
         LoanPaymentResponse expectedResponse = LoansResponseFixture.withDataDefaultLoanPaymentResponse();
         when(service.payLoanInstallment(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/loans/persons/{personId}/accounts/{accountId}/payments/{correlativeId}";
-        MvcResult result = mockMvc.perform(put(path, "123", "123", "123")
+        String path = "/api/v1/loans/persons/{personId}/accounts/{accountId}/payment";
+        MvcResult result = mockMvc.perform(post(path, "123", "123")
                         .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                .content(Util.objectToString(requestMock)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -239,5 +239,30 @@ class LoansControllerTest {
         assertNotNull(result);
         assertEquals(response, actual);
         verify(service).payLoanInstallment(any(), any(), any());
+    }
+
+    @Test
+    void givenValidDataWhenValidatePCC01ThenResponsePcc01Response() throws Exception {
+        //Arrange
+        Pcc01Request requestMock = LoansRequestFixture.withDefaultPcc01Request();
+        Pcc01Response expectedResponse = LoansResponseFixture.withDefaultPcc01Response();
+        when(service.makeControl(any(), any(), any())).thenReturn(expectedResponse);
+
+        // Act
+        String path = "/api/v1/loans/persons/{personId}/accounts/{accountId}/validate-digital";
+        MvcResult result = mockMvc.perform(post(path, "123", "123")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                .content(Util.objectToString(requestMock)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(expectedResponse);
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).makeControl(any(), any(), any());
     }
 }

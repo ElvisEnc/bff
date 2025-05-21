@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DepositRemittanceMWRequest {
 
-    private String codPerson;
-    private String codApplication;
-    private String remittanceNumber;
-    private String queryNumber;
+    private String personId;
+    private String applicationId;
+    private String noRemittance;
+    private String noConsult;
     private String jtsOidAccount;
 }

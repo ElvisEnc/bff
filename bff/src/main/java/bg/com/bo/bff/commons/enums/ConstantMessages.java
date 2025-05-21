@@ -25,7 +25,10 @@ public enum ConstantMessages {
     MAX_ATTEMPTS("Se ha alcanzado el número máximo de intentos permitidos. Inténtalo nuevamente más tarde.", "Intentos máximos alcanzados"),
     NO_FOUND_DATA("No se encontraron registros para la petición.", "Datos no encontrados"),
     SOFTTOKEN_DISABLED("Usuario sin ganapin habilitado, presentando algun error", "GanaPin deshabilitado"),
-    MODIFY_ERROR("No se pudo realizar la modificación, intente más tarde.", "Ocurrió un problema");
+    MODIFY_ERROR("No se pudo realizar la modificación, intente más tarde.", "Ocurrió un problema"),
+    GENERIC_INVALID_PARAMS("Verifica que los datos enviados esten correctos.", "Datos Invalidos"),
+    NOT_INFORMATION_OBTAINED("No se pudo obtener información, con los datos proporcionados.", "Datos no encontrados"),
+    TRANSACTION_COULD_NOT_BE_PROCESSED("La transacción no se pudo procesar.", "Transaccion no procesada.");
 
     private final String message;
     private final String title;

@@ -38,11 +38,24 @@ public class RemittanceMWRequestFixture {
 
     public static DepositRemittanceMWRequest withDefaultDepositRemittance() {
         return DepositRemittanceMWRequest.builder()
-                .codPerson("161616")
-                .codApplication("1")
-                .remittanceNumber("123456789")
-                .queryNumber("123456789")
+                .personId("161616")
+                .applicationId("1")
+                .noRemittance("123456789")
+                .noConsult("123456789")
                 .jtsOidAccount("123456")
+                .build();
+    }
+
+    public static DepositRemittanceWUMWRequest withDefaultDepositRemittanceWU() {
+        return DepositRemittanceWUMWRequest.builder()
+                .personId("161616")
+                .applicationId("1")
+                .noRemittance("123456789")
+                .noConsult("123456789")
+                .jtsOidAccount("123456")
+                .pCType("0")
+                .originFund("1")
+                .originDestination("1")
                 .build();
     }
 

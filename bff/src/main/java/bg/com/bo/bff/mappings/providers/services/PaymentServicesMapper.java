@@ -129,8 +129,11 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                         .build())
                 .supplementaryData(PaymentDebtsMWRequest.PaymentSupplementary.builder()
                         .idGeneratedForDebt(request.idGenerated())
-                        .invoiceNITCI(request.invoiceNit())
+                        .invoiceNITCI(request.invoiceNITCI())
                         .invoiceName(request.invoiceName())
+                        .invoiceType(request.invoiceType())
+                        .invoiceComplementId(request.invoiceComplementId())
+                        .invoiceEmail(request.invoiceEmail())
                         .company(request.company())
                         .affiliationCode(affiliateServiceId)
                         .serviceCode(request.serviceCode())
@@ -192,9 +195,22 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
 
     @Override
     public AffiliationDebtsResponse convertDebtsResponse(DebtsConsultationMWResponse mwResponse) {
+        if (mwResponse.getData() == null){
+            return AffiliationDebtsResponse.builder()
+                    .debtDetails(Collections.emptyList())
+                    .build();
+        }
+
+
         List<DebtDetail> debtDetails = mwResponse.getData().getDebtDetails().stream()
                 .map(detail ->
                         DebtDetail.builder()
+                                .invoiceCanModifyData(detail.getInvoiceCanModifyData())
+                                .invoiceName(detail.getInvoiceName())
+                                .invoiceNITCI(detail.getInvoiceId())
+                                .invoiceComplementId(detail.getInvoiceComplementId())
+                                .invoiceEmail(detail.getInvoiceEmail())
+                                .invoiceType(detail.getInvoiceType())
                                 .description(detail.getDescription())
                                 .referenceCode(detail.getReferenceCode())
                                 .monthPeriod(detail.getMonthPeriod())
@@ -214,9 +230,6 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
         return AffiliationDebtsResponse.builder()
                 .affiliateServiceId(mwResponse.getData().getAffiliationCode())
                 .serviceCode(mwResponse.getData().getServiceCode())
-                .invoiceNit(mwResponse.getData().getInvoiceTaxId())
-                .invoiceName(mwResponse.getData().getInvoiceName())
-                .invoiceCanModify(mwResponse.getData().getInvoiceCanModifyData() != null && !"N".equals(mwResponse.getData().getInvoiceCanModifyData()))
                 .debtDetails(debtDetails)
                 .build();
     }

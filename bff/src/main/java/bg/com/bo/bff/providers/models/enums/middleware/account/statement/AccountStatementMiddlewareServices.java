@@ -9,6 +9,7 @@ public enum AccountStatementMiddlewareServices {
 
     POST_ACCOUNT_STATEMENT("/bs/v1/accounts/reports/generate-basic"),
     REPORT_TRANSFERS("/bs/v1/accounts/reports/transfer"),
+    REGENERATE_VOUCHER("/bs/v1/accounts/reports/voucher")
     ;
 
     private final String serviceURL;

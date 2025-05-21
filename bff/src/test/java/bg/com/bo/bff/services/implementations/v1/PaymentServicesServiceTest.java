@@ -257,6 +257,26 @@ class PaymentServicesServiceTest {
     }
 
     @Test
+    void getDebtsListEmptyData() throws IOException {
+        AffiliationDebtsRequest request = PaymentServiceRequestFixture.withDefaultDebtsRequest();
+        DebtsConsultationMWRequest mwRequestMock = PaymentServicesMWRequestFixture.withDefaultDebtsRequestMW();
+        DebtsConsultationMWResponse mwResponseMock = PaymentServicesMWResponseFixture.withEmptyData();
+        AffiliationDebtsResponse expected = PaymentServiceResponseFixture.withDefaultDebtsResponse();
+
+        when(mapper.mapperRequest(123, 123, request)).thenReturn(mwRequestMock);
+        when(provider.debtsConsultation(any(), any())).thenReturn(mwResponseMock);
+        when(mapper.convertDebtsResponse(mwResponseMock)).thenReturn(expected);
+
+        AffiliationDebtsResponse response = service.getAffiliationDebts(123, 123, request, new HashMap<>());
+
+        assertNotNull(response);
+        assertThat(response).usingRecursiveComparison().isEqualTo(expected);
+        verify(mapper).mapperRequest(123, 123, request);
+        verify(provider).debtsConsultation(mwRequestMock, new HashMap<>());
+        verify(mapper).convertDebtsResponse(mwResponseMock);
+    }
+
+    @Test
     void givenPersonIdAffiliateIdWhenGetAffiliationDebtsThenListAffiliationsDebtsModifyS() throws IOException {
         //Arrange
         AffiliationDebtsRequest request = PaymentServiceRequestFixture.withDefaultDebtsRequest();
@@ -282,7 +302,6 @@ class PaymentServicesServiceTest {
         AffiliationDebtsRequest request = PaymentServiceRequestFixture.withDefaultDebtsRequest();
         DebtsConsultationMWRequest mwRequestMock = PaymentServicesMWRequestFixture.withDefaultDebtsRequestMW();
         DebtsConsultationMWResponse mwResponseMock = PaymentServicesMWResponseFixture.withDefaultDebtsResponseMWModifyNull();
-        AffiliationDebtsResponse expected = PaymentServiceResponseFixture.withDefaultDebtsResponseModifyNull();
         when(provider.debtsConsultation(any(), any())).thenReturn(mwResponseMock);
 
         //Act
@@ -290,14 +309,13 @@ class PaymentServicesServiceTest {
 
         //Assert
         assertNotNull(response);
-        assertThat(response).usingRecursiveComparison().isEqualTo(expected);
         verify(mapper).mapperRequest(123, 123, request);
         verify(provider).debtsConsultation(mwRequestMock, new HashMap<>());
         verify(mapper).convertDebtsResponse(mwResponseMock);
     }
 
     @Test
-    void givenBadYearWhenGetAffiliationDebtsThenBadRequest() throws IOException {
+    void givenBadYearWhenGetAffiliationDebtsThenBadRequest() {
         // Arrange
         AffiliationDebtsRequest request = PaymentServiceRequestFixture.withDefaultDebtsRequestBadYear();
         Map<String, String> parameters = new HashMap<>();

@@ -2,8 +2,10 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.account.statement.AmountRange;
 import bg.com.bo.bff.application.dtos.request.account.statement.AccountStatementsRequest;
+import bg.com.bo.bff.application.dtos.request.account.statement.RegenerateVoucherRequest;
 import bg.com.bo.bff.application.dtos.request.account.statement.TransferMovementsRequest;
 import bg.com.bo.bff.application.dtos.response.account.statement.AccountStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.account.statement.RegenerateVoucherResponse;
 import bg.com.bo.bff.application.dtos.response.account.statement.TransferMovementsResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
@@ -12,7 +14,9 @@ import bg.com.bo.bff.commons.filters.*;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.mappings.providers.account.IOwnAccountsMapper;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
+import bg.com.bo.bff.providers.dtos.request.own.account.mw.RegenerateVoucherMWRequest;
 import bg.com.bo.bff.providers.dtos.request.own.account.mw.ReportTransfersMWRequest;
+import bg.com.bo.bff.providers.dtos.response.own.account.mw.RegenerateVoucherMWResponse;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
 import bg.com.bo.bff.providers.models.enums.middleware.account.statement.AccountStatementMiddlewareError;
 import bg.com.bo.bff.services.interfaces.IAccountStatementService;
@@ -143,6 +147,17 @@ public class AccountStatementService implements IAccountStatementService {
         list = new PageFilter<TransferMovementsResponse>(page, pageSize).apply(list);
 
         return list;
+    }
+
+    @Override
+    public RegenerateVoucherResponse getVoucher(RegenerateVoucherRequest request, Map<String, String> parameter) throws IOException {
+        RegenerateVoucherMWRequest mdwRequest = RegenerateVoucherMWRequest.builder()
+                .seatNumber(request.getSeatNumber())
+                .codBranchOffice(request.getBranchOfficeCode())
+                .processDate(request.getDate())
+                .build();
+        RegenerateVoucherMWResponse mdwResponse = provider.regenerateVoucher(mdwRequest, parameter);
+        return mapper.convertVoucher(mdwResponse);
     }
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.ACCOUNTS_STATEMENTS, key = "#extractId", condition = "#clearCache == false")},

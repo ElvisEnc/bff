@@ -2,6 +2,7 @@ package bg.com.bo.bff.services.implementations.v1;
 
 import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceWURequest;
 import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.*;
@@ -59,7 +60,7 @@ public class RemittanceService implements IRemittanceService {
         if (mwResponse.getCodeError().equals(AppCodeResponseNet.SUCCESS_CODE_STRING.getValue())) {
             return GenericResponse.instance(RemittanceMiddlewareResponse.ACCOUNT_ENABLED);
         }
-        throw new GenericException(RemittanceMiddlewareError.RM_031);
+        throw new GenericException(RemittanceMiddlewareError.RM031);
     }
 
     @Override
@@ -80,6 +81,13 @@ public class RemittanceService implements IRemittanceService {
     public List<DepositRemittanceResponse> depositRemittance(String personId, String remittanceId, DepositRemittanceRequest request) throws IOException {
         DepositRemittanceMWRequest mwRequest = mapper.mapperRequestDeposit(personId, remittanceId, request);
         DepositRemittanceMWResponse mwResponse = provider.depositRemittance(mwRequest);
+        return new ArrayList<>(mapper.convertResponse(mwResponse));
+    }
+
+    @Override
+    public List<DepositRemittanceResponse> depositRemittanceWU(String personId, String remittanceId, DepositRemittanceWURequest request) throws IOException {
+        DepositRemittanceWUMWRequest mwRequest = mapper.mapperRequestDepositWU(personId, remittanceId, request);
+        DepositRemittanceMWResponse mwResponse = provider.depositRemittanceWU(mwRequest);
         return new ArrayList<>(mapper.convertResponse(mwResponse));
     }
 

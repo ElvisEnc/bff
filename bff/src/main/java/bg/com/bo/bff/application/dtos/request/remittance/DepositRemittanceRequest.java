@@ -16,14 +16,11 @@ import jakarta.validation.constraints.NotNull;
 public class DepositRemittanceRequest {
 
     @Valid
-    @NotBlank(message = "El identificador de la persona no puede ser vacío.")
-    @NotNull(message = "La cuenta no puede ser valor nulo.")
-    @OnlyNumber(message = "El número de cuenta de la persona solo puede contener números.")
+    @NotBlank(message = "El JTS_OID de la persona no puede ser vacío.")
+    @NotNull(message = "El JTS_OID no puede ser valor nulo.")
+    @OnlyNumber(message = "El JTS_OID de la persona solo puede contener números.")
     private String accountId;
 
     @Valid
-    @NotBlank(message = "El identificador de la consulta no puede ser vacío.")
-    @NotNull(message = "La consulta no puede ser valor nulo.")
-    @OnlyNumber(message = "El identificador de la persona solo puede contener números.")
     private String consultationId;
 }

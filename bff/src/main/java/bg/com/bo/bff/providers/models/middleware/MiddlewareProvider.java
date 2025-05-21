@@ -226,7 +226,7 @@ public abstract class MiddlewareProvider<T extends IMiddlewareError> {
     }
 
     private <E, R> E executeRequest(HttpUriRequest request, Header[] headers, R requestBody, Class<E> classType, ResponseHandler<E> responseHandler) throws IOException {
-        ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
+         ClientToken clientToken = tokenMiddlewareProvider.generateAccountAccessToken(project.getName(), clientSecret, project.getHeaderKey());
         try (CloseableHttpClient httpClient = httpClientFactory.create()) {
             if (headers != null && headers.length > 0) {
                 request.setHeaders(headers);

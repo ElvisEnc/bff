@@ -53,9 +53,6 @@ public class PaymentServiceResponseFixture {
         return AffiliationDebtsResponse.builder()
                 .affiliateServiceId("123")
                 .serviceCode("123")
-                .invoiceNit("123")
-                .invoiceName("123")
-                .invoiceCanModify(false)
                 .debtDetails(Collections.singletonList(withDefaultDebtsDetail()))
                 .build();
     }
@@ -64,9 +61,6 @@ public class PaymentServiceResponseFixture {
         return AffiliationDebtsResponse.builder()
                 .affiliateServiceId("123")
                 .serviceCode("123")
-                .invoiceNit("123")
-                .invoiceName("123")
-                .invoiceCanModify(true)
                 .debtDetails(Collections.singletonList(withDefaultDebtsDetail()))
                 .build();
     }
@@ -75,15 +69,17 @@ public class PaymentServiceResponseFixture {
         return AffiliationDebtsResponse.builder()
                 .affiliateServiceId("123")
                 .serviceCode("123")
-                .invoiceNit("123")
-                .invoiceName("123")
-                .invoiceCanModify(false)
                 .debtDetails(Collections.singletonList(withDefaultDebtsDetail()))
                 .build();
     }
 
     public static DebtDetail withDefaultDebtsDetail() {
         return DebtDetail.builder()
+                .invoiceCanModifyData("S")
+                .invoiceName("Pedro Perez")
+                .invoiceNITCI("1234")
+                .invoiceComplementId("12")
+                .invoiceEmail("email@atest.com")
                 .description("123")
                 .referenceCode("123")
                 .monthPeriod(123)

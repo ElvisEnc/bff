@@ -2,6 +2,7 @@ package bg.com.bo.bff.application.exceptions;
 
 import bg.com.bo.bff.commons.converters.IErrorResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.response.IErrorControllerResponse;
+import bg.com.bo.bff.providers.models.external.services.interfaces.IExternalError;
 import bg.com.bo.bff.providers.models.interfaces.middleware.IMiddlewareError;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,6 +60,15 @@ public class HandledException extends RuntimeException {
     }
 
     public HandledException(IErrorResponse response, Exception e) {
+        super(e);
+        this.message = response.getMessage();
+        this.status = response.getHttpCode();
+        this.code = response.getCode();
+        this.title = response.getTitle();
+        this.categoryId = response.getCategoryId();
+    }
+
+    public HandledException(IExternalError response, Exception e) {
         super(e);
         this.message = response.getMessage();
         this.status = response.getHttpCode();

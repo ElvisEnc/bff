@@ -76,6 +76,18 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.softtoken.manager}")
     private String clientSoftTokenManager;
 
+    @Value("${client.secret.certifications.manager}")
+    private String clientCertificationsManager;
+
+    @Value("${client.secret.users.questions.manager}")
+    private String clientUsersQuestionsManager;
+
+    @Value("${client.secret.onboarding.manager}")
+    private String clientOnboardingManager;
+
+    @Value("${client.secret.transfer.programming.manager}")
+    private String clientTransferProgramming;
+
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
@@ -102,6 +114,10 @@ public class MiddlewareConfigFactory {
                 .clientAccountStatementManager(clientAccountStatementManager)
                 .clientRemittanceManager(clientRemittanceManager)
                 .clientSoftTokenManager(clientSoftTokenManager)
+                .clientCertificationsManager(clientCertificationsManager)
+                .clientUsersQuestionsManager(clientUsersQuestionsManager)
+                .clientOnboardingManager(clientOnboardingManager)
+                .clientTransferProgramming(clientTransferProgramming)
                 .build();
     }
 }

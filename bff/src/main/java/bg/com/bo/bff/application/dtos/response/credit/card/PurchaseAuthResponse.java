@@ -17,9 +17,6 @@ public class PurchaseAuthResponse {
     @Schema(description = "tipo")
     private String type;
 
-    @Schema(description = "descripción")
-    private String description;
-
     @Schema(description = "monto")
     private String amount;
 
@@ -31,4 +28,13 @@ public class PurchaseAuthResponse {
 
     @Schema(description = "origen")
     private String origin;
+
+    @Schema(description = "Fecha de inicio")
+    private String initDate;
+
+    @Schema(description = "Fecha de fin")
+    private String endDate;
+
+    @Schema(description = "Tipo de habilitacion")
+    private String requestType;
 }

@@ -89,4 +89,7 @@ public class LoanPaymentResponse {
 
     @Schema(description = "Cuotas pagadas")
     private double paidInstallments;
+
+    @Schema(description = "Cuota de seguro en moneda del prestamo")
+    private double amountInsuranceCurrencyLoans;
 }

@@ -52,4 +52,13 @@ public class MiddlewareConfig {
     private String clientAccountStatementManager;
 
     private String clientSoftTokenManager;
+
+    private String clientCertificationsManager;
+
+    private String clientUsersQuestionsManager;
+
+    private String clientOnboardingManager;
+
+    private String clientTransferProgramming;
+
 }

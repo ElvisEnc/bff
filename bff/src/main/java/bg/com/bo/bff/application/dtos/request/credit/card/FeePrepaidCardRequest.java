@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class FeePrepaidCardRequest {
     @NotBlank
-    @Pattern(regexp = "13-\\d{2}-\\d{2}-\\d{2}", message = "Valor inválido para cmsAccountNumber")
+    @Pattern(regexp = "13-\\d{2}-\\d{2}-\\d{3,6}", message = "Valor inválido para cmsAccountNumber")
     @Schema(description = "número compuesto de la Cuenta", example = "123456")
     private String cmsAccount;
 

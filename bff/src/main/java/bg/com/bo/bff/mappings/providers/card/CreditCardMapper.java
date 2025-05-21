@@ -1,12 +1,45 @@
 package bg.com.bo.bff.mappings.providers.card;
 
-import bg.com.bo.bff.application.dtos.request.credit.card.*;
-import bg.com.bo.bff.application.dtos.response.credit.card.*;
+import bg.com.bo.bff.application.dtos.request.credit.card.AuthorizationCreditCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.BlockCreditCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.CashAdvanceRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.FeePrepaidCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.PayCreditCardRequest;
+import bg.com.bo.bff.application.dtos.response.credit.card.AvailableCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CashAdvanceFeeResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CashAdvanceResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CreditCardStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.DetailCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.DetailPrepaidCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.FeePrepaidCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.LinkserCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.ListCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PayCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PeriodCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PurchaseAuthResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.utils.UtilDate;
-import bg.com.bo.bff.providers.dtos.request.credit.card.*;
+import bg.com.bo.bff.providers.dtos.request.credit.card.AuthorizationCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.BlockCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.CashAdvanceFeeMWRequest;
 import bg.com.bo.bff.providers.dtos.request.credit.card.CashAdvanceMWRequest;
-import bg.com.bo.bff.providers.dtos.response.credit.card.mw.*;
+import bg.com.bo.bff.providers.dtos.request.credit.card.FeePrepaidCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.PayCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.TransAccount;
+import bg.com.bo.bff.providers.dtos.request.credit.card.TransAmount;
+import bg.com.bo.bff.providers.dtos.request.credit.card.TransOwnerAccount;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.AvailableCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.CashAdvanceFeeMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.CashAdvanceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.CreditCardStatementsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.DetailPrepaidCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.DetailsCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.FeePrepaidCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.LinkserCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.ListCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.PayCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.PeriodCreditCardMWResponse;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.PurchaseAuthMWResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.credit.card.CreditCardConstans;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +47,27 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
 public class CreditCardMapper implements ICreditCardMapper {
+
+    private static final String REQUEST_TYPE_INTERNET = "I";
+    private static final String TYPE_INTERNET = "Internet";
+    private static final String RESPONSE_TEXT_ACTIVE = "ACTIVA";
+    private static final String RESPONSE_TEXT_FORMATED = "ACTIVADA";
+    private static final String RESPONSE_TEXT_BLOCKED = "BLOQUEADA";
+    private static final String TYPE_SPECIAL = "Liberacion Parametros";
+    private static final String TRANSACTIONS_STATUS_POSTED = "POSTED";
+    private static final String TRANSACTIONS_STATUS_POSTED_FORMATTED = "PROCESADA";
+    private static final String TRANSACTIONS_STATUS_NO_POSTED_FORMATTED = "RECHAZADA";
+
+    private static final Map<String, Integer> TRANSACTION_TYPE_VALUES = Map.of(
+            "TPP", 35,
+            "TC", 2
+    );
+
     @Override
     public ListCreditCardResponse convertResponse(ListCreditCardMWResponse mwResponse) {
         if (mwResponse == null)
@@ -45,9 +95,10 @@ public class CreditCardMapper implements ICreditCardMapper {
     }
 
     private ListCreditCardResponse.CreditCardResponse mapCreditCard(ListCreditCardMWResponse.CreditCardMWResponse ccMW) {
+        String[] words = ccMW.getProduct().split(" ");
         return ListCreditCardResponse.CreditCardResponse.builder()
                 .cardId(ccMW.getAccountMaster())
-                .product(ccMW.getProduct())
+                .product(words[words.length - 1])
                 .cardNumber(Util.obfuscateCardNumber(ccMW.getPanNumber()))
                 .cmsAccount(ccMW.getCmsAccountNumber())
                 .holderName(ccMW.getHolderName())
@@ -60,9 +111,10 @@ public class CreditCardMapper implements ICreditCardMapper {
     }
 
     private ListCreditCardResponse.PrepaidCardResponse mapPrepaidCard(ListCreditCardMWResponse.PrepaidCardMWResponse pcMW) {
+        String[] words = pcMW.getProduct().split(" ");
         return ListCreditCardResponse.PrepaidCardResponse.builder()
                 .cardId(pcMW.getAccountMaster())
-                .product(pcMW.getProduct())
+                .product(words[words.length - 1])
                 .cardNumber(Util.obfuscateCardNumber(pcMW.getPanNumber()))
                 .cmsAccount(pcMW.getCmsAccountNumber())
                 .holderName(pcMW.getHolderName())
@@ -70,7 +122,7 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .dueDate(UtilDate.formatDate(pcMW.getDueDate()))
                 .typeCard(pcMW.getTypeCard())
                 .clientCode(pcMW.getClientCode())
-                .status(pcMW.getStatus())
+                .status(pcMW.getStatus().contains(RESPONSE_TEXT_ACTIVE) ? RESPONSE_TEXT_FORMATED : RESPONSE_TEXT_BLOCKED)
                 .solicitudeDate(UtilDate.formatDate(pcMW.getSolicitudeDate()))
                 .typeCardCode(pcMW.getTypeCardCode())
                 .build();
@@ -82,6 +134,7 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .cardId(mwResponse.getAccountMaster())
                 .cmsAccount(mwResponse.getCmsAccountNumber())
                 .cardNumber(Util.obfuscateCardNumber(mwResponse.getPanNumber()))
+                .panNumber(mwResponse.getPanNumber())
                 .holderName(mwResponse.getHolderName())
                 .placeCode(mwResponse.getPlaceCode())
                 .place(mwResponse.getPlace())
@@ -98,6 +151,10 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .debtClose(mwResponse.getDebtClose())
                 .dueDatePeriod(mwResponse.getDueDatePeriod())
                 .duePaymentDatePeriod(mwResponse.getDuePaymentDatePeriod())
+                .paymentAmountMinimum(mwResponse.getPaymentAmountMinimum())
+                .currentPaymentAmount(mwResponse.getAmountPaymentCurrent())
+                .currentDebtClosureAmount(mwResponse.getDebtCloseCurrent())
+                .currentMinimumAmount(mwResponse.getAmountMinimumCurrent())
                 .build();
     }
 
@@ -111,6 +168,8 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .productCode(mwResponse.getProductCode())
                 .product(mwResponse.getProduct())
                 .currency(mwResponse.getCurrency())
+                .availableAmount(mwResponse.getAvailableAmount())
+                .lastRechargeDate(mwResponse.getLastRechargeDate())
                 .registrationDate(UtilDate.formatDate(mwResponse.getRegistrationDate()))
                 .dueDate(UtilDate.formatDate(mwResponse.getDueDate()))
                 .cardStatus(mwResponse.getStatusCard())
@@ -132,6 +191,7 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .codBlockReason(request.getType().equals(CreditCardConstans.UNBLOCK_REASON.getValue()) ?
                         CreditCardConstans.UNBLOCK_REASON.getValue() :
                         CreditCardConstans.BLOCK_REASON.getValue())
+                .typeCard(request.getTypeCard())
                 .build();
     }
 
@@ -189,18 +249,24 @@ public class CreditCardMapper implements ICreditCardMapper {
     public List<LinkserCreditCardResponse> convertListCreditCard(LinkserCreditCardMWResponse mwResponse) {
         if (mwResponse == null || mwResponse.getData() == null)
             return Collections.emptyList();
+
         return mwResponse.getData().stream()
-                .map(mw -> LinkserCreditCardResponse.builder()
-                        .cmsCard(mw.getCmsCardNumber())
-                        .cardNumber(Util.obfuscateCardNumber(mw.getPanNumber()))
-                        .holderName(mw.getHolderName().trim())
-                        .dueDate(convertDueDateCreditCard(mw.getDueDate()))
-                        .branch(mw.getBranch())
-                        .cardType(mw.getCardType().trim())
-                        .statusCode(mw.getStatusCode())
-                        .statusDescription(mw.getStatusDescription())
-                        .build())
+                .map(mw ->
+                        LinkserCreditCardResponse.builder()
+                                .cmsCard(mw.getCmsCardNumber())
+                                .cardNumber(Util.obfuscateCardNumber(mw.getPanNumber()))
+                                .holderName(mw.getHolderName().trim())
+                                .dueDate(convertDueDateCreditCard(mw.getDueDate()))
+                                .branch(mw.getBranch())
+                                .cardType(mw.getCardType().trim())
+                                .statusCode(mw.getStatusCode())
+                                .statusDescription(getLastWord(mw.getStatusDescription().contains(RESPONSE_TEXT_ACTIVE) ? RESPONSE_TEXT_FORMATED : RESPONSE_TEXT_BLOCKED))
+                                .build())
                 .toList();
+    }
+
+    private String getLastWord(String text) {
+        return text.substring(text.lastIndexOf(" ") + 1);
     }
 
     private String convertDueDateCreditCard(String dueDate) {
@@ -220,6 +286,8 @@ public class CreditCardMapper implements ICreditCardMapper {
                 .cmsAccountNumber(request.getCmsAccount())
                 .cmsCardNumber(request.getCmsCard())
                 .accountId(request.getAccountId())
+                .panNumber(request.getPanNumber())
+                .dueDate(request.getDueDate())
                 .amount(request.getAmount())
                 .description(request.getDescription())
                 .build();
@@ -250,12 +318,12 @@ public class CreditCardMapper implements ICreditCardMapper {
                         .currency(mw.getOriginalCurrency())
                         .mrAmount(Util.scaleToTwoDecimals(mw.getMrAmount()))
                         .mlAmount(Util.scaleToTwoDecimals(mw.getMlAmount()))
-                        .transactionDate(UtilDate.formatDate(mw.getTransactionDate()))
+                        .transactionDate(mw.getTransactionDate())
                         .processDate(UtilDate.formatDate(mw.getProcessDate()))
                         .clientName(mw.getClientName().trim())
                         .transactionType(mw.getTransactionType())
                         .transactionTypeDesc(mw.getTransactionTypeDesc())
-                        .transactionStatus(mw.getTransactionStatus())
+                        .transactionStatus(mw.getTransactionStatus().equals(TRANSACTIONS_STATUS_POSTED) ? TRANSACTIONS_STATUS_POSTED_FORMATTED : TRANSACTIONS_STATUS_NO_POSTED_FORMATTED)
                         .sequenceNumber(mw.getSequenceNumber())
                         .feeNumber(mw.getFeeNumber())
                         .paramDate(UtilDate.formatDate(mw.getParamDate()))
@@ -264,21 +332,34 @@ public class CreditCardMapper implements ICreditCardMapper {
     }
 
     @Override
-    public List<PurchaseAuthResponse> convertPurchase(PurchaseAuthMWResponse mwResponse) {
+    public List<PurchaseAuthResponse> convertPurchase(PurchaseAuthMWResponse mwResponse, String type) {
         if (mwResponse == null || mwResponse.getData() == null) {
             return Collections.emptyList();
         }
-        return mwResponse.getData().stream()
+        List<PurchaseAuthResponse> list = mwResponse.getData().stream()
                 .map(mw -> PurchaseAuthResponse.builder()
                         .processDate(UtilDate.formatDate(mw.getProcessDate()))
                         .type(mw.getType())
-                        .description(mw.getDescription())
                         .amount(mw.getAmount())
                         .currency(mw.getCurrency())
                         .status(mw.getStatus())
                         .origin(mw.getOrigin())
-                        .build())
+                        .initDate(mw.getInitDate())
+                        .endDate(mw.getEndDate())
+                        .requestType(mw.getRequestType())
+                        .build()
+                )
                 .toList();
+
+        if (type.equals(REQUEST_TYPE_INTERNET)) {
+            return list.stream().filter(
+                    obj -> obj.getRequestType().equals(TYPE_INTERNET)
+            ).toList();
+        }
+
+        return list.stream().filter(
+                obj -> obj.getRequestType().equals(TYPE_SPECIAL)
+        ).toList();
     }
 
     @Override
@@ -302,7 +383,11 @@ public class CreditCardMapper implements ICreditCardMapper {
                         .amount(request.getAmount().getAmount())
                         .build())
                 .supplementaryData(PayCreditCardMWRequest.SupplementaryData.builder()
-                        .transactionType(CreditCardConstans.TRANSACTION_TYPE.getValue())
+                        .transactionType(
+                                String.valueOf(
+                                        TRANSACTION_TYPE_VALUES.getOrDefault(
+                                                request.getTransactionType(), 0))
+                        )
                         .description(request.getData().getDescription())
                         .sourceOfFunds(request.getData().getSourceOfFunds())
                         .destinationOfFunds(request.getData().getDestinationOfFunds())

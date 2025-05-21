@@ -1,8 +1,8 @@
 package bg.com.bo.bff.application.dtos.request.credit.card;
 
+import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
 import bg.com.bo.bff.application.dtos.request.destination.account.PaginationRequest;
 import bg.com.bo.bff.application.dtos.request.qr.OrderRequest;
-import bg.com.bo.bff.application.dtos.request.commons.PeriodRequest;
 import bg.com.bo.bff.application.dtos.request.transfer.AmountTransfer;
 import bg.com.bo.bff.application.dtos.request.transfer.DataTransfer;
 import bg.com.bo.bff.application.dtos.request.transfer.TargetAccount;
@@ -14,6 +14,7 @@ public class CreditCardRequestFixture {
         return BlockCreditCardRequest.builder()
                 .cmsCard("13-01-10-0201360001")
                 .type("2")
+                .typeCard("TC")
                 .build();
     }
 
@@ -28,6 +29,8 @@ public class CreditCardRequestFixture {
         return CashAdvanceRequest.builder()
                 .cmsAccount("13-45-10-123456")
                 .cmsCard("13-45-10-1234567890")
+                .panNumber("4099-11XX-XXXX-2018")
+                .dueDate("30/11/2029")
                 .accountId("123456")
                 .amount(new BigDecimal("100.00"))
                 .description("Cash advance for travel")
@@ -36,7 +39,7 @@ public class CreditCardRequestFixture {
 
     public static CreditCardStatementRequest withDefaultCreditCardStatementRequest() {
         return CreditCardStatementRequest.builder()
-                .cmsCard("13-07-10-0000000005")
+                .cmsCard("13-07-10-000005")
                 .filters(CreditCardStatementRequest.CreditCardFilter.builder()
                         .pagination(withDefaultPaginationRequest())
                         .date(withDefaultPeriodRequest())
@@ -132,7 +135,7 @@ public class CreditCardRequestFixture {
 
     public static FeePrepaidCardRequest withDefaultComissionPrepaidCardRequest() {
         return FeePrepaidCardRequest.builder()
-                .cmsAccount("13-45-10-12")
+                .cmsAccount("13-45-10-129")
                 .amount(new BigDecimal("100.00"))
                 .build();
     }

@@ -9,10 +9,7 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
-import bg.com.bo.bff.providers.dtos.request.own.account.mw.AccountStatementsMWRequest;
-import bg.com.bo.bff.providers.dtos.request.own.account.mw.OwnAccountMWRequestFixture;
-import bg.com.bo.bff.providers.dtos.request.own.account.mw.ReportTransfersMWRequest;
-import bg.com.bo.bff.providers.dtos.request.own.account.mw.UpdateTransactionLimitMWRequest;
+import bg.com.bo.bff.providers.dtos.request.own.account.mw.*;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.providers.dtos.response.own.account.mw.*;
 import bg.com.bo.bff.providers.interfaces.IAccountStatementProvider;
@@ -100,5 +97,18 @@ class AccountStatementMiddlewareProviderTest {
         //Assert
         assertNotNull(response);
         assertEquals(response, responseExpected);
+    }
+
+    @Test
+    void regenerateVoucherOK() throws IOException {
+        RegenerateVoucherMWRequest request = RegenerateVoucherMWRequestFixture.withDefaults();
+        RegenerateVoucherMWResponse expected = RegenerateVoucherMWResponseFixture.withDefaults();
+        String jsonResponse = Util.objectToString(expected);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        RegenerateVoucherMWResponse response = provider.regenerateVoucher(request, map);
+
+        assertNotNull(response);
+        assertEquals(response.getData().get(0).getAmount(), expected.getData().get(0).getAmount());
     }
 }

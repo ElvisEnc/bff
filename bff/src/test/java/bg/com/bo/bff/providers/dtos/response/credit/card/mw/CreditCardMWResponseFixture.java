@@ -62,7 +62,7 @@ public class CreditCardMWResponseFixture {
                 .placeCode("001")
                 .place("Main Branch")
                 .amountLimit("5000")
-                .amountAvailable("2000")
+                .amountAvailable(BigDecimal.valueOf(2000))
                 .currencyCode("USD")
                 .currencyDescription("US Dollar")
                 .dueDate("2024-12-31")
@@ -76,6 +76,10 @@ public class CreditCardMWResponseFixture {
                 .dueDatePeriod("20/12/2024")
                 .duePaymentDatePeriod("31/12/2022")
                 .debtClose("close")
+                .paymentAmountMinimum("10")
+                .amountPaymentCurrent(BigDecimal.valueOf(350))
+                .amountMinimumCurrent(BigDecimal.valueOf(195))
+                .debtCloseCurrent(BigDecimal.valueOf(1500))
                 .build();
     }
 
@@ -89,6 +93,8 @@ public class CreditCardMWResponseFixture {
                 .product("Tarjeta Prepaga Oro")
                 .currency("068")
                 .currencyDescription("BOB")
+                .availableAmount(BigDecimal.valueOf(1800.9))
+                .lastRechargeDate("01/01/2025")
                 .registrationDate("2023-01-01")
                 .dueDate("2026-12-31")
                 .statusCard("Activa")
@@ -225,17 +231,61 @@ public class CreditCardMWResponseFixture {
                 .build();
     }
 
+    public static CreditCardStatementsMWResponse withDefaultsNoPosted() {
+        return CreditCardStatementsMWResponse.builder()
+                .data(Arrays.asList(
+                        CreditCardStatementsMWResponse.CreditCardStatementMW.builder()
+                                .transactionDate("10/10/2023")
+                                .processDate("10/10/2023")
+                                .description("PAGO")
+                                .currency("068")
+                                .originalCurrency("068")
+                                .transactionTypeDesc("CREDIT")
+                                .clientName("JOSE          ")
+                                .transactionStatus("NOPOSTED")
+                                .mrAmount(new BigDecimal("0.9"))
+                                .mlAmount(new BigDecimal("10.1"))
+                                .transactionType("PAGO")
+                                .cardNumber("4099-11XX-XXXX-3055")
+                                .sequenceNumber(new BigDecimal("160203"))
+                                .feeNumber("1/1")
+                                .paramDate("12/09/2024")
+                                .build()
+                ))
+                .build();
+    }
+
     public static PurchaseAuthMWResponse withDefaultPurchaseAuthMWResponse() {
         return PurchaseAuthMWResponse.builder()
                 .data(Arrays.asList(
                         PurchaseAuthMWResponse.PurchaseAuthMW.builder()
                                 .processDate("09/08/2024")
                                 .type("Temporal")
-                                .description("Habilitacion de compras por internet: Fecha Inicio: 10/08/2024 - Fecha Fin: 11/08/2024")
                                 .amount("45.00")
                                 .currency("840")
                                 .status("PENDIENTE")
                                 .origin("GMV")
+                                .initDate("01/01/2025")
+                                .endDate("01/01/2025")
+                                .requestType("Internet")
+                                .build()
+                ))
+                .build();
+    }
+
+    public static PurchaseAuthMWResponse withDefaultPurchaseAuthMWResponseSpecial() {
+        return PurchaseAuthMWResponse.builder()
+                .data(Arrays.asList(
+                        PurchaseAuthMWResponse.PurchaseAuthMW.builder()
+                                .processDate("09/08/2024")
+                                .type("Temporal")
+                                .amount("45.00")
+                                .currency("840")
+                                .status("PENDIENTE")
+                                .origin("GMV")
+                                .initDate("01/01/2025")
+                                .endDate("01/01/2025")
+                                .requestType("Liberacion Parametros")
                                 .build()
                 ))
                 .build();
@@ -271,7 +321,7 @@ public class CreditCardMWResponseFixture {
                 .build();
     }
 
-    public static AuthorizationCreditCardMWResponse withDefaultAuthorizationCreditCardMWResponse(){
+    public static AuthorizationCreditCardMWResponse withDefaultAuthorizationCreditCardMWResponse() {
         return AuthorizationCreditCardMWResponse.builder()
                 .codError("TJC092")
                 .desError("Success")
@@ -279,7 +329,7 @@ public class CreditCardMWResponseFixture {
                 .build();
     }
 
-    public static AuthorizationCreditCardMWResponse withDefaultAuthorizationCreditCardMWErrorResponse(){
+    public static AuthorizationCreditCardMWResponse withDefaultAuthorizationCreditCardMWErrorResponse() {
         return AuthorizationCreditCardMWResponse.builder()
                 .codError("000")
                 .desError("Error")
@@ -287,7 +337,7 @@ public class CreditCardMWResponseFixture {
                 .build();
     }
 
-    public static FeePrepaidCardMWResponse withDefaultComissionPrepaidCardMWResponse(){
+    public static FeePrepaidCardMWResponse withDefaultComissionPrepaidCardMWResponse() {
         return FeePrepaidCardMWResponse.builder()
                 .transferFee(BigDecimal.valueOf(5.0))
                 .insuranceAmount(BigDecimal.valueOf(100.0))

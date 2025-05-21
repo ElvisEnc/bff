@@ -30,7 +30,7 @@ public interface ICreditCardService {
 
     List<CreditCardStatementsResponse> creditCardStatements(String personId, CreditCardStatementRequest request) throws IOException;
 
-    List<PurchaseAuthResponse> getPurchasesAuthorizations(String personId, String cmsCard) throws IOException;
+    List<PurchaseAuthResponse> getPurchasesAuthorizations(String personId, String cmsCard, String type) throws IOException;
 
     PayCreditCardResponse payCreditCard(String personId, String accountId, PayCreditCardRequest request) throws IOException;
 

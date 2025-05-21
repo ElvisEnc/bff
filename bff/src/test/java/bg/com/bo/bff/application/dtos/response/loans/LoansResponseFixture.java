@@ -159,7 +159,6 @@ public class LoansResponseFixture {
                 .accruedCharges(100.0)
                 .interestCurrent(100.0)
                 .capital(100.0)
-                .form(1)
                 .amount(100.0)
                 .secureCurrency(1)
                 .amountSecureMandatory(100.0)
@@ -194,6 +193,12 @@ public class LoansResponseFixture {
                 .nextDueDate("2024-08-11")
                 .totalInstallments(12)
                 .paidInstallments(1)
+                .build();
+    }
+
+    public static Pcc01Response withDefaultPcc01Response() {
+        return Pcc01Response.builder()
+                .requiresPcc01("S")
                 .build();
     }
 }

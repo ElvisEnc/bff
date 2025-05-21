@@ -8,6 +8,16 @@ public class RemittanceRequestFixture {
                 .build();
     }
 
+    public static DepositRemittanceWURequest withDefaultDepositRemittanceWURequest() {
+        return DepositRemittanceWURequest.builder()
+                .accountId("123456")
+                .consultationId("123456789")
+                .pccType("0")
+                .originFunds("1")
+                .originDestiny("1")
+                .build();
+    }
+
     public static ConsultWURemittanceRequest withDefaultConsultWURemittanceRequest(){
         return ConsultWURemittanceRequest.builder()
                 .jtsOidAccount("363636")

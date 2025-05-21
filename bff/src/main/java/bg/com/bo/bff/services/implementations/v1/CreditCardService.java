@@ -1,7 +1,23 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.credit.card.*;
-import bg.com.bo.bff.application.dtos.response.credit.card.*;
+import bg.com.bo.bff.application.dtos.request.credit.card.AuthorizationCreditCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.BlockCreditCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.CashAdvanceRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.CreditCardStatementRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.FeePrepaidCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.PayCreditCardRequest;
+import bg.com.bo.bff.application.dtos.response.credit.card.AvailableCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CashAdvanceFeeResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CashAdvanceResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CreditCardStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.DetailCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.DetailPrepaidCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.FeePrepaidCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.LinkserCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.ListCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PayCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PeriodCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PurchaseAuthResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.commons.constants.CacheConstants;
@@ -9,7 +25,13 @@ import bg.com.bo.bff.commons.filters.OrderFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.mappings.providers.card.ICreditCardMapper;
-import bg.com.bo.bff.providers.dtos.request.credit.card.*;
+import bg.com.bo.bff.providers.dtos.request.credit.card.AuthorizationCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.BlockCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.CashAdvanceFeeMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.CashAdvanceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.FeePrepaidCardMWRequest;
+import bg.com.bo.bff.providers.dtos.request.credit.card.PayCreditCardMWRequest;
+import bg.com.bo.bff.providers.dtos.response.credit.card.mw.AvailableCreditCardMWResponse;
 import bg.com.bo.bff.providers.dtos.response.credit.card.mw.CreditCardStatementsMWResponse;
 import bg.com.bo.bff.providers.dtos.response.credit.card.mw.PayCreditCardMWResponse;
 import bg.com.bo.bff.providers.interfaces.ICreditCardProvider;
@@ -28,6 +50,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +66,11 @@ public class CreditCardService implements ICreditCardService {
     @Autowired
     private CreditCardService self;
 
-    public CreditCardService(ICreditCardProvider provider, ICreditCardTransactionProvider transactionProvider, ICreditCardMapper mapper) {
+    public CreditCardService(
+            ICreditCardProvider provider,
+            ICreditCardTransactionProvider transactionProvider,
+            ICreditCardMapper mapper
+    ) {
         this.provider = provider;
         this.transactionProvider = transactionProvider;
         this.mapper = mapper;
@@ -56,12 +83,26 @@ public class CreditCardService implements ICreditCardService {
 
     @Override
     public DetailCreditCardResponse getDetailsCreditCard(String personId, String cardId) throws IOException {
-        return mapper.convertDetails(provider.getDetailCreditCard(personId, cardId));
+        DetailCreditCardResponse dataResponse = mapper.convertDetails(provider.getDetailCreditCard(personId, cardId));
+        if (dataResponse.getCmsAccount() != null) {
+            AvailableCreditCardMWResponse available = provider.getAvailable(dataResponse.getCmsAccount());
+            if (available != null) {
+                dataResponse.setAmountAvailable(available.getAvailableAmount());
+            }
+        }
+        return dataResponse;
     }
 
     @Override
     public DetailPrepaidCardResponse getDetailsPrepaidCard(String personId, String cardId) throws IOException {
-        return mapper.convertDetails(provider.getDetailPrepaidCard(personId, cardId));
+        DetailPrepaidCardResponse dataResponse = mapper.convertDetails(provider.getDetailPrepaidCard(personId, cardId));
+        if (dataResponse.getCmsAccount() != null) {
+            AvailableCreditCardMWResponse available = provider.getAvailable(dataResponse.getCmsAccount());
+            if (available != null) {
+                dataResponse.setAvailableAmount(available.getAvailableAmount());
+            }
+        }
+        return dataResponse;
     }
 
     @Override
@@ -98,7 +139,9 @@ public class CreditCardService implements ICreditCardService {
     }
 
     @Override
-    public List<CreditCardStatementsResponse> creditCardStatements(String personId, CreditCardStatementRequest request) throws IOException {
+    public List<CreditCardStatementsResponse> creditCardStatements(
+            String personId, CreditCardStatementRequest request
+    ) throws IOException {
         Boolean refreshData = request.getRefreshData();
         List<CreditCardStatementsResponse> list = self.getStatementsCache(personId, request, refreshData);
 
@@ -110,9 +153,16 @@ public class CreditCardService implements ICreditCardService {
             BigDecimal localAmount = response.getMlAmount();
             return (localAmount != null && localAmount.compareTo(BigDecimal.ZERO) > 0) ? localAmount : foreignAmount;
         });
-        comparatorOptions.put("DATE", response -> LocalDate.parse(response.getProcessDate(), UtilDate.getDateFormatter()));
-        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
 
+        comparatorOptions.put("DATE", response -> {
+            String dateStr = response.getTransactionDate();
+            return (
+                    dateStr != null && !dateStr.isEmpty())
+                    ? LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    : null;
+        });
+
+        list = new OrderFilter<>(field, desc, comparatorOptions).apply(list);
         if (request.getFilters().getPagination() != null) {
             int page = request.getFilters().getPagination().getPage();
             int pageSize = request.getFilters().getPagination().getPageSize();
@@ -121,9 +171,23 @@ public class CreditCardService implements ICreditCardService {
         return list;
     }
 
-    @Caching(cacheable = {@Cacheable(value = CacheConstants.USER_DATA, key = "'credit-card-statements:' + #personId + ':cmsCard:' + #request.cmsCard", condition = "#refreshData == false")},
-            put = {@CachePut(value = CacheConstants.USER_DATA, key = "'credit-card-statements:' + #personId + ':cmsCard:' + #request.cmsCard", condition = "#refreshData == true")})
-    protected List<CreditCardStatementsResponse> getStatementsCache(String personId, CreditCardStatementRequest request, Boolean refreshData) throws IOException {
+    @Caching(
+            cacheable = {
+                    @Cacheable(
+                            value = CacheConstants.USER_DATA,
+                            key = "'credit-card-statements:' + #personId + ':cmsCard:' + #request.cmsCard",
+                            condition = "#refreshData == false")
+            },
+            put = {
+                    @CachePut(
+                            value = CacheConstants.USER_DATA,
+                            key = "'credit-card-statements:' + #personId + ':cmsCard:' + #request.cmsCard",
+                            condition = "#refreshData == true")
+            }
+    )
+    protected List<CreditCardStatementsResponse> getStatementsCache(
+            String personId, CreditCardStatementRequest request, Boolean refreshData
+    ) throws IOException {
         String card = request.getCmsCard();
         String init = UtilDate.adaptDateToMWFormat(request.getFilters().getDate().getStart());
         String end = UtilDate.adaptDateToMWFormat(request.getFilters().getDate().getEnd());
@@ -132,12 +196,16 @@ public class CreditCardService implements ICreditCardService {
     }
 
     @Override
-    public List<PurchaseAuthResponse> getPurchasesAuthorizations(String personId, String cmsCard) throws IOException {
-        return mapper.convertPurchase(provider.getListPurchaseAuth(personId, cmsCard));
+    public List<PurchaseAuthResponse> getPurchasesAuthorizations(
+            String personId, String cmsCard, String type
+    ) throws IOException {
+        return mapper.convertPurchase(provider.getListPurchaseAuth(personId, cmsCard), type);
     }
 
     @Override
-    public PayCreditCardResponse payCreditCard(String personId, String accountId, PayCreditCardRequest request) throws IOException {
+    public PayCreditCardResponse payCreditCard(
+            String personId, String accountId, PayCreditCardRequest request
+    ) throws IOException {
         PayCreditCardMWRequest mwRequest = mapper.mapperRequest(personId, accountId, request);
         PayCreditCardMWResponse mwResponse = transactionProvider.payCreditCard(mwRequest);
         if (mwResponse.getStatus().equals(CreditCardConstans.APPROVED.getValue()))
@@ -149,14 +217,18 @@ public class CreditCardService implements ICreditCardService {
     }
 
     @Override
-    public GenericResponse authorizationCreditCard(String personId, AuthorizationCreditCardRequest request) throws IOException {
+    public GenericResponse authorizationCreditCard(
+            String personId, AuthorizationCreditCardRequest request
+    ) throws IOException {
         AuthorizationCreditCardMWRequest mwRequest = mapper.mapperRequest(personId, request);
         return provider.authorizationCreditCard(mwRequest);
     }
 
     @Override
-    public FeePrepaidCardResponse getFeePrepaidCard(String personId, String cardId, FeePrepaidCardRequest request) throws IOException {
+    public FeePrepaidCardResponse getFeePrepaidCard(
+            String personId, String cardId, FeePrepaidCardRequest request
+    ) throws IOException {
         FeePrepaidCardMWRequest mwRequest = mapper.mapperRequest(cardId, request);
-        return  mapper.convertResponse(provider.getFeePrepaidCard(mwRequest));
+        return mapper.convertResponse(provider.getFeePrepaidCard(mwRequest));
     }
 }

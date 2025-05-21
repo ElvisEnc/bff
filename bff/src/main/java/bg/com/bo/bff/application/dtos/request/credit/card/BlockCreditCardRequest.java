@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class BlockCreditCardRequest {
     @NotBlank()
     @Size(min = 1, max = 19)
-    @Pattern(regexp = "13-\\d{2}-10-\\d{10}", message = "Se espera el formato correcto")
-    @Schema(description = "número compuesto de la tarjeta", example = "13-07-10-0005790000")
+    @Pattern(regexp = "13-\\d{2}-\\d{2}-\\d{1,10}", message = "Se espera el formato correcto.")
+    @Schema(description = "número compuesto de la tarjeta", example = "13-07-10-000579")
     private String cmsCard;
 
     @NotBlank()
@@ -25,4 +25,10 @@ public class BlockCreditCardRequest {
     @Size(min = 1, max = 1)
     @Schema(description = "bloquedo o desbloqueo. 0=desbloqueo, 2=bloqueo", example = "0")
     private String type;
+
+    @NotBlank(message = "Tipo de tarjeta no puede ser vacia. TC=Tarjeta de credito, TP=Tarjeta prepapagada")
+    @Pattern(regexp = "^(TC|TP)$")
+    @Schema(description = "Tipo de tarjeta. TC=Tarjeta de credito, TP=Tarjeta prepapagada", example = "TC")
+    private String typeCard;
+
 }

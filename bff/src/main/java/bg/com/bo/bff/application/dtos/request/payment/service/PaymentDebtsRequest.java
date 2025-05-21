@@ -1,6 +1,7 @@
 package bg.com.bo.bff.application.dtos.request.payment.service;
 
 import bg.com.bo.bff.commons.annotations.OnlyNumber;
+import bg.com.bo.bff.commons.annotations.ValidText;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
@@ -25,18 +26,30 @@ public record PaymentDebtsRequest(
         Long fromAccountId,
 
         @NotBlank
+        @NotNull
         @Size(min = 1, max = 100)
         @Schema(description = "uuid", example = "324a029a-553f-4acb-abf4-4dcb25574463")
         String idGenerated,
 
-        @OnlyNumber
+        @Pattern(regexp = "\\d+", message = "Existen valores invalidos en el numero de CI o NIT")
+        @Size(min = 1, max = 30)
         @Schema(description = "Nit de la factura", example = "12546878")
-        String invoiceNit,
+        String invoiceNITCI,
 
-        @NotBlank
         @Size(max = 150)
         @Schema(description = "Nombre de la factura", example = "Juan Perez")
         String invoiceName,
+
+        @Schema(description = "Tipo de facturacion")
+        String invoiceType,
+
+        @Schema(description = "Complemento del carnet de identidad", example = "1L")
+        @Size(max = 2)
+        String invoiceComplementId,
+
+        @Schema(description = "Correo electronico al que se envia la factura.", example = "test@hotmail.com")
+        @Size(max = 50)
+        String invoiceEmail,
 
         @NotBlank
         @Size(max = 150)
@@ -44,10 +57,13 @@ public record PaymentDebtsRequest(
         String company,
 
         @OnlyNumber
+        @NotNull
         @Schema(description = "Código de servicio", example = "77")
         String serviceCode,
 
         @NotBlank
+        @NotNull
+        @ValidText
         @Size(max = 150)
         @Schema(description = "Descripción", example = "Pagos")
         String description

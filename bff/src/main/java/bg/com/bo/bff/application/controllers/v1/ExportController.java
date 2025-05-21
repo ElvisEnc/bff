@@ -36,7 +36,7 @@ public class ExportController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Exporta los extractos de un rago de fecha")
     })
-    @PostMapping(value = "/accounts/{accountId}", produces = {"application/pdf", "text/csv"})
+    @PostMapping(value = "/accounts/{accountId}/persons/{personId}", produces = {"application/pdf", "text/csv"})
     public ResponseEntity<AccountStatementExportResponse> generateExtractReport(
             @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
             @RequestHeader("device-name") @NotBlank @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
@@ -44,9 +44,10 @@ public class ExportController {
             @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
             @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
             @PathVariable("accountId") @NotBlank @Parameter(description = "id de la cuenta", example = "654654678") String accountId,
+            @PathVariable("personId") @NotBlank @Parameter(description = "numero de persona", example = "12345") String personId,
             @Valid @RequestBody AccountStatementExportRequest body
     ) throws IOException {
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(exportService.generateReport(body, accountId, Headers.getParameter(httpServletRequest,
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(exportService.generateReport(body, accountId, personId, Headers.getParameter(httpServletRequest,
                 deviceId,
                 deviceName,
                 geoPositionX,

@@ -30,5 +30,6 @@ public class LoanDetailPaymentMWResponse {
     private String amount;
     private String secureCurrency;
     private String amountSecureMandatory;
+    private String amountSecureConvertMandatory;
     private String errorCode;
 }

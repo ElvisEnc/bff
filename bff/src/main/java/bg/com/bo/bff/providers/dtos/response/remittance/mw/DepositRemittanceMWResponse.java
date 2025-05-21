@@ -22,13 +22,13 @@ public class DepositRemittanceMWResponse {
     @NoArgsConstructor
     public static class DepositRemittanceMW {
 
-        private int remittanceCode;
+        private String codRemittance;
         private int accountingEntry;
         private String startTime;
         private String description;
-        private String remittanceName;
-        private BigDecimal receivedAmount;
-        private String receivedCurrency;
+        private String nameRemittance;
+        private BigDecimal amountReceived;
+        private String currencyReceived;
         private BigDecimal exchangeRate;
         private BigDecimal commission;
         private BigDecimal creditedAmount;

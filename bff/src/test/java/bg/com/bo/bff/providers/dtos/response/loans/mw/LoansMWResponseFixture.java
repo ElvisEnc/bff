@@ -171,6 +171,7 @@ public class LoansMWResponseFixture {
                 .amount("100")
                 .secureCurrency("840")
                 .amountSecureMandatory("100")
+                .amountSecureConvertMandatory("10")
                 .errorCode("0")
                 .build();
     }
@@ -226,6 +227,12 @@ public class LoansMWResponseFixture {
                 .typeMovement("payment")
                 .totalInstallment("650")
                 .branch("branch123")
+                .build();
+    }
+
+    public static Pcc01MWResponse withDefaultPcc01MWResponse() {
+        return Pcc01MWResponse.builder()
+                .requireUif("S")
                 .build();
     }
 }

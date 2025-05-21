@@ -62,6 +62,7 @@ public class CreditCardResponseFixture {
                 .cardId("123")
                 .cmsAccount("987654321")
                 .cardNumber("**** **** **** 3456")
+                .panNumber("1234-5678-9012-3456")
                 .holderName("John Doe")
                 .placeCode("001")
                 .place("Main Branch")
@@ -71,13 +72,17 @@ public class CreditCardResponseFixture {
                 .accountStatus("Active")
                 .insurance(true)
                 .currency("USD")
-                .amountAvailable("2000")
+                .amountAvailable(BigDecimal.valueOf(2000))
                 .limitMin("100")
                 .limitMax("5000")
                 .debtClose("close")
                 .amountLimit("5000")
                 .duePaymentDatePeriod("31/12/2022")
                 .dueDatePeriod("20/12/2024")
+                .paymentAmountMinimum("10")
+                .currentPaymentAmount(BigDecimal.valueOf(350))
+                .currentMinimumAmount(BigDecimal.valueOf(195))
+                .currentDebtClosureAmount(BigDecimal.valueOf(1500))
                 .build();
     }
 
@@ -90,6 +95,8 @@ public class CreditCardResponseFixture {
                 .productCode("PROD001")
                 .product("Tarjeta Prepaga Oro")
                 .currency("068")
+                .availableAmount(BigDecimal.valueOf(1800.9))
+                .lastRechargeDate("01/01/2025")
                 .registrationDate("01/01/2023")
                 .dueDate("31/12/2026")
                 .cardStatus("Activa")
@@ -197,6 +204,25 @@ public class CreditCardResponseFixture {
                 .build();
     }
 
+    public static CreditCardStatementsResponse withDefaultsRejected() {
+        return CreditCardStatementsResponse.builder()
+                .transactionDate("10/10/2023")
+                .processDate("10/10/2023")
+                .description("PAGO")
+                .currency("068")
+                .transactionTypeDesc("CREDIT")
+                .clientName("JOSE")
+                .transactionStatus("NOPOSTED")
+                .mrAmount(BigDecimal.valueOf(0.90).setScale(2, RoundingMode.DOWN))
+                .mlAmount(BigDecimal.valueOf(10.10).setScale(2, RoundingMode.DOWN))
+                .transactionType("PAGO")
+                .cardNumber("**** **** **** 3055")
+                .sequenceNumber(new BigDecimal("160203"))
+                .feeNumber("1/1")
+                .paramDate("12/09/2024")
+                .build();
+    }
+
     public static CreditCardStatementsResponse withDefaultCreditCardStatementsResponse2() {
         return CreditCardStatementsResponse.builder()
                 .transactionDate("2023-10-10")
@@ -239,11 +265,27 @@ public class CreditCardResponseFixture {
         return PurchaseAuthResponse.builder()
                 .processDate("09/08/2024")
                 .type("Temporal")
-                .description("Habilitacion de compras por internet: Fecha Inicio: 10/08/2024 - Fecha Fin: 11/08/2024")
                 .amount("45.00")
                 .currency("840")
                 .status("PENDIENTE")
                 .origin("GMV")
+                .initDate("01/01/2025")
+                .endDate("01/01/2025")
+                .requestType("Internet")
+                .build();
+    }
+
+    public static PurchaseAuthResponse withDefaultPurchaseAuthResponseSpecial() {
+        return PurchaseAuthResponse.builder()
+                .processDate("09/08/2024")
+                .type("Temporal")
+                .amount("45.00")
+                .currency("840")
+                .status("PENDIENTE")
+                .origin("GMV")
+                .initDate("01/01/2025")
+                .endDate("01/01/2025")
+                .requestType("Liberacion Parametros")
                 .build();
     }
 

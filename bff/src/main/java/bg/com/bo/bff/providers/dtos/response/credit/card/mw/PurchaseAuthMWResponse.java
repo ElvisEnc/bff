@@ -21,10 +21,12 @@ public class PurchaseAuthMWResponse {
     public static class PurchaseAuthMW {
         private String processDate;
         private String type;
-        private String description;
         private String amount;
         private String currency;
         private String status;
         private String origin;
+        private String initDate;
+        private String endDate;
+        private String requestType;
     }
 }

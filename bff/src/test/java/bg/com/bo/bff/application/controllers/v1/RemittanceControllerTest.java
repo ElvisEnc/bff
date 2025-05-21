@@ -3,6 +3,7 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.config.HeadersDataFixture;
 import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceWURequest;
 import bg.com.bo.bff.application.dtos.request.remittance.RemittanceRequestFixture;
 import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
@@ -65,8 +66,8 @@ class RemittanceControllerTest {
         when(service.getGeneralParameters(any())).thenReturn(responseExpected);
 
         // Act
-        String URL_GET_GENERAL_PARAMETERS = "/api/v1/remittances/persons/{personId}/parameters";
-        MvcResult result = mockMvc.perform(get(URL_GET_GENERAL_PARAMETERS, "123")
+        String urlRemittance = "/api/v1/remittances/persons/{personId}/parameters";
+        MvcResult result = mockMvc.perform(get(urlRemittance, "123")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -88,8 +89,8 @@ class RemittanceControllerTest {
         when(service.validateAccount(any(), any())).thenReturn(responseExpected);
 
         // Act
-        String URL_VALIDATE_ACCOUNT = "/api/v1/remittances/persons/{personId}/accounts/{accountId}/validate";
-        MvcResult result = mockMvc.perform(get(URL_VALIDATE_ACCOUNT, "123", "123456")
+        String urlRemittance = "/api/v1/remittances/persons/{personId}/accounts/{accountId}/validate";
+        MvcResult result = mockMvc.perform(get(urlRemittance, "123", "123456")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -113,8 +114,8 @@ class RemittanceControllerTest {
         when(service.getMoneyOrdersSent(any())).thenReturn(expectedResponse);
 
         // Act
-        String URL_MONEY_ORDERS = "/api/v1/remittances/persons/{personId}/money-orders";
-        MvcResult result = mockMvc.perform(get(URL_MONEY_ORDERS, "123456")
+        String urlRemittance = "/api/v1/remittances/persons/{personId}/money-orders";
+        MvcResult result = mockMvc.perform(get(urlRemittance, "123456")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -137,8 +138,8 @@ class RemittanceControllerTest {
         when(service.checkRemittance(any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String URL_MONEY_ORDERS = "/api/v1/remittances/persons/{personId}/remittance/{remittanceId}";
-        MvcResult result = mockMvc.perform(get(URL_MONEY_ORDERS, "123456", "123456789")
+        String urlRemittance = "/api/v1/remittances/persons/{personId}/remittance/{remittanceId}/check";
+        MvcResult result = mockMvc.perform(get(urlRemittance, "123456", "123456789")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -162,8 +163,8 @@ class RemittanceControllerTest {
         when(service.depositRemittance(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String URL_DEPOSIT_REMITTANCE = "/api/v1/remittances/persons/{personId}/remittance/{remittanceId}";
-        MvcResult result = mockMvc.perform(post(URL_DEPOSIT_REMITTANCE, "123456", "123456789")
+        String urlDeposit = "/api/v1/remittances/persons/{personId}/remittance/{remittanceId}/deposit";
+        MvcResult result = mockMvc.perform(post(urlDeposit, "123456", "123456789")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Util.objectToString(request)))
@@ -178,6 +179,31 @@ class RemittanceControllerTest {
         assertNotNull(result);
         assertEquals(expected, actual);
         verify(service).depositRemittance(any(), any(), any());
+    }
+    @Test
+    void givenValidDataWhenDepositRemittanceWUThenListDepositRemittanceResponse() throws Exception {
+        // Arrange
+        List<DepositRemittanceResponse> expectedResponse = RemittanceResponseFixture.withDataDefaultListDepositRemittanceResponse();
+        DepositRemittanceWURequest request = RemittanceRequestFixture.withDefaultDepositRemittanceWURequest();
+        when(service.depositRemittanceWU(any(), any(), any())).thenReturn(expectedResponse);
+
+        // Act
+        String urlDeposit = "/api/v1/remittances/persons/{personId}/remittance/{remittanceId}/deposit/wester-union";
+        MvcResult result = mockMvc.perform(post(urlDeposit, "123456", "123456789")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        // Assert
+        String expected = Util.objectToString(ApiDataResponse.of(expectedResponse));
+        String actual = result.getResponse().getContentAsString();
+
+        assertNotNull(result);
+        assertEquals(expected, actual);
+        verify(service).depositRemittanceWU(any(), any(), any());
     }
 
     @Test

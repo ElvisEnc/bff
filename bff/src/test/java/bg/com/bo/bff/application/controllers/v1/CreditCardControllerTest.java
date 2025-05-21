@@ -1,8 +1,26 @@
 package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.HeadersDataFixture;
-import bg.com.bo.bff.application.dtos.request.credit.card.*;
-import bg.com.bo.bff.application.dtos.response.credit.card.*;
+import bg.com.bo.bff.application.dtos.request.credit.card.AuthorizationCreditCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.BlockCreditCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.CashAdvanceRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.CreditCardRequestFixture;
+import bg.com.bo.bff.application.dtos.request.credit.card.CreditCardStatementRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.FeePrepaidCardRequest;
+import bg.com.bo.bff.application.dtos.request.credit.card.PayCreditCardRequest;
+import bg.com.bo.bff.application.dtos.response.credit.card.AvailableCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CashAdvanceFeeResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CashAdvanceResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.CreditCardResponseFixture;
+import bg.com.bo.bff.application.dtos.response.credit.card.CreditCardStatementsResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.DetailCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.DetailPrepaidCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.FeePrepaidCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.LinkserCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.ListCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PayCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PeriodCreditCardResponse;
+import bg.com.bo.bff.application.dtos.response.credit.card.PurchaseAuthResponse;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
@@ -23,12 +41,16 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class CreditCardControllerTest {
@@ -154,7 +176,7 @@ class CreditCardControllerTest {
 
         // Act
         String path = "/api/v1/credit-cards/persons/{personId}/cards/{cardId}/available?cmsCard={cmsCard}";
-        MvcResult result = mockMvc.perform(get(path, "123", "123", "13-01-10-0201360000")
+        MvcResult result = mockMvc.perform(get(path, "123", "123", "13-01-10-020136")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -289,11 +311,11 @@ class CreditCardControllerTest {
     void givenListPurchaseRequestWhenGetPurchasesAuthorizationsThenResponseExpected() throws Exception {
         // Arrange
         List<PurchaseAuthResponse> expectedResponse = Collections.singletonList(CreditCardResponseFixture.withDefaultPurchaseAuthResponse());
-        when(service.getPurchasesAuthorizations(any(), any())).thenReturn(expectedResponse);
+        when(service.getPurchasesAuthorizations(any(), any(), any())).thenReturn(expectedResponse);
 
         // Act
-        String path = "/api/v1/credit-cards/persons/{personId}/authorizations?cmsCard={cmsCard}";
-        MvcResult result = mockMvc.perform(get(path, "123", "13-01-10-0000000005")
+        String path = "/api/v1/credit-cards/persons/123/authorizations?cmsCard=13-01-10-0000000001&type=L";
+        MvcResult result = mockMvc.perform(get(path)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -305,7 +327,7 @@ class CreditCardControllerTest {
         // Assert
         assertNotNull(result);
         assertEquals(expectedJsonResponse, response);
-        verify(service).getPurchasesAuthorizations(any(), any());
+        verify(service).getPurchasesAuthorizations(any(), any(), any());
     }
 
     @Test

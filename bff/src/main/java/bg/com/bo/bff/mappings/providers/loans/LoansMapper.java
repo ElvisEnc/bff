@@ -1,17 +1,24 @@
 package bg.com.bo.bff.mappings.providers.loans;
 
+import bg.com.bo.bff.application.dtos.request.loans.LoanPaymentRequest;
+import bg.com.bo.bff.application.dtos.request.loans.Pcc01Request;
 import bg.com.bo.bff.application.dtos.response.loans.*;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.utils.UtilDate;
 import bg.com.bo.bff.providers.dtos.request.loans.mw.LoanPaymentMWRequest;
+import bg.com.bo.bff.providers.dtos.request.loans.mw.Pcc01MWRequest;
 import bg.com.bo.bff.providers.dtos.response.loans.mw.*;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class LoansMapper implements ILoansMapper {
+
+    private static final String CURRENCY_BOB = "068";
 
     @Override
     public List<ListLoansResponse> convertResponse(ListLoansMWResponse mwResponse) {
@@ -77,7 +84,7 @@ public class LoansMapper implements ILoansMapper {
                         .currencyCode(mw.getCurrency())
                         .currencyDescription(mw.getCurrencyDescription())
                         .paymentNumber(mw.getPaymentNumber())
-                        .paymentDate(UtilDate.formatDate(mw.getPaymentDate()))
+                        .paymentDate(mw.getPaymentDate())
                         .amount(Util.scaleToTwoDecimals(mw.getAmount()))
                         .index(mw.getRecord())
                         .build())
@@ -130,7 +137,18 @@ public class LoansMapper implements ILoansMapper {
     }
 
     @Override
-    public LoanDetailPaymentResponse convertResponse(LoanDetailPaymentMWResponse mwResponse) {
+    public LoanDetailPaymentResponse convertResponse(LoanDetailPaymentMWResponse mwResponse, String currencyCode) {
+        BigDecimal total;
+        BigDecimal secureAmount;
+        BigDecimal amount;
+        if(currencyCode.equals(CURRENCY_BOB)){
+            secureAmount = new BigDecimal(mwResponse.getAmountSecureConvertMandatory());
+        }else {
+            secureAmount = new BigDecimal(mwResponse.getAmountSecureMandatory());
+        }
+        amount = new BigDecimal(mwResponse.getAmount());
+        total = amount.add(secureAmount);
+
         return LoanDetailPaymentResponse.builder()
                 .correlativeId(Long.parseLong(mwResponse.getIdentifier()))
                 .nroOperation(Long.parseLong(mwResponse.getLoanNumber()))
@@ -143,19 +161,22 @@ public class LoansMapper implements ILoansMapper {
                 .dateValue(UtilDate.formatDate(mwResponse.getDateValue()))
                 .currentBalance(Double.parseDouble(mwResponse.getCurrentBalance()))
                 .status(mwResponse.getStatus())
+                .paid(!mwResponse.getErrorCode().equals("0"))
                 .balanceSecure(Double.parseDouble(mwResponse.getBalanceSecure()))
-                .accruedCharges(Double.parseDouble(mwResponse.getAccruedCharges()))
+                .accruedCharges((new BigDecimal(mwResponse.getAccruedCharges()).add(new BigDecimal(mwResponse.getForm()))).doubleValue())
+                .penaltyInterest(Double.parseDouble(mwResponse.getPenaltyInterest()))
                 .interestCurrent(Double.parseDouble(mwResponse.getInterestCurrent()))
                 .capital(Double.parseDouble(mwResponse.getCapital()))
-                .form(Integer.parseInt(mwResponse.getForm()))
                 .amount(Double.parseDouble(mwResponse.getAmount()))
                 .secureCurrency(Integer.parseInt(mwResponse.getSecureCurrency()))
                 .amountSecureMandatory(Double.parseDouble(mwResponse.getAmountSecureMandatory()))
+                .amountSecureConvertMandatory(Double.parseDouble(mwResponse.getAmountSecureConvertMandatory()))
+                .totalAmount(total.doubleValue())
                 .build();
     }
 
     @Override
-    public LoanPaymentMWRequest mapperRequest(String personId, String accountId, String correlativeId) {
+    public LoanPaymentMWRequest mapperRequest(String personId, String accountId, LoanPaymentRequest request) {
         return LoanPaymentMWRequest.builder()
                 .ownerAccountRequest(LoanPaymentMWRequest.OwnAccount.builder()
                         .schemaName("PersonId")
@@ -168,8 +189,14 @@ public class LoansMapper implements ILoansMapper {
                         .build())
                 .creditorAccountRequest(LoanPaymentMWRequest.CreditorAccount.builder()
                         .schemaName("SessionId")
-                        .sessionId(correlativeId)
+                        .sessionId(request.getCorrelativeId())
                         .build())
+                .supplementaryData(Optional.ofNullable(request.getSupplementaryData())
+                        .map(suppData -> LoanPaymentMWRequest.SupplementaryData.builder()
+                                .sourceOfFunds(suppData.getSourceOfFunds())
+                                .destinationOfFunds(suppData.getDestinationOfFunds())
+                                .build())
+                        .orElseGet(() -> LoanPaymentMWRequest.SupplementaryData.builder().build()))
                 .build();
     }
 
@@ -192,7 +219,7 @@ public class LoansMapper implements ILoansMapper {
                 .insuranceAmount(mwResponse.getInsuranceAmount())
                 .currencyCodeInsurance(mwResponse.getCurrencyInsurance())
                 .amountDebitInsurance(mwResponse.getAmountDebitInsurance())
-                .exchangeRateDebit(mwResponse.getExchangeRateDebit())
+                .exchangeRateDebitInsurance(mwResponse.getExchangeRateDebitInsurance())
                 .loanId(mwResponse.getToLoanNumber())
                 .loanCapital(mwResponse.getLoanCapital())
                 .currentInterest(mwResponse.getCurrentInterest())
@@ -202,6 +229,17 @@ public class LoansMapper implements ILoansMapper {
                 .nextDueDate(UtilDate.formatDate(mwResponse.getNextDueDate()))
                 .totalInstallments(mwResponse.getTotalInstallments())
                 .paidInstallments(mwResponse.getPaidInstallments())
+                .amountInsuranceCurrencyLoans(mwResponse.getAmountInsuranceCurrencyLoans())
+                .build();
+    }
+
+    @Override
+    public Pcc01MWRequest mapperRequest(String personId, String accountId, Pcc01Request request) {
+        return Pcc01MWRequest.builder()
+                .currency(request.currency())
+                .amount(request.amount())
+                .accountId(accountId)
+                .personId(personId)
                 .build();
     }
 }

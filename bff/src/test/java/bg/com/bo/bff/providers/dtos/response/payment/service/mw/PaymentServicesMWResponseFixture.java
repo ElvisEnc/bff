@@ -129,12 +129,13 @@ public class PaymentServicesMWResponseFixture {
                 .data(DebtsConsultationMWResponse.DebtsConsultationMW.builder()
                         .affiliationCode("123")
                         .serviceCode("123")
-                        .invoiceTaxId("123")
-                        .invoiceName("123")
-                        .invoiceCanModifyData("N")
                         .debtDetails(Collections.singletonList(withDefaultDebtsDetailMW()))
                         .build()
                 ).build();
+    }
+
+    public static DebtsConsultationMWResponse withEmptyData(){
+        return new DebtsConsultationMWResponse();
     }
 
     public static DebtsConsultationMWResponse withDefaultDebtsResponseMWModifyS() {
@@ -142,9 +143,6 @@ public class PaymentServicesMWResponseFixture {
                 .data(DebtsConsultationMWResponse.DebtsConsultationMW.builder()
                         .affiliationCode("123")
                         .serviceCode("123")
-                        .invoiceTaxId("123")
-                        .invoiceName("123")
-                        .invoiceCanModifyData("S")
                         .debtDetails(Collections.singletonList(withDefaultDebtsDetailMW()))
                         .build()
                 ).build();
@@ -155,16 +153,44 @@ public class PaymentServicesMWResponseFixture {
                 .data(DebtsConsultationMWResponse.DebtsConsultationMW.builder()
                         .affiliationCode("123")
                         .serviceCode("123")
-                        .invoiceTaxId("123")
-                        .invoiceName("123")
-                        .invoiceCanModifyData(null)
-                        .debtDetails(Collections.singletonList(withDefaultDebtsDetailMW()))
+                        .debtDetails(Collections.singletonList(withInvoiceNull()))
                         .build()
                 ).build();
     }
 
     public static DebtsConsultationMWResponse.DebtsConsultationDetail withDefaultDebtsDetailMW() {
         return DebtsConsultationMWResponse.DebtsConsultationDetail.builder()
+                .invoiceCanModifyData("S")
+                .invoiceName("Pedro Perez")
+                .invoiceId("1234")
+                .invoiceComplementId("12")
+                .invoiceEmail("email@atest.com")
+                .description("123")
+                .referenceCode("123")
+                .monthPeriod(123)
+                .year(123)
+                .commissionAmount(BigDecimal.valueOf(10.00))
+                .currencyCode("123")
+                .amount(BigDecimal.valueOf(10.00))
+                .accumulatedAmount(BigDecimal.valueOf(10.00))
+                .identifier(123L)
+                .validationType("123")
+                .detail("123")
+                .additionalDataDetails("123")
+                .paymentPlanCode("123")
+                .idGeneratedForDebt("123")
+                .penaltyPayment(BigDecimal.valueOf(10.00))
+                .concept("123")
+                .build();
+    }
+
+    public static DebtsConsultationMWResponse.DebtsConsultationDetail withInvoiceNull() {
+        return DebtsConsultationMWResponse.DebtsConsultationDetail.builder()
+                .invoiceCanModifyData(null)
+                .invoiceName(null)
+                .invoiceId(null)
+                .invoiceComplementId(null)
+                .invoiceEmail(null)
                 .description("123")
                 .referenceCode("123")
                 .monthPeriod(123)

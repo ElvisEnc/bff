@@ -1,8 +1,10 @@
 package bg.com.bo.bff.mappings.providers.remittance;
 
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
+import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceWURequest;
 import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.remittance.UpdateWURemittanceResponse;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.UpdateWURemittanceMWRequest;
+import bg.com.bo.bff.providers.dtos.request.remittance.mw.*;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.UpdateWURemittanceMWResponse;
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +15,6 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.utils.UtilDate;
 
 import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
-import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.GPCurrencies;
@@ -25,18 +26,11 @@ import bg.com.bo.bff.application.dtos.response.remittance.GPRelationships;
 import bg.com.bo.bff.application.dtos.response.remittance.GPTransactionReasons;
 import bg.com.bo.bff.application.dtos.response.remittance.ListGeneralParametersResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.CheckRemittanceMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.ConsultWURemittanceMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.DepositRemittanceMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.GeneralParametersMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.MoneyOrderSentMWRequest;
-import bg.com.bo.bff.providers.dtos.request.remittance.mw.ValidateAccountMWRequest;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.DepositRemittanceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
 import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareEnums;
-
 
 @Component
 public class RemittanceMapper implements IRemittanceMapper {
@@ -81,11 +75,25 @@ public class RemittanceMapper implements IRemittanceMapper {
     @Override
     public DepositRemittanceMWRequest mapperRequestDeposit(String personId, String remittanceId, DepositRemittanceRequest request) {
         return DepositRemittanceMWRequest.builder()
-                .codPerson(personId)
-                .codApplication(CanalMW.GANAMOVIL.getCanal())
-                .remittanceNumber(remittanceId)
-                .queryNumber(request.getConsultationId())
+                .personId(personId)
+                .applicationId(CanalMW.GANAMOVIL.getCanal())
+                .noRemittance(remittanceId)
+                .noConsult(request.getConsultationId())
                 .jtsOidAccount(request.getAccountId())
+                .build();
+    }
+
+    @Override
+    public DepositRemittanceWUMWRequest mapperRequestDepositWU(String personId, String remittanceId, DepositRemittanceWURequest request) {
+        return DepositRemittanceWUMWRequest.builder()
+                .personId(personId)
+                .applicationId(CanalMW.GANAMOVIL.getCanal())
+                .noRemittance(remittanceId)
+                .noConsult(request.getConsultationId())
+                .jtsOidAccount(request.getAccountId())
+                .pCType(request.getPccType())
+                .originFund(request.getOriginFunds())
+                .originDestination(request.getOriginDestiny())
                 .build();
     }
 
@@ -205,13 +213,12 @@ public class RemittanceMapper implements IRemittanceMapper {
             return Collections.emptyList();
         return mwResponse.getData().stream()
                 .map(mw -> DepositRemittanceResponse.builder()
-                        .remittanceId(mw.getRemittanceCode())
                         .accountingEntry(mw.getAccountingEntry())
                         .time(mw.getStartTime())
                         .description(mw.getDescription())
-                        .remittanceName(mw.getRemittanceName())
-                        .amountReceived(mw.getReceivedAmount())
-                        .currencyCode(Util.convertCurrency(mw.getReceivedCurrency()))
+                        .remittanceName(mw.getNameRemittance())
+                        .amountReceived(mw.getAmountReceived())
+                        .currencyCode(Util.convertCurrency(mw.getCurrencyReceived()))
                         .exchangeRate(mw.getExchangeRate())
                         .commission(mw.getCommission())
                         .amountPaid(mw.getCreditedAmount())

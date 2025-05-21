@@ -1,0 +1,115 @@
+package bg.com.bo.bff.application.controllers.v1;
+
+import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
+import bg.com.bo.bff.application.dtos.request.transfers.programming.SaveTransferRequest;
+import bg.com.bo.bff.application.dtos.response.transfers.programming.DeleteTransferResponse;
+import bg.com.bo.bff.application.dtos.response.transfers.programming.PaymentsPlanResponse;
+import bg.com.bo.bff.application.dtos.response.transfers.programming.ProgrammedTransfersResponse;
+import bg.com.bo.bff.application.dtos.response.transfers.programming.SaveProgrammedTransferResponse;
+import bg.com.bo.bff.commons.annotations.OnlyNumber;
+import bg.com.bo.bff.services.interfaces.ITransferProgrammingService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.List;
+
+@RestController
+@Validated
+@RequestMapping("api/v1/transfer-programming")
+@Tag(name = "Transfer Programming Controller", description = "Controlador de Programación de Transferencias")
+public class TransfersProgrammingController extends AbstractBFFController {
+
+    private final ITransferProgrammingService service;
+
+    public TransfersProgrammingController(ITransferProgrammingService service) {
+        this.service = service;
+    }
+
+    @Operation(summary = "Obtener Transferencias Programadas", description = "Lista de transferencias programadas")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Programmed transfers list",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProgrammedTransfersResponse.class))))
+    })
+    @GetMapping("/persons/{personId}")
+    public ResponseEntity<List<ProgrammedTransfersResponse>> getTransfers(
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el numero de persona", example = "12345") String personId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(
+                service.getTransfers(
+                        personId
+                )
+        );
+    }
+
+    @Operation(summary = "Obtener Plan de Pagos", description = "Obtener plan de pagos de una transferencia programada")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Programmed transfers list",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = PaymentsPlanResponse.class))))
+    })
+    @GetMapping("/payments-plan/persons/{personId}/transfer/{transferId}")
+    public ResponseEntity<List<PaymentsPlanResponse>> getPaymentsPlan(
+            @PathVariable("personId") @OnlyNumber @Parameter(description = "Este es el numero de persona", example = "12345") String personId,
+            @PathVariable("transferId") @OnlyNumber @Parameter(description = "Identificador de la transferencia", example = "54321") String transferId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(
+                service.getPaymentsPlan(
+                        transferId
+                )
+        );
+    }
+
+    @Operation(
+            summary = "Cancelar Transferencia Programada",
+            description = "Cancela la transferencia programada de un cliente segun el nro de la transferencia")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = DeleteTransferResponse.class)))
+    })
+    @DeleteMapping("/cancel/persons/{personId}/transfer/{transferId}")
+    public ResponseEntity<DeleteTransferResponse> getListCreditCards(
+            @PathVariable("personId") @OnlyNumber
+            @Parameter(description = "Este es el personId de la persona", example = "12345") String personId,
+            @PathVariable("transferId") @OnlyNumber
+            @Parameter(description = "Este es el personId de la persona", example = "12345") String transferId
+    ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.deleteTransfer(personId, transferId));
+    }
+
+    @Operation(
+            summary = "Registro de Programacion de Transferencia",
+            description = "Registra una nueva programación de transferencia")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = SaveProgrammedTransferResponse.class)))
+    })
+    @PostMapping("/persons/{personId}")
+    public ResponseEntity<SaveProgrammedTransferResponse> saveRequest(
+            @PathVariable("personId") @OnlyNumber
+            @Parameter(description = "Este es el numero de la persona", example = "12345") String personId,
+            @RequestBody SaveTransferRequest request
+            ) throws IOException {
+        getDeviceDataHeader();
+        return ResponseEntity.ok(service.saveTransfer(request, personId));
+    }
+}

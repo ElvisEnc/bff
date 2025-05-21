@@ -24,7 +24,7 @@ public class PointAttentionProvider extends MiddlewareProvider<PointAttentionMid
     private final String baseUrl;
 
     public PointAttentionProvider(ITokenMiddlewareProvider tokenMiddlewareProvider, MiddlewareConfig middlewareConfig, IHttpClientFactory httpClientFactory) {
-        super(ProjectNameMW.POINT_ATTENTION_MANAGER, PointAttentionMiddlewareError.class, tokenMiddlewareProvider, middlewareConfig, httpClientFactory, middlewareConfig.getClientCreditCardManager());
+        super(ProjectNameMW.POINT_ATTENTION_MANAGER, PointAttentionMiddlewareError.class, tokenMiddlewareProvider, middlewareConfig, httpClientFactory, middlewareConfig.getClientPointAttentionManager() );
         this.baseUrl = middlewareConfig.getUrlBase() + ProjectNameMW.POINT_ATTENTION_MANAGER.getName();
     }
 
