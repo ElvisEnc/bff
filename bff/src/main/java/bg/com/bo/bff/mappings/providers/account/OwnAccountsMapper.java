@@ -121,6 +121,9 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
                         .movementTime(mw.getAccountingTime())
                         .channel(mw.getBranchOffice())
                         .seatNumber(String.valueOf(mw.getSeatNumber()))
+                        .agencyCode(mw.getAgencyCod())
+                        .voucher(mw.getVoucher())
+                        .processDate(mw.getProcessDate())
                         .build())
                 .toList();
     }

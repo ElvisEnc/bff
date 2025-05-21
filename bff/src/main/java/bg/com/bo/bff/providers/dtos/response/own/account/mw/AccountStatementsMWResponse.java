@@ -45,5 +45,6 @@ public class AccountStatementsMWResponse {
         private String moveType;
         private BigDecimal currentBalance;
         private String status;
+        private String voucher;
     }
 }
