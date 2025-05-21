@@ -22,4 +22,7 @@ public class AccountStatementsResponse {
     private String movementTime;
     private String channel;
     private String seatNumber;
+    private String agencyCode;
+    private String voucher;
+    private String processDate;
 }
