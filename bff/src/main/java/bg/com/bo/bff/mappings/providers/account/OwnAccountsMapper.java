@@ -207,6 +207,7 @@ public class OwnAccountsMapper implements IOwnAccountsMapper {
                 .description(obj.getDescription())
                 .postingTime(obj.getPostingTime())
                 .listIdAccount(obj.getListIdAccount())
+                .destinationBank(obj.getDestinationBank())
                 .build();
     }
 }

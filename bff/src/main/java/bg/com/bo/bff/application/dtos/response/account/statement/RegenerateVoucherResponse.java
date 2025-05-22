@@ -102,4 +102,7 @@ public class RegenerateVoucherResponse {
     @Schema(description = "identificador en la lista de cuentas")
     private String listIdAccount;
 
+    @Schema(description = "nombre del banco destinatario")
+    private String destinationBank;
+
 }

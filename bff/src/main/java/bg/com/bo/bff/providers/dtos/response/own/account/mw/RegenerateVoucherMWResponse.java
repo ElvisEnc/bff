@@ -50,6 +50,7 @@ public class RegenerateVoucherMWResponse {
         private String description;
         private String postingTime;
         private String listIdAccount;
+        private String destinationBank;
     }
 
 }
