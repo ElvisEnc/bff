@@ -94,6 +94,7 @@ public class PaymentServiceResponseFixture {
                 .additionalDataDetails("123")
                 .paymentPlan("123")
                 .idGenerated("123")
+                .concept("123")
                 .build();
     }
 
