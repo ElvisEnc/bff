@@ -225,6 +225,7 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                                 .additionalDataDetails(detail.getAdditionalDataDetails())
                                 .paymentPlan(detail.getPaymentPlanCode())
                                 .idGenerated(detail.getIdGeneratedForDebt())
+                                .concept(detail.getConcept())
                                 .build())
                 .toList();
         return AffiliationDebtsResponse.builder()
@@ -274,6 +275,7 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
                         .serviceName(mw.getServiceName())
                         .categoryId(mw.getIdCategory())
                         .subCategoryId(mw.getIdSubCategory())
+                        .subCategoryDesc(mw.getSubCategoryDesc())
                         .build())
                 .toList();
     }
