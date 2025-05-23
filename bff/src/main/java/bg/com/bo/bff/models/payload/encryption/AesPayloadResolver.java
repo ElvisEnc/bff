@@ -1,9 +1,9 @@
 package bg.com.bo.bff.models.payload.encryption;
 
-import bg.com.bo.bff.models.encryptor.EncryptorFactory;
 import bg.com.bo.bff.commons.enums.config.provider.EncryptionAlgorithm;
 import bg.com.bo.bff.commons.utils.CipherUtils;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.models.encryptor.EncryptorFactory;
 import bg.com.bo.bff.models.encryptor.IEncryptor;
 
 import javax.crypto.BadPaddingException;
@@ -49,8 +49,9 @@ public class AesPayloadResolver {
     public EncryptionPayload decrypt(String keysData, EncryptionPayload encryptedPayload) throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, IOException {
         PayloadKey payloadKey = Util.stringToObject(keysData, PayloadKey.class);
         SecretKey payloadSecretKey = CipherUtils.getSecretKey(encryptionAlgorithm, payloadKey.getSecret());
-        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(Util.getEncodedBytes(payloadKey.getIv())));
-
+        IvParameterSpec iv = CipherUtils.generateIv();
+        String encodedIv = Base64.getEncoder().encodeToString(iv.getIV());
+        payloadKey.setIv(encodedIv);
         String decryptedPayload = "";
         String contentType = null;
 
