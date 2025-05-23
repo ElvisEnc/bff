@@ -61,4 +61,6 @@ public class MiddlewareConfig {
 
     private String clientTransferProgramming;
 
+    private String clientNotificationConfigManager;
+
 }
