@@ -88,6 +88,9 @@ public class MiddlewareConfigFactory {
     @Value("${client.secret.transfer.programming.manager}")
     private String clientTransferProgramming;
 
+    @Value("${client.secret.notification.config.manager}")
+    private String clientNotificationConfigManager;
+
     @Bean
     public MiddlewareConfig integrationProviderConfig() {
         return MiddlewareConfig.builder()
@@ -118,6 +121,7 @@ public class MiddlewareConfigFactory {
                 .clientUsersQuestionsManager(clientUsersQuestionsManager)
                 .clientOnboardingManager(clientOnboardingManager)
                 .clientTransferProgramming(clientTransferProgramming)
+                .clientNotificationConfigManager(clientNotificationConfigManager)
                 .build();
     }
 }

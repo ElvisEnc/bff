@@ -28,8 +28,12 @@ public enum ProjectNameMW {
     CERTIFICATIONS_MANAGER("/certifications-manager", "CERTIFICATIONS MANAGER", ProjectNameMW.HEADER_KEY),
     USERS_QUESTIONS_MANAGER("/users-questions-manager", "USER QUESTION MANAGER", ProjectNameMW.HEADER_KEY),
     ONBOARDING_MANAGER("/onboarding-manager", "ONBOARDING MANAGER", ProjectNameMW.HEADER_KEY),
-    TRANSFER_PROGRAMMING_MANAGER("/transfer-programming-manager", "TRANSFER PROGRAMMING MANAGER", ProjectNameMW.HEADER_KEY)
-    ;
+    TRANSFER_PROGRAMMING_MANAGER("/transfer-programming-manager", "TRANSFER PROGRAMMING MANAGER", ProjectNameMW.HEADER_KEY),
+    NOTIFICATION_MANAGER(
+            "/notification-manager",
+            "NOTIFICATION MANAGER",
+            ProjectNameMW.HEADER_KEY
+    );
 
     private final String name;
     private final String description;
