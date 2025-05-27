@@ -172,6 +172,8 @@ public class LoansMapper implements ILoansMapper {
                 .amountSecureMandatory(Double.parseDouble(mwResponse.getAmountSecureMandatory()))
                 .amountSecureConvertMandatory(Double.parseDouble(mwResponse.getAmountSecureConvertMandatory()))
                 .totalAmount(total.doubleValue())
+                .paidErrorCode(mwResponse.getErrorCode())
+                .paidDescription(mwResponse.getErrorDescription())
                 .build();
     }
 

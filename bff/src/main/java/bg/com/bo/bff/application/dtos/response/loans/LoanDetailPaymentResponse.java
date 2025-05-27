@@ -77,4 +77,10 @@ public class LoanDetailPaymentResponse {
 
     @Schema(description = "Préstamo pagado")
     private boolean paid;
+
+    @Schema(description = "Cddgo de error para la solicitu retornado por el MDW")
+    private String paidErrorCode;
+
+    @Schema(description = "Mensaje de error")
+    private String paidDescription;
 }
