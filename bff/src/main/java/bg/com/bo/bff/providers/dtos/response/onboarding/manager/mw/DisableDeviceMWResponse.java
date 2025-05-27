@@ -18,8 +18,8 @@ public class DisableDeviceMWResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DataMWResponse {
-        private String codeResponse;
-        private String messageResponse;
+        private String code;
+        private String message;
 
     }
 

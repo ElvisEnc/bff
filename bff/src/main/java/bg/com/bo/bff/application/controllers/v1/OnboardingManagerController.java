@@ -15,8 +15,8 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -55,7 +55,7 @@ public class OnboardingManagerController extends AbstractBFFController {
 
     @Operation(summary = "Deshabilitar dispositivos.", description = "Endpoint para el Desactivar el dispositivo.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Transaccion exitos.")})
-    @PostMapping("/persons/{personId}/devices/{deviceId}/disable")
+    @PatchMapping("/persons/{personId}/devices/{deviceId}/disabled")
     public ResponseEntity<GenericResponse> disableDevice(
             @PathVariable("personId")
             @NotNull

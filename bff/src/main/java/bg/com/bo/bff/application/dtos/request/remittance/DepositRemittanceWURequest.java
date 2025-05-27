@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @lombok.Data
 @lombok.Builder
@@ -32,9 +33,11 @@ public class DepositRemittanceWURequest {
     private String pccType;
 
     @Valid
+    @Size(min = 10, max = 50, message = "El campo originFunds debe tener entre 10 y 50 caracteres.")
     private String originFunds;
 
 
     @Valid
+    @Size(min = 10, max = 50, message = "El campo originDestiny debe tener entre 10 y 50 caracteres.")
     private String originDestiny;
 }

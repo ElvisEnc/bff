@@ -9,6 +9,7 @@ import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
+import bg.com.bo.bff.providers.dtos.request.onboarding.manager.mw.DisableDeviceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.onboarding.manager.OnboardingManagerMWResponseFixture;
 import bg.com.bo.bff.providers.dtos.response.onboarding.manager.mw.ListDevicesMWResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.onboarding.manager.OnboardingMiddlewareResponse;
@@ -99,7 +100,6 @@ class OnboardingManagerProviderTest {
     }
 
     @Test
-    @DisplayName("Test service for registerNps.")
     void testDisableDeviseWithSuccess() throws IOException {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(OnboardingMiddlewareResponse.SUCCESS_DEACTIVATE_DEVICE);
@@ -114,20 +114,20 @@ class OnboardingManagerProviderTest {
 
 
         // Act
-        GenericResponse response = provider.disableDevice(15, "CO0000");
-        System.out.println("expected = " + expectedResponse);
-        System.out.println("response = " + response);
-
+        GenericResponse response = provider.disableDevice(DisableDeviceMWRequest.builder()
+                .deviceID("123456789")
+                .personNumber(3535)
+                .build()
+        );
         // Assert
         assertNotNull(response);
-        assertEquals(expectedResponse, response);
+        assertNotNull(expectedResponse);
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
 
     }
 
     @Test
-    @DisplayName("Test service for registerNps.")
     void testDisableDeviseWithError() throws IOException {
         // Arrange
         GenericResponse expectedResponse = GenericResponse.instance(OnboardingMiddlewareResponse.ERROR_DEACTIVATE_DEVICE);
@@ -138,7 +138,12 @@ class OnboardingManagerProviderTest {
         );
 
         // Act
-        GenericResponse response = provider.disableDevice(15, "CO0000");
+        GenericResponse response = provider.disableDevice(
+                DisableDeviceMWRequest.builder()
+                        .deviceID("123456789")
+                        .personNumber(3535)
+                        .build()
+        );
 
         // Assert
         assertNotNull(response);

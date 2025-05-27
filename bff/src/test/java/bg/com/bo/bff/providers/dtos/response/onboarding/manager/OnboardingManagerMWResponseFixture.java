@@ -68,23 +68,23 @@ public class OnboardingManagerMWResponseFixture {
 
     public static GenericResponse withDefaultDisableDevice() {
         return GenericResponse.builder()
-                .title("Dispositivo desvinculado.")
-                .message("Se ha desvinculado el dispositivo exitosamente.")
+                .title("Dispositivo deshabilitado.")
+                .message("Dispositivo deshabilitado exitosamente.")
                 .code("SUCCESS").build();
     }
 
     public static GenericResponse withDefaultDisableDeviceWithError() {
         return GenericResponse.builder()
-                .title("Ocurrió un problema")
-                .message("Ocurrio algo inesperado, no se pudo desactivar el dispositivo.")
+                .title("ERROR")
+                .message("Ocurrió un problema")
                 .code("ERROR").build();
     }
 
     public static DisableDeviceMWResponse withDefaultDisableDeviceWithSuccess() {
         return DisableDeviceMWResponse.builder()
                 .data(DisableDeviceMWResponse.DataMWResponse.builder()
-                        .codeResponse("COD000")
-                        .messageResponse("OK")
+                        .code("ONB-0000")
+                        .message("OK")
                         .build())
                 .build();
     }

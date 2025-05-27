@@ -1,6 +1,7 @@
 package bg.com.bo.bff.mappings.providers.onboarding.manager;
 
 import bg.com.bo.bff.application.dtos.response.onboarding.manager.OnboardingManagerResponse;
+import bg.com.bo.bff.providers.dtos.request.onboarding.manager.mw.DisableDeviceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.onboarding.manager.mw.ListDevicesMWResponse;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +42,14 @@ public class OnboardingManagerMapper implements IOnboardingManagerMapper {
                         .roleCode(mw.getRoleCode())
                         .build()
                 ).toList();
+    }
+
+    @Override
+    public DisableDeviceMWRequest mapToDisableDeviceRequest(int personId, String deviceId) {
+        return DisableDeviceMWRequest.builder()
+                .personNumber(personId)
+                .deviceID(deviceId)
+                .build();
     }
 
 
