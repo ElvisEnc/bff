@@ -50,6 +50,11 @@ public enum OnboardingManagerMiddlewareError implements IMiddlewareError {
             HttpStatus.NOT_IMPLEMENTED, CodeError.ERROR_DB_PROCEDURE.getCode(),
             "ONB-0005", ConstantMessages.GENERIC.getTitle(),
             ConstantMessages.GENERIC.getMessage(), CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()
+    ),
+    ONB_0006(
+            HttpStatus.NOT_FOUND, CodeError.DATA_NOT_FOUND.getCode(),
+            "ONB-0006", ConstantMessages.GENERIC_INVALID_PARAMS.getTitle(),
+            "Datos no encontrados o dispositivo ya deshabilitado, verifique los datos proporcionados.", CategoryError.MW_SPECIFIC_FAIL_RESPONSE.getCategoryId()
     );
 
     private final HttpStatus httpCode;

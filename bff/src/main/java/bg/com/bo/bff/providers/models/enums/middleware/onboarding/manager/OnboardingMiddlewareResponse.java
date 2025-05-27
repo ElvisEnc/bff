@@ -11,8 +11,8 @@ public enum OnboardingMiddlewareResponse implements IGenericControllerResponse {
 
     SUCCESS_DEACTIVATE_DEVICE(
             ConstantMessages.SUCCESS.getTitle(),
-            "Dispositivo desvinculado.",
-            "Se ha desvinculado el dispositivo exitosamente."),
+            "Dispositivo deshabilitado.",
+            "Dispositivo deshabilitado exitosamente."),
     ERROR_DEACTIVATE_DEVICE(
             ConstantMessages.ERROR.getTitle(),
             ConstantMessages.GENERIC.getTitle(),

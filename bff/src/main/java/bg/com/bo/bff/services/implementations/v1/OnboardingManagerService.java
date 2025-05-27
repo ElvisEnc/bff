@@ -3,6 +3,7 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.onboarding.manager.OnboardingManagerResponse;
 import bg.com.bo.bff.mappings.providers.onboarding.manager.IOnboardingManagerMapper;
+import bg.com.bo.bff.providers.dtos.request.onboarding.manager.mw.DisableDeviceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.onboarding.manager.mw.ListDevicesMWResponse;
 import bg.com.bo.bff.providers.interfaces.IOnboardingManagerProvider;
 import bg.com.bo.bff.services.interfaces.IOnboardingManagerService;
@@ -36,7 +37,8 @@ public class OnboardingManagerService implements IOnboardingManagerService {
     }
 
     @Override
-    public GenericResponse disableDevice(int personId, String deviseId) throws IOException {
-        return provider.disableDevice(personId, deviseId);
+    public GenericResponse disableDevice(int personId, String deviceId) throws IOException {
+        DisableDeviceMWRequest mwRequest = mapper.mapToDisableDeviceRequest(personId, deviceId);
+        return provider.disableDevice(mwRequest);
     }
 }
