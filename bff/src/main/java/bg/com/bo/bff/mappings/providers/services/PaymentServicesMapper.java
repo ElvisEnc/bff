@@ -1,6 +1,7 @@
 package bg.com.bo.bff.mappings.providers.services;
 
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.PaymentTypeRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.DataRegisterServiceAffiliation;
@@ -10,6 +11,7 @@ import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.Servic
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.commons.utils.UtilDate;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ConceptsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
@@ -108,7 +110,7 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
 
     @Override
     public DebtsConsultationMWRequest mapperRequest(Integer personId, Integer affiliateServiceId, AffiliationDebtsRequest request) {
-        return new DebtsConsultationMWRequest(request.serviceCode(), personId, request.year(), affiliateServiceId);
+        return new DebtsConsultationMWRequest(request.serviceCode(), personId, request.year(), affiliateServiceId, request.concept())   ;
     }
 
     @Override
@@ -360,6 +362,30 @@ public class PaymentServicesMapper implements IPaymentServicesMapper {
         return ValidateAffiliateCriteriaResponse.builder()
                 .serviceCode(mwResponse.getServiceCode())
                 .dataAffiliation(mwResponse.getDataAffiliation())
+                .build();
+    }
+
+    @Override
+    public List<PaymentTypeResponse> convertPaymentTypeResponse(ConceptsMWResponse mdwResponse) {
+        if (mdwResponse.getData() == null){
+            return Collections.emptyList();
+        }
+        return mdwResponse.getData().
+                stream().map(
+                        item -> PaymentTypeResponse.builder()
+                                .concept(item.getConcept())
+                                .description(item.getDescription())
+                                .abbreviation(item.getAbbreviation())
+                                .build()
+                ).toList();
+    }
+
+    @Override
+    public ConceptsMWRequest convertPaymentTypeRequest(PaymentTypeRequest request, String personId) {
+        return ConceptsMWRequest.builder()
+                .personId(personId)
+                .affiliationCode(request.getAffiliateServiceId())
+                .serviceCode(request.getServiceCode())
                 .build();
     }
 }

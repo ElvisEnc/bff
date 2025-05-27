@@ -6,6 +6,8 @@ import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.payment.service.*;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.services.PaymentServicesMapper;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ConceptsMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ConceptsMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentServicesMWRequestFixture;
@@ -598,5 +600,39 @@ class PaymentServicesServiceTest {
         assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
         verify(provider).getListService(new HashMap<>());
         verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void getPaymentConceptsOK() throws IOException {
+        PaymentTypeRequest request = PaymentTypeRequest.builder()
+                .serviceCode("123")
+                .affiliateServiceId("4321")
+                .build();
+        ConceptsMWResponse mdwResponse = ConceptsMWResponseFixture.withDefaults();
+        List<PaymentTypeResponse> expected = PaymentTypeResponseFixture.withDefaults();
+
+        when(provider.getPaymentTypes(any(), any())).thenReturn(mdwResponse);
+        when(mapper.convertPaymentTypeResponse(mdwResponse)).thenReturn(expected);
+
+        List<PaymentTypeResponse> response = service.getPaymentsType(request, "123", new HashMap<>());
+
+        assertEquals(expected.size(), response.size());
+    }
+
+    @Test
+    void getPaymentConceptsNull() throws IOException {
+        PaymentTypeRequest request = PaymentTypeRequest.builder()
+                .serviceCode("123")
+                .affiliateServiceId("4321")
+                .build();
+        List<PaymentTypeResponse> expected = PaymentTypeResponseFixture.withDefaults();
+        ConceptsMWResponse mdwResponse = ConceptsMWResponseFixture.withNullData();
+
+        when(provider.getPaymentTypes(any(), any())).thenReturn(mdwResponse);
+        when(mapper.convertPaymentTypeResponse(mdwResponse)).thenReturn(expected);
+
+        List<PaymentTypeResponse> response = service.getPaymentsType(request, "123", new HashMap<>());
+
+        assertNotNull(response);
     }
 }

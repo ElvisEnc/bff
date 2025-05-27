@@ -3,6 +3,7 @@ package bg.com.bo.bff.services.implementations.v1;
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.ListServiceRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.PaymentTypeRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
@@ -13,6 +14,7 @@ import bg.com.bo.bff.commons.enums.config.provider.AppError;
 import bg.com.bo.bff.commons.filters.OrderFilter;
 import bg.com.bo.bff.commons.filters.PageFilter;
 import bg.com.bo.bff.commons.filters.ServiceNameFilter;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ConceptsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
@@ -148,6 +150,13 @@ public class PaymentServicesService implements IPaymentServicesService {
             list = new PageFilter<ServiceResponse>(page, pageSize).apply(list);
         }
         return list;
+    }
+
+    @Override
+    public List<PaymentTypeResponse> getPaymentsType(PaymentTypeRequest request, String personId, Map<String, String> parameter) throws IOException {
+        ConceptsMWRequest mdwRequest = mapper.convertPaymentTypeRequest(request, personId);
+        ConceptsMWResponse mdwResponse = provider.getPaymentTypes(mdwRequest, parameter);
+        return mapper.convertPaymentTypeResponse(mdwResponse);
     }
 
     @Caching(cacheable = {@Cacheable(value = CacheConstants.GENERIC_DATA, key = "#key", condition = "#isInitial == false")},

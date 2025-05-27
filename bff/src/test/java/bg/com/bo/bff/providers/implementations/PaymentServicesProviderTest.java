@@ -9,6 +9,8 @@ import bg.com.bo.bff.commons.utils.Util;
 import bg.com.bo.bff.models.ClientToken;
 import bg.com.bo.bff.models.ClientTokenFixture;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ConceptsMWRequest;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ConceptsMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
@@ -417,4 +419,22 @@ class PaymentServicesProviderTest {
         verify(httpClientFactoryMock).create();
         verify(tokenMiddlewareProviderMock).generateAccountAccessToken(any(), any(), any());
     }
+
+    @Test
+    @DisplayName("Should list concepts for a service payment")
+    void getConceptsList() throws IOException {
+        ConceptsMWRequest request = ConceptsMWRequestFixture.withDefaults();
+        ConceptsMWResponse expected = ConceptsMWResponseFixture.withDefaults();
+
+        when(tokenMiddlewareProviderMock.generateAccountAccessToken(any(), any(), any())).thenReturn(clientTokenMock);
+        String jsonResponse = Util.objectToString(expected);
+        stubFor(post(anyUrl()).willReturn(okJson(jsonResponse)));
+
+        ConceptsMWResponse response = provider.getPaymentTypes(request, map);
+
+        assertNotNull(response);
+        assertEquals(response.getData().size(), expected.getData().size());
+        verify(httpClientFactoryMock).create();
+    }
+
 }

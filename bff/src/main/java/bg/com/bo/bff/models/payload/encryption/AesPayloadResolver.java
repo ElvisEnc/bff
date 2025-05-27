@@ -49,9 +49,7 @@ public class AesPayloadResolver {
     public EncryptionPayload decrypt(String keysData, EncryptionPayload encryptedPayload) throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, IOException {
         PayloadKey payloadKey = Util.stringToObject(keysData, PayloadKey.class);
         SecretKey payloadSecretKey = CipherUtils.getSecretKey(encryptionAlgorithm, payloadKey.getSecret());
-        IvParameterSpec iv = CipherUtils.generateIv();
-        String encodedIv = Base64.getEncoder().encodeToString(iv.getIV());
-        payloadKey.setIv(encodedIv);
+        IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(Util.getEncodedBytes(payloadKey.getIv())));
         String decryptedPayload = "";
         String contentType = null;
 

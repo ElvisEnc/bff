@@ -3,6 +3,7 @@ package bg.com.bo.bff.application.controllers.v1;
 import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.ListServiceRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.PaymentTypeRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
@@ -301,5 +302,25 @@ public class PaymentServicesController {
             @Valid @RequestBody ListServiceRequest request
     ) throws IOException {
         return ResponseEntity.ok(ApiDataResponse.of(service.getListService(request, Headers.getParameter(httpServletRequest))));
+    }
+
+    @Operation(summary = "Lista de Tipos de Pago", description = "Listado de todos los tipos de pago que puede tener un servicio")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de Tipos de Pago")
+    })
+    @PostMapping("persons/{personId}/payments-type")
+    public ResponseEntity<ApiDataResponse<List<PaymentTypeResponse>>> listPaymentTypes(
+            @RequestHeader("device-id") @NotBlank @Parameter(description = "Este es el Unique deviceId", example = "42ebffbd7c30307d") String deviceId,
+            @RequestHeader("device-name") @Parameter(description = "Este es el deviceName", example = "ANDROID") String deviceName,
+            @RequestHeader("geo-position-x") @NotBlank @Parameter(description = "Este es el geoPositionX", example = "12.265656") String geoPositionX,
+            @RequestHeader("geo-position-y") @NotBlank @Parameter(description = "Este es el geoPositionY", example = "12.454545") String geoPositionY,
+            @RequestHeader("app-version") @NotBlank @Parameter(description = "Este es el appVersion", example = "1.3.3") String appVersion,
+            @Parameter(description = "Este es el Person id", example = "1222220")
+            @Pattern(regexp = "^\\d{1,12}$", message = "El codigo de persona es invalido")
+            @NotNull
+            @PathVariable("personId") final String personId,
+            @Valid @RequestBody PaymentTypeRequest request
+    ) throws IOException {
+        return ResponseEntity.ok(ApiDataResponse.of(service.getPaymentsType(request, personId, Headers.getParameter(httpServletRequest))));
     }
 }

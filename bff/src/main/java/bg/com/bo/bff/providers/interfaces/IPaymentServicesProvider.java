@@ -1,5 +1,6 @@
 package bg.com.bo.bff.providers.interfaces;
 
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ConceptsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
@@ -35,4 +36,7 @@ public interface IPaymentServicesProvider {
     ValidateAffiliateCriteriaMWResponse validateAffiliateCriteria(ValidateAffiliateCriteriaMWRequest request, Map<String, String> parameter) throws IOException;
 
     ListServicesMWResponse getListService(Map<String, String> parameter) throws IOException;
+
+    ConceptsMWResponse getPaymentTypes(ConceptsMWRequest request, Map<String, String> parameter) throws IOException;
+
 }

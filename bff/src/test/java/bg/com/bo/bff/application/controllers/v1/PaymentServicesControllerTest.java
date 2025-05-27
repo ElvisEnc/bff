@@ -404,4 +404,35 @@ class PaymentServicesControllerTest {
         assertEquals(response, actual);
         verify(service).getListService(any(), any());
     }
+
+    @Test
+    void getPaymentsType() throws Exception {
+        //Arrange
+        PaymentTypeRequest requestMock = PaymentTypeRequest.builder()
+                .affiliateServiceId("1234")
+                .serviceCode("321")
+                .build();
+        List<PaymentTypeResponse> expectedResponse = PaymentTypeResponseFixture.withDefaults();
+        when(service.getPaymentsType(any(),any(), any())).thenReturn(expectedResponse);
+        when(httpServletRequest.getHeaderNames()).thenReturn(enumerations);
+        when(httpServletRequest.getRemoteAddr()).thenReturn("127.0.0.1");
+
+        // Act
+        String path = "/api/v1/payment-services/persons/1234/payments-type";
+        MvcResult result = mockMvc.perform(post(path)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Util.objectToString(requestMock))
+                        .headers(this.headers))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+        String response = objectMapper.writeValueAsString(ApiDataResponse.of(expectedResponse));
+        String actual = result.getResponse().getContentAsString();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(response, actual);
+        verify(service).getPaymentsType(any(), any(), any());
+    }
 }

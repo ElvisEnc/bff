@@ -4,6 +4,7 @@ public record DebtsConsultationMWRequest(
         Integer serviceCode,
         Integer personId,
         Integer year,
-        Integer affiliationCode
+        Integer affiliationCode,
+        Integer concept
 ) {
 }
