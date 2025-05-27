@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
 import bg.com.bo.bff.commons.utils.Util;
+import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ConceptsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DeleteAffiliateServiceMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.ValidateAffiliateCriteriaMWRequest;
@@ -115,5 +116,12 @@ public class PaymentServicesProvider extends MiddlewareProvider<PaymentServicesM
         String url = baseUrl + PaymentServicesMiddlewareServices.GET_LIST_SERVICES.getServiceURL();
         ByMwErrorResponseHandler<ListServicesMWResponse> responseHandler = ByMwErrorResponseHandler.instance(PaymentServicesMiddlewareError.MDWPSM_007);
         return get(url, HeadersMW.getDefaultHeaders(parameter), ListServicesMWResponse.class, responseHandler);
+    }
+
+    @Override
+    public ConceptsMWResponse getPaymentTypes(ConceptsMWRequest request, Map<String, String> parameter) throws IOException {
+        String url = baseUrl + PaymentServicesMiddlewareServices.GET_PAYMENT_TYPE.getServiceURL();
+        ByMwErrorResponseHandler<ConceptsMWResponse> responseHandler = ByMwErrorResponseHandler.instance(PaymentServicesMiddlewareError.MDWPSM_052);
+        return post(url, HeadersMW.getDefaultHeaders(parameter), request, ConceptsMWResponse.class, responseHandler);
     }
 }

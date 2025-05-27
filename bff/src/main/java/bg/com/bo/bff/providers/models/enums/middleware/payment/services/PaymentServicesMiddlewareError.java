@@ -307,7 +307,18 @@ public enum PaymentServicesMiddlewareError implements IMiddlewareError {
             ConstantMessages.GENERIC.getMessage(),
             ConstantMessages.GENERIC.getTitle(),
             CategoryError.MW_GENERIC_INTERNAL_FAILURE.getCategoryId()
-    );
+    ),
+
+    MDWPSM_052(
+            HttpStatus.CONFLICT,
+            "NO_CONCEPTS_FOUND",
+            "MDWPGL-001",
+            "No se encontro registros",
+            "No se encontro registros",
+            CategoryError.MW_GENERIC_FAIL_RESPONSE.getCategoryId()
+    )
+
+    ;
 
     private final HttpStatus httpCode;
     private final String code;

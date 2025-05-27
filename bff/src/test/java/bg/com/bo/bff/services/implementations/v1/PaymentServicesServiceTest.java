@@ -1,16 +1,44 @@
 package bg.com.bo.bff.services.implementations.v1;
 
-import bg.com.bo.bff.application.dtos.request.payment.service.*;
+import bg.com.bo.bff.application.dtos.request.payment.service.AffiliationDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.ListServiceRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.PaymentDebtsRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.PaymentServiceRequestFixture;
+import bg.com.bo.bff.application.dtos.request.payment.service.PaymentTypeRequest;
+import bg.com.bo.bff.application.dtos.request.payment.service.ValidateAffiliateCriteriaRequest;
 import bg.com.bo.bff.application.dtos.request.payment.service.affiliation.ServiceAffiliationRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
-import bg.com.bo.bff.application.dtos.response.payment.service.*;
+import bg.com.bo.bff.application.dtos.response.payment.service.AffiliateCriteriaResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.AffiliatedServicesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.AffiliationDebtsResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.CategoryResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.DeleteAffiliateServiceResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.PaymentDebtsResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.PaymentServiceResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.PaymentTypeResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.PaymentTypeResponseFixture;
+import bg.com.bo.bff.application.dtos.response.payment.service.ServiceAffiliationResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.ServiceResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubCategoryCitiesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.SubcategoriesResponse;
+import bg.com.bo.bff.application.dtos.response.payment.service.ValidateAffiliateCriteriaResponse;
 import bg.com.bo.bff.application.exceptions.GenericException;
 import bg.com.bo.bff.mappings.providers.services.PaymentServicesMapper;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.DebtsConsultationMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentDebtsMWRequest;
 import bg.com.bo.bff.providers.dtos.request.payment.services.mw.PaymentServicesMWRequestFixture;
 import bg.com.bo.bff.providers.dtos.request.personal.information.affiliation.ServiceAffiliationMWRequest;
-import bg.com.bo.bff.providers.dtos.response.payment.service.mw.*;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliateCriteriaMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.AffiliatedServiceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.CategoryMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ConceptsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ConceptsMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.DebtsConsultationMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ListServicesMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.PaymentDebtsMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.PaymentServicesMWResponseFixture;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ServiceAffiliationMWResponse;
+import bg.com.bo.bff.providers.dtos.response.payment.service.mw.ValidateAffiliateCriteriaMWResponse;
 import bg.com.bo.bff.providers.interfaces.IPaymentServicesProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,8 +55,13 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -598,5 +631,39 @@ class PaymentServicesServiceTest {
         assertThat(response).usingRecursiveComparison().isEqualTo(expectedResponse);
         verify(provider).getListService(new HashMap<>());
         verify(mapper).convertResponse(mwResponseMock);
+    }
+
+    @Test
+    void getPaymentConceptsOK() throws IOException {
+        PaymentTypeRequest request = PaymentTypeRequest.builder()
+                .serviceCode("123")
+                .affiliateServiceId("4321")
+                .build();
+        ConceptsMWResponse mdwResponse = ConceptsMWResponseFixture.withDefaults();
+        List<PaymentTypeResponse> expected = PaymentTypeResponseFixture.withDefaults();
+
+        when(provider.getPaymentTypes(any(), any())).thenReturn(mdwResponse);
+        when(mapper.convertPaymentTypeResponse(mdwResponse)).thenReturn(expected);
+
+        List<PaymentTypeResponse> response = service.getPaymentsType(request, "123", new HashMap<>());
+
+        assertEquals(expected.size(), response.size());
+    }
+
+    @Test
+    void getPaymentConceptsNull() throws IOException {
+        PaymentTypeRequest request = PaymentTypeRequest.builder()
+                .serviceCode("123")
+                .affiliateServiceId("4321")
+                .build();
+        List<PaymentTypeResponse> expected = PaymentTypeResponseFixture.withDefaults();
+        ConceptsMWResponse mdwResponse = ConceptsMWResponseFixture.withNullData();
+
+        when(provider.getPaymentTypes(any(), any())).thenReturn(mdwResponse);
+        when(mapper.convertPaymentTypeResponse(mdwResponse)).thenReturn(expected);
+
+        List<PaymentTypeResponse> response = service.getPaymentsType(request, "123", new HashMap<>());
+
+        assertNotNull(response);
     }
 }

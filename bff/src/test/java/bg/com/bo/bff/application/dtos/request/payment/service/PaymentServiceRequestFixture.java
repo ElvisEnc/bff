@@ -12,11 +12,11 @@ import java.util.List;
 
 public class PaymentServiceRequestFixture {
     public static AffiliationDebtsRequest withDefaultDebtsRequest() {
-        return new AffiliationDebtsRequest(123, 2024);
+        return new AffiliationDebtsRequest(123, 1,2024);
     }
 
     public static AffiliationDebtsRequest withDefaultDebtsRequestBadYear() {
-        return new AffiliationDebtsRequest(123, 99999);
+        return new AffiliationDebtsRequest(123, 1, 99999);
     }
 
     public static ServiceAffiliationRequest withDefaultServiceAffiliationRequest() {
