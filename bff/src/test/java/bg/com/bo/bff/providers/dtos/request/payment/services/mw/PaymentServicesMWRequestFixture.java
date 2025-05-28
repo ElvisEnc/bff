@@ -17,7 +17,7 @@ public class PaymentServicesMWRequestFixture {
     }
 
     public static DebtsConsultationMWRequest withDefaultDebtsRequestMW() {
-        return new DebtsConsultationMWRequest(123, 123, 2024, 123);
+        return new DebtsConsultationMWRequest(123, 123, 2024, 123, 1);
     }
 
     public static PaymentDebtsMWRequest withDefaultPaymentDebtsMWRequest() {

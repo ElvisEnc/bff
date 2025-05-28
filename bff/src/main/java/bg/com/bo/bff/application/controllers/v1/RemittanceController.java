@@ -2,9 +2,8 @@ package bg.com.bo.bff.application.controllers.v1;
 
 import bg.com.bo.bff.application.config.request.tracing.AbstractBFFController;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceRequest;
-import bg.com.bo.bff.application.dtos.request.remittance.ConsultWURemittanceRequest;
-import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.request.remittance.DepositRemittanceWURequest;
+import bg.com.bo.bff.application.dtos.request.remittance.UpdateWURemittanceRequest;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.CheckRemittanceResponse;
 import bg.com.bo.bff.application.dtos.response.remittance.DepositRemittanceResponse;
@@ -13,7 +12,6 @@ import bg.com.bo.bff.application.dtos.response.remittance.MoneyOrderSentResponse
 import bg.com.bo.bff.application.dtos.response.remittance.UpdateWURemittanceResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ApiDataResponse;
 import bg.com.bo.bff.services.interfaces.IRemittanceService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,7 +22,14 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
@@ -75,14 +80,14 @@ public class RemittanceController extends AbstractBFFController {
     }
 
     @Operation(summary = "Obtener giros enviados",
-            description = "Obtiene los giros enviados de una persona",operationId = "getMoneyOrdersSent")
+            description = "Obtiene los giros enviados de una persona", operationId = "getMoneyOrdersSent")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Obtener giros enviados")
     })
     @GetMapping(path = "/persons/{personId}/money-orders", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ApiDataResponse<List<MoneyOrderSentResponse>>> getMoneyOrdersSent(
             @PathVariable("personId") @NotNull
-            @Parameter(description = "Este es el personId de la persona",example = "12345")
+            @Parameter(description = "Este es el personId de la persona", example = "12345")
             String personId
     ) throws IOException {
         getDeviceDataHeader();
@@ -152,12 +157,11 @@ public class RemittanceController extends AbstractBFFController {
             @Parameter(description = "Este es el personId de la persona", example = "12345")
             String personId,
             @PathVariable("noRemittance") @NotNull
-            @Parameter( description = "Este es el noRemittance de la remesa", example = "123456789")
-            String noRemittance,
-            @Valid @RequestBody ConsultWURemittanceRequest request
+            @Parameter(description = "Este es el Numero de la remesa", example = "123456789") String noRemittance,
+            @RequestParam("jtsOidAccount") @Parameter(description = "jtsOidAccount del giro.") String jtsOidAccount
     ) throws IOException {
         getDeviceDataHeader();
-        return ResponseEntity.ok(ApiDataResponse.of(service.consultWURemittance(personId, noRemittance, request)));
+        return ResponseEntity.ok(ApiDataResponse.of(service.consultWURemittance(personId, noRemittance, jtsOidAccount)));
     }
 
     @Operation(summary = "Actualizar remesa Wester Union",
@@ -177,7 +181,7 @@ public class RemittanceController extends AbstractBFFController {
             @Valid @RequestBody UpdateWURemittanceRequest request
     ) throws IOException {
         getDeviceDataHeader();
-            return ResponseEntity.ok(ApiDataResponse.of(service.updateWURemittance(personId, consultId, request)));
+        return ResponseEntity.ok(ApiDataResponse.of(service.updateWURemittance(personId, consultId, request)));
     }
 
 }

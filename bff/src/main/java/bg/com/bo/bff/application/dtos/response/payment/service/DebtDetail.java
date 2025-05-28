@@ -73,4 +73,7 @@ public class DebtDetail {
 
     @Schema(description = "UUID")
     private String idGenerated;
+
+    private String concept;
+
 }

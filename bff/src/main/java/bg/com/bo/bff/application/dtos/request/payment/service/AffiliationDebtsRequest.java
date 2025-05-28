@@ -11,6 +11,11 @@ public record AffiliationDebtsRequest(
         Integer serviceCode,
 
         @NotNull
+        @Min(1)
+        @Schema(example = "2", description = "Código de concepto")
+        Integer concept,
+
+        @NotNull
         @Schema(example = "2024", description = "Año de la gestión")
         Integer year
 ) {

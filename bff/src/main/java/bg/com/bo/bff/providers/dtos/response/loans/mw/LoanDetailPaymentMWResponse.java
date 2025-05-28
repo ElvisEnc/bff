@@ -32,4 +32,5 @@ public class LoanDetailPaymentMWResponse {
     private String amountSecureMandatory;
     private String amountSecureConvertMandatory;
     private String errorCode;
+    private String errorDescription;
 }
