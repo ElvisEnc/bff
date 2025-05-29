@@ -13,18 +13,18 @@ public class RemittanceRequestFixture {
                 .accountId("123456")
                 .consultationId("123456789")
                 .pccType("0")
-                .originFunds("1")
-                .originDestiny("1")
+                .originFunds("12345678912")
+                .originDestiny("12345678912")
                 .build();
     }
 
-    public static ConsultWURemittanceRequest withDefaultConsultWURemittanceRequest(){
+    public static ConsultWURemittanceRequest withDefaultConsultWURemittanceRequest() {
         return ConsultWURemittanceRequest.builder()
                 .jtsOidAccount("363636")
                 .build();
     }
 
-    public static UpdateWURemittanceRequest withDefaultUpdateWURemittanceRequest(){
+    public static UpdateWURemittanceRequest withDefaultUpdateWURemittanceRequest() {
         return UpdateWURemittanceRequest.builder()
                 .relation("Hermano")
                 .origin("Remesas")

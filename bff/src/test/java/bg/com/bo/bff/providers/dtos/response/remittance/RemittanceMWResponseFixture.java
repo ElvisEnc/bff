@@ -2,7 +2,19 @@ package bg.com.bo.bff.providers.dtos.response.remittance;
 
 import bg.com.bo.bff.providers.dtos.response.generic.ApiErrorResponse;
 import bg.com.bo.bff.providers.dtos.response.generic.ErrorDetailResponse;
-import bg.com.bo.bff.providers.dtos.response.remittance.mw.*;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.CheckRemittanceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.DepositRemittanceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.GPCurrenciesMW;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.GPEconomicActivitiesMW;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.GPExtensionsMW;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.GPIncomeSourcesMW;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.GPJobLevelsMW;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.GPRelationshipsMW;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.GPTransactionReasonsMW;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.ListGeneralParametersMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.MoneyOrderSentMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.UpdateWURemittanceMWResponse;
+import bg.com.bo.bff.providers.dtos.response.remittance.mw.ValidateAccountMWResponse;
 import bg.com.bo.bff.providers.models.enums.middleware.remittance.RemittanceMiddlewareError;
 
 import java.math.BigDecimal;
@@ -129,13 +141,13 @@ public class RemittanceMWResponseFixture {
                 .build();
     }
 
-    public static CheckRemittanceMWResponse withDefaultConsultWURemittance(){
+    public static CheckRemittanceMWResponse withDefaultConsultWURemittance() {
         return CheckRemittanceMWResponse.builder()
                 .data(Collections.singletonList(CheckRemittanceMWResponse.CheckRemittanceMW.builder()
                         .noRemittance("1000")
                         .noConsult(10)
                         .amountReceived(BigDecimal.valueOf(350.0))
-                        .currencyReceived("Pepito Perez")
+                        .currencyReceived("10000")
                         .countryEmission("USA")
                         .plazaOrigin("PlazaOrigen")
                         .payer("Juan Perez")
@@ -150,7 +162,7 @@ public class RemittanceMWResponseFixture {
                         .build())).build();
     }
 
-    public static UpdateWURemittanceMWResponse withDefaultUpdateWURemittance(){
+    public static UpdateWURemittanceMWResponse withDefaultUpdateWURemittance() {
         return UpdateWURemittanceMWResponse.builder()
                 .data(UpdateWURemittanceMWResponse.UpdateWURemittanceMW.builder()
                         .codeError("1000")

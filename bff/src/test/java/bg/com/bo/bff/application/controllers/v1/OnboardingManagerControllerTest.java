@@ -31,14 +31,14 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class OnboardingManagerControllerTest {
     private static final String GET_ALL_DEVICES = "/api/v1/onboarding-manager/persons/{personId}/devices";
-    private static final String DEACTIVATE_DEVICE = "/api/v1/onboarding-manager/persons/{personId}/devices/{deviceId}/disable";
+    private static final String DEACTIVATE_DEVICE = "/api/v1/onboarding-manager/persons/{personId}/devices/{deviceId}/disabled";
 
     private MockMvc mockMvc;
     @Spy
@@ -88,7 +88,7 @@ class OnboardingManagerControllerTest {
 
         // Act
         MvcResult result = mockMvc.perform(
-                        post(DEACTIVATE_DEVICE, "123456", "456454554")
+                        patch(DEACTIVATE_DEVICE, "123456", "456454554")
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )

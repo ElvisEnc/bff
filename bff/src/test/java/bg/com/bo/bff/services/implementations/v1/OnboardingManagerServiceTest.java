@@ -21,8 +21,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -102,7 +102,7 @@ class OnboardingManagerServiceTest {
         // Arrange
         GenericResponse expected = GenericResponse.instance(OnboardingMiddlewareResponse.SUCCESS_DEACTIVATE_DEVICE);
 
-        when(provider.disableDevice(anyInt(), anyString())).thenReturn(
+        when(provider.disableDevice(any())).thenReturn(
                 OnboardingManagerMWResponseFixture.withDefaultDisableDevice()
         );
 
@@ -112,7 +112,7 @@ class OnboardingManagerServiceTest {
         // Assert
         assertNotNull(response);
         assertEquals(expected, response);
-        verify(provider).disableDevice(anyInt(), anyString());
+        verify(provider).disableDevice(any());
 
     }
 

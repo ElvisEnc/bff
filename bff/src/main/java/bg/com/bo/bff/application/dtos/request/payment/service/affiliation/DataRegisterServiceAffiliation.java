@@ -10,7 +10,6 @@ public record DataRegisterServiceAffiliation(
         @Schema(description = "Etiqueta", example = "cuenta")
         String label,
 
-        @NotBlank
         @Schema(description = "Valor de la etiqueta", example = "73166120")
         String value,
 

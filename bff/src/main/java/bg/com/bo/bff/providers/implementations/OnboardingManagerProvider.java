@@ -4,6 +4,7 @@ import bg.com.bo.bff.application.config.MiddlewareConfig;
 import bg.com.bo.bff.application.dtos.response.generic.GenericResponse;
 import bg.com.bo.bff.commons.enums.config.provider.ProjectNameMW;
 import bg.com.bo.bff.commons.interfaces.IHttpClientFactory;
+import bg.com.bo.bff.providers.dtos.request.onboarding.manager.mw.DisableDeviceMWRequest;
 import bg.com.bo.bff.providers.dtos.response.onboarding.manager.mw.DisableDeviceMWResponse;
 import bg.com.bo.bff.providers.dtos.response.onboarding.manager.mw.ListDevicesMWResponse;
 import bg.com.bo.bff.providers.interfaces.IOnboardingManagerProvider;
@@ -45,18 +46,17 @@ public class OnboardingManagerProvider extends MiddlewareProvider<OnboardingMana
     }
 
     @Override
-    public GenericResponse disableDevice(int personId, String deviceId) throws IOException {
+    public GenericResponse disableDevice(DisableDeviceMWRequest request) throws IOException {
 
-        String url = baseUrl + String.format(OnboardingManagerMiddlewareService.DISABLE_DEVICE.getServiceURL(), personId,
-                deviceId);
+        String url = baseUrl + OnboardingManagerMiddlewareService.DISABLE_DEVICE.getServiceURL();
         DisableDeviceMWResponse mwResponse = post(
                 url,
                 HeadersMW.getDefaultHeaders(httpServletRequest),
-                null,
+                request,
                 DisableDeviceMWResponse.class
         );
 
-        if (mwResponse.getData() != null && mwResponse.getData().getCodeResponse().equals("COD000"))
+        if (mwResponse.getData() != null && mwResponse.getData().getCode().equals("ONB-0000"))
             return GenericResponse.instance(OnboardingMiddlewareResponse.SUCCESS_DEACTIVATE_DEVICE);
         else return GenericResponse.instance(OnboardingMiddlewareResponse.ERROR_DEACTIVATE_DEVICE);
 

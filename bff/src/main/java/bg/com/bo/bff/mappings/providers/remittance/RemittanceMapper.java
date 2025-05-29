@@ -196,7 +196,7 @@ public class RemittanceMapper implements IRemittanceMapper {
                         .remittanceId(mw.getNoRemittance())
                         .consultationId(mw.getNoConsult())
                         .amount(mw.getAmountReceived())
-                        .currencyCode(Util.convertCurrency(mw.getCurrencyReceived()))
+                        .currencyCode(mw.getCurrencyReceived())
                         .originCountry(mw.getCountryEmission())
                         .originCity(mw.getPlazaOrigin())
                         .holderName(mw.getPayer())
