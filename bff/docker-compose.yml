@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  backend:
+    # Comando para buildear la imagen. Utiliza el Dockerfile indicado.
+    build: .
+    # Nombre de la imagen a utilizar. Si esta presente el comando build, construye una nueva imagen y le asigna este nombre.
+    image: bg.bo.com/bff:latest
+    environment:
+      # Permite el debug remoto de la aplicacion.
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    env_file:
+      - .env
+    profiles: [ "debug", "dev" ]
+
+  redis:
+    image: "redis:alpine3.19"
+    environment:
+      - REDIS_PASSWORD=bff
+    command: /bin/sh -c 'redis-server --appendonly yes --requirepass $${REDIS_PASSWORD}'
+    ports:
+      - "6379:6379"
+    restart: always
+    profiles: [ "debug", "dev" ]

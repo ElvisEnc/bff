@@ -1,0 +1,4 @@
+## Configmap for develop
+CONFIGMAP_DEVELOP_VITE_APP_HOST: "qwerty"
+CONFIGMAP_DEVELOP_VITE_APP_PATH: "qwerty"
+CONFIGMAP_DEVELOP_VITE_APP_URL: "qwerty"

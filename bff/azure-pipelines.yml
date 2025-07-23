@@ -1,0 +1,28 @@
+trigger:
+  - develop
+  - staging
+  - uat
+  - release*
+  - main
+pr:
+  branches:
+    include:
+      - '*'
+resources:
+  repositories:
+    - repository: devops
+      name: BGA-DEVSECOPS/ci-templates
+      type: git
+      ref: refs/heads/main
+      endpoint: AzureDevOpsBancoGanadero
+extends:
+  template: templates/ci-java-gradle.yml@devops
+  parameters:
+    teamName: 'ganamovil'
+    projectName: 'bff'
+    applicationName: 'ganamovil-bff'
+    jdkVersionOption: '1.17'
+    gradleWrapperFile: "$(Build.SourcesDirectory)/bff/gradlew"
+    workingDirectory: "$(Build.SourcesDirectory)/bff"
+    testResultsFiles: "**/TEST-*.xml"
+    codeCoverageClassFilesDirectories: "$(Build.SourcesDirectory)/bff/build/classes/main/"

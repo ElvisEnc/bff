@@ -1,0 +1,23 @@
+package bg.com.bo.bff.providers.dtos.response.generic;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+@Data
+@SuperBuilder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
+public class ApiDataResponse<T> {
+    private T data;
+
+    private ApiDataResponse(T data) {
+        this.data = data;
+    }
+
+    public static <T> ApiDataResponse<T> of(T data) {
+        return new ApiDataResponse(data);
+    }
+}

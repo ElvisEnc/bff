@@ -1,0 +1,17 @@
+package bg.com.bo.bff.providers.models.enums.middleware.loans;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public enum LoansMiddlewareServices {
+    GET_LIST_LOANS("/bs/v1/loans/persons/%s/clients/%s"),
+    GET_LIST_LOAN_PAYMENTS("/bs/v1/loans/%s/loan-number/%s/clients/%s/payments"),
+    GET_LIST_LOAN_INSURANCE_PAYMENTS("/bs/v1/loans/%s/loan-number/%s/clients/%s/payments/insurances?records=%s"),
+    GET_LIST_LOAN_PLANS("/bs/v1/loans/%s/clients/%s/payments/plans"),
+    GET_LOAN_DETAIL_PAYMENT("/bs/v1/loans/%s/clients/%s"),
+    VALIDATE_PCC01("/bs/v1/uif/validate");
+
+    private final String serviceURL;
+}

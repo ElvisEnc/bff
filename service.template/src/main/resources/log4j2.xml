@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <JSONLayout complete="true" compact="false" eventEol="true"
+                        includeTimeMillis="true" objectMessageAsJsonObject="true">
+                <KeyValuePair key="fecha" value="$${date:yyyy-MM-dd'T'HH:mm:ss.SSS}"/>
+            </JSONLayout>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>

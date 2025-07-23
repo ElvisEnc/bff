@@ -1,0 +1,16 @@
+package bg.com.bo.bff.providers.dtos.response.notification.config;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class SubscribeNotificationMWResponse {
+    @JsonProperty("data")
+    private IdentifierNotification data;
+}
